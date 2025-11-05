@@ -21,7 +21,7 @@ class AppStyle {
 
   static TextStyle get headline1 => TextStyle(
     fontSize: 28.sp,
-    fontWeight: FontWeight.w700 ,
+    fontWeight: FontWeight.bold ,
     color: AppColors.dark,
     fontFamily: 'Raleway',
   );
@@ -42,7 +42,7 @@ class AppStyle {
 
   static TextStyle get body1 => TextStyle(
     fontSize: 19.sp,
-    fontWeight: FontWeight.w300,
+    fontWeight: FontWeight.w700,
     
     color: AppColors.dark,
     fontFamily: 'Raleway',
@@ -59,7 +59,7 @@ class AppStyle {
   // Buttons
   static TextStyle get button => TextStyle(
     fontSize: 22.sp,
-    fontWeight: FontWeight.w300,
+    fontWeight: FontWeight.w900,
     color: AppColors.lightprimery,
     fontFamily: 'Raleway',
   );

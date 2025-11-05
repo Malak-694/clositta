@@ -1,4 +1,6 @@
 import 'package:chicora/core/router/route_names.dart';
+import 'package:chicora/features/auth/ui/screens/password_recovery_screen.dart';
+import 'package:chicora/features/auth/ui/screens/recovery_code_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -9,6 +11,10 @@ class AppRouter {
     switch(settings.name){
       case RouteNames.login:
         return MaterialPageRoute(builder: (_)=> LoginScreen());
+      case RouteNames.passord_recovery:
+        return MaterialPageRoute(builder: (_)=> PasswordRecoveryScreen());
+      case RouteNames.recovery_code:
+        return MaterialPageRoute(builder: (_)=> RecoveryCodeScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => const Scaffold(

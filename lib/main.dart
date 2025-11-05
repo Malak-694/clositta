@@ -22,7 +22,7 @@ class ChicoraApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp(
           title: 'Chicora',
-          initialRoute: RouteNames.login,
+          initialRoute: RouteNames.reset_password,
           onGenerateRoute: AppRouter.generateRoute,
         );
       },

@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'core/router/app_router.dart';
 import 'core/router/route_names.dart';
 
-void main()async {
+void main() async {
   // setupGetIt();
   //   await initializeDateFormatting('ar', null);
 
@@ -22,7 +22,7 @@ class ChicoraApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp(
           title: 'Chicora',
-          initialRoute: RouteNames.login,
+          initialRoute: RouteNames.singUp,
           onGenerateRoute: AppRouter.generateRoute,
         );
       },

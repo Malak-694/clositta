@@ -1,10 +1,11 @@
+import 'package:chicora/core/di/dependency_injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'core/router/app_router.dart';
 import 'core/router/route_names.dart';
 
 void main() async {
-  // setupGetIt();
+  setupGetIt();
   //   await initializeDateFormatting('ar', null);
 
   runApp(const ChicoraApp());

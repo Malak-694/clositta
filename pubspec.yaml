@@ -28,25 +28,36 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  bloc: ^9.1.0
   cupertino_icons: ^1.0.8
+  dio: ^5.9.0
   dropdown_button2: ^2.3.9
   flutter:
     sdk: flutter
+  flutter_bloc: ^9.1.1
   flutter_screenutil: ^5.9.3
   flutter_secure_storage: ^9.2.4
+  freezed_annotation: ^3.1.0
+  get_it: ^9.1.1
+  intl: ^0.20.2
+  json_annotation: ^4.9.0
+
+  logger: ^2.6.2
+  mason_logger: ^0.3.3
   pinput: ^5.0.2
+  pretty_dio_logger: ^1.4.0
+  retrofit: ^4.9.1
   shared_preferences: ^2.5.3
+  url_launcher: ^6.3.2
 
 dev_dependencies:
-
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
+  build_runner: ^2.10.4
   flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
+  freezed: ^3.2.3
+  json_serializable: ^6.11.1
+  retrofit_generator: ^10.2.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

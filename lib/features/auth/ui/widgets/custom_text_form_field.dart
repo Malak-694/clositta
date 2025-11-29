@@ -37,9 +37,11 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       child: TextFormField(
         controller: widget.controller,
         obscureText: widget.isPassword ? _obscureText : false,
+        style: AppStyle.body3,
         decoration: InputDecoration(
           filled: true,
           fillColor: AppColors.lightprimery,
+
           // labelText: "Email",
           hintText: widget.text,
           hintStyle: AppStyle.body2.copyWith(fontSize: 17.sp),

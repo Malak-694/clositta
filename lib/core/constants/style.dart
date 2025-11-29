@@ -77,6 +77,16 @@ class AppStyle {
       ..color = AppColors.primery,
     fontFamily: 'Raleway',
   );
+ static TextStyle get body3 => TextStyle(
+    fontSize: 19.sp,
+    fontWeight: FontWeight.w700,
+
+    foreground: Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = .3
+      ..color = AppColors.darkprimery,
+    fontFamily: 'Raleway',
+  );
 
   // Captions
   static TextStyle get caption => TextStyle(

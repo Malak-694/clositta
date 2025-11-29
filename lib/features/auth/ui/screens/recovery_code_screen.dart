@@ -48,7 +48,7 @@ class RecoveryCodeScreen extends StatelessWidget {
               SizedBox(
                 height: 110.h,
               ),
-              CustomMediumButton(value: "Send Again", onPressed: (){}, color: AppColors.ternary,),
+              CustomMediumButton(value: "Send Again", onPressed: (){}, color: AppColors.ternary,isLoading: false,),
               SizedBox(
                 height: 16.h,
               ),

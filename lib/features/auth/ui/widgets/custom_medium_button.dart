@@ -1,3 +1,4 @@
+import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,27 +8,39 @@ class CustomMediumButton extends StatelessWidget {
     super.key,
     required this.value,
     required this.onPressed,
+    required this.isLoading,
     required this.color,
     this.width = 220,
   });
 
   final value;
-  final Function() onPressed;
+  final VoidCallback? onPressed;
   final Color color;
   final double width;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: onPressed,
-      child: Text(value, style: AppStyle.button),
+      onPressed: isLoading ? (){} : onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: color,
+        backgroundColor: AppColors.primery,
         minimumSize: Size(width.w, 55.h),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.r),
         ),
       ),
+      child: isLoading
+          ? SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                backgroundColor: AppColors.primery,
+              ),
+            )
+          : Text(value, style: AppStyle.button),
     );
   }
 }

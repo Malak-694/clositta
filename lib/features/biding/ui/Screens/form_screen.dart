@@ -31,7 +31,7 @@ class _FormScreenState extends State<FormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Create New Post', style: AppStyle.headline4),
+        title: Text('cancel', style: AppStyle.headline4),
         leadingWidth: 20.w,
         iconTheme: IconThemeData(
           color: AppColors.ternary, // Change arrow color
@@ -44,10 +44,11 @@ class _FormScreenState extends State<FormScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
+            Text("create new post" , style: AppStyle.headline2,),
+            SizedBox(height: 10.h,),
             Text(
               'upload design photo',
-              style: AppStyle.headline3
+              style: AppStyle.body6
             ),
             SizedBox(height: 10.h),
 
@@ -96,7 +97,7 @@ class _FormScreenState extends State<FormScreen> {
             // Description section
             Text(
               'Description',
-              style: AppStyle.headline3
+              style: AppStyle.body6
             ),
             SizedBox(height: 8.h),
             Container(
@@ -126,7 +127,7 @@ class _FormScreenState extends State<FormScreen> {
                     children: [
                       Text(
                         'Price',
-                        style: AppStyle.headline3
+                        style: AppStyle.body6
                       ),
                       SizedBox(height: 8.h),
                       Container(
@@ -157,7 +158,7 @@ class _FormScreenState extends State<FormScreen> {
                     children: [
                       Text(
                         'Duration (days)',
-                        style: AppStyle.headline3
+                        style: AppStyle.body6
                       ),
                       SizedBox(height: 8.h),
                       Container(

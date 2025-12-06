@@ -57,6 +57,17 @@ class AppStyle {
       ..color = AppColors.dark,
   );
 
+  static TextStyle get headline4 => TextStyle(
+    fontSize: 17.sp,
+
+    fontWeight: FontWeight.w700,
+    fontFamily: 'Raleway',
+    foreground: Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1
+      ..color = AppColors.ternary,
+  );
+
   static TextStyle get body1 => TextStyle(
     fontSize: 19.sp,
     fontWeight: FontWeight.w700,
@@ -85,6 +96,38 @@ class AppStyle {
       ..style = PaintingStyle.stroke
       ..strokeWidth = .3
       ..color = AppColors.darkprimery,
+    fontFamily: 'Raleway',
+  );
+
+  static TextStyle get body4 => TextStyle(
+    fontSize: 19.sp,
+    fontWeight: FontWeight.w600,
+
+    foreground: Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = .3
+      ..color =  AppColors.light,
+    fontFamily: 'Raleway',
+  );
+
+  static TextStyle get body5 => TextStyle(
+    fontSize: 17.sp,
+    fontWeight: FontWeight.w600,
+
+    foreground: Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = .3
+      ..color = AppColors.light,
+    fontFamily: 'Raleway',
+  );
+  static TextStyle get body6 => TextStyle(
+    fontSize: 15.sp,
+    fontWeight: FontWeight.w600,
+
+    foreground: Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = .3
+      ..color = AppColors.dark,
     fontFamily: 'Raleway',
   );
 

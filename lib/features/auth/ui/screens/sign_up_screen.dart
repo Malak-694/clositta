@@ -154,9 +154,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         CustomMediumButton(
                           value: "Sign Up",
                           isLoading: state is Loading,
-                          onPressed: state is Loading
-                              ? () {}
-                              :   _handleSignUp,
+                          onPressed: state is Loading ? () {} : _handleSignUp,
                           color: AppColors.primery,
                           width: MediaQuery.of(context).size.width - 60.w,
                         ),

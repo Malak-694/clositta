@@ -5,7 +5,10 @@ import 'core/router/app_router.dart';
 import 'core/router/route_names.dart';
 
 void main() async {
-  setupGetIt();
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await setupGetIt();
+
   //   await initializeDateFormatting('ar', null);
 
   runApp(const ChicoraApp());
@@ -25,6 +28,7 @@ class ChicoraApp extends StatelessWidget {
           title: 'Chicora',
           initialRoute: RouteNames.singUp,
           onGenerateRoute: AppRouter.generateRoute,
+          debugShowCheckedModeBanner: false,
         );
       },
     );

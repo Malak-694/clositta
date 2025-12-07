@@ -31,7 +31,7 @@ class ResetPasswordScreen extends StatelessWidget {
             children: [
               SizedBox( height : 180.h),
               Container(
-                height: 250.h,
+                height: 220.h,
                 child: Image.asset("assets/images/lock.png"),
               ),
               Text("setup new passpassword" , style: AppStyle.headline1,),
@@ -43,7 +43,7 @@ class ResetPasswordScreen extends StatelessWidget {
               SizedBox(height: 10.h,),
               CustomTextFormField(text: "confirm password", controller: _confirmPassword , isPassword: true,),
               SizedBox(
-                height: 80.h,
+                height: 90.h,
               ),
               CustomElevatedButton(value: "Save", onPressed: (){}),
               SizedBox(

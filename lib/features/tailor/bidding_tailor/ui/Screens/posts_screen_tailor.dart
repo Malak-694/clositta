@@ -4,7 +4,6 @@ import 'package:chicora/core/di/dependency_injection.dart';
 import 'package:chicora/core/helper/shared_key.dart';
 import 'package:chicora/core/helper/shared_pref_helper.dart';
 import 'package:chicora/core/widgets/custom_nav_bar.dart';
-import 'package:chicora/features/customer/biding/ui/Screens/detailes_screen.dart';
 import 'package:chicora/features/tailor/bidding_tailor/ui/widgets/post_item_tailor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

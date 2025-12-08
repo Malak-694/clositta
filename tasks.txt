@@ -1,12 +1,12 @@
 malak tasks 7/12/2025
 1- add navbar []
 1.a in figma [done]
-1.b in flutter []
+1.b in flutter [done]
 2. see the copy with in text style problem [done]
 foreground: Paint()
     ..style = PaintingStyle.stroke
     ..strokeWidth = 1
     ..color = Colors.white,
-3. build in figma the ui of bidding in tailor side []
+3. build in figma the ui of bidding in tailor side [done]
 4. build the ui in flutter of bidding in tailor side [done]
-5. adding flutter gen dependencies [in middle] 
+5. adding flutter gen dependencies [done] 

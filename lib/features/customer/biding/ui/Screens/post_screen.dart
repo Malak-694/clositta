@@ -1,9 +1,8 @@
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
-import 'package:chicora/features/biding/ui/Screens/detailes_screen.dart';
-import 'package:chicora/features/biding/ui/widgets/post_item.dart';
+import 'package:chicora/features/customer/biding/ui/Screens/detailes_screen.dart';
+import 'package:chicora/features/customer/biding/ui/widgets/post_item.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 

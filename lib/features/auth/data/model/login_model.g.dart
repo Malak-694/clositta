@@ -15,7 +15,7 @@ Map<String, dynamic> _$LoginRequestToJson(LoginRequest instance) =>
     <String, dynamic>{'email': instance.email, 'password': instance.password};
 
 LoginResponse _$LoginResponseFromJson(Map<String, dynamic> json) =>
-    LoginResponse(token: json['token'] as String);
+    LoginResponse(token: json['token'] as String, role: json['role'] as String);
 
 Map<String, dynamic> _$LoginResponseToJson(LoginResponse instance) =>
-    <String, dynamic>{'token': instance.token};
+    <String, dynamic>{'token': instance.token, 'role': instance.role};

@@ -1,4 +1,6 @@
 import 'package:chicora/core/di/dependency_injection.dart';
+import 'package:chicora/core/helper/shared_key.dart';
+import 'package:chicora/core/helper/shared_pref_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'core/router/app_router.dart';
@@ -11,11 +13,21 @@ void main() async {
 
   //   await initializeDateFormatting('ar', null);
 
-  runApp(const ChicoraApp());
+  final prefs = getIt<SharedPrefHelper>();
+  final token = await prefs.getSecureData(SharedPrefKey.token);
+  final role = await prefs.getSecureData(SharedPrefKey.role);
+  final initialRoute = (token != null && token.isNotEmpty)
+      ? (role == "tailor"
+            ? RouteNames.view_bidding_tailor
+            : RouteNames.posts) //TODO : handel different users roles
+      : RouteNames.login;
+
+  runApp(ChicoraApp(initialRoute: initialRoute));
 }
 
 class ChicoraApp extends StatelessWidget {
-  const ChicoraApp({super.key});
+  final String initialRoute;
+  const ChicoraApp({super.key, required this.initialRoute});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +38,7 @@ class ChicoraApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp(
           title: 'Chicora',
-          initialRoute: RouteNames.singUp,
+          initialRoute: initialRoute,
           onGenerateRoute: AppRouter.generateRoute,
           debugShowCheckedModeBanner: false,
         );

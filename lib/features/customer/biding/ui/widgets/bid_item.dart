@@ -2,7 +2,7 @@
 
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
-import 'package:chicora/features/biding/ui/widgets/cutsom_button.dart';
+import 'package:chicora/features/customer/biding/ui/widgets/cutsom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -15,13 +15,13 @@ class BidItem extends StatelessWidget {
   final String? comment;
 
   const BidItem({
-    Key? key,
+    super.key,
     required this.Tailor,
     required this.duration,
     required this.price,
     required this.num_work,
     this.comment,
-   }): super(key: key);
+   });
 
   @override
   Widget build(BuildContext context) {

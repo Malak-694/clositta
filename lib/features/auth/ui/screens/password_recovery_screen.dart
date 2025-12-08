@@ -1,14 +1,15 @@
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
 import 'package:chicora/core/router/route_names.dart';
-import 'package:chicora/features/auth/ui/widgets/custom_elevated_button.dart';
+import 'package:chicora/core/widgets/custom_elevated_button.dart';
 import 'package:chicora/features/auth/ui/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PasswordRecoveryScreen extends StatelessWidget {
-  TextEditingController _email = TextEditingController();
+  final TextEditingController _email = TextEditingController();
+ PasswordRecoveryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +30,7 @@ class PasswordRecoveryScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: 200.h),
-              Container(
+              SizedBox(
                 height: 280.h,
                 child: Image.asset("assets/images/recovery.png"),
               ),

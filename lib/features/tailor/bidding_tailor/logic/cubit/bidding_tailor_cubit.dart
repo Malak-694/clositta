@@ -3,20 +3,18 @@ import 'package:chicora/core/helper/shared_key.dart';
 import 'package:chicora/core/helper/shared_pref_helper.dart';
 import 'package:chicora/features/tailor/bidding_tailor/logic/cubit/bidding_tailor_state.dart';
 
+import '../../../../../core/di/dependency_injection.dart';
+import '../../data/models/bid_model.dart';
 import '../../data/models/join_bidding_model.dart';
+import '../../data/models/post_tailor_model.dart';
 import '../../data/repo/bidding_tailor_repo.dart';
-import '../../ui/widgets/post_item_tailor.dart';
 
 class BiddingTailorCubit extends Cubit<BiddingTailorState> {
   final BiddingTailorRepo _repository;
-  final SharedPrefHelper _prefs;
-
-  BiddingTailorCubit({
-    required BiddingTailorRepo repository,
-    required SharedPrefHelper prefs,
-  }) : _repository = repository,
-       _prefs = prefs,
-       super(const BiddingTailorState.initial());
+  final SharedPrefHelper _prefs = getIt<SharedPrefHelper>();
+  BiddingTailorCubit(this._repository) : super(BiddingTailorState.initial());
+  bool _loadedPosts = false;
+  bool _loadedoOffers = false;
 
   // Get token from shared preferences
   Future<String?> _getToken() async {
@@ -25,6 +23,7 @@ class BiddingTailorCubit extends Cubit<BiddingTailorState> {
 
   // Get bidding tailors (posts)
   Future<void> getBiddingTailors() async {
+    if (_loadedPosts) return;
     emit(const BiddingTailorState.loading());
     try {
       final token = await _getToken();
@@ -33,10 +32,10 @@ class BiddingTailorCubit extends Cubit<BiddingTailorState> {
         return;
       }
 
-      final List<PostItemTailor> response = await _repository.getBiddingTailors(
-        token,
-      );
+      final List<PostTailorResponse> response = await _repository
+          .getBiddingTailors(token);
       emit(BiddingTailorState.success(response));
+      _loadedPosts = true;
     } catch (e) {
       emit(
         BiddingTailorState.fail(
@@ -50,6 +49,7 @@ class BiddingTailorCubit extends Cubit<BiddingTailorState> {
 
   // Get offers for a specific post
   Future<void> getOffers(String postId) async {
+    if (_loadedoOffers) return;
     emit(const BiddingTailorState.loading());
     try {
       final token = await _getToken();
@@ -58,11 +58,12 @@ class BiddingTailorCubit extends Cubit<BiddingTailorState> {
         return;
       }
 
-      final List<PostItemTailor> response = await _repository.getOffers(
+      final List<BidModelReponse> response = await _repository.getOffers(
         token,
         postId,
       );
       emit(BiddingTailorState.success(response));
+      _loadedoOffers = true;
     } catch (e) {
       emit(
         BiddingTailorState.fail(

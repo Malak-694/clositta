@@ -1,12 +1,12 @@
 
-import 'package:chicora/features/tailor/bidding_tailor/data/models/cutomer_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'post_tailor_model.g.dart';
 
 @JsonSerializable()
-class PostTailor {
-  String? sId;
+class PostTailorResponse {
+    @JsonKey(name: '_id')
+  String? id;
   CustomerModel? customer;
   String? requestDescription;
   String? imageUrl;
@@ -17,8 +17,8 @@ class PostTailor {
   String? updatedAt;
   int? iV;
 
-  PostTailor({
-    this.sId,
+  PostTailorResponse({
+    this.id,
     this.customer,
     this.requestDescription,
     this.imageUrl,
@@ -29,19 +29,21 @@ class PostTailor {
     this.updatedAt,
     this.iV,
   });
-  factory PostTailor.fromJson(Map<String, dynamic> json) =>
-      _$PostTailorFromJson(json);
-  Map<String, dynamic> toJson() => _$PostTailorToJson(this);
+  factory PostTailorResponse.fromJson(Map<String, dynamic> json) =>
+      _$PostTailorResponseFromJson(json);
+  Map<String, dynamic> toJson() => _$PostTailorResponseToJson(this);
 }
 @JsonSerializable()
 
 class CustomerModel {
-  String? sId;
+    @JsonKey(name: '_id')
+
+  String? id;
   String? name;
   String? email;
   String? phone;
 
-  CustomerModel({this.sId, this.name, this.email, this.phone});
+  CustomerModel({this.id, this.name, this.email, this.phone});
 
   
   

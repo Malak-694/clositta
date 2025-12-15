@@ -16,11 +16,12 @@ void main() async {
   final prefs = getIt<SharedPrefHelper>();
   final token = await prefs.getSecureData(SharedPrefKey.token);
   final role = await prefs.getSecureData(SharedPrefKey.role);
+
   final initialRoute = (token != null && token.isNotEmpty)
-      ? (role == "tailor"
-            ? RouteNames.view_bidding_tailor
-            : RouteNames.posts) //TODO : handel different users roles
+      ? (role == "tailor" ? RouteNames.view_bidding_tailor : RouteNames.posts)
       : RouteNames.login;
+  print(role);
+  print(initialRoute);
 
   runApp(ChicoraApp(initialRoute: initialRoute));
 }

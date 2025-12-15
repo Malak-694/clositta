@@ -7,12 +7,14 @@ import 'package:chicora/features/auth/ui/screens/reset_password_screen.dart';
 import 'package:chicora/features/auth/ui/screens/log_in_screen.dart';
 import 'package:chicora/features/customer/biding/ui/Screens/form_screen.dart';
 import 'package:chicora/features/customer/biding/ui/Screens/post_screen.dart';
+import 'package:chicora/features/tailor/bidding_tailor/logic/cubit/bidding_tailor_cubit.dart';
+import 'package:chicora/features/tailor/bidding_tailor/ui/Screens/detailes_screen_tailor.dart';
 import 'package:chicora/features/tailor/bidding_tailor/ui/Screens/join_bidding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../features/auth/ui/screens/sign_up_screen.dart';
-import '../../features/tailor/bidding_tailor/ui/Screens/posts_screen_tailor.dart';
+import '../../features/tailor/bidding_tailor/ui/Screens/posts_tailor_screen.dart';
 
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -42,9 +44,53 @@ class AppRouter {
       case RouteNames.upload_post:
         return MaterialPageRoute(builder: (_) => FormScreen());
       case RouteNames.view_bidding_tailor:
-        return MaterialPageRoute(builder: (_) => PostScreenTailor());
-      // case RouteNames.upload_post:
-      //   return MaterialPageRoute(builder: (_) => FormScreen());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<BiddingTailorCubit>(),
+            child: PostScreenTailor(),
+          ),
+        );
+
+      case RouteNames.view_offers_tailor:
+        final args = settings.arguments as Map<String, dynamic>? ?? {};
+        final urlImage = args['urlImage'] as String? ?? '';
+        final description = args['description'] as String? ?? '';
+         final price = args['price'] as String? ?? '';
+          final period = args['period'] as String? ?? '';
+        final postId = args['postId'] as String? ?? ''; // optional
+
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<BiddingTailorCubit>(),
+            child: DetailesScreenTailor(
+              urlImage: urlImage,
+              price: price,
+              period: period,
+              describtion: description,
+              postId: postId,
+            ),
+          ),
+        );
+      case RouteNames.join_bidding:
+        final args = settings.arguments as Map<String, dynamic>? ?? {};
+        final urlImage = args['urlImage'] as String? ?? '';
+        final price = args['price'] as String? ?? '';
+        final period = args['period'] as String? ?? '';
+        final title = args['title'] as String? ?? '';
+        final postId = args['postId'] as String? ?? '';
+
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<BiddingTailorCubit>(),
+            child: JoinBiddingScreen(
+              imageUrl: urlImage,
+              price: price,
+              period: period,
+              title: title,
+              postId: postId,
+            ),
+          ),
+        );
 
       default:
         return MaterialPageRoute(

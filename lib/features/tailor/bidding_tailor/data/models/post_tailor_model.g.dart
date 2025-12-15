@@ -6,24 +6,25 @@ part of 'post_tailor_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-PostTailor _$PostTailorFromJson(Map<String, dynamic> json) => PostTailor(
-  sId: json['sId'] as String?,
-  customer: json['customer'] == null
-      ? null
-      : CustomerModel.fromJson(json['customer'] as Map<String, dynamic>),
-  requestDescription: json['requestDescription'] as String?,
-  imageUrl: json['imageUrl'] as String?,
-  price: (json['price'] as num?)?.toInt(),
-  time: json['time'] as String?,
-  status: json['status'] as String?,
-  createdAt: json['createdAt'] as String?,
-  updatedAt: json['updatedAt'] as String?,
-  iV: (json['iV'] as num?)?.toInt(),
-);
+PostTailorResponse _$PostTailorResponseFromJson(Map<String, dynamic> json) =>
+    PostTailorResponse(
+      id: json['_id'] as String?,
+      customer: json['customer'] == null
+          ? null
+          : CustomerModel.fromJson(json['customer'] as Map<String, dynamic>),
+      requestDescription: json['requestDescription'] as String?,
+      imageUrl: json['imageUrl'] as String?,
+      price: (json['price'] as num?)?.toInt(),
+      time: json['time'] as String?,
+      status: json['status'] as String?,
+      createdAt: json['createdAt'] as String?,
+      updatedAt: json['updatedAt'] as String?,
+      iV: (json['iV'] as num?)?.toInt(),
+    );
 
-Map<String, dynamic> _$PostTailorToJson(PostTailor instance) =>
+Map<String, dynamic> _$PostTailorResponseToJson(PostTailorResponse instance) =>
     <String, dynamic>{
-      'sId': instance.sId,
+      '_id': instance.id,
       'customer': instance.customer,
       'requestDescription': instance.requestDescription,
       'imageUrl': instance.imageUrl,
@@ -37,7 +38,7 @@ Map<String, dynamic> _$PostTailorToJson(PostTailor instance) =>
 
 CustomerModel _$CustomerModelFromJson(Map<String, dynamic> json) =>
     CustomerModel(
-      sId: json['sId'] as String?,
+      id: json['_id'] as String?,
       name: json['name'] as String?,
       email: json['email'] as String?,
       phone: json['phone'] as String?,
@@ -45,7 +46,7 @@ CustomerModel _$CustomerModelFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$CustomerModelToJson(CustomerModel instance) =>
     <String, dynamic>{
-      'sId': instance.sId,
+      '_id': instance.id,
       'name': instance.name,
       'email': instance.email,
       'phone': instance.phone,

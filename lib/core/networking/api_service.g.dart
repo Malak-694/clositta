@@ -78,13 +78,13 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<List<PostItemTailor>> viewBiddingTailor(String token) async {
+  Future<List<PostTailorResponse>> viewBiddingTailor(String token) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<List<PostItemTailor>>(
+    final _options = _setStreamType<List<PostTailorResponse>>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -95,11 +95,12 @@ class _ApiService implements ApiService {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<List<dynamic>>(_options);
-    late List<PostItemTailor> _value;
+    late List<PostTailorResponse> _value;
     try {
       _value = _result.data!
           .map(
-            (dynamic i) => PostItemTailor.fromJson(i as Map<String, dynamic>),
+            (dynamic i) =>
+                PostTailorResponse.fromJson(i as Map<String, dynamic>),
           )
           .toList();
     } on Object catch (e, s) {
@@ -110,13 +111,13 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<List<PostItemTailor>> viewOffers(String token, String id) async {
+  Future<List<BidModelReponse>> viewOffers(String token, String id) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<List<PostItemTailor>>(
+    final _options = _setStreamType<List<BidModelReponse>>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -127,11 +128,11 @@ class _ApiService implements ApiService {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<List<dynamic>>(_options);
-    late List<PostItemTailor> _value;
+    late List<BidModelReponse> _value;
     try {
       _value = _result.data!
           .map(
-            (dynamic i) => PostItemTailor.fromJson(i as Map<String, dynamic>),
+            (dynamic i) => BidModelReponse.fromJson(i as Map<String, dynamic>),
           )
           .toList();
     } on Object catch (e, s) {

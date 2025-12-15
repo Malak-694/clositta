@@ -1,11 +1,10 @@
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
 import 'package:chicora/core/widgets/custom_elevated_button.dart';
-import 'package:chicora/core/widgets/post_status.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../Screens/join_bidding_screen.dart';
+import '../../../../../core/router/route_names.dart';
 
 class PostItemTailor extends StatelessWidget {
   final String title;
@@ -15,7 +14,7 @@ class PostItemTailor extends StatelessWidget {
   final String price;
   final String period;
   final String status;
-
+  final String id;
   const PostItemTailor({
     super.key,
     required this.title,
@@ -25,6 +24,7 @@ class PostItemTailor extends StatelessWidget {
     required this.status,
     required this.price,
     required this.period,
+    required this.id
   });
 
   @override
@@ -43,7 +43,7 @@ class PostItemTailor extends StatelessWidget {
             height: 270.h,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("assets/images/clothes1.jpg"),
+                image: NetworkImage(Image_url),
                 fit: BoxFit.fill,
               ),
             ),
@@ -120,30 +120,28 @@ class PostItemTailor extends StatelessWidget {
             children: [
               // Bids count
               Text(
-                '$bidCount bid${bidCount == 1 ? '' : 's'} . $date',
+                '$bidCount bid${bidCount == 1 ? '' : 's'}',
                 style: AppStyle.body4,
               ),
-              status == "selected"
-                  ? Container()
-                  : StatusBadge(status: status, isSelected: false),
+              
             ],
           ),
           SizedBox(height: 8.h),
-          status == "selected"
+          status == "closed"
               ? Container()
               : CustomElevatedButton(
                   value: 'join Bidding',
                   onPressed: () {
-                    Navigator.push(
+                    Navigator.pushNamed(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => JoinBiddingScreen(
-                          imageUrl: Image_url,
-                          price: price,
-                          period: period,
-                          title: title,
-                        ),
-                      ),
+                      RouteNames.join_bidding,
+                      arguments: {
+                        'urlImage': Image_url,
+                        'price': price,
+                        'period': period,
+                        'title': title,
+                        'postId':id 
+                      },
                     );
                   },
                   height: 39,

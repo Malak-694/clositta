@@ -3,6 +3,8 @@ import 'package:chicora/core/networking/api_service.dart';
 import 'package:chicora/core/networking/dio_factory.dart';
 import 'package:chicora/features/auth/data/repo/auth_repo.dart';
 import 'package:chicora/features/auth/logic/cubit/authentication_cubit.dart';
+import 'package:chicora/features/tailor/bidding_tailor/data/repo/bidding_tailor_repo.dart';
+import 'package:chicora/features/tailor/bidding_tailor/logic/cubit/bidding_tailor_cubit.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
@@ -12,8 +14,12 @@ Future<void> setupGetIt() async {
 
   await SharedPrefHelper.init();
   getIt.registerSingleton<SharedPrefHelper>(SharedPrefHelper());
-
   getIt.registerLazySingleton<ApiService>(() => ApiService(dio));
+  //Authentication
   getIt.registerLazySingleton<AuthRepo>(() => AuthRepo(apiService: getIt()));
   getIt.registerFactory<AuthCubit>(() => AuthCubit(getIt()));
+  //BiddingTailor
+  getIt.registerLazySingleton<BiddingTailorRepo>(() => BiddingTailorRepo(apiService: getIt()));
+  getIt.registerFactory<BiddingTailorCubit>(() => BiddingTailorCubit(getIt()));
+  
 }

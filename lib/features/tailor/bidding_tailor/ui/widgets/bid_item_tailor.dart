@@ -1,23 +1,21 @@
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
-import 'package:chicora/features/customer/biding/ui/widgets/cutsom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-class BidItem extends StatelessWidget {
-  final String Tailor;
+class BidItemTailor extends StatelessWidget {
+  final String tailorName;
   final int price;
-  final int num_work;
   final int duration;
   final String? comment;
+  
 
-  const BidItem({
+  const BidItemTailor({
     super.key,
-    required this.Tailor,
+    required this.tailorName,
     required this.duration,
     required this.price,
-    required this.num_work,
     this.comment,
   });
 
@@ -49,16 +47,16 @@ class BidItem extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(Tailor, style: AppStyle.headline2),
+                Text(tailorName, style: AppStyle.headline2),
                 Text('\$$price', style: AppStyle.body1),
               ],
             ),
             // SizedBox(height: .h),
             Row(
               children: [
-                Icon(LucideIcons.smile, size: 20, color: AppColors.light),
-                const SizedBox(width: 2),
-                Text(' $num_work Tailor', style: AppStyle.body5),
+                // Icon(LucideIcons.smile, size: 20, color: AppColors.light),
+                // const SizedBox(width: 2),
+                // Text(' $num_work Tailor', style: AppStyle.body5),
                 const Spacer(),
                 Icon(LucideIcons.clock, size: 18, color: AppColors.light),
                 const SizedBox(width: 1),
@@ -68,25 +66,6 @@ class BidItem extends StatelessWidget {
             const SizedBox(height: 10),
             if (comment != null) Text(comment!, style: AppStyle.body6),
             const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                CustomButton(
-                  text: "chat",
-                  onPressed: () {},
-                  backgroundColor: AppColors.background,
-                  foregroundColor: AppColors.light,
-                  icon: LucideIcons.messageCircle,
-                ),
-                CustomButton(
-                  text: "Select",
-                  onPressed: () {},
-                  backgroundColor: AppColors.primery,
-                  foregroundColor: AppColors.background,
-                  icon: LucideIcons.userRoundCheck,
-                ),
-              ],
-            ),
           ],
         ),
       ),

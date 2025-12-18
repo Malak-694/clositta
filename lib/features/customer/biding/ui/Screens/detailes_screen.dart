@@ -2,7 +2,7 @@
 
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
-import 'package:chicora/features/biding/ui/widgets/bid_item.dart';
+import 'package:chicora/features/customer/biding/ui/widgets/bid_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

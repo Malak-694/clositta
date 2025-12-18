@@ -1,0 +1,11 @@
+1. create the model
+1.a https://javiercbk.github.io/json_to_dart/
+1.b create the model file with JsonSerializable
+factory PostTailor.fromJson(Map<String, dynamic> json) =>
+      _$PostTailorFromJson(json);
+  Map<String, dynamic> toJson() => _$PostTailorToJson(this);
+
+2. add the urls to the end point 
+3. add the the services 
+4. add the repo
+

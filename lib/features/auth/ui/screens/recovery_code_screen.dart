@@ -7,6 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pinput/pinput.dart';
 
 class RecoveryCodeScreen extends StatelessWidget {
+  const RecoveryCodeScreen({super.key});
+
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class RecoveryCodeScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox( height : 180.h),
-              Container(
+              SizedBox(
                 height: 280.h,
                 child: Image.asset("assets/images/email.png"),
               ),

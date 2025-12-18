@@ -10,7 +10,7 @@ class PostItem extends StatelessWidget {
   final String Image_url ;
   final String status ;
 
-  PostItem({
+  const PostItem({super.key, 
     required this.title,
     required this.bidCount,
     required this.Image_url,

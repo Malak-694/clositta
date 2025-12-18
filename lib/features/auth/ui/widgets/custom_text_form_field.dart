@@ -31,8 +31,9 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     // }
   }
 
+  @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 350.w,
       child: TextFormField(
         controller: widget.controller,

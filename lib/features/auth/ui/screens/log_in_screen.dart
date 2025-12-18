@@ -13,6 +13,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
@@ -40,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
           initial: () {},
           loading: () {},
           success: (message) {
-            Navigator.pushNamed(context, RouteNames.passord_recovery);
+            Navigator.pushReplacementNamed(context, RouteNames.posts);
           },
           fail: (error) {
             ScaffoldMessenger.of(
@@ -149,7 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(height: 16.h),
                   TextButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, RouteNames.singUp);
+                      Navigator.pushNamed(context, RouteNames.sing_up);
                     },
                     child: Text("First time to see us?", style: AppStyle.body1),
                   ),

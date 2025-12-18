@@ -1,4 +1,4 @@
-import 'package:chicora/features/auth/ui/widgets/custom_elevated_button.dart';
+import 'package:chicora/core/widgets/custom_elevated_button.dart';
 import 'package:chicora/features/auth/ui/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,8 +13,8 @@ class ResetPasswordScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController _password = TextEditingController() ;
-    TextEditingController _confirmPassword = TextEditingController();
+    TextEditingController password = TextEditingController() ;
+    TextEditingController confirmPassword = TextEditingController();
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -30,7 +30,7 @@ class ResetPasswordScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox( height : 180.h),
-              Container(
+              SizedBox(
                 height: 220.h,
                 child: Image.asset("assets/images/lock.png"),
               ),
@@ -39,9 +39,9 @@ class ResetPasswordScreen extends StatelessWidget {
               SizedBox(
                 height: 25.h,
               ),
-              CustomTextFormField(text: "password", controller: _password ,isPassword: true,),
+              CustomTextFormField(text: "password", controller: password ,isPassword: true,),
               SizedBox(height: 10.h,),
-              CustomTextFormField(text: "confirm password", controller: _confirmPassword , isPassword: true,),
+              CustomTextFormField(text: "confirm password", controller: confirmPassword , isPassword: true,),
               SizedBox(
                 height: 90.h,
               ),

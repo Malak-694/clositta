@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class BidItem extends StatelessWidget {
-  final String Tailor;
+  final String tailor;
   final int price;
   final int num_work;
   final int duration;
@@ -14,7 +14,7 @@ class BidItem extends StatelessWidget {
 
   const BidItem({
     super.key,
-    required this.Tailor,
+    required this.tailor,
     required this.duration,
     required this.price,
     required this.num_work,
@@ -49,7 +49,7 @@ class BidItem extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(Tailor, style: AppStyle.headline2),
+                Text(tailor, style: AppStyle.headline2),
                 Text('\$$price', style: AppStyle.body1),
               ],
             ),

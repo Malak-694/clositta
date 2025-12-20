@@ -19,7 +19,10 @@ class DioFactory {
   }
 
   static void addDioHeader() async {
-    dio?.options.headers = {'Accept': "application/json"};
+    dio!..options.headers = {
+      'Accept': 'application/json',
+      'Content-Type': null,
+    };
   }
 
   static void addDioInterceptor() {

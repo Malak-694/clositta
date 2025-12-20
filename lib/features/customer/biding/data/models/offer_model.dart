@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
 
-part 'bid_model.g.dart';
+part 'offer_model.g.dart';
 
 
 @JsonSerializable()
@@ -24,8 +24,9 @@ class Tailor {
 
   Map<String, dynamic> toJson() => _$TailorToJson(this);
 }
+
 @JsonSerializable()
-class BidModelReponse {
+class OfferResponse {
   @JsonKey(name: '_id')
   final String id;
   final String bid;
@@ -40,7 +41,7 @@ class BidModelReponse {
   @JsonKey(name: '__v')
   final int version;
 
-  BidModelReponse({
+  OfferResponse({
     required this.id,
     required this.bid,
     required this.tailor,
@@ -52,8 +53,8 @@ class BidModelReponse {
     required this.version,
   });
 
-  factory BidModelReponse.fromJson(Map<String, dynamic> json) =>
-      _$BidModelReponseFromJson(json);
+  factory OfferResponse.fromJson(Map<String, dynamic> json) =>
+      _$OfferResponseFromJson(json);
 
-  Map<String, dynamic> toJson() => _$BidModelReponseToJson(this);
+  Map<String, dynamic> toJson() => _$OfferResponseToJson(this);
 }

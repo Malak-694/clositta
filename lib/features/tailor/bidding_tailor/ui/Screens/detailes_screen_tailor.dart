@@ -32,7 +32,6 @@ class DetailesScreenTailor extends StatelessWidget {
     required this.describtion,
     required this.price,
     required this.period,
-
    required this.postId,
   });
 

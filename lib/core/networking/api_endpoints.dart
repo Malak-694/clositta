@@ -5,4 +5,8 @@ class ApiEndpoints {
   //Tailor 
   static const String viewBiddingTailor = '/api/bids/all';
   static const String offers = '/api/offers/{id}';
+  //customer
+  static const String myBids = '/api/bids';
+  static const String createBid = '/api/bids';
+  static const String bestOffers = '/api/offers/{bidId}/best';
 }

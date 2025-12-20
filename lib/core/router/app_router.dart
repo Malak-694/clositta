@@ -5,6 +5,8 @@ import 'package:chicora/features/auth/ui/screens/password_recovery_screen.dart';
 import 'package:chicora/features/auth/ui/screens/recovery_code_screen.dart';
 import 'package:chicora/features/auth/ui/screens/reset_password_screen.dart';
 import 'package:chicora/features/auth/ui/screens/log_in_screen.dart';
+import 'package:chicora/features/customer/biding/logic/cubit/customer_bidding_cubit.dart';
+import 'package:chicora/features/customer/biding/ui/Screens/detailes_screen.dart';
 import 'package:chicora/features/customer/biding/ui/Screens/form_screen.dart';
 import 'package:chicora/features/customer/biding/ui/Screens/post_screen.dart';
 import 'package:chicora/features/tailor/bidding_tailor/logic/cubit/bidding_tailor_cubit.dart';
@@ -40,9 +42,19 @@ class AppRouter {
       case RouteNames.reset_password:
         return MaterialPageRoute(builder: (_) => ResetPasswordScreen());
       case RouteNames.posts:
-        return MaterialPageRoute(builder: (_) => PostScreen());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<CustomerBiddingCubit>(),
+            child: PostScreen(),
+          ),
+        );
       case RouteNames.upload_post:
-        return MaterialPageRoute(builder: (_) => FormScreen());
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider(
+              create: (_) => getIt<CustomerBiddingCubit>(),
+              child: FormScreen(),
+            )
+        );
       case RouteNames.view_bidding_tailor:
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
@@ -51,6 +63,23 @@ class AppRouter {
           ),
         );
 
+
+      case RouteNames.post_details_customer: // ✅ Define this constant
+        final args = settings.arguments as Map<String, dynamic>? ?? {};
+        final bidId = args['bidId'] as String? ?? '';
+        final urlImage = args['urlImage'] as String? ?? '';
+        final description = args['description'] as String? ?? '';
+
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<CustomerBiddingCubit>(
+            create: (context) => getIt<CustomerBiddingCubit>(),
+            child: DetailesScreen(
+              bidId: bidId,
+              urlImage: urlImage,
+              description: description,
+            ),
+          )
+        );
       case RouteNames.view_offers_tailor:
         final args = settings.arguments as Map<String, dynamic>? ?? {};
         final urlImage = args['urlImage'] as String? ?? '';

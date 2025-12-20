@@ -5,14 +5,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PostItem extends StatelessWidget {
   final String title;
-  final int bidCount;
+  final int? bidCount;
   final String date;
   final String Image_url ;
   final String status ;
 
-  const PostItem({super.key, 
+  const PostItem({super.key,
     required this.title,
-    required this.bidCount,
+    this.bidCount,
     required this.Image_url,
     required this.date,
     required this.status
@@ -31,13 +31,13 @@ class PostItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            height: 270.h,
+            height: 290.h,
             decoration: BoxDecoration(
                image: DecorationImage(
-                 image: AssetImage("assets/images/dress.png"),
+                 image: NetworkImage(Image_url),
                   fit: BoxFit.fill,
                ),
               ),
@@ -45,18 +45,17 @@ class PostItem extends StatelessWidget {
           ),
           SizedBox(height: 8.h,),
 
-          Text(
-                title,
-                style: AppStyle.body1,),
+          Text(title, style: AppStyle.body1,),
 
-          SizedBox(height: 5.h),
+          SizedBox(height: 10.h),
 
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // Bids count
              Text(
-                  '$bidCount bid${bidCount == 1 ? '' : 's'} . $date',
+                 // '$bidCount bid${bidCount == 1 ? '' : 's'} . $date',
+                   date,
                   style: AppStyle.body4
                 ),
               Container(

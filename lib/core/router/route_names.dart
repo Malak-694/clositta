@@ -12,4 +12,5 @@ class RouteNames {
   static const view_bidding_tailor = "view_bidding_tailor";
   static const join_bidding = "join_bidding";
   static const view_offers_tailor = "view_offers";
+  static const seller_products_screen = "seller_products_screen";
 }

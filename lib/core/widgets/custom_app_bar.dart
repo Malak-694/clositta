@@ -37,7 +37,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               fontSize: 30.sp,
               foreground: Paint()
                 ..style = PaintingStyle.stroke
-                ..strokeWidth = 1
+                ..strokeWidth = 1.5
                 ..color = const Color.fromARGB(255, 82, 66, 184),
             ),
           ),

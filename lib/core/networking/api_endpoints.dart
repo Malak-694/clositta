@@ -1,8 +1,9 @@
 class ApiEndpoints {
-  static const String baseUrl = 'https://graduationproject-p.up.railway.app';
+  static const String baseUrl =
+      'https://graduationproject-production-38b3.up.railway.app';
   static const String login = '/api/auth/login';
   static const String signUp = '/api/auth/register';
-  //Tailor 
+  //Tailor
   static const String viewBiddingTailor = '/api/bids/all';
   static const String offers = '/api/offers/{id}';
   //customer

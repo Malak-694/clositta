@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../features/auth/ui/screens/sign_up_screen.dart';
+import '../../features/seller/products/ui/screens/seller_products_screen.dart';
 import '../../features/tailor/bidding_tailor/ui/Screens/posts_tailor_screen.dart';
 
 class AppRouter {
@@ -120,7 +121,10 @@ class AppRouter {
             ),
           ),
         );
-
+      case RouteNames.seller_products_screen:
+        return MaterialPageRoute(
+          builder: (_) =>  SellerProductsScreen(),
+        );
       default:
         return MaterialPageRoute(
           builder: (_) => const Scaffold(

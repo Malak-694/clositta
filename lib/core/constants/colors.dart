@@ -10,4 +10,5 @@ class AppColors {
   static const secondary = Color(0xFFFFC333);
   static const lightsecondary = Color.fromARGB(255, 255, 233, 183);
   static const ternary = Color(0xFFFF6464);
+  static const lightternary = Color(0xFFF18C88);
 }

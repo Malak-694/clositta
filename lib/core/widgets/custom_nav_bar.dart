@@ -6,11 +6,14 @@ import '../router/route_names.dart';
 class FloatingNavBar extends StatelessWidget {
   final String userRole;
   final int selectedIndex;
-
+  final Color focused;
+  final Color notSelected;
   const FloatingNavBar({
     super.key,
     required this.userRole,
     required this.selectedIndex,
+    this.focused = AppColors.primery,
+    this.notSelected = AppColors.darkprimery,
   });
 
   Map<String, List<Map<String, dynamic>>> get roleNavItems => {
@@ -35,6 +38,24 @@ class FloatingNavBar extends StatelessWidget {
         "icon": Icons.person,
         "name": "Profile",
         "route": RouteNames.view_bidding_tailor,
+      },
+    ],
+    "seller": [
+      {
+        "icon": Icons.home,
+        "name": "Products",
+        "route": RouteNames.seller_products_screen,
+      },
+      {
+        "icon": Icons.cut,
+        "name": "Portfolio",
+        "route": RouteNames.seller_products_screen,
+      },
+
+      {
+        "icon": Icons.person,
+        "name": "Profile",
+        "route": RouteNames.seller_products_screen,
       },
     ],
   };
@@ -91,17 +112,13 @@ class FloatingNavBar extends StatelessWidget {
                           children: [
                             Icon(
                               item["icon"],
-                              color: isSelected
-                                  ? AppColors.primery
-                                  : AppColors.darkprimery,
+                              color: isSelected ? focused : notSelected,
                               size: item["name"] == "Profile" ? 34.r : 32.r,
                             ),
                             Text(
                               item["name"],
                               style: TextStyle(
-                                color: isSelected
-                                    ? AppColors.primery
-                                    : AppColors.darkprimery,
+                                color: isSelected ? focused : notSelected,
                                 fontSize: 12.r,
                               ),
                             ),

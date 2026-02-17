@@ -9,7 +9,7 @@ import 'package:chicora/features/customer/biding/logic/cubit/customer_bidding_cu
 import 'package:chicora/features/customer/biding/ui/Screens/detailes_screen.dart';
 import 'package:chicora/features/customer/biding/ui/Screens/form_screen.dart';
 import 'package:chicora/features/customer/biding/ui/Screens/post_screen.dart';
-import 'package:chicora/features/customer/products/view_products/ui/screens/product_screen.dart';
+import 'package:chicora/features/ecommerce_multi/ui/screens/product_details_screen.dart';
 import 'package:chicora/features/tailor/bidding_tailor/logic/cubit/bidding_tailor_cubit.dart';
 import 'package:chicora/features/tailor/bidding_tailor/ui/Screens/detailes_screen_tailor.dart';
 import 'package:chicora/features/tailor/bidding_tailor/ui/Screens/join_bidding_screen.dart';
@@ -17,7 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../features/auth/ui/screens/sign_up_screen.dart';
-import '../../features/customer/products/view_products/ui/screens/customer_products_screen.dart';
+import '../../features/customer/ecommerce/view_products/ui/screens/customer_products_screen.dart';
 import '../../features/seller/products/ui/screens/seller_products_screen.dart';
 import '../../features/tailor/bidding_tailor/ui/Screens/posts_tailor_screen.dart';
 

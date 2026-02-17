@@ -77,10 +77,9 @@ class AuthCubit extends Cubit<AuthState> {
       final ApiResult<LoginResponse> result = await repo.logIn(request);
       result.when(
         success: (LoginResponse response) async {
-        
           await prefs.setSecureData(SharedPrefKey.token, response.token);
           await prefs.setSecureData(SharedPrefKey.role, response.role);
-          emit(AuthState.success("Login successful"));
+          emit(AuthState.success(response));
         },
         failure: (error) {
           emit(AuthState.fail(error));

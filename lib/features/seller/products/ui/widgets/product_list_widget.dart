@@ -1,14 +1,13 @@
+import 'package:chicora/features/seller/products/data/models/product_model_response.dart';
 import 'package:chicora/features/seller/products/ui/widgets/product_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductList extends StatelessWidget {
-  const ProductList({
-    super.key,
-    required List<Map<String, dynamic>> filteredProducts,
-  }) : _filteredProducts = filteredProducts;
+  const ProductList({super.key, required List<ProductModel> filteredProducts})
+    : _filteredProducts = filteredProducts;
 
-  final List<Map<String, dynamic>> _filteredProducts;
+  final List<ProductModel> _filteredProducts;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +35,7 @@ class ProductList extends StatelessWidget {
           : ListView.separated(
               itemCount: _filteredProducts.length,
               itemBuilder: (context, index) {
-                return buildFabricCard(_filteredProducts[index]);
+                return buildProductCard(context, _filteredProducts[index]);
               },
               separatorBuilder: (context, index) => const SizedBox(height: 6),
             ),

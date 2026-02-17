@@ -3,13 +3,13 @@ import 'package:chicora/features/ecommerce_multi/data/models/comment_model.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../../../core/constants/colors.dart';
-import '../../../../../../core/constants/constants.dart';
-import '../../../../../../core/constants/style.dart';
-import '../../../../../../core/widgets/custom_app_bar.dart';
-import '../../../../../../core/widgets/labeled_text_field.dart';
-import '../../../../../ecommerce_multi/ui/widgets/comment_card_widget.dart';
-import '../../../../../ecommerce_multi/ui/widgets/seller_info_widget.dart';
+import '../../../../core/constants/colors.dart';
+import '../../../../core/constants/constants.dart';
+import '../../../../core/constants/style.dart';
+import '../../../../core/widgets/custom_app_bar.dart';
+import '../../../../core/widgets/labeled_text_field.dart';
+import '../widgets/comment_section_widget.dart';
+import '../widgets/seller_info_widget.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   const ProductDetailScreen({Key? key}) : super(key: key);
@@ -266,46 +266,32 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       ),
                     ),
                   ),
+                  LabeledTextField(
+                    hintText: 'Share your experience with us',
+                    hintStyle: AppStyle.medLight,
+                    textStyle: AppStyle.medBlack,
+                    controller: rateController,
+                  ),
+                  const SizedBox(height: 24),
+                  // Buttons
+                  Center(
+                    child: CustomElevatedButton(
+                      value: 'Submit Rating',
+                      onPressed: () {},
+                      height: 40.h,
+                      width: 200.h,
+                    ),
+                  ),
                 ],
               ),
               SizedBox(height: 24.h),
+
               // Review Text Field
-              LabeledTextField(
-                hintText: 'Share your experience with us',
-                hintStyle: AppStyle.medLight,
-                textStyle: AppStyle.medBlack,
-                controller: rateController,
-              ),
-              const SizedBox(height: 24),
-              // Buttons
-              Center(
-                child: CustomElevatedButton(
-                  value: 'Submit Rating',
-                  onPressed: () {},
-                  height: 40.h,
-                  width: 200.h,
-                ),
-              ),
               const SizedBox(height: 12),
 
               const SizedBox(height: 24),
               // Customer Reviews Section
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Customer Reviews', style: AppStyle.medBlack),
-                  const SizedBox(height: 16),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: productComments.length,
-                    itemBuilder: (context, index) {
-                      final comment = productComments[index];
-                      return CommentCard(comment: comment);
-                    },
-                  ),
-                ],
-              ),
+              CommentSection(productComments: productComments),
               const SizedBox(height: 24),
             ],
           ),
@@ -314,3 +300,4 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     );
   }
 }
+

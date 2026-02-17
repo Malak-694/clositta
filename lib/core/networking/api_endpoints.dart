@@ -10,4 +10,7 @@ class ApiEndpoints {
   static const String myBids = '/api/bids';
   static const String createBid = '/api/bids';
   static const String bestOffers = '/api/offers/{bidId}/best';
+  //seller
+  static const String sellerProducts = '/api/products/my/products';
+  static const String product = '/api/products/{productId}';
 }

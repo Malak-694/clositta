@@ -11,6 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/colors.dart';
+import '../../data/model/login_model.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -40,8 +41,25 @@ class _LoginScreenState extends State<LoginScreen> {
         state.when(
           initial: () {},
           loading: () {},
-          success: (message) {
-            Navigator.pushReplacementNamed(context, RouteNames.posts);
+          success: (data) {
+            if (data is LoginResponse) {
+              if (data.role == 'customer') {
+                Navigator.pushReplacementNamed(context, RouteNames.posts);
+              } else if (data.role == 'tailor') {
+                Navigator.pushReplacementNamed(
+                  context,
+                  RouteNames.view_bidding_tailor,
+                );
+              } else if (data.role == 'clothes_seller' ||
+                  data.role == 'material_seller') {
+                Navigator.pushReplacementNamed(
+                  context,
+                  RouteNames.seller_products_screen,
+                );
+              } else {
+                Navigator.pushReplacementNamed(context, RouteNames.posts);
+              }
+            }
           },
           fail: (error) {
             ScaffoldMessenger.of(

@@ -18,10 +18,10 @@ void main() async {
   final role = await prefs.getSecureData(SharedPrefKey.role);
 
   String initialRoute = (token != null && token.isNotEmpty)
-      ? (role == "tailor" ? RouteNames.view_bidding_tailor : RouteNames.posts)
+      ? (role == "material_seller"
+            ? RouteNames.seller_products_screen
+            : RouteNames.login)
       : RouteNames.login;
-  initialRoute = RouteNames.customer_products_screen;
-
 
   runApp(ChicoraApp(initialRoute: initialRoute));
 }

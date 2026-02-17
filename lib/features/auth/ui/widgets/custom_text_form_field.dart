@@ -45,7 +45,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
           // labelText: "Email",
           hintText: widget.text,
-          hintStyle: AppStyle.body2.copyWith(fontSize: 17.sp),
+          hintStyle: AppStyle.medPrimery.copyWith(fontSize: 17.sp),
           suffixIcon: widget.isPassword
               ? IconButton(
                   icon: Icon(

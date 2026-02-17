@@ -49,8 +49,8 @@ class BidItem extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(tailor, style: AppStyle.headline2),
-                Text('\$$price', style: AppStyle.body1),
+                Text(tailor, style: AppStyle.boldSecondary),
+                Text('\$$price', style: AppStyle.medBlack),
               ],
             ),
             // SizedBox(height: .h),

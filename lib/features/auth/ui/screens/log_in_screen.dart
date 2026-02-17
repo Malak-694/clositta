@@ -74,11 +74,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Login", style: AppStyle.headline0),
+                          Text("Login", style: AppStyle.boldBlack),
                           Text(
                             "Good to see you back",
                             textAlign: TextAlign.start,
-                            style: AppStyle.body1.copyWith(
+                            style: AppStyle.medBlack.copyWith(
                               fontWeight: FontWeight.w900,
                             ),
                           ),
@@ -130,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                         child: Text(
                           "Forget your password ",
-                          style: AppStyle.body1.copyWith(fontSize: 18.sp),
+                          style: AppStyle.medBlack.copyWith(fontSize: 18.sp),
                           textAlign: TextAlign.start,
                         ),
                       ),
@@ -152,7 +152,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: () {
                       Navigator.pushNamed(context, RouteNames.sing_up);
                     },
-                    child: Text("First time to see us?", style: AppStyle.body1),
+                    child: Text(
+                      "First time to see us?",
+                      style: AppStyle.medBlack,
+                    ),
                   ),
                 ],
               ),

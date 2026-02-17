@@ -97,7 +97,7 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Description", style: AppStyle.headline2),
+                Text("Description", style: AppStyle.boldSecondary),
                 SizedBox(height: 10.h),
                 Text(widget.title, style: AppStyle.body6),
                 SizedBox(height: 10.h),
@@ -264,8 +264,7 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
     );
 
     cubit.joinBidding(postId: widget.postId, request: request).then((_) {
-        // The cubit will emit states; listen via BlocListener in parent if needed
-      });
-    
+      // The cubit will emit states; listen via BlocListener in parent if needed
+    });
   }
 }

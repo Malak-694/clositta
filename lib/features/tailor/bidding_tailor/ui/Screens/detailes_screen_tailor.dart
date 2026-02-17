@@ -19,7 +19,7 @@ import 'package:chicora/features/tailor/bidding_tailor/logic/cubit/bidding_tailo
 class DetailesScreenTailor extends StatelessWidget {
   final String urlImage;
   final String describtion;
-  final int bids_num=0;
+  final int bids_num = 0;
   final String price;
   final String period;
   final String status = "pending";
@@ -32,7 +32,7 @@ class DetailesScreenTailor extends StatelessWidget {
     required this.describtion,
     required this.price,
     required this.period,
-   required this.postId,
+    required this.postId,
   });
 
   @override
@@ -49,7 +49,7 @@ class DetailesScreenTailor extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Tailor bids", style: AppStyle.headline2),
+            Text("Tailor bids", style: AppStyle.boldSecondary),
             SizedBox(height: 5.h),
             Container(
               height: 275.h,
@@ -62,7 +62,7 @@ class DetailesScreenTailor extends StatelessWidget {
                 ),
               ),
             ),
-            Text(describtion, style: AppStyle.body4),
+            Text(describtion, style: AppStyle.medLight),
             SizedBox(height: 15.h),
             Expanded(
               child: Padding(
@@ -103,11 +103,10 @@ class DetailesScreenTailor extends StatelessWidget {
                                 itemBuilder: (context, index) {
                                   final offer = offers[index];
                                   return BidItemTailor(
-                                    tailorName: offer.tailor.name ,
-                                    duration:
-                                      offer.timeInDays ,
-                                    price: offer.price ,
-                                    comment: offer.message,  
+                                    tailorName: offer.tailor.name,
+                                    duration: offer.timeInDays,
+                                    price: offer.price,
+                                    comment: offer.message,
                                   );
                                 },
                               );
@@ -136,7 +135,7 @@ class DetailesScreenTailor extends StatelessWidget {
                             'price': price,
                             'period': period,
                             'title': describtion,
-                            'postId': postId
+                            'postId': postId,
                           },
                         );
                       },

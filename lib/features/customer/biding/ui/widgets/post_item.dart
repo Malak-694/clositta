@@ -7,27 +7,26 @@ class PostItem extends StatelessWidget {
   final String title;
   final int? bidCount;
   final String date;
-  final String Image_url ;
-  final String status ;
+  final String Image_url;
+  final String status;
 
-  const PostItem({super.key,
+  const PostItem({
+    super.key,
     required this.title,
     this.bidCount,
     required this.Image_url,
     required this.date,
-    required this.status
+    required this.status,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height : 382.h ,
-      width : 400.w ,
-      padding: EdgeInsets.symmetric(horizontal:10 ),
+      height: 382.h,
+      width: 400.w,
+      padding: EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
-        border: Border.all(
-          color: Colors.black12
-        ),
+        border: Border.all(color: Colors.black12),
         borderRadius: BorderRadius.circular(15),
       ),
       child: Column(
@@ -36,16 +35,15 @@ class PostItem extends StatelessWidget {
           Container(
             height: 290.h,
             decoration: BoxDecoration(
-               image: DecorationImage(
-                 image: NetworkImage(Image_url),
-                  fit: BoxFit.fill,
-               ),
+              image: DecorationImage(
+                image: NetworkImage(Image_url),
+                fit: BoxFit.fill,
               ),
-
+            ),
           ),
-          SizedBox(height: 8.h,),
+          SizedBox(height: 8.h),
 
-          Text(title, style: AppStyle.body1,),
+          Text(title, style: AppStyle.medBlack),
 
           SizedBox(height: 10.h),
 
@@ -53,28 +51,35 @@ class PostItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // Bids count
-             Text(
-                 // '$bidCount bid${bidCount == 1 ? '' : 's'} . $date',
-                   date,
-                  style: AppStyle.body4
-                ),
+              Text(
+                // '$bidCount bid${bidCount == 1 ? '' : 's'} . $date',
+                date,
+                style: AppStyle.medLight,
+              ),
               Container(
-                height: 30.h ,
+                height: 30.h,
                 width: 65.w,
                 margin: EdgeInsets.fromLTRB(0, 0, 5, 5),
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15.sp),
-                    color: status == "selected" ? AppColors.light : Colors.greenAccent ,
-                    border: BoxBorder.all(color: status == "selected" ? AppColors.dark : Colors.green  )
-
-
+                  borderRadius: BorderRadius.circular(15.sp),
+                  color: status == "selected"
+                      ? AppColors.light
+                      : Colors.greenAccent,
+                  border: BoxBorder.all(
+                    color: status == "selected" ? AppColors.dark : Colors.green,
+                  ),
                 ),
                 child: Center(
-                  child: Text(status , style: TextStyle(
-                    color:  status == "selected" ? AppColors.dark : Colors.green
-                  ),),
+                  child: Text(
+                    status,
+                    style: TextStyle(
+                      color: status == "selected"
+                          ? AppColors.dark
+                          : Colors.green,
+                    ),
+                  ),
                 ),
-              )
+              ),
             ],
           ),
         ],

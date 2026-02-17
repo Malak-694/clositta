@@ -13,7 +13,8 @@ class AppStyle {
     );
   }
 
-  static TextStyle get headline0 => TextStyle(
+  //BOLD
+  static TextStyle get boldBlack => TextStyle(
     fontSize: 52.sp,
     fontWeight: FontWeight.w700,
     fontFamily: 'Raleway',
@@ -21,10 +22,131 @@ class AppStyle {
     letterSpacing: 2.0,
     foreground: Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 3
+      ..strokeWidth = 1
       ..color = AppColors.dark,
   );
+  static TextStyle get boldPrimery => TextStyle(
+    fontSize: 17.sp,
 
+    fontWeight: FontWeight.w700,
+    fontFamily: 'Raleway',
+    foreground: Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1
+      ..color = AppColors.primery,
+  );
+
+  static TextStyle get boldSecondary => TextStyle(
+    fontSize: 21.sp,
+
+    fontWeight: FontWeight.w700,
+    fontFamily: 'Raleway',
+    foreground: Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1
+      ..color = AppColors.secondary,
+  );
+
+  static TextStyle get boldTernary => TextStyle(
+    fontSize: 17.sp,
+
+    fontWeight: FontWeight.w700,
+    fontFamily: 'Raleway',
+    foreground: Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1
+      ..color = AppColors.ternary,
+  );
+  //Medium
+  static TextStyle get medBlack => TextStyle(
+    fontSize: 19.sp,
+    fontWeight: FontWeight.w700,
+
+    foreground: Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = .5
+      ..color = AppColors.dark,
+    fontFamily: 'Raleway',
+  );
+  static TextStyle get medPrimery => TextStyle(
+    fontSize: 19.sp,
+    fontWeight: FontWeight.w700,
+
+    foreground: Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = .5
+      ..color = AppColors.primery,
+    fontFamily: 'Raleway',
+  );
+  static TextStyle get medSecondary => TextStyle(
+    fontSize: 19.sp,
+    fontWeight: FontWeight.w700,
+
+    foreground: Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = .5
+      ..color = AppColors.secondary,
+    fontFamily: 'Raleway',
+  );
+  static TextStyle get medTernary => TextStyle(
+    fontSize: 19.sp,
+    fontWeight: FontWeight.w700,
+
+    foreground: Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = .5
+      ..color = AppColors.ternary,
+    fontFamily: 'Raleway',
+  );
+  static TextStyle get medBackground => TextStyle(
+    fontSize: 19.sp,
+    fontWeight: FontWeight.w700,
+
+    foreground: Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = .5
+      ..color = AppColors.background,
+    fontFamily: 'Raleway',
+  );
+  //Small
+  static TextStyle get smallBlack => TextStyle(
+    fontSize: 12.sp,
+    fontWeight: FontWeight.w400,
+    foreground: Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = .3
+      ..color = AppColors.dark,
+
+    fontFamily: 'Raleway',
+  );
+  static TextStyle get smallPrimery => TextStyle(
+    fontSize: 12.sp,
+    fontWeight: FontWeight.w400,
+    foreground: Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = .3
+      ..color = AppColors.primery,
+    fontFamily: 'Raleway',
+  );
+  static TextStyle get smallSecondary => TextStyle(
+    fontSize: 12.sp,
+    fontWeight: FontWeight.w400,
+    foreground: Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = .3
+      ..color = AppColors.secondary,
+    fontFamily: 'Raleway',
+  );
+  static TextStyle get smallTernary => TextStyle(
+    fontSize: 12.sp,
+    fontWeight: FontWeight.w400,
+    foreground: Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = .3
+      ..color = AppColors.ternary,
+    fontFamily: 'Raleway',
+  );
+  //OLD
   static TextStyle get headline1 => TextStyle(
     fontSize: 28.sp,
     fontWeight: FontWeight.w900,
@@ -35,60 +157,7 @@ class AppStyle {
       ..color = AppColors.dark,
   );
 
-  // Body
-  static TextStyle get headline2 => TextStyle(
-    fontSize: 21.sp,
-
-    fontWeight: FontWeight.w700,
-    fontFamily: 'Raleway',
-    foreground: Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1
-      ..color = AppColors.dark,
-  );
-  static TextStyle get headline3 => TextStyle(
-    fontSize: 17.sp,
-
-    fontWeight: FontWeight.w700,
-    fontFamily: 'Raleway',
-    foreground: Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1
-      ..color = AppColors.dark,
-  );
-
-  static TextStyle get headline4 => TextStyle(
-    fontSize: 17.sp,
-
-    fontWeight: FontWeight.w700,
-    fontFamily: 'Raleway',
-    foreground: Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1
-      ..color = AppColors.ternary,
-  );
-
-  static TextStyle get body1 => TextStyle(
-    fontSize: 19.sp,
-    fontWeight: FontWeight.w700,
-
-    foreground: Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = .3
-      ..color = AppColors.dark,
-    fontFamily: 'Raleway',
-  );
-  static TextStyle get body2 => TextStyle(
-    fontSize: 19.sp,
-    fontWeight: FontWeight.w700,
-
-    foreground: Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = .3
-      ..color = AppColors.primery,
-    fontFamily: 'Raleway',
-  );
- static TextStyle get body3 => TextStyle(
+  static TextStyle get body3 => TextStyle(
     fontSize: 19.sp,
     fontWeight: FontWeight.w700,
 
@@ -99,14 +168,14 @@ class AppStyle {
     fontFamily: 'Raleway',
   );
 
-  static TextStyle get body4 => TextStyle(
+  static TextStyle get medLight => TextStyle(
     fontSize: 19.sp,
     fontWeight: FontWeight.w600,
 
     foreground: Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = .3
-      ..color =  AppColors.light,
+      ..color = const Color.fromARGB(255, 121, 120, 120),
     fontFamily: 'Raleway',
   );
 

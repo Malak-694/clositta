@@ -1,5 +1,4 @@
 import 'package:chicora/core/constants/colors.dart';
-import 'package:chicora/features/seller/products/ui/widgets/product_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -86,7 +85,6 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
   final TextEditingController searchController = TextEditingController();
 
   @override
-  @override
   void initState() {
     super.initState();
     _filteredProducts = List.from(_allProducts);
@@ -136,7 +134,7 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
             children: [
               Text(
                 "$nProducts Products",
-                style: AppStyle.body2.copyWith(
+                style: AppStyle.medPrimery.copyWith(
                   foreground: Paint()
                     ..style = PaintingStyle.stroke
                     ..strokeWidth = 1

@@ -11,7 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class DetailesScreen extends StatefulWidget {
-  final String bidId;  // ADD THIS
+  final String bidId; // ADD THIS
   final String urlImage;
   final String description;
 
@@ -41,11 +41,9 @@ class _DetailesScreenState extends State<DetailesScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text("Back to Posts", style: AppStyle.headline4),
+        title: Text("Back to Posts", style: AppStyle.boldTernary),
         leadingWidth: 20.w,
-        iconTheme: IconThemeData(
-          color: AppColors.ternary,
-        ),
+        iconTheme: IconThemeData(color: AppColors.ternary),
         backgroundColor: AppColors.background,
       ),
       body: Padding(
@@ -53,7 +51,7 @@ class _DetailesScreenState extends State<DetailesScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Tailor bids", style: AppStyle.headline2),
+            Text("Tailor bids", style: AppStyle.boldSecondary),
             SizedBox(height: 5.h),
             Container(
               height: 275.h,
@@ -66,7 +64,7 @@ class _DetailesScreenState extends State<DetailesScreen> {
                 ),
               ),
             ),
-            Text(widget.description, style: AppStyle.body4),
+            Text(widget.description, style: AppStyle.medLight),
             SizedBox(height: 15.h),
             Expanded(
               child: BlocBuilder<CustomerBiddingCubit, CustomerBiddingState>(
@@ -82,7 +80,8 @@ class _DetailesScreenState extends State<DetailesScreen> {
                           const SizedBox(height: 8),
                           CustomElevatedButton(
                             onPressed: () => context
-                                .read<CustomerBiddingCubit>().getMyBids(),
+                                .read<CustomerBiddingCubit>()
+                                .getMyBids(),
                             value: 'Retry',
                           ),
                         ],
@@ -92,7 +91,10 @@ class _DetailesScreenState extends State<DetailesScreen> {
                       if (offers is List<OfferResponse>) {
                         if (offers.isEmpty) {
                           return Center(
-                            child: Text("No offers yet", style: AppStyle.body4),
+                            child: Text(
+                              "No offers yet",
+                              style: AppStyle.medLight,
+                            ),
                           );
                         }
                         return ListView.builder(
@@ -103,12 +105,14 @@ class _DetailesScreenState extends State<DetailesScreen> {
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 10.0),
                               child: BidItem(
-                                tailor: offer.tailor.name,  // Use real tailor name
+                                tailor:
+                                    offer.tailor.name, // Use real tailor name
                                 duration: offer.timeInDays,
                                 price: offer.price,
-                                num_work: 0,  // You might need to add this field to OfferResponse
+                                num_work:
+                                    0, // You might need to add this field to OfferResponse
                                 comment: offer.message,
-        // Optional: pass offer ID
+                                // Optional: pass offer ID
                               ),
                             );
                           },

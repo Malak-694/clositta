@@ -96,7 +96,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Create\nAccount", style: AppStyle.headline0),
+                      Text("Create\nAccount", style: AppStyle.boldBlack),
                       SizedBox(width: 150.w),
                     ],
                   ),
@@ -169,7 +169,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     onPressed: () {
                       Navigator.pushNamed(context, RouteNames.login);
                     },
-                    child: Text("Already Our Friend ?", style: AppStyle.body1),
+                    child: Text(
+                      "Already Our Friend ?",
+                      style: AppStyle.medBlack,
+                    ),
                   ),
                 ],
               ),

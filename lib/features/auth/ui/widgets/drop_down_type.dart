@@ -11,7 +11,6 @@ class CustomDropdown extends StatelessWidget {
   final double width;
 
   const CustomDropdown({
-
     super.key,
     this.value = "Customer",
     this.hintText = "Type",
@@ -26,18 +25,17 @@ class CustomDropdown extends StatelessWidget {
       width: width.w,
       child: DropdownButtonFormField<String>(
         initialValue: value,
-        hint: Text(hintText, style: AppStyle.body1),
+        hint: Text(hintText, style: AppStyle.medBlack),
         items: items.map((item) {
           return DropdownMenuItem<String>(
             value: item,
-            child: Text(item, style: AppStyle.body2),
+            child: Text(item, style: AppStyle.medPrimery),
           );
         }).toList(),
         onChanged: onChanged,
         dropdownColor: AppColors.lightprimery,
         borderRadius: BorderRadius.circular(25.r),
         decoration: InputDecoration(
-      
           filled: true,
           fillColor: AppColors.lightprimery,
           contentPadding: EdgeInsets.symmetric(

@@ -9,7 +9,6 @@ class BidItemTailor extends StatelessWidget {
   final int price;
   final int duration;
   final String? comment;
-  
 
   const BidItemTailor({
     super.key,
@@ -47,8 +46,8 @@ class BidItemTailor extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(tailorName, style: AppStyle.headline2),
-                Text('\$$price', style: AppStyle.body1),
+                Text(tailorName, style: AppStyle.boldSecondary),
+                Text('\$$price', style: AppStyle.medBlack),
               ],
             ),
             // SizedBox(height: .h),

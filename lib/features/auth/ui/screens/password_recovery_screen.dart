@@ -9,7 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PasswordRecoveryScreen extends StatelessWidget {
   final TextEditingController _email = TextEditingController();
- PasswordRecoveryScreen({super.key});
+  PasswordRecoveryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ class PasswordRecoveryScreen extends StatelessWidget {
               Text(
                 "Enter your email to send \n recovery code",
                 textAlign: TextAlign.center,
-                style: AppStyle.body1,
+                style: AppStyle.medBlack,
               ),
               SizedBox(height: 25.h),
               CustomTextFormField(text: "Email", controller: _email),
@@ -54,7 +54,7 @@ class PasswordRecoveryScreen extends StatelessWidget {
                 onPressed: () {
                   Navigator.pushNamed(context, RouteNames.login);
                 },
-                child: Text("cancel", style: AppStyle.body1),
+                child: Text("cancel", style: AppStyle.medBlack),
               ),
             ],
           ),

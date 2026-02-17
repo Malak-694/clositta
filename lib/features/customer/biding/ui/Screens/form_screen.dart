@@ -52,7 +52,7 @@ class _FormScreenState extends State<FormScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                state.message ?? 'Something went wrong, please try again later.',
+                state.message,
                 style: AppStyle.body6.copyWith(
                   foreground: Paint()
                     ..style = PaintingStyle.stroke
@@ -71,11 +71,9 @@ class _FormScreenState extends State<FormScreen> {
 
         return Scaffold(
           appBar: AppBar(
-            title: Text('cancel', style: AppStyle.headline4),
+            title: Text('cancel', style: AppStyle.boldTernary),
             leadingWidth: 20.w,
-            iconTheme: IconThemeData(
-              color: AppColors.ternary,
-            ),
+            iconTheme: IconThemeData(color: AppColors.ternary),
             backgroundColor: AppColors.background,
           ),
           backgroundColor: AppColors.background,
@@ -84,7 +82,7 @@ class _FormScreenState extends State<FormScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("create new post", style: AppStyle.headline2),
+                Text("create new post", style: AppStyle.boldSecondary),
                 SizedBox(height: 10.h),
                 Text('upload design photo', style: AppStyle.body6),
                 SizedBox(height: 10.h),
@@ -105,53 +103,53 @@ class _FormScreenState extends State<FormScreen> {
                     ),
                     child: _selectedImagePath == null
                         ? Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          LucideIcons.upload,
-                          size: 50.sp,
-                          color: AppColors.light,
-                        ),
-                        SizedBox(height: 10.h),
-                        Text('Tap to upload', style: AppStyle.body5),
-                      ],
-                    )
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                LucideIcons.upload,
+                                size: 50.sp,
+                                color: AppColors.light,
+                              ),
+                              SizedBox(height: 10.h),
+                              Text('Tap to upload', style: AppStyle.body5),
+                            ],
+                          )
                         : Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(12.r),
-                          child: Image.file(
-                            File(_selectedImagePath!),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        if (!isLoading)
-                          Positioned(
-                            top: 8,
-                            right: 8,
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _selectedImagePath = null;
-                                });
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(4.w),
-                                decoration: BoxDecoration(
-                                  color: Colors.black54,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  Icons.close,
-                                  color: Colors.white,
-                                  size: 20.sp,
+                            fit: StackFit.expand,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(12.r),
+                                child: Image.file(
+                                  File(_selectedImagePath!),
+                                  fit: BoxFit.cover,
                                 ),
                               ),
-                            ),
+                              if (!isLoading)
+                                Positioned(
+                                  top: 8,
+                                  right: 8,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedImagePath = null;
+                                      });
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(4.w),
+                                      decoration: BoxDecoration(
+                                        color: Colors.black54,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        Icons.close,
+                                        color: Colors.white,
+                                        size: 20.sp,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
-                      ],
-                    ),
                   ),
                 ),
                 SizedBox(height: 20.h),
@@ -259,24 +257,26 @@ class _FormScreenState extends State<FormScreen> {
                         borderRadius: BorderRadius.circular(12.r),
                       ),
                       elevation: 2,
-                      disabledBackgroundColor: AppColors.primery.withOpacity(0.6),
+                      disabledBackgroundColor: AppColors.primery.withOpacity(
+                        0.6,
+                      ),
                     ),
                     child: isLoading
                         ? SizedBox(
-                      height: 24.h,
-                      width: 24.w,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
-                      ),
-                    )
+                            height: 24.h,
+                            width: 24.w,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
                         : Text(
-                      'Post for Bids',
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                            'Post for Bids',
+                            style: TextStyle(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                   ),
                 ),
               ],
@@ -325,10 +325,7 @@ class _FormScreenState extends State<FormScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              'Failed to pick image: $e',
-              style: AppStyle.body6,
-            ),
+            content: Text('Failed to pick image: $e', style: AppStyle.body6),
             backgroundColor: AppColors.lightsecondary,
             behavior: SnackBarBehavior.floating,
           ),
@@ -342,10 +339,7 @@ class _FormScreenState extends State<FormScreen> {
     if (_descriptionController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            'Please enter a description',
-            style: AppStyle.body6,
-          ),
+          content: Text('Please enter a description', style: AppStyle.body6),
           backgroundColor: AppColors.lightsecondary,
           behavior: SnackBarBehavior.floating,
         ),
@@ -356,10 +350,7 @@ class _FormScreenState extends State<FormScreen> {
     if (_selectedImagePath == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            'Please select an image',
-            style: AppStyle.body6,
-          ),
+          content: Text('Please select an image', style: AppStyle.body6),
           backgroundColor: AppColors.lightsecondary,
           behavior: SnackBarBehavior.floating,
         ),

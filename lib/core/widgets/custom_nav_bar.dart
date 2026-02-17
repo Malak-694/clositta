@@ -1,6 +1,9 @@
 import 'package:chicora/core/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import '../router/route_names.dart';
 
 class FloatingNavBar extends StatelessWidget {
@@ -19,7 +22,7 @@ class FloatingNavBar extends StatelessWidget {
   Map<String, List<Map<String, dynamic>>> get roleNavItems => {
     "customer": [
       {"icon": Icons.home, "name": "Home", "route": RouteNames.posts},
-      {"icon": Icons.star, "name": "ai", "route": RouteNames.posts},
+      {"icon": Icons.star, "name": "AI", "route": RouteNames.posts},
       {"icon": Icons.person, "name": "Profile", "route": RouteNames.posts},
     ],
     "tailor": [
@@ -110,11 +113,20 @@ class FloatingNavBar extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Icon(
-                              item["icon"],
-                              color: isSelected ? focused : notSelected,
-                              size: item["name"] == "Profile" ? 34.r : 32.r,
-                            ),
+                            item["name"] == "AI"
+                                ? FaIcon(
+                                    FontAwesomeIcons.wandMagicSparkles,
+                                    color: isSelected ? focused : notSelected,
+                                    size: 32.r,
+                                  )
+                                : Icon(
+                                    item["icon"],
+                                    color: isSelected ? focused : notSelected,
+                                    size: item["name"] == "Profile"
+                                        ? 34.r
+                                        : 32.r,
+                                  ),
+
                             Text(
                               item["name"],
                               style: TextStyle(

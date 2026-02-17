@@ -20,7 +20,7 @@ void main() async {
   String initialRoute = (token != null && token.isNotEmpty)
       ? (role == "tailor" ? RouteNames.view_bidding_tailor : RouteNames.posts)
       : RouteNames.login;
-  initialRoute = RouteNames.seller_products_screen;
+  initialRoute = RouteNames.customer_products_screen;
 
 
   runApp(ChicoraApp(initialRoute: initialRoute));

@@ -24,7 +24,7 @@ class PostItemTailor extends StatelessWidget {
     required this.status,
     required this.price,
     required this.period,
-    required this.id
+    required this.id,
   });
 
   @override
@@ -56,7 +56,7 @@ class PostItemTailor extends StatelessWidget {
                 child: Text(
                   title,
                   softWrap: true,
-                  style: AppStyle.body1.copyWith(
+                  style: AppStyle.medBlack.copyWith(
                     foreground: Paint()
                       ..style = PaintingStyle.stroke
                       ..strokeWidth = .5
@@ -77,7 +77,7 @@ class PostItemTailor extends StatelessWidget {
                         child: Text(
                           price,
                           textAlign: TextAlign.center,
-                          style: AppStyle.body2.copyWith(
+                          style: AppStyle.medPrimery.copyWith(
                             fontSize: 20.sp,
                             foreground: Paint()
                               ..style = PaintingStyle.stroke
@@ -121,9 +121,8 @@ class PostItemTailor extends StatelessWidget {
               // Bids count
               Text(
                 '$bidCount bid${bidCount == 1 ? '' : 's'}',
-                style: AppStyle.body4,
+                style: AppStyle.medLight,
               ),
-              
             ],
           ),
           SizedBox(height: 8.h),
@@ -140,7 +139,7 @@ class PostItemTailor extends StatelessWidget {
                         'price': price,
                         'period': period,
                         'title': title,
-                        'postId':id 
+                        'postId': id,
                       },
                     );
                   },

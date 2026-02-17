@@ -69,7 +69,7 @@ Widget buildFabricCard(Map<String, dynamic> fabric) {
           children: [
             Text(
               name,
-              style: AppStyle.body1.copyWith(
+              style: AppStyle.medBlack.copyWith(
                 fontSize: 14.sp,
                 foreground: Paint()
                   ..style = PaintingStyle.stroke
@@ -98,7 +98,7 @@ Widget buildFabricCard(Map<String, dynamic> fabric) {
             SizedBox(height: 6.h),
             Text(
               '\$$pricePerYard/yd',
-              style: AppStyle.body2.copyWith(
+              style: AppStyle.medPrimery.copyWith(
                 fontSize: 16.sp,
                 foreground: Paint()
                   ..style = PaintingStyle.stroke

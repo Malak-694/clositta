@@ -33,7 +33,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           Text(
             title,
-            style: AppStyle.headline2.copyWith(
+            style: AppStyle.boldSecondary.copyWith(
               fontSize: 30.sp,
               foreground: Paint()
                 ..style = PaintingStyle.stroke

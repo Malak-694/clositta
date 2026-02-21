@@ -1,11 +1,11 @@
-
 import 'package:chicora/core/constants/colors.dart';
 import 'package:flutter/material.dart';
 
 class CustomSearchBar extends StatelessWidget {
   const CustomSearchBar({
     super.key,
-    required this.searchController, required this.onChanged,
+    required this.searchController,
+    required this.onChanged,
   });
   final ValueChanged<String> onChanged;
 
@@ -16,14 +16,14 @@ class CustomSearchBar extends StatelessWidget {
     return TextField(
       controller: searchController,
       decoration: InputDecoration(
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 10, // 👈 controls height
+          horizontal: 12,
+        ),
         hintText: "Search...",
         filled: true,
         fillColor: const Color.fromARGB(255, 242, 242, 254),
-        prefixIcon: Icon(
-          Icons.search,
-          color: AppColors.primery,
-          size: 30,
-        ),
+        prefixIcon: Icon(Icons.search, color: AppColors.primery, size: 30),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide(
@@ -54,8 +54,8 @@ class CustomSearchBar extends StatelessWidget {
           borderSide: const BorderSide(color: AppColors.ternary, width: 2.0),
         ),
       ),
-    
-      onChanged: onChanged
+
+      onChanged: onChanged,
     );
   }
 }

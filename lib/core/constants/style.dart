@@ -146,6 +146,16 @@ class AppStyle {
       ..color = AppColors.ternary,
     fontFamily: 'Raleway',
   );
+  static TextStyle get smallBackground => TextStyle(
+    fontSize: 12.sp,
+    fontWeight: FontWeight.w400,
+    foreground: Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = .3
+      ..color = Colors.white,
+    fontFamily: 'Raleway',
+  );
+
   //OLD
   static TextStyle get headline1 => TextStyle(
     fontSize: 28.sp,

@@ -8,11 +8,13 @@ class RouteNames {
   static const reset_password = "reset_password";
   static const posts = "posts";
   static const upload_post = "upload_post";
-  static const post_details_customer= "post_details";
+  static const post_details_customer = "post_details";
   static const view_bidding_tailor = "view_bidding_tailor";
   static const join_bidding = "join_bidding";
   static const view_offers_tailor = "view_offers";
   static const seller_products_screen = "seller_products_screen";
   static const customer_products_screen = "customer_products_screen";
+    static const tailor_products_screen = "tailor_products_screen";
+
   static const product_details_screen = "product_details_screen";
 }

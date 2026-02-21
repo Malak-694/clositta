@@ -1,13 +1,46 @@
-import 'package:chicora/features/ecommerce_multi/data/models/comment_model.dart';
+import 'package:chicora/features/seller/products/data/models/rating_model_response.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/style.dart';
 
 class CommentCard extends StatelessWidget {
-  final ProductCommentModel comment;
+  final RatingModel comment;
+  final bool isOwn;
+  final void Function(String ratingId)? onDelete;
 
-  const CommentCard({Key? key, required this.comment}) : super(key: key);
+  const CommentCard({
+    Key? key,
+    required this.comment,
+    this.isOwn = false,
+    this.onDelete,
+  }) : super(key: key);
+
+  String _formatDate(dynamic dateValue) {
+    try {
+      late DateTime dateTime;
+      if (dateValue is DateTime) {
+        dateTime = dateValue;
+      } else if (dateValue is String) {
+        dateTime = DateTime.parse(dateValue);
+      } else {
+        return 'N/A';
+      }
+      // Return formatted date: 2026-02-17
+      return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}';
+    } catch (e) {
+      return 'N/A';
+    }
+  }
+
+  String _getInitials(String name) {
+    final parts = name.trim().split(' ').where((p) => p.isNotEmpty).toList();
+    if (parts.isEmpty) return '?';
+    if (parts.length == 1) return parts[0][0].toUpperCase();
+    // Take first letter of first and last name
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,21 +62,25 @@ class CommentCard extends StatelessWidget {
               Row(
                 children: [
                   CircleAvatar(
-                    radius: 20,
+                    radius: 15,
                     backgroundColor: AppColors.primery,
                     child: Text(
-                      comment.userInitial,
-                      style: AppStyle.medBackground.copyWith(
-                        color: Colors.white,
-                      ),
+                      _getInitials('Ahmed Mohamed'),
+                      style: AppStyle.medBackground.copyWith(fontSize: 10.sp),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(comment.userName, style: AppStyle.medBlack),
-                      Text(comment.timestamp, style: AppStyle.medLight),
+                      Text(
+                        'Ahmed Mohamed',
+                        style: AppStyle.medPrimery.copyWith(fontSize: 16.sp),
+                      ),
+                      Text(
+                        _formatDate(comment.updatedAt),
+                        style: AppStyle.medLight.copyWith(fontSize: 10.sp),
+                      ),
                     ],
                   ),
                 ],
@@ -65,15 +102,28 @@ class CommentCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           // Comment text
-          Text(
-            comment.comment,
-            style: AppStyle.medBlack,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  comment.comment,
+                  style: AppStyle.medBlack.copyWith(fontSize: 16.sp),
+                  softWrap: true,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              if (isOwn)
+                IconButton(
+                  icon: const Icon(Icons.delete, size: 18),
+                  onPressed: () {
+                    if (onDelete != null) onDelete!(comment.id);
+                  },
+                ),
+            ],
           ),
         ],
       ),
     );
   }
 }
-

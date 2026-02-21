@@ -13,4 +13,7 @@ class ApiEndpoints {
   //seller
   static const String sellerProducts = '/api/products/my/products';
   static const String product = '/api/products/{productId}';
+  //ecommerce
+  static const String products = '/api/products/all';
+  static const String ratePoduct = '/api/products/{productId}/rate';
 }

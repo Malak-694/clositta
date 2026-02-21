@@ -4,6 +4,10 @@ import 'package:chicora/core/networking/dio_factory.dart';
 import 'package:chicora/features/auth/data/repo/auth_repo.dart';
 import 'package:chicora/features/auth/logic/cubit/authentication_cubit.dart';
 import 'package:chicora/features/customer/biding/logic/cubit/customer_bidding_cubit.dart';
+import 'package:chicora/features/ecommerce_multi/data/repo/rate_products_repo.dart';
+import 'package:chicora/features/ecommerce_multi/data/repo/view_products_repo.dart';
+import 'package:chicora/features/ecommerce_multi/logic/rate_products_logic/rate_products_cubit.dart';
+import 'package:chicora/features/ecommerce_multi/logic/view_product_logic/view_products_cubit.dart';
 import 'package:chicora/features/tailor/bidding_tailor/data/repo/bidding_tailor_repo.dart';
 import 'package:chicora/features/tailor/bidding_tailor/logic/cubit/bidding_tailor_cubit.dart';
 import 'package:chicora/features/seller/products/data/repo/seller_product_repo.dart';
@@ -41,5 +45,19 @@ Future<void> setupGetIt() async {
   );
   getIt.registerFactory<SellerProductsCubit>(
     () => SellerProductsCubit(sellerProductRepo: getIt()),
+  );
+  //ViewProducts
+  getIt.registerLazySingleton<ViewProductsRepo>(
+    () => ViewProductsRepo(apiService: getIt()),
+  );
+  getIt.registerFactory<ViewProductsCubit>(
+    () => ViewProductsCubit(viewProductsRepo: getIt()),
+  );
+  //RateProducts
+  getIt.registerLazySingleton<RateProductsRepo>(
+    () => RateProductsRepo(apiService: getIt()),
+  );
+  getIt.registerFactory<RateProductsCubit>(
+    () => RateProductsCubit(rateProductsRepo: getIt()),
   );
 }

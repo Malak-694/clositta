@@ -2,6 +2,8 @@ import 'package:chicora/core/models/message_model.dart';
 import 'package:chicora/core/networking/api_endpoints.dart';
 import 'package:chicora/features/auth/data/model/login_model.dart';
 import 'package:chicora/features/auth/data/model/sign_up_model.dart';
+import 'package:chicora/features/ecommerce_multi/data/models/product_models/product_response_model.dart';
+import 'package:chicora/features/ecommerce_multi/data/models/rating%20models/rating_request_model.dart';
 import 'package:chicora/features/seller/products/data/models/product_model_response.dart';
 import 'package:chicora/features/tailor/bidding_tailor/data/models/bid_model.dart';
 import 'package:chicora/features/tailor/bidding_tailor/data/models/join_bidding_model.dart';
@@ -12,8 +14,9 @@ import 'package:retrofit/http.dart';
 
 import '../../features/customer/biding/data/models/bid_customer_model.dart';
 import '../../features/customer/biding/data/models/offer_model.dart';
-import '../../features/customer/biding/data/models/send_bidding_model.dart';
-import 'package:retrofit/http.dart'; //
+import 'package:retrofit/http.dart';
+
+import '../../features/ecommerce_multi/data/models/rating models/rating_response_model.dart';
 
 part 'api_service.g.dart';
 
@@ -57,9 +60,33 @@ abstract class ApiService {
     @Path("bidId") String bidId,
   );
   @GET(ApiEndpoints.sellerProducts)
-  Future<List<ProductModel>> getProducts(@Header("Authorization") String token);
+  Future<List<ProductModel>> getProductsSeller(
+    @Header("Authorization") String token,
+  );
   @DELETE(ApiEndpoints.product)
   Future<MessageModel> deleteProduct(
+    @Header("Authorization") String token,
+    @Path("productId") String productId,
+  );
+  @GET(ApiEndpoints.products)
+  Future<List<ProductModelBuyer>> getProductsBuyer({
+    @Header("Authorization") required String token,
+    @Query("category") String? category,
+    @Query("minPrice") double? minPrice,
+    @Query("maxPrice") double? maxPrice,
+    @Query("inStock") bool? inStock,
+    @Query("sellerId") String? sellerId,
+    @Query("search") String? search,
+    @Query("type") String? type,
+  });
+  @POST(ApiEndpoints.ratePoduct)
+  Future<RatingResponseModel> rateProduct(
+    @Header("Authorization") String token,
+    @Path("productId") String productId,
+    @Body() RatingRequestModel body,
+  );    
+  @DELETE(ApiEndpoints.ratePoduct)
+  Future<MessageModel> deleteRateProduct(
     @Header("Authorization") String token,
     @Path("productId") String productId,
   );

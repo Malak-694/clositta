@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:chicora/features/seller/products/logic/cubit/seller_products_state.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../../../core/di/dependency_injection.dart';
 import '../../../../../core/helper/shared_key.dart';
@@ -26,9 +25,8 @@ class SellerProductsCubit extends Cubit<SellerProductsState> {
     }
 
     try {
-      final List<ProductModel> response = await sellerProductRepo.getProducts(
-        token,
-      );
+      final List<ProductModel> response = await sellerProductRepo
+          .getProductsSeller(token);
       emit(SellerProductsState.success(response));
     } catch (e) {
       emit(SellerProductsState.fail(e.toString()));

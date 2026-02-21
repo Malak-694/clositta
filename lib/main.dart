@@ -6,6 +6,27 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'core/router/app_router.dart';
 import 'core/router/route_names.dart';
 
+String getInitialRoute(String? token, String? role) {
+  if (token == null || token.isEmpty) {
+    return RouteNames.login;
+  }
+
+  switch (role) {
+    case 'customer':
+      return RouteNames.customer_products_screen;
+
+    case 'tailor':
+      return RouteNames.view_bidding_tailor;
+
+    case 'clothes_seller':
+    case 'material_seller':
+      return RouteNames.seller_products_screen;
+
+    default:
+      return RouteNames.login;
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -16,12 +37,9 @@ void main() async {
   final prefs = getIt<SharedPrefHelper>();
   final token = await prefs.getSecureData(SharedPrefKey.token);
   final role = await prefs.getSecureData(SharedPrefKey.role);
+  prefs.setSecureData(SharedPrefKey.id, '6929dc682e470cba4cb85a6f');
 
-  String initialRoute = (token != null && token.isNotEmpty)
-      ? (role == "material_seller"
-            ? RouteNames.seller_products_screen
-            : RouteNames.login)
-      : RouteNames.login;
+  String initialRoute = getInitialRoute(token, role);
 
   runApp(ChicoraApp(initialRoute: initialRoute));
 }

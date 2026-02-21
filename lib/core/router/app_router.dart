@@ -1,4 +1,5 @@
 import 'package:chicora/core/di/dependency_injection.dart';
+import 'package:chicora/features/ecommerce_multi/logic/rate_products_logic/rate_products_cubit.dart';
 import 'package:chicora/core/router/route_names.dart';
 import 'package:chicora/features/auth/logic/cubit/authentication_cubit.dart';
 import 'package:chicora/features/auth/ui/screens/password_recovery_screen.dart';
@@ -20,6 +21,7 @@ import '../../features/auth/ui/screens/sign_up_screen.dart';
 import '../../features/customer/ecommerce/view_products/ui/screens/customer_products_screen.dart';
 import '../../features/seller/products/ui/screens/seller_products_screen.dart';
 import '../../features/tailor/bidding_tailor/ui/Screens/posts_tailor_screen.dart';
+import '../../features/tailor/ecommerce/view_products/ui/screens/tailor_products_screen.dart';
 
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -53,10 +55,10 @@ class AppRouter {
         );
       case RouteNames.upload_post:
         return MaterialPageRoute(
-            builder: (_) => BlocProvider(
-              create: (_) => getIt<CustomerBiddingCubit>(),
-              child: FormScreen(),
-            )
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<CustomerBiddingCubit>(),
+            child: FormScreen(),
+          ),
         );
       case RouteNames.view_bidding_tailor:
         return MaterialPageRoute(
@@ -65,7 +67,6 @@ class AppRouter {
             child: PostScreenTailor(),
           ),
         );
-
 
       case RouteNames.post_details_customer: // ✅ Define this constant
         final args = settings.arguments as Map<String, dynamic>? ?? {};
@@ -81,14 +82,14 @@ class AppRouter {
               urlImage: urlImage,
               description: description,
             ),
-          )
+          ),
         );
       case RouteNames.view_offers_tailor:
         final args = settings.arguments as Map<String, dynamic>? ?? {};
         final urlImage = args['urlImage'] as String? ?? '';
         final description = args['description'] as String? ?? '';
-         final price = args['price'] as String? ?? '';
-          final period = args['period'] as String? ?? '';
+        final price = args['price'] as String? ?? '';
+        final period = args['period'] as String? ?? '';
         final postId = args['postId'] as String? ?? ''; // optional
 
         return MaterialPageRoute(
@@ -124,16 +125,25 @@ class AppRouter {
           ),
         );
       case RouteNames.seller_products_screen:
-        return MaterialPageRoute(
-          builder: (_) =>  SellerProductsScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => SellerProductsScreen());
       case RouteNames.customer_products_screen:
-        return MaterialPageRoute(
-          builder: (_) =>  CustomerProductsScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => CustomerProductsScreen());
+      case RouteNames.tailor_products_screen:
+        return MaterialPageRoute(builder: (_) => TailorProductsScreen());
       case RouteNames.product_details_screen:
+        final args = settings.arguments as Map<String, dynamic>? ?? {};
+        final product = args['product'];
+        if (product == null) {
+          return MaterialPageRoute(
+            builder: (_) =>
+                const Scaffold(body: Center(child: Text('Product not found'))),
+          );
+        }
         return MaterialPageRoute(
-          builder: (_) =>  ProductDetailScreen(),
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<RateProductsCubit>(),
+            child: ProductDetailScreen(product: product),
+          ),
         );
       default:
         return MaterialPageRoute(

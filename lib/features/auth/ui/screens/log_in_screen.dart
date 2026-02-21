@@ -44,7 +44,10 @@ class _LoginScreenState extends State<LoginScreen> {
           success: (data) {
             if (data is LoginResponse) {
               if (data.role == 'customer') {
-                Navigator.pushReplacementNamed(context, RouteNames.posts);
+                Navigator.pushReplacementNamed(
+                  context,
+                  RouteNames.customer_products_screen,
+                );
               } else if (data.role == 'tailor') {
                 Navigator.pushReplacementNamed(
                   context,
@@ -57,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   RouteNames.seller_products_screen,
                 );
               } else {
-                Navigator.pushReplacementNamed(context, RouteNames.posts);
+                Navigator.pushReplacementNamed(context, RouteNames.login);
               }
             }
           },

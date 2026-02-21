@@ -1,5 +1,6 @@
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
+import 'package:chicora/features/ecommerce_multi/data/models/product_models/product_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -21,11 +22,8 @@ Widget _buildStarRating(double rating) {
   );
 }
 
-Widget buildPinterestCard(Map<String, dynamic> product , VoidCallback onTap) {
-  final name = product['name'] as String;
-  final rating = product['rating'] as double;
-  final imageUrl = product['image'] as String;
-  final price = product['price'] as double;
+Widget buildPinterestCard(ProductModelBuyer product , VoidCallback onTap) {
+
 
   return InkWell(
     onTap: onTap,
@@ -40,7 +38,7 @@ Widget buildPinterestCard(Map<String, dynamic> product , VoidCallback onTap) {
         children: [
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-            child: Image.network(imageUrl, fit: BoxFit.cover),
+            child: Image.network(product.imageUrl!, fit: BoxFit.cover),
           ),
     
           Padding(
@@ -49,13 +47,13 @@ Widget buildPinterestCard(Map<String, dynamic> product , VoidCallback onTap) {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name, style: AppStyle.body6),
-                _buildStarRating(rating),
+                Text(product.name!, style: AppStyle.body6),
+                _buildStarRating(product.averageRating!),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '\$${price.toStringAsFixed(2)}/eg',
+                      '\$${product.price!.toStringAsFixed(2)}/eg',
                       style: AppStyle.body6.copyWith(
                         fontSize: 12.sp,
                         foreground: Paint()

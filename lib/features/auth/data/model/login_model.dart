@@ -17,7 +17,8 @@ class LoginRequest {
 class LoginResponse {
   final String token;
   final String role;
-  LoginResponse({required this.token, required this.role});
+  final String id;
+  LoginResponse({required this.token, required this.role, required this.id});
   factory LoginResponse.fromJson(Map<String, dynamic> json) =>
       _$LoginResponseFromJson(json);
   Map<String, dynamic> toJson() => _$LoginResponseToJson(this);

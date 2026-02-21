@@ -5,8 +5,8 @@ import '../../../../../core/networking/api_service.dart';
 class SellerProductRepo {
   final ApiService apiService;
   SellerProductRepo({required this.apiService});
-  Future<List<ProductModel>> getProducts(String token) async {
-    final response = await apiService.getProducts("Bearer $token");
+  Future<List<ProductModel>> getProductsSeller(String token) async {
+    final response = await apiService.getProductsSeller("Bearer $token");
     return response;
   }
 

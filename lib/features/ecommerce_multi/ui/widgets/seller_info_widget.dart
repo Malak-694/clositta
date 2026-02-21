@@ -1,11 +1,12 @@
-
+import 'package:chicora/features/ecommerce_multi/data/models/product_models/seller_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/style.dart';
 
 class SellerInfo extends StatelessWidget {
-  const SellerInfo({super.key});
+  final SellerModel? seller;
+  const SellerInfo({super.key, this.seller});
 
   @override
   Widget build(BuildContext context) {
@@ -23,17 +24,9 @@ class SellerInfo extends StatelessWidget {
             children: [
               Text('Sold by', style: AppStyle.medPrimery),
               const SizedBox(height: 8),
-              Row(
-                children: [
-                  Text(
-                    'Fashion Hub',
-                    style: AppStyle.medBlack.copyWith(fontSize: 16),
-                  ),
-                  const SizedBox(width: 8),
-                  const Icon(Icons.star, color: Colors.amber, size: 16),
-                  const SizedBox(width: 4),
-                  Text('4.6', style: AppStyle.medLight),
-                ],
+              Text(
+                seller?.name ?? 'Unknown Seller',
+                style: AppStyle.medBlack.copyWith(fontSize: 16),
               ),
             ],
           ),

@@ -21,7 +21,11 @@ class FloatingNavBar extends StatelessWidget {
 
   Map<String, List<Map<String, dynamic>>> get roleNavItems => {
     "customer": [
-      {"icon": Icons.home, "name": "Home", "route": RouteNames.posts},
+      {
+        "icon": Icons.home,
+        "name": "Home",
+        "route": RouteNames.customer_products_screen,
+      },
       {"icon": Icons.star, "name": "AI", "route": RouteNames.posts},
       {"icon": Icons.person, "name": "Profile", "route": RouteNames.posts},
     ],
@@ -41,6 +45,11 @@ class FloatingNavBar extends StatelessWidget {
         "icon": Icons.person,
         "name": "Profile",
         "route": RouteNames.view_bidding_tailor,
+      },
+      {
+        "icon": Icons.shopping_bag,
+        "name": "Shop",
+        "route": RouteNames.tailor_products_screen,
       },
     ],
     "seller": [

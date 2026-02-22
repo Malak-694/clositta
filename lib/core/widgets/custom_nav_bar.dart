@@ -42,7 +42,7 @@ class FloatingNavBar extends StatelessWidget {
       {
         "icon": Icons.cut,
         "name": "Portfolio",
-        "route": RouteNames.view_bidding_tailor,
+        "route": RouteNames.portfolio_tailor_screen,
       },
 
       {

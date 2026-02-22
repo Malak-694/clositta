@@ -3,7 +3,6 @@ import 'package:chicora/core/models/message_model.dart';
 import 'package:chicora/core/networking/api_result.dart';
 import 'package:chicora/features/customer/closet/data/repo/closet_repo.dart';
 import 'package:chicora/features/customer/closet/logic/cubit/closet_state.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../../../core/di/dependency_injection.dart';
 import '../../../../../core/helper/shared_key.dart';

@@ -17,6 +17,7 @@ import '../../features/customer/biding/data/models/bid_customer_model.dart';
 import '../../features/customer/biding/data/models/offer_model.dart';
 
 import '../../features/ecommerce_multi/data/models/rating models/rating_response_model.dart';
+import '../../features/tailor/portfolio/data/models/portfolio_tailor_response_model.dart';
 
 part 'api_service.g.dart';
 
@@ -104,4 +105,17 @@ abstract class ApiService {
     @Header("Authorization") String token,
     @Path("itemId") String itemId,
   );
+
+  //tailor-portfolio
+  @GET(ApiEndpoints.viewPortfolioTailor)
+  Future<List<PortfolioTailorResponseModel>> viewPortfolioTailor(
+    @Header("Authorization") String token,
+    @Query("category") String? category,
+  );
+  @DELETE(ApiEndpoints.deletePortfolioTailor)
+  Future<MessageModel> deletePortfolioTailor(
+    @Header("Authorization") String token,
+    @Path("itemId") String itemId,
+  );
+
 }

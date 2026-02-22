@@ -11,9 +11,9 @@ class AppColors {
   static const primery = Color(0xFF5E50B6);
   static const darkprimery = Color.fromRGBO(39, 32, 83, 1);
   static const secondary = Color(0xFFFFC333);
-  static const darksecondary = Color.fromARGB(255, 175, 133, 34);
+  static const darksecondary = Color.fromARGB(255, 212, 138, 0);
 
-  static const lightsecondary = Color.fromARGB(255, 255, 233, 183);
+  static const lightsecondary = Color.fromARGB(255, 252, 239, 209);
   static const ternary = Color(0xFFFF6464);
 
   static const darkternary = Color.fromARGB(255, 163, 46, 46);

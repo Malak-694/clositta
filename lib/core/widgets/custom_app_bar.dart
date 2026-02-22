@@ -9,10 +9,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.title,
     this.leading = false,
     this.leadingIcon = Icons.arrow_back_ios,
+    this.style,
   });
   final String title;
   final bool leading;
   final IconData leadingIcon;
+  final TextStyle? style;
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -33,7 +35,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           Text(
             title,
-            style: AppStyle.boldSecondary.copyWith(
+            style: style ?? AppStyle.boldSecondary.copyWith(
               fontSize: 30.sp,
               foreground: Paint()
                 ..style = PaintingStyle.stroke

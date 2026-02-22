@@ -24,7 +24,12 @@ Widget _buildStarRating(double rating) {
 
 // core/widgets/pinterest_card.dart
 
-Widget buildPinterestCard(PinterestCardConfig config, VoidCallback onTap) {
+Widget buildPinterestCard(
+  PinterestCardConfig config,
+  VoidCallback onTap, {
+  Color mainColor = AppColors.primery,
+  Color darkColor = AppColors.darkprimery,
+}) {
   return InkWell(
     onTap: onTap,
     child: Container(
@@ -63,7 +68,7 @@ Widget buildPinterestCard(PinterestCardConfig config, VoidCallback onTap) {
                           foreground: Paint()
                             ..style = PaintingStyle.stroke
                             ..strokeWidth = .4
-                            ..color = AppColors.primery,
+                            ..color = mainColor,
                         ),
                       ),
                     Spacer(),
@@ -73,7 +78,7 @@ Widget buildPinterestCard(PinterestCardConfig config, VoidCallback onTap) {
                         width: 36,
                         height: 24,
                         decoration: ShapeDecoration(
-                          color: const Color(0xFF5E50B6),
+                          color:mainColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),

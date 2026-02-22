@@ -18,4 +18,6 @@ class RouteNames {
 
   static const product_details_screen = "product_details_screen";
   static const closet_items_screen = "closet";
+  //portfolio
+  static const portfolio_tailor_screen = "portfolio_tailor_screen";
 }

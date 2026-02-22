@@ -1,5 +1,6 @@
 // core/widgets/pinterest_grid.dart
 
+import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/widgets/pinterest_card.dart';
 import 'package:chicora/core/widgets/pinterest_grid_config.dart';
 import 'package:flutter/material.dart';
@@ -9,12 +10,16 @@ class PinterestGrid<T> extends StatelessWidget {
   final List<T> items;
   final Function(T item) onTap;
   final PinterestCardConfig Function(T item) configBuilder;
+  final Color? mainColor;
+  final Color? darkColor;
 
   const PinterestGrid({
     super.key,
     required this.items,
     required this.onTap,
     required this.configBuilder,
+    this.mainColor,
+    this.darkColor,
   });
 
   @override
@@ -28,6 +33,8 @@ class PinterestGrid<T> extends StatelessWidget {
         return buildPinterestCard(
           configBuilder(items[index]),
           () => onTap(items[index]),
+          mainColor: mainColor ?? AppColors.primery,
+          darkColor: darkColor ?? AppColors.darkprimery,
         );
       },
     );

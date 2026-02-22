@@ -23,6 +23,7 @@ import '../../features/customer/ecommerce/view_products/ui/screens/customer_prod
 import '../../features/seller/products/ui/screens/seller_products_screen.dart';
 import '../../features/tailor/bidding_tailor/ui/Screens/posts_tailor_screen.dart';
 import '../../features/tailor/ecommerce/view_products/ui/screens/tailor_products_screen.dart';
+import '../../features/tailor/portfolio/ui/screens/portfolio_tailor_screen.dart';
 
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -148,6 +149,8 @@ class AppRouter {
         );
       case RouteNames.closet_items_screen:
         return MaterialPageRoute(builder: (_) => ClosetItemsScreen());
+      case RouteNames.portfolio_tailor_screen:
+        return MaterialPageRoute(builder: (_) => PortfolioTailorScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => const Scaffold(

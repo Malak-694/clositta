@@ -14,10 +14,12 @@ import 'package:chicora/features/tailor/bidding_tailor/data/repo/bidding_tailor_
 import 'package:chicora/features/tailor/bidding_tailor/logic/cubit/bidding_tailor_cubit.dart';
 import 'package:chicora/features/seller/products/data/repo/seller_product_repo.dart';
 import 'package:chicora/features/seller/products/logic/cubit/seller_products_cubit.dart';
+import 'package:chicora/features/tailor/portfolio/logic/cubit/portfolio_tailor_cubit.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../features/customer/biding/data/repo/bid_repo.dart';
+import '../../features/tailor/portfolio/data/repo/portfolio_tailor_repo.dart';
 
 final GetIt getIt = GetIt.instance;
 Future<void> setupGetIt() async {
@@ -69,4 +71,11 @@ Future<void> setupGetIt() async {
   getIt.registerFactory<ClosetCubit>(
     () => ClosetCubit(closetRepo: getIt()),
   );
+  //PortfolioTailor
+  getIt.registerLazySingleton<PortfolioTailorRepo>(
+    () => PortfolioTailorRepo(apiService: getIt()),
+  );
+  getIt.registerFactory<PortfolioTailorCubit>(
+    () => PortfolioTailorCubit(portfolioTailorRepo: getIt()),
+  );  
 }

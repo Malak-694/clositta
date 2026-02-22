@@ -111,12 +111,12 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
               ),
               CustomSearchBar(
                 searchController: searchController,
-                onChanged: (value) {
-                  // searchController listener handles search
+                onSearch: (value) {
+                  // run local filtering on press
+                  _performSearch();
                 },
               ),
               state.maybeWhen(
-                
                 loading: () => const Expanded(
                   child: Center(child: CircularProgressIndicator()),
                 ),

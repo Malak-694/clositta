@@ -41,15 +41,6 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
   @override
   void initState() {
     super.initState();
-    searchController.addListener(() {
-      final q = searchController.text;
-      if (_token != null) {
-        context.read<ViewProductsCubit>().getProductsBuyer(
-          token: _token!,
-          search: q.isEmpty ? null : q,
-        );
-      }
-    });
     _initAndLoad();
   }
 
@@ -73,8 +64,6 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
   void _performSearch() {}
 
   Widget build(BuildContext context) {
-    print('dfdfdf');
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         kHorizontalPadding,
@@ -87,9 +76,14 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
         children: [
           CustomSearchBar(
             searchController: searchController,
-            onChanged: (value) {
-              searchController.clear();
-              _performSearch();
+            onSearch: (value) {
+              final q = value.trim();
+              if (_token != null) {
+                context.read<ViewProductsCubit>().getProductsBuyer(
+                  token: _token!,
+                  search: q.isEmpty ? null : q,
+                );
+              }
             },
           ),
           SizedBox(height: 20.h),

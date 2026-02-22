@@ -8,7 +8,6 @@ import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/constants/style.dart';
 import '../../../../core/widgets/custom_app_bar.dart';
-import '../../../../core/widgets/labeled_text_field.dart';
 import '../widgets/comment_section_widget.dart';
 import '../widgets/rate_product_widget.dart';
 import '../widgets/seller_info_widget.dart';
@@ -19,7 +18,6 @@ import '../../../../core/helper/shared_pref_helper.dart';
 import '../../../../core/helper/shared_key.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/models/message_model.dart';
-import '../../data/models/rating models/rating_response_model.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final ProductModelBuyer product;
@@ -41,6 +39,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   String? _userId;
 
   late List<String> productPhotos;
+  Color _rolePrimary = AppColors.primery;
 
   @override
   void initState() {
@@ -51,6 +50,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         : ['https://via.placeholder.com/400x500?text=No+Image'];
     // initialize ratings list and load current user info
     _ratings = List<RatingModel>.from(widget.product.ratings ?? []);
+    AppColors.primaryForCurrentUser().then((color) {
+      if (!mounted) return;
+      setState(() {
+        _rolePrimary = color;
+      });
+    });
     _loadUserInfo();
   }
 
@@ -101,7 +106,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             success: (data) {
               // deletion returns a MessageModel
               if (data is MessageModel) {
-                
                 // remove user's rating locally and show rate widget again
                 setState(() {
                   _ratings.removeWhere((r) => r.user == _userId);
@@ -112,9 +116,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               // if success with rating response, nothing to do here (onRated handles UI)
             },
             fail: (message) {
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text('please try again later ', style: AppStyle.smallBackground), backgroundColor: Colors.red));
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'please try again later ',
+                    style: AppStyle.smallBackground,
+                  ),
+                  backgroundColor: Colors.red,
+                ),
+              );
             },
           );
         },
@@ -176,7 +186,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
                                 color: isSelected
-                                    ? AppColors.primery
+                                    ? _rolePrimary
                                     : Colors.grey[300]!,
                                 width: isSelected ? 3 : 1,
                               ),
@@ -216,7 +226,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     const SizedBox(height: 4),
                     Text(
                       widget.product.category ?? 'Uncategorized',
-                      style: AppStyle.medPrimery,
+                      style: AppStyle.medPrimery.copyWith(
+                        foreground: Paint()
+                          ..style = PaintingStyle.stroke
+                          ..strokeWidth = .5
+                          ..color = _rolePrimary,
+                      ),
                     ),
                   ],
                 ),
@@ -231,7 +246,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         foreground: Paint()
                           ..style = PaintingStyle.stroke
                           ..strokeWidth = 1
-                          ..color = AppColors.primery,
+                          ..color = _rolePrimary,
                       ),
                     ),
                     Spacer(),

@@ -1,4 +1,5 @@
 import 'package:chicora/core/constants/colors.dart';
+import 'package:chicora/core/widgets/custom_category_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +11,8 @@ import '../../../../core/widgets/custom_search_bar.dart';
 import '../../../../core/widgets/pinterest_grid.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/helper/shared_pref_helper.dart';
+import '../../../../core/widgets/pinterest_grid_config.dart';
+import '../../data/models/product_models/product_response_model.dart';
 import '../../logic/view_product_logic/view_products_cubit.dart';
 import '../../logic/view_product_logic/view_products_state.dart';
 
@@ -37,10 +40,29 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
   // local token for API calls
   String? _token;
   String _selectedCategory = 'All'; // Track selected category
+  // role-aware primary color (defaults to app default)
+  Color _rolePrimary = AppColors.primery;
+  Color _roleDark = AppColors.darkprimery;
+
   final TextEditingController searchController = TextEditingController();
   @override
   void initState() {
     super.initState();
+    // load role based primary color
+    AppColors.primaryForCurrentUser().then((color) {
+      if (!mounted) return;
+      setState(() {
+        _rolePrimary = color;
+      });
+    });
+
+    AppColors.darkForCurrentUser().then((color) {
+      if (!mounted) return;
+      setState(() {
+        _roleDark = color;
+      });
+    });
+
     _initAndLoad();
   }
 
@@ -60,8 +82,6 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
     searchController.dispose();
     super.dispose();
   }
-
-  void _performSearch() {}
 
   Widget build(BuildContext context) {
     return Padding(
@@ -87,49 +107,24 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
             },
           ),
           SizedBox(height: 20.h),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                for (var i = 0; i < _categories.length; i++) ...[
-                  ElevatedButton(
-                    onPressed: () {
-                      final category = _categories[i];
-                      setState(() {
-                        _selectedCategory = category;
-                        searchController
-                            .clear(); // Clear search when changing category
-                      });
-                      if (_token != null) {
-                        context.read<ViewProductsCubit>().getProductsBuyer(
-                          token: _token!,
-                          category: category == 'All' ? null : category,
-                        );
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(0, 30),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 4,
-                      ),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      backgroundColor: _selectedCategory == _categories[i]
-                          ? AppColors.darkprimery
-                          : AppColors.primery,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                    ),
-                    child: Text(
-                      _categories[i],
-                      style: AppStyle.smallBackground,
-                    ),
-                  ),
-                  if (i != _categories.length - 1) SizedBox(width: 5.w),
-                ],
-              ],
-            ),
+          CustomCategorySelector(
+            categories: _categories,
+            selectedCategory: _selectedCategory,
+            selectedColor: _roleDark,
+            unselectedColor: _rolePrimary,
+            onCategorySelected: (category) {
+              setState(() {
+                _selectedCategory = category;
+                searchController.clear();
+              });
+
+              if (_token != null) {
+                context.read<ViewProductsCubit>().getProductsBuyer(
+                  token: _token!,
+                  category: category == 'All' ? null : category,
+                );
+              }
+            },
           ),
 
           SizedBox(height: 20.h),
@@ -141,17 +136,28 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
                   initial: () => const SizedBox(),
                   loading: () =>
                       const Center(child: CircularProgressIndicator()),
-                  success: (products) => PinterestGrid(
-                    products: products,
-                    onTap: (product) {
-                      Navigator.pushNamed(
-                        context,
-                        RouteNames.product_details_screen,
-                        arguments: {'product': product},
-                      );
-                    },
+                  success: (products) => PinterestGrid<ProductModelBuyer>(
+                    items: products,
+                    onTap: (product) => Navigator.pushNamed(
+                      context,
+                      RouteNames.product_details_screen,
+                      arguments: {'product': product},
+                    ),
+                    configBuilder: (product) => PinterestCardConfig(
+                      imageUrl: product.imageUrl,
+                      name: product.name,
+                      rating: product.averageRating,
+                      price: product.price,
+                      showCart: true,
+                    ),
                   ),
-                  fail: (error) => Center(child: Text(error)),
+                  fail: (error) => Center(
+                    child: Text(
+                      'There is a connection error, please try again later',
+                      style: AppStyle.medBlack,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                 );
               },
             ),

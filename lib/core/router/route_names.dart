@@ -14,7 +14,8 @@ class RouteNames {
   static const view_offers_tailor = "view_offers";
   static const seller_products_screen = "seller_products_screen";
   static const customer_products_screen = "customer_products_screen";
-    static const tailor_products_screen = "tailor_products_screen";
+  static const tailor_products_screen = "tailor_products_screen";
 
   static const product_details_screen = "product_details_screen";
+  static const closet_items_screen = "closet";
 }

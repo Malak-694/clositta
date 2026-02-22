@@ -5,7 +5,6 @@ import 'package:chicora/core/networking/api_service.dart';
 import '../models/bid_customer_model.dart';
 import '../models/offer_model.dart';
 import 'package:http_parser/http_parser.dart';
-import '../models/send_bidding_model.dart'; // ✅ Import ModelendBidding
 
 class BiddingCustomerRepo {
   final ApiService apiService;

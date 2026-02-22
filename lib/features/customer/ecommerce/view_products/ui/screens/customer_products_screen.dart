@@ -13,7 +13,6 @@ class CustomerProductsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('dfdfdf');
 
     return Scaffold(
       backgroundColor: AppColors.background,

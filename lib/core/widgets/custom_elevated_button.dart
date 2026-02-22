@@ -11,13 +11,15 @@ class CustomElevatedButton extends StatelessWidget {
     this.height = 60,
     this.width = 335,
     this.background = AppColors.primery,
+    this.style,
   });
 
-  final value;
+  final String value;
   final Function() onPressed;
   final double height;
   final double width;
-  final Color background ;
+  final Color background;
+  final TextStyle? style;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +32,7 @@ class CustomElevatedButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
         ),
       ),
-      child: Text(value, style: AppStyle.button),
+      child: Text(value, style: style ?? AppStyle.button),
     );
   }
 }

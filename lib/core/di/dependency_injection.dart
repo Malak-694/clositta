@@ -4,6 +4,8 @@ import 'package:chicora/core/networking/dio_factory.dart';
 import 'package:chicora/features/auth/data/repo/auth_repo.dart';
 import 'package:chicora/features/auth/logic/cubit/authentication_cubit.dart';
 import 'package:chicora/features/customer/biding/logic/cubit/customer_bidding_cubit.dart';
+import 'package:chicora/features/customer/closet/data/repo/closet_repo.dart';
+import 'package:chicora/features/customer/closet/logic/cubit/closet_cubit.dart';
 import 'package:chicora/features/ecommerce_multi/data/repo/rate_products_repo.dart';
 import 'package:chicora/features/ecommerce_multi/data/repo/view_products_repo.dart';
 import 'package:chicora/features/ecommerce_multi/logic/rate_products_logic/rate_products_cubit.dart';
@@ -59,5 +61,12 @@ Future<void> setupGetIt() async {
   );
   getIt.registerFactory<RateProductsCubit>(
     () => RateProductsCubit(rateProductsRepo: getIt()),
+  );
+  //Closet
+  getIt.registerLazySingleton<ClosetRepo>(
+    () => ClosetRepo(apiService: getIt()),
+  );
+  getIt.registerFactory<ClosetCubit>(
+    () => ClosetCubit(closetRepo: getIt()),
   );
 }

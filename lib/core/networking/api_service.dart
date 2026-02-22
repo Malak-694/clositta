@@ -2,6 +2,7 @@ import 'package:chicora/core/models/message_model.dart';
 import 'package:chicora/core/networking/api_endpoints.dart';
 import 'package:chicora/features/auth/data/model/login_model.dart';
 import 'package:chicora/features/auth/data/model/sign_up_model.dart';
+import 'package:chicora/features/customer/closet/data/models/closet_item_response_model.dart';
 import 'package:chicora/features/ecommerce_multi/data/models/product_models/product_response_model.dart';
 import 'package:chicora/features/ecommerce_multi/data/models/rating%20models/rating_request_model.dart';
 import 'package:chicora/features/seller/products/data/models/product_model_response.dart';
@@ -14,7 +15,6 @@ import 'package:retrofit/http.dart';
 
 import '../../features/customer/biding/data/models/bid_customer_model.dart';
 import '../../features/customer/biding/data/models/offer_model.dart';
-import 'package:retrofit/http.dart';
 
 import '../../features/ecommerce_multi/data/models/rating models/rating_response_model.dart';
 
@@ -68,6 +68,7 @@ abstract class ApiService {
     @Header("Authorization") String token,
     @Path("productId") String productId,
   );
+  //ecommerce -buyer
   @GET(ApiEndpoints.products)
   Future<List<ProductModelBuyer>> getProductsBuyer({
     @Header("Authorization") required String token,
@@ -79,15 +80,28 @@ abstract class ApiService {
     @Query("search") String? search,
     @Query("type") String? type,
   });
+  //ecommerce -buyer -rate
   @POST(ApiEndpoints.ratePoduct)
   Future<RatingResponseModel> rateProduct(
     @Header("Authorization") String token,
     @Path("productId") String productId,
     @Body() RatingRequestModel body,
-  );    
+  );
   @DELETE(ApiEndpoints.ratePoduct)
   Future<MessageModel> deleteRateProduct(
     @Header("Authorization") String token,
     @Path("productId") String productId,
+  );
+  //closet operations
+  @GET(ApiEndpoints.viewClosetItems)
+  Future<List<ClosetItemResponseModel>> viewClosetItems(
+    @Header("Authorization") String token,
+    @Query("category") String? category,
+    @Query("season") String? season,
+  );
+  @DELETE(ApiEndpoints.deleteClosetItem)
+  Future<MessageModel> deleteClosetItem(
+    @Header("Authorization") String token,
+    @Path("itemId") String itemId,
   );
 }

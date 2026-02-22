@@ -1,4 +1,5 @@
 import 'package:chicora/core/di/dependency_injection.dart';
+import 'package:chicora/features/customer/closet/ui/screens/closet_items_screen.dart';
 import 'package:chicora/features/ecommerce_multi/logic/rate_products_logic/rate_products_cubit.dart';
 import 'package:chicora/core/router/route_names.dart';
 import 'package:chicora/features/auth/logic/cubit/authentication_cubit.dart';
@@ -145,6 +146,8 @@ class AppRouter {
             child: ProductDetailScreen(product: product),
           ),
         );
+      case RouteNames.closet_items_screen:
+        return MaterialPageRoute(builder: (_) => ClosetItemsScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => const Scaffold(

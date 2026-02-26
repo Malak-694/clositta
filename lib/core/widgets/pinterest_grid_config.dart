@@ -1,5 +1,3 @@
-// core/widgets/pinterest_card_config.dart
-
 import 'dart:ui';
 
 class PinterestCardConfig<T> {
@@ -10,7 +8,9 @@ class PinterestCardConfig<T> {
   final bool showCart;
   final bool showRating;
   final bool showPrice;
+  final bool showEdit;
   final VoidCallback onTap;
+  final VoidCallback? onEdit;
 
   const PinterestCardConfig({
     this.imageUrl,
@@ -20,7 +20,10 @@ class PinterestCardConfig<T> {
     this.showCart = true,
     this.showRating = true,
     this.showPrice = true,
+    this.showEdit = false,
     this.onTap = _emptyOnTap,
+    this.onEdit,
   });
+
   static void _emptyOnTap() {}
 }

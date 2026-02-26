@@ -6,18 +6,28 @@ class RouteNames {
   static const passord_recovery = "passord_recovery";
   static const recovery_code = "recovery_code";
   static const reset_password = "reset_password";
+
   static const posts = "posts";
   static const upload_post = "upload_post";
   static const post_details_customer = "post_details";
   static const view_bidding_tailor = "view_bidding_tailor";
   static const join_bidding = "join_bidding";
   static const view_offers_tailor = "view_offers";
-  static const seller_products_screen = "seller_products_screen";
-  static const customer_products_screen = "customer_products_screen";
-  static const tailor_products_screen = "tailor_products_screen";
 
+  static const seller_products_screen = "seller_products_screen";
+  static const added_product_item = "added_product_item" ;
+  static const customer_products_screen = "customer_products_screen";
+  static const update_product_screen = "update_product_screen";
+
+  static const tailor_products_screen = "tailor_products_screen";
   static const product_details_screen = "product_details_screen";
+
+  static const upload_closet_item = "upload_closet_item";
   static const closet_items_screen = "closet";
+  static const update_closet_item = "edit_closet_item" ;
   //portfolio
   static const portfolio_tailor_screen = "portfolio_tailor_screen";
+  static const added_work_screen = "added_work_screen";
+  static const update_work_screen = "update_work_screen";
+
 }

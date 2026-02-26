@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/constants/style.dart';
+import '../../../../../core/router/route_names.dart';
 import '../../../../../core/widgets/pinterest_grid_config.dart';
 import '../../data/models/portfolio_tailor_response_model.dart';
 import '../../logic/cubit/portfolio_tailor_state.dart';
@@ -78,7 +79,9 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
               CustomElevatedButton(
                 background: AppColors.secondary,
                 value: 'Add',
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, "added_work_screen");
+                },
                 height: 35,
                 width: 80,
                 style: AppStyle.medBackground.copyWith(fontSize: 13.sp),
@@ -121,6 +124,16 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
                           showCart: false,
                           showRating: false,
                           showPrice: false,
+                          showEdit: true,
+                          onEdit: () {
+                            Navigator.pushNamed(
+                              context,
+                              RouteNames.update_work_screen,
+                              arguments: item,
+                            ).then((_) {
+                              context.read<PortfolioTailorCubit>().viewPortfolioTailor(null);
+                            });
+                          },
                           onTap: () {
                             _showDeleteConfirmation(context, item);
                           },

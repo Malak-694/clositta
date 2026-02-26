@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/constants/colors.dart';
+import '../../../../../core/router/route_names.dart';
 
 String _getStatus(int stock) {
   if (stock == 0) return 'Out of Stock';
@@ -153,39 +154,62 @@ Widget buildProductCard(BuildContext context, ProductModel product) {
                 ),
               ),
               Spacer(),
-              GestureDetector(
-                onTap: () {
-                  final parentContext = context;
-                  showDialog(
-                    context: context,
-                    builder: (dialogContext) {
-                      return AlertDialog(
-                        content: Text(
-                          'Are you sure you want to Delete this product?',
-                          style: AppStyle.medBlack.copyWith(fontSize: 16.sp),
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(dialogContext);
-                            },
-                            child: Text('Cancel', style: AppStyle.medBlack),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              parentContext
-                                  .read<SellerProductsCubit>()
-                                  .deleteProduct(product.id);
-                              Navigator.pop(dialogContext);
-                            },
-                            child: Text('Delete', style: AppStyle.medTernary),
-                          ),
-                        ],
-                      );
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+
+                  IconButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (dialogContext) {
+                          return AlertDialog(
+                            content: Text(
+                              'Are you sure you want to Delete this product?',
+                              style: AppStyle.medBlack.copyWith(fontSize: 16.sp),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(dialogContext);
+                                },
+                                child: Text('Cancel', style: AppStyle.medBlack),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  context
+                                      .read<SellerProductsCubit>()
+                                      .deleteProduct(product.id);
+                                  Navigator.pop(dialogContext);
+                                },
+                                child: Text('Delete', style: AppStyle.medTernary),
+                              ),
+                            ],
+                          );
+                        },
+                      );// keep existing delete dialog
                     },
-                  );
-                },
-                child: Icon(Icons.delete, color: AppColors.primery),
+                    icon: Icon(Icons.delete, color: AppColors.primery),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    iconSize: 22,
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        RouteNames.update_product_screen,
+                        arguments: product,
+                      ).then((_) {
+                        context.read<SellerProductsCubit>().getProducts();
+                      });
+                    },
+                    icon: Icon(Icons.edit, color:  AppColors.primery),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    iconSize: 22,
+                  ),
+                ],
               ),
             ],
           ),

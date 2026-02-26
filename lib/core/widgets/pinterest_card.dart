@@ -72,6 +72,16 @@ Widget buildPinterestCard(
                         ),
                       ),
                     Spacer(),
+                    if (config.showEdit && config.onEdit != null) ...[
+                      IconButton(
+                        onPressed: config.onEdit,
+                        icon: Icon(Icons.edit, color: mainColor),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        iconSize: 20,
+                      ),
+                      const SizedBox(width: 4),
+                    ],
                     GestureDetector(
                       onTap: config.onTap,
                       child: Container(

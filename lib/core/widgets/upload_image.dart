@@ -6,7 +6,8 @@ import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
 
 class ImageUploadWidget extends StatelessWidget {
-  final String? imagePath;
+  final String? imagePath;  // local file path (new image picked)
+  final String? imageUrl;   // ✅ network url (existing image from API)
   final VoidCallback onTap;
   final VoidCallback? onRemove;
   final bool enabled;
@@ -18,6 +19,7 @@ class ImageUploadWidget extends StatelessWidget {
     super.key,
     required this.imagePath,
     required this.onTap,
+    this.imageUrl,           // ✅ optional
     this.onRemove,
     this.enabled = true,
     this.height,
@@ -39,9 +41,11 @@ class ImageUploadWidget extends StatelessWidget {
             width: 2,
           ),
         ),
-        child: imagePath == null
-            ? _buildPlaceholder()
-            : _buildImagePreview(),
+        child: imagePath != null
+            ? _buildFileImagePreview()   //local image takes priority
+            : imageUrl != null
+            ? _buildNetworkImagePreview() // existing url if no new image
+            : _buildPlaceholder(),        // no image at all
       ),
     );
   }
@@ -61,7 +65,7 @@ class ImageUploadWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildImagePreview() {
+  Widget _buildFileImagePreview() {
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -70,6 +74,28 @@ class ImageUploadWidget extends StatelessWidget {
           child: Image.file(
             File(imagePath!),
             fit: BoxFit.cover,
+          ),
+        ),
+        if (enabled && onRemove != null) _buildRemoveButton(),
+      ],
+    );
+  }
+
+  // new method for network image
+  Widget _buildNetworkImagePreview() {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12.r),
+          child: Image.network(
+            imageUrl!,
+            fit: BoxFit.cover,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return const Center(child: CircularProgressIndicator());
+            },
+            errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
           ),
         ),
         if (enabled && onRemove != null) _buildRemoveButton(),

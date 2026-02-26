@@ -73,4 +73,61 @@ class PortfolioTailorCubit extends Cubit<PortfolioTailorState> {
       failure: (error) => emit(PortfolioTailorState.fail(error)),
     );
   }
+
+  Future<void> addPortfolioItem({
+    required String title,
+    required String category,
+    required String description,
+    required String imagePath,
+  }) async {
+    emit(PortfolioTailorState.loading());
+    final token = await _getToken();
+    if (token == null || token.isEmpty) {
+      emit(const PortfolioTailorState.fail("Authentication token not found"));
+      return;
+    }
+
+    final respose = await portfolioTailorRepo.addPortfolioItem(
+      token: token,
+      title: title,
+      category: category,
+      description: description,
+      imagePath: imagePath,
+    );
+
+    respose.when(
+      success: (_) => emit(PortfolioTailorState.success(respose)),
+      failure: (error) => emit(PortfolioTailorState.fail(error)),
+    );
+  }
+
+  Future<void> updatePortfolioItem({
+    required String itemId,
+    required String title,
+    required String category,
+    required String description,
+    String? imagePath, // ✅ optional
+  }) async {
+    emit(PortfolioTailorState.loading());
+    final token = await _getToken();
+    if (token == null || token.isEmpty) {
+      emit(const PortfolioTailorState.fail("Authentication token not found"));
+      return;
+    }
+
+    final response = await portfolioTailorRepo.updatePortfolioItem(
+      token: token,
+      itemId: itemId,
+      title: title,
+      category: category,
+      description: description,
+      imagePath: imagePath,
+    );
+
+    response.when(
+      success: (_) => emit(PortfolioTailorState.success(response)),// ✅
+      failure: (error) => emit(PortfolioTailorState.fail(error)),
+    );
+  }
+
 }

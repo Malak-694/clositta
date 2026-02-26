@@ -1,4 +1,6 @@
 import 'package:chicora/core/di/dependency_injection.dart';
+import 'package:chicora/features/customer/closet/logic/cubit/closet_cubit.dart';
+import 'package:chicora/features/customer/closet/ui/screens/added_item_screen.dart';
 import 'package:chicora/features/customer/closet/ui/screens/closet_items_screen.dart';
 import 'package:chicora/features/ecommerce_multi/logic/rate_products_logic/rate_products_cubit.dart';
 import 'package:chicora/core/router/route_names.dart';
@@ -12,17 +14,24 @@ import 'package:chicora/features/customer/biding/ui/Screens/detailes_screen.dart
 import 'package:chicora/features/customer/biding/ui/Screens/form_screen.dart';
 import 'package:chicora/features/customer/biding/ui/Screens/post_screen.dart';
 import 'package:chicora/features/ecommerce_multi/ui/screens/product_details_screen.dart';
+import 'package:chicora/features/seller/products/logic/cubit/seller_products_cubit.dart';
+import 'package:chicora/features/seller/products/ui/screens/added_product_form.dart';
 import 'package:chicora/features/tailor/bidding_tailor/logic/cubit/bidding_tailor_cubit.dart';
 import 'package:chicora/features/tailor/bidding_tailor/ui/Screens/detailes_screen_tailor.dart';
 import 'package:chicora/features/tailor/bidding_tailor/ui/Screens/join_bidding_screen.dart';
+import 'package:chicora/features/tailor/portfolio/logic/cubit/portfolio_tailor_cubit.dart';
+import 'package:chicora/features/tailor/portfolio/ui/screens/added_item_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../features/auth/ui/screens/sign_up_screen.dart';
+import '../../features/customer/closet/data/models/closet_item_response_model.dart';
 import '../../features/customer/ecommerce/view_products/ui/screens/customer_products_screen.dart';
+import '../../features/seller/products/data/models/product_model_response.dart';
 import '../../features/seller/products/ui/screens/seller_products_screen.dart';
 import '../../features/tailor/bidding_tailor/ui/Screens/posts_tailor_screen.dart';
 import '../../features/tailor/ecommerce/view_products/ui/screens/tailor_products_screen.dart';
+import '../../features/tailor/portfolio/data/models/portfolio_tailor_response_model.dart';
 import '../../features/tailor/portfolio/ui/screens/portfolio_tailor_screen.dart';
 
 class AppRouter {
@@ -128,6 +137,21 @@ class AppRouter {
         );
       case RouteNames.seller_products_screen:
         return MaterialPageRoute(builder: (_) => SellerProductsScreen());
+      case RouteNames.added_product_item :
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<SellerProductsCubit>(),
+            child: AddedProductForm(),
+          ),
+        );
+      case RouteNames.update_product_screen:
+        final product = settings.arguments as ProductModel;
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<SellerProductsCubit>(),
+            child: AddedProductForm(product: product),
+          ),
+        );
       case RouteNames.customer_products_screen:
         return MaterialPageRoute(builder: (_) => CustomerProductsScreen());
       case RouteNames.tailor_products_screen:
@@ -149,8 +173,38 @@ class AppRouter {
         );
       case RouteNames.closet_items_screen:
         return MaterialPageRoute(builder: (_) => ClosetItemsScreen());
+      case RouteNames.upload_closet_item :
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<ClosetCubit>(),
+            child: AddedClosetItemScreen(),
+          ),
+        );
+      case RouteNames.update_closet_item:
+        final item = settings.arguments as ClosetItemResponseModel;
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<ClosetCubit>(),
+            child: AddedClosetItemScreen(item: item),
+          ),
+        );
       case RouteNames.portfolio_tailor_screen:
         return MaterialPageRoute(builder: (_) => PortfolioTailorScreen());
+      case RouteNames.added_work_screen :
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<PortfolioTailorCubit>(),
+            child: AddedItemScreen(),
+          ),
+        );
+      case RouteNames.update_work_screen:
+        final item = settings.arguments as PortfolioTailorResponseModel;
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<PortfolioTailorCubit>(),
+            child: AddedItemScreen(item: item),
+          ),
+        );
       default:
         return MaterialPageRoute(
           builder: (_) => const Scaffold(

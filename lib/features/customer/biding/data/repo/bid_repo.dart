@@ -74,14 +74,12 @@ class BiddingCustomerRepo {
         throw Exception("Image file not found");
       }
 
-      // ✅ Create multipart file with proper filename and content type
+      final fileName = file.path.split('/').last;
+
       final multipartFile = await MultipartFile.fromFile(
         file.path,
-        filename: 'bid_${DateTime.now().millisecondsSinceEpoch}.jpg',
-        // Optional: specify content type based on file extension
-        contentType: MediaType('image', 'jpeg'),
+        filename: fileName,
       );
-
       // ✅ Call API with Bearer token
       final response = await apiService.createBidMultipart(
         token:  "Bearer $token",
@@ -90,11 +88,9 @@ class BiddingCustomerRepo {
         time: time,
         image: multipartFile,
       );
-      print('✅ Bid created successfully');
       return response;
     } on DioException catch (e) {
       print('   Headers sent: ${e.requestOptions.headers}');
-      // Handle Dio-specific errors
       if (e.response != null) {
         throw Exception(
             "Server error: ${e.response?.statusCode} - ${e.response?.data}"

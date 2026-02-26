@@ -87,6 +87,53 @@ class ClosetCubit extends Cubit<ClosetState> {
     emit(ClosetState.success(filtered));
   }
 
+  Future<void> addClosetItem({
+    required String name,
+    required String category,
+    required String season,
+    required String color ,
+    required String imagePath,
+  }) async {
+    emit(ClosetState.loading());
+    try {
+      final token = await _getToken();
+      if (token == null || token.isEmpty) {
+        emit(const ClosetState.fail("Authentication token not found"));
+        return;
+      }
+
+      if (imagePath.isEmpty) {
+        emit(const ClosetState.fail("Please select an image"));
+        return;
+      }
+
+      final response = await closetRepo.addClosetItem(
+        token: token,
+        name: name,
+        category: category,
+        season: season,
+        color: color,
+        imagePath: imagePath,
+      );
+
+      response.when(
+        success: (MessageModel data) {
+          // Refresh the closet after adding
+          viewClosetItems();
+        },
+        failure: (String error) {
+          emit(ClosetState.fail(error));
+        },
+      );
+    } catch (e) {
+      emit(ClosetState.fail(
+        e.toString().contains("Exception:")
+            ? e.toString().split("Exception: ")[1]
+            : "Failed to add item. Please try again.",
+      ));
+    }
+  }
+
   Future<void> deleteClosetItem({required String itemId}) async {
     try {
       final token = await _getToken();
@@ -118,6 +165,45 @@ class ClosetCubit extends Cubit<ClosetState> {
               : "Failed to delete item. Please try again.",
         ),
       );
+    }
+  }
+
+  Future<void> updateClosetItem({
+    required String itemId,
+    required String name,
+    required String category,
+    required String season,
+    required String color,
+    String? imagePath,
+  }) async {
+    emit(ClosetState.loading());
+    try {
+      final token = await _getToken();
+      if (token == null || token.isEmpty) {
+        emit(const ClosetState.fail("Authentication token not found"));
+        return;
+      }
+
+      final response = await closetRepo.updateClosetItem(
+        token: token,
+        itemId: itemId,
+        name: name,
+        category: category,
+        season: season,
+        color: color,
+        imagePath: imagePath,
+      );
+
+      response.when(
+        success: (_) => emit(ClosetState.success(response)), // ✅
+        failure: (error) => emit(ClosetState.fail(error)),
+      );
+    } catch (e) {
+      emit(ClosetState.fail(
+        e.toString().contains("Exception:")
+            ? e.toString().split("Exception: ")[1]
+            : "Failed to update item. Please try again.",
+      ));
     }
   }
 }

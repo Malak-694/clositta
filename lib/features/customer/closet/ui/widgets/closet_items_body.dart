@@ -10,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/constants/style.dart';
+import '../../../../../core/router/route_names.dart';
 import '../../../../../core/widgets/pinterest_grid_config.dart';
 import '../../data/models/closet_item_response_model.dart';
 import '../../logic/cubit/closet_cubit.dart';
@@ -93,7 +94,9 @@ class _ClosetItemsScreenBodyState extends State<ClosetItemsScreenBody> {
               SizedBox(width: 10.w),
               CustomElevatedButton(
                 value: 'Add',
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, "upload_closet_item");
+                },
                 height: 35,
                 width: 80,
                 style: AppStyle.medBackground.copyWith(fontSize: 13.sp),
@@ -136,6 +139,16 @@ class _ClosetItemsScreenBodyState extends State<ClosetItemsScreenBody> {
                           showCart: false,
                           showRating: false,
                           showPrice: false,
+                          showEdit: true,
+                          onEdit: () {
+                            Navigator.pushNamed(
+                              context,
+                              RouteNames.update_closet_item,
+                              arguments: item,
+                            ).then((_) {
+                              context.read<ClosetCubit>().viewClosetItems();
+                            });
+                          },
                           onTap: () {
                             _showDeleteConfirmation(context, item);
                           },

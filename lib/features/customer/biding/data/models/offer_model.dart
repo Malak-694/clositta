@@ -24,7 +24,6 @@ class Tailor {
 
   Map<String, dynamic> toJson() => _$TailorToJson(this);
 }
-
 @JsonSerializable()
 class OfferResponse {
   @JsonKey(name: '_id')
@@ -34,7 +33,7 @@ class OfferResponse {
   final int price;
   final int timeInDays;
   final String message;
-
+  final String status; // 👈 "pending", "updated", "accepted", "rejected"
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -48,10 +47,13 @@ class OfferResponse {
     required this.price,
     required this.timeInDays,
     required this.message,
+    this.status = 'pending', // 👈
     required this.createdAt,
     required this.updatedAt,
     required this.version,
   });
+
+  bool get isAccepted => status == "accepted";
 
   factory OfferResponse.fromJson(Map<String, dynamic> json) =>
       _$OfferResponseFromJson(json);

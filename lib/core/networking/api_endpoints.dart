@@ -6,6 +6,7 @@ class ApiEndpoints {
   //Tailor
   static const String viewBiddingTailor = '/api/bids/all';
   static const String offers = '/api/offers/{id}';
+  static const String acceptOffer = "/api/offers/{offerId}/accept" ;
   //Tailor-portfolio
   static const String viewPortfolioTailor = '/api/portfolio/my';
   static const String deletePortfolioTailor = '/api/portfolio/{itemId}';

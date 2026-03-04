@@ -101,4 +101,12 @@ class BiddingCustomerRepo {
       throw Exception("Failed to create bid: $e");
     }
   }
+
+  Future<void> acceptOffer(String token, String offerId) async {
+    try {
+      await apiService.acceptOffer("Bearer $token", offerId);
+    } catch (e) {
+      throw Exception("Failed to accept offer: $e");
+    }
+  }
 }

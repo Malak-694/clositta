@@ -128,4 +128,31 @@ class CustomerBiddingCubit extends Cubit<CustomerBiddingState> {
     _loadedBestOffers = false;
     emit(const CustomerBiddingState.initial());
   }
+  Future<void> acceptOffer(String offerId, String bidId) async {
+    emit(const CustomerBiddingState.loading());
+    try {
+      final token = await _getToken();
+      if (token == null || token.isEmpty) {
+        emit(const CustomerBiddingState.fail("Authentication token not found"));
+        return;
+      }
+
+      await _repository.acceptOffer(token, offerId);
+
+      // emit success message first (listener catches this)
+      emit(const CustomerBiddingState.success("Offer accepted successfully"));
+
+      // then reload offers
+      _loadedBestOffers = false;
+      await getBestOffers(bidId);
+    } catch (e) {
+      emit(
+        CustomerBiddingState.fail(
+          e.toString().contains("Exception:")
+              ? e.toString().split("Exception: ")[1]
+              : "Failed to accept offer. Please try again.",
+        ),
+      );
+    }
+  }
 }

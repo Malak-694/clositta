@@ -33,4 +33,7 @@ class RouteNames {
   static const portfolio_tailor_screen = "portfolio_tailor_screen";
   static const added_work_screen = "added_work_screen";
   static const update_work_screen = "update_work_screen";
+
+  // chat
+  static const chat_screen = "chat_screen" ;
 }

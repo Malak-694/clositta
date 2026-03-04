@@ -64,6 +64,12 @@ abstract class ApiService {
     @Header("Authorization") String token,
     @Path("bidId") String bidId,
   );
+  @PATCH(ApiEndpoints.acceptOffer)
+  Future<void> acceptOffer(
+      @Header("Authorization") String token,
+      @Path("offerId") String offerId,
+      );
+
   //seller-products
   @GET(ApiEndpoints.sellerProducts)
   Future<List<ProductModel>> getProductsSeller(
@@ -215,4 +221,5 @@ abstract class ApiService {
     @Part(name: "description") String description,
     @Part(name: "image") MultipartFile? image, // ✅ optional
   );
+
 }

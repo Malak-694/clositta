@@ -1,4 +1,5 @@
 import 'package:chicora/core/di/dependency_injection.dart';
+import 'package:chicora/features/chat/ui/screens/chat_screen.dart';
 import 'package:chicora/features/customer/closet/logic/cubit/closet_cubit.dart';
 import 'package:chicora/features/customer/closet/ui/screens/added_item_screen.dart';
 import 'package:chicora/features/customer/closet/ui/screens/closet_items_screen.dart';
@@ -87,6 +88,7 @@ class AppRouter {
         final bidId = args['bidId'] as String? ?? '';
         final urlImage = args['urlImage'] as String? ?? '';
         final description = args['description'] as String? ?? '';
+        final status = args["status"] as String ?? '' ;
 
         return MaterialPageRoute(
           builder: (_) => BlocProvider<CustomerBiddingCubit>(
@@ -95,6 +97,7 @@ class AppRouter {
               bidId: bidId,
               urlImage: urlImage,
               description: description,
+              bidStatus: status,
             ),
           ),
         );
@@ -220,6 +223,13 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => CustomerCartScreen());
       case RouteNames.tailor_cart_screen:
         return MaterialPageRoute(builder: (_) => TailorCartScreen());
+      case RouteNames.chat_screen:
+        final args = settings.arguments as Map<String, dynamic>? ?? {};
+        final personName  = args['personName'] as String? ?? '';
+
+        return MaterialPageRoute(
+          builder: (_) => ChatScreen(personName: personName)
+        );
       default:
         return MaterialPageRoute(
           builder: (_) => const Scaffold(

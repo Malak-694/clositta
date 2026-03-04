@@ -57,6 +57,16 @@ class AppStyle {
       ..strokeWidth = 1
       ..color = AppColors.ternary,
   );
+  static TextStyle get boldBackground => TextStyle(
+    fontSize: 17.sp,
+
+    fontWeight: FontWeight.w700,
+    fontFamily: 'Raleway',
+    foreground: Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1
+      ..color = AppColors.background,
+  );
   //Medium
   static TextStyle get medBlack => TextStyle(
     fontSize: 19.sp,
@@ -106,6 +116,16 @@ class AppStyle {
       ..style = PaintingStyle.stroke
       ..strokeWidth = .5
       ..color = AppColors.background,
+    fontFamily: 'Raleway',
+  );
+  static TextStyle get medGray => TextStyle(
+    fontSize: 19.sp,
+    fontWeight: FontWeight.w700,
+
+    foreground: Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = .5
+      ..color = const Color.fromARGB(255, 151, 150, 158),
     fontFamily: 'Raleway',
   );
   //Small

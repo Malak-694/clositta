@@ -23,7 +23,7 @@ class CommentSection extends StatelessWidget {
           // build a combined list placing the user's rating at the top if provided
           final combined = <RatingModel>[];
           if (userRating != null) combined.add(userRating!);
-          combined.addAll(productComments.where((c) => userRating == null || c.user != userRating!.user));
+          combined.addAll(productComments.where((c) => userRating == null || c.user.id != userRating!.user.id));
 
           return ListView.builder(
             shrinkWrap: true,
@@ -33,7 +33,8 @@ class CommentSection extends StatelessWidget {
               final comment = combined[index];
               return CommentCard(
                 comment: comment,
-                isOwn: currentUserId != null && comment.user == currentUserId,
+                
+                isOwn: currentUserId != null && comment.user.id == currentUserId,
                 onDelete: onDelete,
               );
             },

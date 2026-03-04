@@ -1,6 +1,6 @@
 class ApiEndpoints {
   static const String baseUrl =
-      'https://graduationproject-production-38b3.up.railway.app';
+      'https://graduationproject-production-8b09.up.railway.app';
   static const String login = '/api/auth/login';
   static const String signUp = '/api/auth/register';
   //Tailor
@@ -27,4 +27,7 @@ class ApiEndpoints {
   //ecommerce
   static const String products = '/api/products/all';
   static const String ratePoduct = '/api/products/{productId}/rate';
+  //ecommerce-cart
+  static const String cart = '/api/cart';
+  static const String updateCartItems = '/api/cart/item/{productId}';
 }

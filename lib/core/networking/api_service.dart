@@ -3,6 +3,7 @@ import 'package:chicora/core/networking/api_endpoints.dart';
 import 'package:chicora/features/auth/data/model/login_model.dart';
 import 'package:chicora/features/auth/data/model/sign_up_model.dart';
 import 'package:chicora/features/customer/closet/data/models/closet_item_response_model.dart';
+import 'package:chicora/features/ecommerce_multi/data/models/cart_models/delete_cart_response_model.dart';
 import 'package:chicora/features/ecommerce_multi/data/models/product_models/product_response_model.dart';
 import 'package:chicora/features/ecommerce_multi/data/models/rating%20models/rating_request_model.dart';
 import 'package:chicora/features/seller/products/data/models/product_model_response.dart';
@@ -16,6 +17,8 @@ import 'package:retrofit/http.dart';
 import '../../features/customer/biding/data/models/bid_customer_model.dart';
 import '../../features/customer/biding/data/models/offer_model.dart';
 
+import '../../features/ecommerce_multi/data/models/cart_models/cart_request_model.dart';
+import '../../features/ecommerce_multi/data/models/cart_models/cart_response_model.dart';
 import '../../features/ecommerce_multi/data/models/rating models/rating_response_model.dart';
 import '../../features/tailor/portfolio/data/models/portfolio_tailor_response_model.dart';
 
@@ -73,15 +76,15 @@ abstract class ApiService {
   @POST(ApiEndpoints.addProduct)
   @MultiPart()
   Future<MessageModel> addProduct(
-      @Header("Authorization") String token,
-      @Part(name: "name") String name,
-      @Part(name: "description") String description,
-      @Part(name: "price") String price,
-      @Part(name: "stock") String stock,
-      @Part(name: "category") String category,
-      @Part(name: "type") String type,
-      @Part(name: "image") MultipartFile image,
-      );
+    @Header("Authorization") String token,
+    @Part(name: "name") String name,
+    @Part(name: "description") String description,
+    @Part(name: "price") String price,
+    @Part(name: "stock") String stock,
+    @Part(name: "category") String category,
+    @Part(name: "type") String type,
+    @Part(name: "image") MultipartFile image,
+  );
   //ecommerce -buyer
   @GET(ApiEndpoints.products)
   Future<List<ProductModelBuyer>> getProductsBuyer({
@@ -109,16 +112,39 @@ abstract class ApiService {
   @PUT(ApiEndpoints.product)
   @MultiPart()
   Future<MessageModel> updateProduct(
-      @Header("Authorization") String token,
-      @Path("productId") String productId,
-      @Part(name: "name") String name,
-      @Part(name: "description") String description,
-      @Part(name: "price") String price,
-      @Part(name: "stock") String stock,
-      @Part(name: "category") String category,
-      @Part(name: "type") String type,
-      @Part(name: "image") MultipartFile? image,
-      );
+    @Header("Authorization") String token,
+    @Path("productId") String productId,
+    @Part(name: "name") String name,
+    @Part(name: "description") String description,
+    @Part(name: "price") String price,
+    @Part(name: "stock") String stock,
+    @Part(name: "category") String category,
+    @Part(name: "type") String type,
+    @Part(name: "image") MultipartFile? image,
+  );
+
+  //ecommerce-cart
+  @GET(ApiEndpoints.cart)
+  Future<CartResponseModel> getCart(@Header("Authorization") String token);
+  @POST(ApiEndpoints.cart)
+  Future<CartResponseModel> addToCart(
+    @Header("Authorization") String token,
+    @Body() CartRequestModel body,
+  );
+  @PUT(ApiEndpoints.updateCartItems)
+  Future<CartResponseModel> updateCart(
+    @Header("Authorization") String token,
+    @Path("productId") String productId,
+    @Body() CartRequestModel body,
+  );
+  @DELETE(ApiEndpoints.updateCartItems)
+  Future<DeleteCartResponseModel> removeFromCart(
+    @Header("Authorization") String token,
+    @Path("productId") String productId,
+  );
+
+  @DELETE(ApiEndpoints.cart)
+  Future<MessageModel> removeAllCart(@Header("Authorization") String token);
   //closet operations
   @GET(ApiEndpoints.viewClosetItems)
   Future<List<ClosetItemResponseModel>> viewClosetItems(
@@ -135,25 +161,25 @@ abstract class ApiService {
   @POST(ApiEndpoints.createClosetItems)
   @MultiPart()
   Future<MessageModel> addClosetItem(
-      @Header("Authorization") String token,
-      @Part(name: "name") String name,
-      @Part(name: "category") String category,
-      @Part(name: "season") String season,
-      @Part(name: "color") String color,
-      @Part(name: "image") MultipartFile image,
-      );
+    @Header("Authorization") String token,
+    @Part(name: "name") String name,
+    @Part(name: "category") String category,
+    @Part(name: "season") String season,
+    @Part(name: "color") String color,
+    @Part(name: "image") MultipartFile image,
+  );
 
   @PUT(ApiEndpoints.updateClosetItem)
   @MultiPart()
   Future<MessageModel> updateClosetItem(
-      @Header("Authorization") String token,
-      @Path("itemId") String itemId,
-      @Part(name: "name") String name,
-      @Part(name: "category") String category,
-      @Part(name: "season") String season,
-      @Part(name: "color") String color,
-      @Part(name: "image") MultipartFile? image,
-      );
+    @Header("Authorization") String token,
+    @Path("itemId") String itemId,
+    @Part(name: "name") String name,
+    @Part(name: "category") String category,
+    @Part(name: "season") String season,
+    @Part(name: "color") String color,
+    @Part(name: "image") MultipartFile? image,
+  );
 
   //tailor-portfolio
   @GET(ApiEndpoints.viewPortfolioTailor)
@@ -170,21 +196,21 @@ abstract class ApiService {
   @POST(ApiEndpoints.createPortfolioTailor)
   @MultiPart()
   Future<MessageModel> addPortfolioItem(
-      @Header("Authorization") String token,
-      @Part(name: "title") String title,
-      @Part(name: "category") String category,
-      @Part(name: "description") String description,
-      @Part(name: "image") MultipartFile image,
-      );
+    @Header("Authorization") String token,
+    @Part(name: "title") String title,
+    @Part(name: "category") String category,
+    @Part(name: "description") String description,
+    @Part(name: "image") MultipartFile image,
+  );
 
   @PUT(ApiEndpoints.updatePortfolioTailor)
   @MultiPart()
   Future<MessageModel> updatePortfolioItem(
-      @Header("Authorization") String token,
-      @Path("itemId") String itemId,
-      @Part(name: "title") String title,
-      @Part(name: "category") String category,
-      @Part(name: "description") String description,
-      @Part(name: "image") MultipartFile? image, // ✅ optional
-      );
+    @Header("Authorization") String token,
+    @Path("itemId") String itemId,
+    @Part(name: "title") String title,
+    @Part(name: "category") String category,
+    @Part(name: "description") String description,
+    @Part(name: "image") MultipartFile? image, // ✅ optional
+  );
 }

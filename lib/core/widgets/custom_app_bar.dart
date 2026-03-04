@@ -1,7 +1,10 @@
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
+import 'package:chicora/core/di/dependency_injection.dart';
+import 'package:chicora/core/helper/shared_key.dart';
+import 'package:chicora/core/helper/shared_pref_helper.dart';
+import 'package:chicora/core/router/route_names.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({
@@ -10,11 +13,18 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.leading = false,
     this.leadingIcon = Icons.arrow_back_ios,
     this.style,
+    required this.showCartIcon,
+    this.cartItemCount = 0,
+    required this.onCartTap,
   });
+
   final String title;
   final bool leading;
   final IconData leadingIcon;
   final TextStyle? style;
+  final bool showCartIcon;
+  final int cartItemCount;
+  final VoidCallback? onCartTap;
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -24,7 +34,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       scrolledUnderElevation: 0,
       backgroundColor: AppColors.background,
-      automaticallyImplyLeading: false, // Disable default back button
+      automaticallyImplyLeading: false,
       title: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -33,18 +43,77 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               icon: Icon(leadingIcon, color: AppColors.dark),
               onPressed: () => Navigator.pop(context),
             ),
-          Text(
-            title,
-            style: style ?? AppStyle.boldSecondary.copyWith(
-              fontSize: 30.sp,
-              foreground: Paint()
-                ..style = PaintingStyle.stroke
-                ..strokeWidth = 1.5
-                ..color = const Color.fromARGB(255, 82, 66, 184),
-            ),
+          FutureBuilder<String?>(
+            future: getIt<SharedPrefHelper>().getSecureData(SharedPrefKey.role),
+            builder: (context, snapshot) {
+              final String role = snapshot.data ?? '';
+              final TextStyle resolvedStyle = style ?? _styleForRole(role);
+              return Text(title, style: resolvedStyle);
+            },
           ),
         ],
       ),
+      actions: [
+        if (showCartIcon)
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                IconButton(
+                  icon: Icon(
+                    Icons.shopping_cart_outlined,
+                    color: AppColors.dark,
+                  ),
+                  onPressed: onCartTap,
+                ),
+                // Badge — only shows when cartItemCount > 0
+                if (cartItemCount > 0)
+                  Positioned(
+                    top: 6,
+                    right: 6,
+                    child: Container(
+                      padding: const EdgeInsets.all(3),
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 16,
+                        minHeight: 16,
+                      ),
+                      child: Text(
+                        cartItemCount > 99 ? '99+' : '$cartItemCount',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+      ],
     );
+  }
+}
+
+TextStyle _styleForRole(String role) {
+  switch (role) {
+    case 'customer':
+      return AppStyle.medPrimery;
+    case 'tailor':
+      return AppStyle.medSecondary;
+    case 'clothes_seller':
+      return AppStyle.medTernary;
+    case 'material_seller':
+      return AppStyle.medTernary;
+    case 'admin':
+      return AppStyle.medPrimery.copyWith(color: Colors.red);
+    default:
+      return AppStyle.medPrimery; // default style
   }
 }

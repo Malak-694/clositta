@@ -1,4 +1,3 @@
-import 'package:chicora/core/widgets/custom_elevated_button.dart';
 import 'package:chicora/features/ecommerce_multi/data/models/product_models/product_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +7,7 @@ import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/constants/style.dart';
 import '../../../../core/widgets/custom_app_bar.dart';
+import '../widgets/add_to_cart_section.dart';
 import '../widgets/comment_section_widget.dart';
 import '../widgets/rate_product_widget.dart';
 import '../widgets/seller_info_widget.dart';
@@ -37,6 +37,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   RatingModel? _userRatingModel;
   late List<RatingModel> _ratings;
   String? _userId;
+  String? _userName;
 
   late List<String> productPhotos;
   Color _rolePrimary = AppColors.primery;
@@ -62,11 +63,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Future<void> _loadUserInfo() async {
     final prefs = getIt<SharedPrefHelper>();
     final id = await prefs.getSecureData(SharedPrefKey.id);
+    final name = await prefs.getSecureData(SharedPrefKey.name);
     if (!mounted) return;
     setState(() {
       _userId = id;
+      _userName = name;
       if (_userId != null) {
-        final matches = _ratings.where((r) => r.user == _userId);
+        final matches = _ratings.where((r) => r.user.id == _userId);
         if (matches.isNotEmpty) {
           _userHasRated = true;
           _userRatingModel = matches.first;
@@ -99,7 +102,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(title: "Product Detail", leading: true),
+      appBar: CustomAppBar(
+        title: "Product Detail",
+        leading: true,
+        showCartIcon: false,
+        onCartTap: () {},
+      ),
       body: BlocListener<RateProductsCubit, RateProductsState>(
         listener: (context, state) {
           state.whenOrNull(
@@ -108,7 +116,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               if (data is MessageModel) {
                 // remove user's rating locally and show rate widget again
                 setState(() {
-                  _ratings.removeWhere((r) => r.user == _userId);
+                  _ratings.removeWhere((r) => r.user.id == _userId);
                   _userHasRated = false;
                   _userRatingModel = null;
                 });
@@ -216,23 +224,32 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 ),
                 const SizedBox(height: 24),
                 // Product Title
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                Row(
                   children: [
-                    Text(
-                      widget.product.name ?? 'Unknown Product',
-                      style: AppStyle.headline1,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.product.name ?? 'Unknown Product',
+                          style: AppStyle.headline1,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          widget.product.category ?? 'Uncategorized',
+                          style: AppStyle.medPrimery.copyWith(
+                            foreground: Paint()
+                              ..style = PaintingStyle.stroke
+                              ..strokeWidth = .5
+                              ..color = _rolePrimary,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      widget.product.category ?? 'Uncategorized',
-                      style: AppStyle.medPrimery.copyWith(
-                        foreground: Paint()
-                          ..style = PaintingStyle.stroke
-                          ..strokeWidth = .5
-                          ..color = _rolePrimary,
-                      ),
+                    SizedBox(width: 20.w),
+                    Expanded(
+                      child: AddToCartSection(productId: widget.product.pId!),
                     ),
+                    SizedBox(width: 20.w),
                   ],
                 ),
 
@@ -249,13 +266,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           ..color = _rolePrimary,
                       ),
                     ),
-                    Spacer(),
-                    CustomElevatedButton(
-                      value: 'Add to Cart',
-                      onPressed: () {},
-                      height: 40.h,
-                      width: 190.w,
-                    ),
+                    const SizedBox(width: 16),
                   ],
                 ),
                 Row(
@@ -301,7 +312,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       // create a temporary RatingModel and add to top of list
                       final now = DateTime.now();
                       final newRating = RatingModel(
-                        user: _userId ?? '',
+                        user: User(id: _userId ?? '', name: _userName ?? ''),
                         rating: r,
                         comment: comment,
                         id: now.toIso8601String(),

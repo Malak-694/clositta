@@ -43,6 +43,9 @@ class DetailesScreenTailor extends StatelessWidget {
         title: "Biddings",
         leading: true,
         leadingIcon: Icons.arrow_back,
+        showCartIcon: true,
+        onCartTap: () =>
+            Navigator.pushNamed(context, RouteNames.tailor_cart_screen),
       ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),

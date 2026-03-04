@@ -15,6 +15,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../../../core/router/route_names.dart';
+
 class AddedItemScreen extends StatefulWidget {
   final PortfolioTailorResponseModel? item; // ✅ null = add, not null = update
 
@@ -30,12 +32,16 @@ class _AddedItemScreenState extends State<AddedItemScreen> {
   final ImagePicker _picker = ImagePicker();
 
   final List<String> categories = [
-    'Tops', 'Bottoms', 'Shoes', 'Accessories', 'Formal'
+    'Tops',
+    'Bottoms',
+    'Shoes',
+    'Accessories',
+    'Formal',
   ];
 
   String? _selectedCategory;
   String? _selectedImagePath; // new image picked by user
-  String? _existingImageUrl;  // existing image from API
+  String? _existingImageUrl; // existing image from API
 
   bool get _isUpdate => widget.item != null;
 
@@ -73,6 +79,9 @@ class _AddedItemScreenState extends State<AddedItemScreen> {
         appBar: CustomAppBar(
           title: _isUpdate ? "Update Item" : "Add New Item",
           leading: true,
+          showCartIcon: true,
+          onCartTap: () =>
+              Navigator.pushNamed(context, RouteNames.tailor_cart_screen),
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(15, 30, 15, 10),
@@ -86,8 +95,10 @@ class _AddedItemScreenState extends State<AddedItemScreen> {
                     Text("Upload Image", style: AppStyle.body6),
                     SizedBox(height: 10.h),
                     ImageUploadWidget(
-                      imagePath: _selectedImagePath,           // new picked image
-                      imageUrl: _selectedImagePath == null     // show existing only if no new image
+                      imagePath: _selectedImagePath, // new picked image
+                      imageUrl:
+                          _selectedImagePath ==
+                              null // show existing only if no new image
                           ? _existingImageUrl
                           : null,
                       onTap: _pickImage,
@@ -137,8 +148,7 @@ class _AddedItemScreenState extends State<AddedItemScreen> {
                         child: ElevatedButton(
                           onPressed: null,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                            AppColors.primery.withOpacity(0.6),
+                            backgroundColor: AppColors.primery.withOpacity(0.6),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.r),
                             ),

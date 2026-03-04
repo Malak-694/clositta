@@ -26,10 +26,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../features/auth/ui/screens/sign_up_screen.dart';
 import '../../features/customer/closet/data/models/closet_item_response_model.dart';
+import '../../features/customer/ecommerce/view_products/customer_cart_screen.dart';
 import '../../features/customer/ecommerce/view_products/ui/screens/customer_products_screen.dart';
+import '../../features/ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
 import '../../features/seller/products/data/models/product_model_response.dart';
 import '../../features/seller/products/ui/screens/seller_products_screen.dart';
 import '../../features/tailor/bidding_tailor/ui/Screens/posts_tailor_screen.dart';
+import '../../features/tailor/ecommerce/view_products/tailor_cart_screen.dart';
 import '../../features/tailor/ecommerce/view_products/ui/screens/tailor_products_screen.dart';
 import '../../features/tailor/portfolio/data/models/portfolio_tailor_response_model.dart';
 import '../../features/tailor/portfolio/ui/screens/portfolio_tailor_screen.dart';
@@ -137,7 +140,7 @@ class AppRouter {
         );
       case RouteNames.seller_products_screen:
         return MaterialPageRoute(builder: (_) => SellerProductsScreen());
-      case RouteNames.added_product_item :
+      case RouteNames.added_product_item:
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
             create: (_) => getIt<SellerProductsCubit>(),
@@ -159,21 +162,29 @@ class AppRouter {
       case RouteNames.product_details_screen:
         final args = settings.arguments as Map<String, dynamic>? ?? {};
         final product = args['product'];
-        if (product == null) {
+        final cartCubit = args['cartCubit'] as CartCubit?; // ✅ extract it
+
+        if (product == null || cartCubit == null) {
           return MaterialPageRoute(
             builder: (_) =>
                 const Scaffold(body: Center(child: Text('Product not found'))),
           );
         }
+
         return MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (_) => getIt<RateProductsCubit>(),
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (_) => getIt<RateProductsCubit>()),
+              BlocProvider.value(
+                value: cartCubit, // ✅ reuse the existing instance
+              ),
+            ],
             child: ProductDetailScreen(product: product),
           ),
         );
       case RouteNames.closet_items_screen:
         return MaterialPageRoute(builder: (_) => ClosetItemsScreen());
-      case RouteNames.upload_closet_item :
+      case RouteNames.upload_closet_item:
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
             create: (_) => getIt<ClosetCubit>(),
@@ -190,7 +201,7 @@ class AppRouter {
         );
       case RouteNames.portfolio_tailor_screen:
         return MaterialPageRoute(builder: (_) => PortfolioTailorScreen());
-      case RouteNames.added_work_screen :
+      case RouteNames.added_work_screen:
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
             create: (_) => getIt<PortfolioTailorCubit>(),
@@ -205,6 +216,10 @@ class AppRouter {
             child: AddedItemScreen(item: item),
           ),
         );
+      case RouteNames.customer_cart_screen:
+        return MaterialPageRoute(builder: (_) => CustomerCartScreen());
+      case RouteNames.tailor_cart_screen:
+        return MaterialPageRoute(builder: (_) => TailorCartScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => const Scaffold(

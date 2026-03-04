@@ -32,8 +32,16 @@ class _AddedProductFormState extends State<AddedProductForm> {
   final ImagePicker _picker = ImagePicker();
 
   final List<String> categories = [
-    'Tops', 'Bottoms', 'Dresses', 'Shoes',
-    'Outwear', 'Accessories', 'Women', 'Men', 'Kids', 'Others',
+    'Tops',
+    'Bottoms',
+    'Dresses',
+    'Shoes',
+    'Outwear',
+    'Accessories',
+    'Women',
+    'Men',
+    'Kids',
+    'Others',
   ];
   final List<String> types = ['Clothes', 'Material'];
 
@@ -85,6 +93,8 @@ class _AddedProductFormState extends State<AddedProductForm> {
         appBar: CustomAppBar(
           title: _isUpdate ? "Update Product" : "Add New Product",
           leading: true,
+          showCartIcon: false,
+          onCartTap: () {},
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(15, 30, 15, 10),
@@ -195,8 +205,7 @@ class _AddedProductFormState extends State<AddedProductForm> {
                         child: ElevatedButton(
                           onPressed: null,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                            AppColors.primery.withOpacity(0.6),
+                            backgroundColor: AppColors.primery.withOpacity(0.6),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.r),
                             ),

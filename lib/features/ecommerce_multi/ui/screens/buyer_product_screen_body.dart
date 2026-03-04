@@ -13,6 +13,7 @@ import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/helper/shared_pref_helper.dart';
 import '../../../../core/widgets/pinterest_grid_config.dart';
 import '../../data/models/product_models/product_response_model.dart';
+import '../../logic/cart_cubit/cart_cubit.dart';
 import '../../logic/view_product_logic/view_products_cubit.dart';
 import '../../logic/view_product_logic/view_products_state.dart';
 
@@ -141,7 +142,10 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
                     onTap: (product) => Navigator.pushNamed(
                       context,
                       RouteNames.product_details_screen,
-                      arguments: {'product': product},
+                      arguments: {
+                        'product': product,
+                        'cartCubit': context.read<CartCubit>(),
+                      },
                     ),
                     configBuilder: (product) => PinterestCardConfig(
                       imageUrl: product.imageUrl,
@@ -149,6 +153,9 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
                       rating: product.averageRating,
                       price: product.price,
                       showCart: true,
+                      onTap: () {
+                        context.read<CartCubit>().addToCart(product.pId!, 1);
+                      },
                     ),
                   ),
                   fail: (error) => Center(

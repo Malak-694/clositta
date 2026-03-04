@@ -6,7 +6,7 @@ part 'rating_model_response.g.dart';
 class RatingModel {
   @JsonKey(name: '_id') // ← Add this annotation
   final String id;
-  final String user;
+  final User user;
   final int rating;
   final String comment;
   final DateTime createdAt;
@@ -26,4 +26,19 @@ class RatingModel {
       _$RatingModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$RatingModelToJson(this);
+}
+
+@JsonSerializable()
+class User {
+  @JsonKey(name: '_id')
+  final String id;
+  final String name;
+
+  User({
+    required this.id,
+    required this.name,
+  });
+
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+  Map<String, dynamic> toJson() => _$UserToJson(this);
 }

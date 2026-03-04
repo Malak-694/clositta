@@ -80,6 +80,7 @@ class AuthCubit extends Cubit<AuthState> {
           await prefs.setSecureData(SharedPrefKey.token, response.token);
           await prefs.setSecureData(SharedPrefKey.role, response.role);
           await prefs.setSecureData(SharedPrefKey.id, response.id);
+          await prefs.setSecureData(SharedPrefKey.name, response.name);
           emit(AuthState.success(response));
         },
         failure: (error) {

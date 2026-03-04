@@ -13,6 +13,8 @@ import 'package:chicora/features/customer/biding/logic/cubit/customer_bidding_cu
 import 'package:chicora/features/customer/biding/logic/cubit/customer_bidding_state.dart';
 import 'package:chicora/features/customer/biding/data/models/send_bidding_model.dart';
 
+import '../../../../../core/router/route_names.dart';
+
 class FormScreen extends StatefulWidget {
   const FormScreen({super.key});
 
@@ -60,7 +62,13 @@ class _FormScreenState extends State<FormScreen> {
 
         return Scaffold(
           backgroundColor: AppColors.background,
-          appBar: CustomAppBar(title: 'Create New Post' , leading: true,),
+          appBar: CustomAppBar(
+            title: 'Create New Post',
+            leading: true,
+            showCartIcon: true,
+            onCartTap: () =>
+                Navigator.pushNamed(context, RouteNames.customer_cart_screen),
+          ),
           body: SingleChildScrollView(
             padding: EdgeInsets.all(20.w),
             child: Column(

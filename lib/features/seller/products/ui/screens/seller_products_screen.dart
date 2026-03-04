@@ -18,7 +18,11 @@ class SellerProductsScreen extends StatelessWidget {
       resizeToAvoidBottomInset: false,
 
       backgroundColor: AppColors.background,
-      appBar: CustomAppBar(title: "My Products"),
+      appBar: CustomAppBar(
+        title: "My Products",
+        showCartIcon: false,
+        onCartTap: () {},
+      ),
       body: BlocProvider(
         create: (context) => getIt<SellerProductsCubit>()..getProducts(),
         child: SellerProductScreenBody(),

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
+import 'package:chicora/core/router/route_names.dart';
 import 'package:chicora/core/widgets/custom_app_bar.dart';
 import 'package:chicora/core/widgets/custom_dropdown_list.dart';
 import 'package:chicora/core/widgets/custom_elevated_button.dart';
@@ -81,6 +82,12 @@ class _AddedClosetItemScreenState extends State<AddedClosetItemScreen> {
         appBar: CustomAppBar(
           title: _isUpdate ? "Update Item" : "Add New Item",
           leading: true,
+          showCartIcon: true,
+          onCartTap: () => Navigator.pushNamed(
+            context,
+            RouteNames.customer_cart_screen,
+          ),
+          
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(15, 30, 15, 10),

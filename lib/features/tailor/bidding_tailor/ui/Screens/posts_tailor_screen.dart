@@ -25,7 +25,12 @@ class PostScreenTailor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: "My Post"),
+      appBar: CustomAppBar(
+        title: "My Post",
+        showCartIcon: true,
+        onCartTap: () =>
+            Navigator.pushNamed(context, RouteNames.tailor_cart_screen),
+      ),
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Container(

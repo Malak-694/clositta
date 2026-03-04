@@ -65,7 +65,7 @@ class CommentCard extends StatelessWidget {
                     radius: 15,
                     backgroundColor: AppColors.primery,
                     child: Text(
-                      _getInitials('Ahmed Mohamed'),
+                      _getInitials(comment.user.name),
                       style: AppStyle.medBackground.copyWith(fontSize: 10.sp),
                     ),
                   ),
@@ -74,7 +74,7 @@ class CommentCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Ahmed Mohamed',
+                        comment.user.name,
                         style: AppStyle.medPrimery.copyWith(fontSize: 16.sp),
                       ),
                       Text(

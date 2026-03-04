@@ -1,3 +1,4 @@
+import 'package:chicora/core/router/route_names.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -18,7 +19,12 @@ class ClosetItemsScreen extends StatelessWidget {
       create: (context) => ClosetCubit(closetRepo: getIt<ClosetRepo>()),
       child: Scaffold(
         backgroundColor: AppColors.background,
-        appBar: CustomAppBar(title: "Your Closet"),
+        appBar: CustomAppBar(
+          title: "Your Closet",
+          showCartIcon: true,
+          onCartTap: () =>
+              Navigator.pushNamed(context, RouteNames.customer_cart_screen),
+        ),
         body: ClosetItemsScreenBody(),
         bottomNavigationBar: FloatingNavBar(
           userRole: 'customer',

@@ -54,16 +54,40 @@ class _DetailesScreenState extends State<DetailesScreen> {
             Text("Tailor bids", style: AppStyle.boldSecondary),
             SizedBox(height: 5.h),
             Container(
-              height: 275.h,
-              width: 400.w,
               decoration: BoxDecoration(
+                color: Colors.grey.shade100, // ← background for empty space
                 borderRadius: BorderRadius.circular(20.sp),
-                image: DecorationImage(
-                  image: NetworkImage(widget.urlImage),
-                  fit: BoxFit.cover,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(30.sp),
+                child: AspectRatio(
+                  aspectRatio: 4 / 3,
+                  child: Image.network(
+                    widget.urlImage,
+                    fit: BoxFit.contain,
+                    width: double.infinity,
+                    errorBuilder: (_, __, ___) => Container(
+                      color: Colors.grey.shade100,
+                      child: const Center(
+                        child: Icon(
+                          Icons.image_not_supported,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
+            SizedBox(height: 15.h),
+
             Text(widget.description, style: AppStyle.medLight),
             SizedBox(height: 15.h),
             Expanded(

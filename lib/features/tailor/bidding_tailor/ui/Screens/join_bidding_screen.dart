@@ -11,6 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/di/dependency_injection.dart';
 import '../../../../../core/helper/shared_key.dart';
 import '../../../../../core/helper/shared_pref_helper.dart';
+import '../../../../../core/router/route_names.dart';
 import '../../../../../core/widgets/custom_app_bar.dart';
 import '../../../../../core/widgets/custom_nav_bar.dart';
 
@@ -90,6 +91,9 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
             title: "Join Bidding",
             leading: true,
             leadingIcon: Icons.arrow_back,
+            showCartIcon: true,
+            onCartTap: () =>
+                Navigator.pushNamed(context, RouteNames.tailor_cart_screen),
           ),
           backgroundColor: AppColors.background,
           body: SingleChildScrollView(

@@ -11,6 +11,12 @@ class PinterestCardConfig<T> {
   final bool showEdit;
   final VoidCallback onTap;
   final VoidCallback? onEdit;
+  final String? date;
+  final String? status;
+  final bool showStatus;
+  final bool showDate;
+  final String? bidsDate;
+  final bool showBidsCount;
 
   const PinterestCardConfig({
     this.imageUrl,
@@ -23,6 +29,12 @@ class PinterestCardConfig<T> {
     this.showEdit = false,
     this.onTap = _emptyOnTap,
     this.onEdit,
+    this.date,
+    this.status,
+    this.showStatus = false,
+    this.showDate = false,
+    this.bidsDate,
+    this.showBidsCount = false,
   });
 
   static void _emptyOnTap() {}

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/style.dart';
 import '../../../../../core/di/dependency_injection.dart';
+import '../../../../../core/router/route_names.dart';
 import '../../../../../core/widgets/custom_app_bar.dart';
 import '../../../../../core/widgets/custom_nav_bar.dart';
 import '../../data/repo/portfolio_tailor_repo.dart';
@@ -16,10 +17,18 @@ class PortfolioTailorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => PortfolioTailorCubit(portfolioTailorRepo: getIt<PortfolioTailorRepo>()),
+      create: (context) => PortfolioTailorCubit(
+        portfolioTailorRepo: getIt<PortfolioTailorRepo>(),
+      ),
       child: Scaffold(
         backgroundColor: AppColors.background,
-        appBar: CustomAppBar(title: "Your Portfolio",style : AppStyle.boldSecondary ),
+        appBar: CustomAppBar(
+          title: "Your Portfolio",
+          style: AppStyle.boldSecondary,
+          showCartIcon: true,
+          onCartTap: () =>
+              Navigator.pushNamed(context, RouteNames.tailor_cart_screen),
+        ),
         body: PortfolioTailorBody(),
         bottomNavigationBar: FloatingNavBar(
           userRole: 'tailor',

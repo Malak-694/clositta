@@ -37,13 +37,15 @@ void main() async {
   final prefs = getIt<SharedPrefHelper>();
   final token = await prefs.getSecureData(SharedPrefKey.token);
   final role = await prefs.getSecureData(SharedPrefKey.role);
-
-  String initialRoute = getInitialRoute(token, role);
-  if (role != "tailor") {
+  String initialRoute;
+  
+  if (role != "customer") {
     initialRoute = RouteNames.login;
   }else{
-  initialRoute = RouteNames.portfolio_tailor_screen;}
+  initialRoute = RouteNames.customer_products_screen;}
 
+  print(role);
+  print(initialRoute);
   runApp(ChicoraApp(initialRoute: initialRoute));
 }
 

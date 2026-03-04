@@ -34,61 +34,58 @@ class BidItem extends StatelessWidget {
         ),
         shadows: [
           BoxShadow(
-            color: AppColors.light,
+            color: const Color.fromARGB(255, 228, 228, 228),
             blurRadius: 5,
             offset: Offset(0, .5),
           ),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(tailor, style: AppStyle.boldSecondary),
-                Text('\$$price', style: AppStyle.medBlack),
-              ],
-            ),
-            // SizedBox(height: .h),
-            Row(
-              children: [
-                Icon(LucideIcons.smile, size: 20, color: AppColors.light),
-                const SizedBox(width: 2),
-                Text(' $num_work Tailor', style: AppStyle.body5),
-                const Spacer(),
-                Icon(LucideIcons.clock, size: 18, color: AppColors.light),
-                const SizedBox(width: 1),
-                Text(' ${duration}d', style: AppStyle.body5),
-              ],
-            ),
-            const SizedBox(height: 10),
-            if (comment != null) Text(comment!, style: AppStyle.body6),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                CustomButton(
-                  text: "chat",
-                  onPressed: () {},
-                  backgroundColor: AppColors.background,
-                  foregroundColor: AppColors.light,
-                  icon: LucideIcons.messageCircle,
-                ),
-                CustomButton(
-                  text: "Select",
-                  onPressed: () {},
-                  backgroundColor: AppColors.primery,
-                  foregroundColor: AppColors.background,
-                  icon: LucideIcons.userRoundCheck,
-                ),
-              ],
-            ),
-          ],
-        ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(tailor, style: AppStyle.boldSecondary),
+              Text('\$$price', style: AppStyle.medBlack),
+            ],
+          ),
+          SizedBox(height: 8.h),
+          Row(
+            children: [
+              Icon(LucideIcons.smile, size: 20, color: AppColors.light),
+              const SizedBox(width: 2),
+              Text(' $num_work Tailoring', style: AppStyle.body5),
+              const Spacer(),
+              Icon(LucideIcons.clock, size: 18, color: AppColors.light),
+              const SizedBox(width: 1),
+              Text(' ${duration}d', style: AppStyle.body5),
+            ],
+          ),
+          const SizedBox(height: 10),
+          if (comment != null) Text(comment!, style: AppStyle.body6),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              CustomButton(
+                text: "chat",
+                onPressed: () {},
+                backgroundColor: AppColors.background,
+                foregroundColor: AppColors.light,
+                icon: LucideIcons.messageCircle,
+              ),
+              CustomButton(
+                text: "Select",
+                onPressed: () {},
+                backgroundColor: AppColors.primery,
+                foregroundColor: AppColors.background,
+                icon: LucideIcons.userRoundCheck,
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

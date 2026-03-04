@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:chicora/core/networking/api_service.dart';
 import '../models/bid_customer_model.dart';
 import '../models/offer_model.dart';
-import 'package:http_parser/http_parser.dart';
 
 class BiddingCustomerRepo {
   final ApiService apiService;

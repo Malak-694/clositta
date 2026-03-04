@@ -47,6 +47,7 @@ abstract class ApiService {
     @Path("id") String id,
     @Body() JoinBiddingRequest body,
   );
+  //customer-bids
   @GET(ApiEndpoints.myBids)
   Future<List<BidResponse>> getMyBids(@Header("Authorization") String token);
   @POST(ApiEndpoints.createBid)
@@ -63,6 +64,7 @@ abstract class ApiService {
     @Header("Authorization") String token,
     @Path("bidId") String bidId,
   );
+  //seller-products
   @GET(ApiEndpoints.sellerProducts)
   Future<List<ProductModel>> getProductsSeller(
     @Header("Authorization") String token,

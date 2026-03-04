@@ -60,7 +60,7 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => RecoveryCodeScreen());
       case RouteNames.reset_password:
         return MaterialPageRoute(builder: (_) => ResetPasswordScreen());
-      case RouteNames.posts:
+      case RouteNames.posts_customer:
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
             create: (_) => getIt<CustomerBiddingCubit>(),

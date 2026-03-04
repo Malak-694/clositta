@@ -24,14 +24,18 @@ class FloatingNavBar extends StatelessWidget {
         "name": "Home",
         "route": RouteNames.customer_products_screen,
       },
-      {"icon": Icons.star, "name": "AI", "route": RouteNames.posts},
+      {"icon": Icons.star, "name": "AI", "route": RouteNames.posts_customer},
       {
         "icon": Icons.checkroom,
         "name": "closet",
         "route": RouteNames.closet_items_screen,
       },
 
-      {"icon": Icons.person, "name": "Profile", "route": RouteNames.posts},
+      {
+        "icon": Icons.person,
+        "name": "Profile",
+        "route": RouteNames.posts_customer,
+      },
     ],
     "tailor": [
       {

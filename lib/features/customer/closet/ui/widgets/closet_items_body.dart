@@ -1,8 +1,6 @@
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/constants.dart';
-import 'package:chicora/core/widgets/custom_category_selector.dart';
 import 'package:chicora/core/widgets/custom_elevated_button.dart';
-import 'package:chicora/core/widgets/custom_search_bar.dart';
 import 'package:chicora/core/widgets/pinterest_grid.dart';
 import 'package:chicora/features/auth/ui/widgets/drop_down_type.dart';
 import 'package:flutter/material.dart';

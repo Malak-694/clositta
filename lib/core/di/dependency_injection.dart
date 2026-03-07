@@ -21,6 +21,8 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../features/customer/biding/data/repo/bid_repo.dart';
+import '../../features/profile/data/repo/profile_repo.dart';
+import '../../features/profile/logic/profile_cubit.dart';
 import '../../features/tailor/portfolio/data/repo/portfolio_tailor_repo.dart';
 
 final GetIt getIt = GetIt.instance;
@@ -33,6 +35,13 @@ Future<void> setupGetIt() async {
   //Authentication
   getIt.registerLazySingleton<AuthRepo>(() => AuthRepo(apiService: getIt()));
   getIt.registerFactory<AuthCubit>(() => AuthCubit(getIt()));
+  //profile
+  getIt.registerFactory<ProfileCubit>(
+        () => ProfileCubit(getIt<ProfileRepo>()),
+  );
+  getIt.registerFactory<ProfileRepo>(
+        () => ProfileRepo(apiService: getIt<ApiService>()),
+  );
   //BiddingTailor
   getIt.registerLazySingleton<BiddingTailorRepo>(
     () => BiddingTailorRepo(apiService: getIt()),
@@ -86,5 +95,6 @@ Future<void> setupGetIt() async {
   );
   getIt.registerFactory<CartCubit>(
     () => CartCubit(cartRepo: getIt()),
-  );  
+  );
+
 }

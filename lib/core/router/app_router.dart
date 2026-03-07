@@ -15,6 +15,7 @@ import 'package:chicora/features/customer/biding/ui/Screens/detailes_screen.dart
 import 'package:chicora/features/customer/biding/ui/Screens/form_screen.dart';
 import 'package:chicora/features/customer/biding/ui/Screens/post_screen.dart';
 import 'package:chicora/features/ecommerce_multi/ui/screens/product_details_screen.dart';
+import 'package:chicora/features/profile/ui/screens/profile_screen.dart';
 import 'package:chicora/features/seller/products/logic/cubit/seller_products_cubit.dart';
 import 'package:chicora/features/seller/products/ui/screens/added_product_form.dart';
 import 'package:chicora/features/tailor/bidding_tailor/logic/cubit/bidding_tailor_cubit.dart';
@@ -29,14 +30,18 @@ import '../../features/auth/ui/screens/sign_up_screen.dart';
 import '../../features/customer/closet/data/models/closet_item_response_model.dart';
 import '../../features/customer/ecommerce/view_products/customer_cart_screen.dart';
 import '../../features/customer/ecommerce/view_products/ui/screens/customer_products_screen.dart';
+import '../../features/customer/profile/ui/customer_profile_screen.dart';
 import '../../features/ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
+import '../../features/profile/logic/profile_cubit.dart';
 import '../../features/seller/products/data/models/product_model_response.dart';
 import '../../features/seller/products/ui/screens/seller_products_screen.dart';
+import '../../features/seller/profile/ui/seller_profile_screen.dart' hide TailorProfileScreen;
 import '../../features/tailor/bidding_tailor/ui/Screens/posts_tailor_screen.dart';
 import '../../features/tailor/ecommerce/view_products/tailor_cart_screen.dart';
 import '../../features/tailor/ecommerce/view_products/ui/screens/tailor_products_screen.dart';
 import '../../features/tailor/portfolio/data/models/portfolio_tailor_response_model.dart';
 import '../../features/tailor/portfolio/ui/screens/portfolio_tailor_screen.dart';
+import '../../features/tailor/profile/ui/tailor_profile_screen.dart';
 
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -61,6 +66,19 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => RecoveryCodeScreen());
       case RouteNames.reset_password:
         return MaterialPageRoute(builder: (_) => ResetPasswordScreen());
+      case RouteNames.profile_customer_screen:
+        return MaterialPageRoute(
+          builder: (_) => const CustomerProfileScreen(),
+        );
+      case RouteNames.profile_tailor_screen:
+        return MaterialPageRoute(
+          builder: (_) => const TailorProfileScreen(),
+        );
+
+      case RouteNames.profile_seller_screen:
+        return MaterialPageRoute(
+          builder: (_) => const SellerProfileScreen(),
+        );
       case RouteNames.posts_customer:
         return MaterialPageRoute(
           builder: (_) => BlocProvider(

@@ -6,6 +6,10 @@ class RouteNames {
   static const passord_recovery = "passord_recovery";
   static const recovery_code = "recovery_code";
   static const reset_password = "reset_password";
+// profile
+  static const profile_customer_screen = "profile_customer_screen" ;
+  static const profile_tailor_screen =  "profile_tailor_screen";
+  static const profile_seller_screen = "profile_seller_screen" ;
 
   static const posts_customer = "posts";
   static const upload_post = "upload_post";

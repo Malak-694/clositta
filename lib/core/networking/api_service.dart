@@ -20,6 +20,7 @@ import '../../features/customer/biding/data/models/offer_model.dart';
 import '../../features/ecommerce_multi/data/models/cart_models/cart_request_model.dart';
 import '../../features/ecommerce_multi/data/models/cart_models/cart_response_model.dart';
 import '../../features/ecommerce_multi/data/models/rating models/rating_response_model.dart';
+import '../../features/profile/data/model/profile_model.dart';
 import '../../features/tailor/portfolio/data/models/portfolio_tailor_response_model.dart';
 
 part 'api_service.g.dart';
@@ -36,6 +37,27 @@ abstract class ApiService {
   Future<List<PostTailorResponse>> viewBiddingTailor(
     @Header("Authorization") String token,
   );
+
+  @GET(ApiEndpoints.profile)
+  Future<ProfileResponse> getProfile(
+      @Header("Authorization") String token,
+      );
+
+  @MultiPart()
+  @PUT(ApiEndpoints.profile)
+  Future<MessageModel> updateProfile({
+    @Header("Authorization") required String token,
+    @Part() String? name,
+    @Part() String? email,
+    @Part() String? phone,
+    @Part() MultipartFile? image,
+  });
+
+  @DELETE(ApiEndpoints.delete_profile_image)
+  Future<MessageModel> deleteProfileImage(
+      @Header("Authorization") String token,
+      );
+
   @GET(ApiEndpoints.offers)
   Future<List<BidModelReponse>> viewOffers(
     @Header("Authorization") String token,

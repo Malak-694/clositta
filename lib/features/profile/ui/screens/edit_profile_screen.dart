@@ -148,7 +148,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         GestureDetector(
                           onTap: _pickImage,
                           child: CircleAvatar(
-                                radius: 60.r,
+                                radius: 73.r,
                                 backgroundColor: widget.lightColor,
                                 backgroundImage: imageToShow,
                                 child: imageToShow == null
@@ -228,11 +228,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     keyboardType: TextInputType.phone,
                     focusedBorderColor: widget.primaryColor,
                   ),
-                  SizedBox(height: 220.h),
+                  SizedBox(height: 40.h),
 
                   isLoading
                       ? Center(child: circleIndicator())
                       : CustomElevatedButton(
+                    height: 55.h ,
                     width: 380.w,
                     value: "Save Changes",
                     background: widget.primaryColor,

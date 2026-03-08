@@ -18,6 +18,7 @@ class ApiEndpoints {
   //customer
   static const String myBids = '/api/bids';
   static const String createBid = '/api/bids';
+  static const String updateBid = "/api/bids/{bidId}" ;
   static const String bestOffers = '/api/offers/{bidId}/best';
   //customer-closet
   static const String viewClosetItems = '/api/closet';

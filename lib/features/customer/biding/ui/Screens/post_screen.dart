@@ -172,7 +172,19 @@ class _PostScreenState extends State<PostScreen> {
                                   showDate: true,
                                   showCart: false,
                                   showRating: false,
-                                  showEdit: false,
+                                  // ✅ Only show edit for open posts
+                                  showEdit: post.status.toLowerCase() != 'closed',
+                                  onEdit: post.status.toLowerCase() != 'closed'
+                                      ? () => Navigator.pushNamed(
+                                    context,
+                                    RouteNames.upload_post,
+                                    arguments: {
+                                      'bidId': post.id,
+                                      'initialDescription': post.requestDescription,
+                                      'initialImageUrl': post.imageUrl,
+                                      'initialPrice': post.price,
+                                    },
+                                  ) : null,
                                 ),
                               );
                             }

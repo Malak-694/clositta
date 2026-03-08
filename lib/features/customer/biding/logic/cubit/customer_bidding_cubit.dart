@@ -155,4 +155,67 @@ class CustomerBiddingCubit extends Cubit<CustomerBiddingState> {
       );
     }
   }
+
+  // update bid
+  Future<void> updateBid({
+    required String bidId,
+    required String description,
+    String? imagePath,
+    double? price,
+    String? time,
+  }) async {
+    emit(const CustomerBiddingState.loading());
+    try {
+      final token = await _getToken();
+      if (token == null || token.isEmpty) {
+        emit(const CustomerBiddingState.fail("Authentication token not found"));
+        return;
+      }
+
+      final BidResponse response = await _repository.updateBid(
+        token: token,
+        bidId: bidId,
+        description: description,
+        imagePath: imagePath,
+        price: price,
+        time: time,
+      );
+
+      _loadedBids = false; // force refresh on next load
+      emit(CustomerBiddingState.success(response));
+    } catch (e) {
+      emit(
+        CustomerBiddingState.fail(
+          e.toString().contains("Exception:")
+              ? e.toString().split("Exception: ")[1]
+              : "Failed to update bid. Please try again.",
+        ),
+      );
+    }
+  }
+
+  // delete
+  Future<void> deleteBid({required String bidId}) async {
+    emit(const CustomerBiddingState.loading());
+    try {
+      final token = await _getToken();
+      if (token == null || token.isEmpty) {
+        emit(const CustomerBiddingState.fail("Authentication token not found"));
+        return;
+      }
+
+      await _repository.deleteBid(token: token, bidId: bidId);
+
+      _loadedBids = false; // force refresh
+      emit(const CustomerBiddingState.success("Bid deleted successfully"));
+    } catch (e) {
+      emit(
+        CustomerBiddingState.fail(
+          e.toString().contains("Exception:")
+              ? e.toString().split("Exception: ")[1]
+              : "Failed to delete bid. Please try again.",
+        ),
+      );
+    }
+  }
 }

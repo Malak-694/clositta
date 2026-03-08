@@ -86,11 +86,25 @@ class AppRouter {
             child: PostScreen(),
           ),
         );
+      // case RouteNames.upload_post:
+      //   return MaterialPageRoute(
+      //     builder: (_) => BlocProvider(
+      //       create: (_) => getIt<CustomerBiddingCubit>(),
+      //       child: FormScreen(),
+      //     ),
+      //   );
       case RouteNames.upload_post:
+        final args = settings.arguments as Map<String, dynamic>?;
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
             create: (_) => getIt<CustomerBiddingCubit>(),
-            child: FormScreen(),
+            child: FormScreen(
+              bidId: args?['bidId'],
+              initialDescription: args?['initialDescription'],
+              initialImageUrl: args?['initialImageUrl'],
+              initialPrice: args?['initialPrice'] as double?,
+              initialDuration: args?['initialDuration'],
+            ),
           ),
         );
       case RouteNames.view_bidding_tailor:

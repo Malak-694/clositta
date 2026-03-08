@@ -24,10 +24,10 @@ Widget buildPinterestCard(
 
 // ── POST CARD ────────────────────────────────────────────
 Widget _buildPostCard(
-  PinterestCardConfig config,
-  VoidCallback onTap, {
-  Color mainColor = AppColors.primery,
-}) {
+    PinterestCardConfig config,
+    VoidCallback onTap, {
+      Color mainColor = AppColors.primery,
+    }) {
   return InkWell(
     onTap: onTap,
     borderRadius: BorderRadius.circular(20),
@@ -40,32 +40,57 @@ Widget _buildPostCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Image
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-            child: config.imageUrl != null
-                ? Image.network(
-                    config.imageUrl!,
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    errorBuilder: (_, __, ___) => Container(
-                      height: 120,
-                      color: Colors.grey.shade100,
-                      child: const Center(
-                        child: Icon(
-                          Icons.image_not_supported,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                  )
-                : Container(
+          // ── Image + Status badge overlay ──────────────────
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                child: config.imageUrl != null
+                    ? Image.network(
+                  config.imageUrl!,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  errorBuilder: (_, __, ___) => Container(
                     height: 120,
                     color: Colors.grey.shade100,
                     child: const Center(
-                      child: Icon(Icons.image, color: Colors.grey),
+                      child: Icon(
+                        Icons.image_not_supported,
+                        color: Colors.grey,
+                      ),
                     ),
                   ),
+                )
+                    : Container(
+                  height: 120,
+                  color: Colors.grey.shade100,
+                  child: const Center(
+                    child: Icon(Icons.image, color: Colors.grey),
+                  ),
+                ),
+              ),
+
+              // Status badge — top right of photo
+              if (config.showStatus && config.status != null)
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 4.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: _statusColor(config.status!),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      config.status!,
+                      style: AppStyle.medBackground.copyWith(fontSize: 12.sp),
+                    ),
+                  ),
+                ),
+            ],
           ),
 
           Padding(
@@ -73,7 +98,7 @@ Widget _buildPostCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Name + Status badge
+                // ── Name + Edit icon ──────────────────────────
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -85,44 +110,36 @@ Widget _buildPostCard(
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    if (config.showStatus && config.status != null) ...[
-                      SizedBox(width: 6.w),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 10.w,
-                          vertical: 4.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: _statusColor(config.status!),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          config.status!,
-                          style: AppStyle.medBackground.copyWith(
-                            fontSize: 12.sp,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-
-                SizedBox(height: 6.h),
-
-                // Price + Bids count
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
                     if (config.showPrice && config.price != null)
                       Text(
                         '\$${config.price}',
                         style: AppStyle.medTernary.copyWith(fontSize: 14.sp),
                       ),
+                    SizedBox(width: 6.w,),
+                  ],
+                ),
+
+                // SizedBox(height: 6.h),
+
+                // ── Price + Date ──────────────────────────────
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
                     if (config.showDate && config.bidsDate != null)
                       Text(
-                        '${config.bidsDate} ',
+                        '${config.bidsDate}',
                         style: AppStyle.body6.copyWith(fontSize: 12.sp),
                       ),
+                    if (config.showEdit && config.onEdit != null) ...[
+                      Spacer(),
+                      IconButton(
+                        onPressed: config.onEdit,
+                        icon: Icon(Icons.edit, color: mainColor),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        iconSize: 25,
+                      ),
+                    ],
                   ],
                 ),
               ],

@@ -81,6 +81,23 @@ abstract class ApiService {
     @Part(name: "time") String? time,
     @Part(name: "image") required MultipartFile image,
   });
+  @PUT(ApiEndpoints.updateBid)
+  @MultiPart()
+  Future<BidResponse> updateBid(
+      @Header("Authorization") String token,
+      @Path("bidId") String bidId,
+      @Part(name: "requestDescription") String description,
+      @Part(name: "image") MultipartFile? image,
+      @Part(name: "price") String? price,
+      @Part(name: "time") String? time,
+      );
+
+  @DELETE(ApiEndpoints.updateBid)
+  Future<void> deleteBid(
+      @Header("Authorization") String token,
+      @Path("bidId") String bidId,
+      );
+
   @GET(ApiEndpoints.bestOffers)
   Future<List<OfferResponse>> getBestOffers(
     @Header("Authorization") String token,

@@ -21,7 +21,14 @@ class JoinBiddingScreen extends StatefulWidget {
   final String period;
   final String title;
   final String postId;
-  final prefs = getIt<SharedPrefHelper>();
+
+  // ✅ Edit mode args
+  final String? offerId;
+  final String? initialPrice;
+  final String? initialDays;
+  final String? initialMessage;
+
+  bool get isEditMode => offerId != null;
 
   JoinBiddingScreen({
     super.key,
@@ -30,6 +37,10 @@ class JoinBiddingScreen extends StatefulWidget {
     required this.period,
     required this.title,
     required this.postId,
+    this.offerId,
+    this.initialPrice,
+    this.initialDays,
+    this.initialMessage,
   });
 
   @override
@@ -38,9 +49,18 @@ class JoinBiddingScreen extends StatefulWidget {
 
 class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
   final prefs = getIt<SharedPrefHelper>();
-  final _descriptionController = TextEditingController();
-  final _priceController = TextEditingController();
-  final _durationController = TextEditingController();
+  late final TextEditingController _descriptionController;
+  late final TextEditingController _priceController;
+  late final TextEditingController _durationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _priceController = TextEditingController(text: widget.initialPrice ?? '');
+    _durationController = TextEditingController(text: widget.initialDays ?? '');
+    _descriptionController = TextEditingController(text: widget.initialMessage ?? '');
+
+  }
 
   @override
   void dispose() {
@@ -58,7 +78,9 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'your bidding has been created successfully!',
+                widget.isEditMode
+                    ? 'Offer updated successfully!'
+                    : 'Your bidding has been created successfully!',
                 style: AppStyle.body6,
               ),
               backgroundColor: AppColors.lightprimery,
@@ -70,7 +92,7 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'Something wrong happens, please try again later.',
+                'Something went wrong, please try again later.',
                 style: AppStyle.body6.copyWith(
                   foreground: Paint()
                     ..style = PaintingStyle.stroke
@@ -86,14 +108,26 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
       },
       builder: (context, state) {
         bool isLoading = state is Loading;
+
         return Scaffold(
           appBar: CustomAppBar(
-            title: "Join Bidding",
+            title: widget.isEditMode ? "Edit Offer" : "Join Bidding",
             leading: true,
             leadingIcon: Icons.arrow_back,
-            showCartIcon: true,
-            onCartTap: () =>
-                Navigator.pushNamed(context, RouteNames.tailor_cart_screen),
+            showCartIcon: false,
+            onCartTap: () {},
+            extraActions: widget.isEditMode
+                ? [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 12, 0),
+                child: IconButton(
+                  icon: Icon(Icons.delete_outline, color: AppColors.ternary ,size: 30,),
+                  onPressed: isLoading ? null : () => _confirmDeleteOffer(context,widget.offerId!),
+                  tooltip: 'Delete Post',
+                ),
+              ),
+            ]
+                : [],
           ),
           backgroundColor: AppColors.background,
           body: SingleChildScrollView(
@@ -106,7 +140,7 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
                 Text(widget.title, style: AppStyle.body6),
                 SizedBox(height: 10.h),
 
-                // Image upload box
+                // ── Image ────────────────────────────────────────
                 Container(
                   height: 270.h,
                   decoration: BoxDecoration(
@@ -119,9 +153,10 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
                 ),
 
                 SizedBox(height: 15.h),
+
+                // ── Price + Duration ─────────────────────────────
                 Row(
                   children: [
-                    // Price section
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,8 +187,6 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
                       ),
                     ),
                     SizedBox(width: 20.w),
-
-                    // Duration section
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,7 +200,6 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
                             ),
                             child: TextField(
                               enabled: !isLoading,
-
                               controller: _durationController,
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
@@ -186,9 +218,14 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
                     ),
                   ],
                 ),
+
                 SizedBox(height: 15.h),
-                // Description section
-                Text('Description (optionoal)', style: AppStyle.body6),
+
+                // ── Message ──────────────────────────────────────
+                Text(
+                  'Description (optional)',
+                  style: AppStyle.body6,
+                ),
                 SizedBox(height: 8.h),
                 Container(
                   decoration: BoxDecoration(
@@ -197,7 +234,6 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
                   ),
                   child: TextField(
                     enabled: !isLoading,
-
                     controller: _descriptionController,
                     maxLines: 3,
                     decoration: InputDecoration(
@@ -207,30 +243,55 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
                     ),
                   ),
                 ),
+
                 SizedBox(height: 25.h),
-                // Post for Bids button
-                SizedBox(
-                  width: double.infinity,
-                  height: 56.h,
-                  child: ElevatedButton(
-                    onPressed: () => _submitPost(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primery, // Use your color
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.r),
+
+                // ── Submit button ────────────────────────────────
+                if (isLoading)
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56.h,
+                    child: ElevatedButton(
+                      onPressed: null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primery.withOpacity(0.6),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
                       ),
-                      elevation: 2,
+                      child: SizedBox(
+                        height: 24.h,
+                        width: 24.w,
+                        child: const CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      ),
                     ),
-                    child: Text(
-                      'Post for Bids',
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.bold,
+                  )
+                else
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56.h,
+                    child: ElevatedButton(
+                      onPressed: () => _submitPost(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primery,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        elevation: 2,
+                      ),
+                      child: Text(
+                        widget.isEditMode ? 'Save Changes' : 'Post for Bids',
+                        style: TextStyle(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
-                ),
               ],
             ),
           ),
@@ -247,28 +308,72 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
   }
 
   void _submitPost(BuildContext context) {
-    // Validate and submit the post
-    print(_priceController.text);
-    print(_durationController.text);
     if (_priceController.text.isEmpty || _durationController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Please fill all fields'),
           backgroundColor: Colors.red,
         ),
       );
       return;
     }
+
     final cubit = context.read<BiddingTailorCubit>();
 
-    final request = JoinBiddingRequest(
-      price: int.tryParse(_priceController.text),
-      timeInDays: int.tryParse(_durationController.text),
-      message: _descriptionController.text,
+    if (widget.isEditMode) {
+      // ── EDIT ──
+      cubit.updateOffer(
+        offerId: widget.offerId!,
+        postId: widget.postId,
+        price: _priceController.text,
+        timeInDays: _durationController.text,
+        message: _descriptionController.text.isNotEmpty
+            ? _descriptionController.text
+            : null,
+      );
+    } else {
+      // ── JOIN ──
+      final request = JoinBiddingRequest(
+        price: int.tryParse(_priceController.text),
+        timeInDays: int.tryParse(_durationController.text),
+        message: _descriptionController.text,
+      );
+      cubit.joinBidding(postId: widget.postId, request: request);
+    }
+  }
+  void _confirmDeleteOffer(BuildContext context, String offerId) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            const Icon(Icons.warning_amber_rounded, color: Colors.red),
+            const SizedBox(width: 8),
+            Text('Delete Offer', style: AppStyle.body6),
+          ],
+        ),
+        content: Text(
+          'Are you sure you want to delete this offer? This action cannot be undone.',
+          style: AppStyle.body6.copyWith(fontWeight: FontWeight.normal),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text('Cancel', style: AppStyle.medSecondary),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              context.read<BiddingTailorCubit>().deleteOffer(
+                offerId: offerId,
+                postId: widget.postId,
+              );
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
     );
-
-    cubit.joinBidding(postId: widget.postId, request: request).then((_) {
-      // The cubit will emit states; listen via BlocListener in parent if needed
-    });
   }
 }

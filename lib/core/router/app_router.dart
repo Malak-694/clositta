@@ -153,23 +153,42 @@ class AppRouter {
             ),
           ),
         );
+      // case RouteNames.join_bidding:
+      //   final args = settings.arguments as Map<String, dynamic>? ?? {};
+      //   final urlImage = args['urlImage'] as String? ?? '';
+      //   final price = args['price'] as String? ?? '';
+      //   final period = args['period'] as String? ?? '';
+      //   final title = args['title'] as String? ?? '';
+      //   final postId = args['postId'] as String? ?? '';
+      //
+      //   return MaterialPageRoute(
+      //     builder: (_) => BlocProvider(
+      //       create: (_) => getIt<BiddingTailorCubit>(),
+      //       child: JoinBiddingScreen(
+      //         imageUrl: urlImage,
+      //         price: price,
+      //         period: period,
+      //         title: title,
+      //         postId: postId,
+      //       ),
+      //     ),
+      //   );
       case RouteNames.join_bidding:
         final args = settings.arguments as Map<String, dynamic>? ?? {};
-        final urlImage = args['urlImage'] as String? ?? '';
-        final price = args['price'] as String? ?? '';
-        final period = args['period'] as String? ?? '';
-        final title = args['title'] as String? ?? '';
-        final postId = args['postId'] as String? ?? '';
-
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
             create: (_) => getIt<BiddingTailorCubit>(),
             child: JoinBiddingScreen(
-              imageUrl: urlImage,
-              price: price,
-              period: period,
-              title: title,
-              postId: postId,
+              imageUrl: args['urlImage'] ?? '',
+              price: args['price'] ?? '',
+              period: args['period'] ?? '',
+              title: args['title'] ?? '',
+              postId: args['postId'] ?? '',
+              // ✅ these make it edit mode
+              offerId: args['offerId'],
+              initialPrice: args['initialPrice'],
+              initialDays: args['initialDays'],
+              initialMessage: args['initialMessage'],
             ),
           ),
         );

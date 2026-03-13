@@ -18,6 +18,7 @@ class CustomerBiddingCubit extends Cubit<CustomerBiddingState> {
 
   bool _loadedBids = false;
   bool _loadedBestOffers = false;
+  bool _loadedOffers =false ;
 
   // Get token from shared preferences
   Future<String?> _getToken() async {
@@ -49,6 +50,31 @@ class CustomerBiddingCubit extends Cubit<CustomerBiddingState> {
     }
   }
 
+
+  Future<void> getOffers(String postId) async {
+    if (_loadedOffers) return;
+    emit(const CustomerBiddingState.loading());
+    try {
+      final token = await _getToken();
+      if (token == null || token.isEmpty) {
+        emit(const CustomerBiddingState.fail("Authentication token not found"));
+        return;
+      }
+      print(token);
+      final List<OfferResponse> response =
+      await _repository.getOffers(token, postId);
+      emit(CustomerBiddingState.success(response));
+      _loadedOffers = true;
+    } catch (e) {
+      emit(CustomerBiddingState.fail(
+        e.toString().contains("Exception:")
+            ? e.toString().split("Exception: ")[1]
+            : "Failed to load offers. Please try again.",
+      ));
+    }
+  }
+
+
   // Get best offers for a specific bid
   Future<void> getBestOffers(String bidId) async {
     if (_loadedBestOffers) return;
@@ -76,8 +102,6 @@ class CustomerBiddingCubit extends Cubit<CustomerBiddingState> {
       );
     }
   }
-
-  // lib/features/customer/biding/logic/cubit/customer_bidding_cubit.dart
 
 // Update the createBid method:
   Future<void> createBid({
@@ -154,6 +178,16 @@ class CustomerBiddingCubit extends Cubit<CustomerBiddingState> {
         ),
       );
     }
+  }
+
+  Future<void> refreshBestOffers(String bidId) async {
+    _loadedBestOffers = false;
+    await getBestOffers(bidId);
+  }
+
+  Future<void> refreshOffers(String postId) async {
+    _loadedOffers = false;
+    await getOffers(postId);
   }
 
   // update bid

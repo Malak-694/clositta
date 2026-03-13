@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../../core/widgets/custom_category_selector.dart';
+
 class DetailesScreen extends StatefulWidget {
   final String bidId;
   final String urlImage;
@@ -27,9 +29,13 @@ class DetailesScreen extends StatefulWidget {
   @override
   State<DetailesScreen> createState() => _DetailesScreenState();
 }
-
 class _DetailesScreenState extends State<DetailesScreen> {
   late bool isBidOpen;
+
+  String _filterType = 'Best 3';
+  String _sortType = 'Price';
+  final List<String> _filterCategories = ['Best 3', 'All'];
+  final List<String> _sortCategories = ['Price', 'Time'];
 
   @override
   void initState() {
@@ -38,6 +44,33 @@ class _DetailesScreenState extends State<DetailesScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CustomerBiddingCubit>().getBestOffers(widget.bidId);
     });
+  }
+
+  void _onFilterChanged(String filter) {
+    if (filter == _filterType) return;
+    setState(() => _filterType = filter);
+
+    final cubit = context.read<CustomerBiddingCubit>();
+    if (filter == 'Best 3') {
+      cubit.refreshBestOffers(widget.bidId);
+    } else {
+      cubit.refreshOffers(widget.bidId);
+    }
+  }
+
+  List<OfferResponse> _applySort(List<OfferResponse> offers) {
+    final result = List<OfferResponse>.from(offers);
+    result.sort((a, b) {
+      switch (_sortType) {
+        case 'Price':
+          return (a.price ?? 0).compareTo(b.price ?? 0);
+        case 'Time':
+          return (a.timeInDays ?? 0).compareTo(b.timeInDays ?? 0);
+        default:
+          return 0;
+      }
+    });
+    return result;
   }
 
   void _handleAcceptOffer(BuildContext context, String offerId) {
@@ -80,7 +113,7 @@ class _DetailesScreenState extends State<DetailesScreen> {
         backgroundColor: AppColors.background,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(15.0),
+        padding: const EdgeInsets.fromLTRB(15, 0, 15,15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -122,50 +155,71 @@ class _DetailesScreenState extends State<DetailesScreen> {
             ),
             SizedBox(height: 15.h),
 
-            // Description
             Text(widget.description, style: AppStyle.medLight),
-            SizedBox(height: 15.h),
+            SizedBox(height: 10.h),
 
-            // Bid Status Badge
+            // ── Status Badge ─────────────────────────────────
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-                  decoration: BoxDecoration(
-                    color: isBidOpen
-                        ? AppColors.lightprimery
-                        : AppColors.lightternary.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(20.r),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        isBidOpen ? Icons.lock_open : Icons.lock,
-                        size: 14.sp,
-                        color: isBidOpen
-                            ? AppColors.primery
-                            : AppColors.ternary,
+                // Container(
+                //   padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                //   decoration: BoxDecoration(
+                //     color: isBidOpen
+                //         ? AppColors.lightprimery
+                //         : AppColors.lightternary.withOpacity(0.2),
+                //     borderRadius: BorderRadius.circular(20.r),
+                //   ),
+                //   child: Row(
+                //     mainAxisSize: MainAxisSize.min,
+                //     children: [
+                //       Icon(
+                //         isBidOpen ? Icons.lock_open : Icons.lock,
+                //         size: 14.sp,
+                //         color: isBidOpen ? AppColors.primery : AppColors.ternary,
+                //       ),
+                //       SizedBox(width: 4.w),
+                //       Text(
+                //         isBidOpen ? "Open for offers" : "Closed",
+                //         style: TextStyle(
+                //           fontSize: 12.sp,
+                //           fontWeight: FontWeight.w600,
+                //           color: isBidOpen ? AppColors.primery : AppColors.ternary,
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                // Spacer(),
+                if (isBidOpen) ...[
+                      Text('Show', style: AppStyle.body6),
+                      SizedBox(width: 6.w),
+                      CustomCategorySelector(
+                        categories: _filterCategories,
+                        selectedCategory: _filterType,
+                        onCategorySelected: _onFilterChanged,
+                        selectedColor: AppColors.primery,
+                        unselectedColor: AppColors.lightprimery,
+                        unselectedTextColor: AppColors.darkprimery,
                       ),
-                      SizedBox(width: 4.w),
-                      Text(
-                        isBidOpen ? "Open for offers" : "Closed",
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w600,
-                          color: isBidOpen
-                              ? AppColors.primery
-                              : AppColors.ternary,
-                        ),
+                      Spacer(),
+                      Text('Sort by', style: AppStyle.body6),
+                      SizedBox(width: 6.w),
+                      CustomCategorySelector(
+                        categories: _sortCategories,
+                        selectedCategory: _sortType,
+                        onCategorySelected: (val) =>
+                            setState(() => _sortType = val),
+                        selectedColor: AppColors.primery,
+                        unselectedColor: AppColors.lightprimery,
+                        unselectedTextColor: AppColors.darkprimery,
                       ),
-                    ],
-                  ),
-                ),
+
+                  SizedBox(height: 10.h),
+                ],
               ],
             ),
             SizedBox(height: 15.h),
-
-            // Offers List
             Expanded(
               child: BlocConsumer<CustomerBiddingCubit, CustomerBiddingState>(
                 listener: (context, state) {
@@ -181,7 +235,6 @@ class _DetailesScreenState extends State<DetailesScreen> {
                       );
                     },
                     success: (data) {
-                      // If accept was successful (data is String message)
                       if (data is String) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -189,12 +242,10 @@ class _DetailesScreenState extends State<DetailesScreen> {
                             backgroundColor: Colors.green,
                           ),
                         );
-                        // update badge to closed
                         setState(() => isBidOpen = false);
-                        // reload offers to show only accepted
                         context
                             .read<CustomerBiddingCubit>()
-                            .getBestOffers(widget.bidId);
+                            .refreshBestOffers(widget.bidId);
                       }
                     },
                   );
@@ -207,7 +258,7 @@ class _DetailesScreenState extends State<DetailesScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text('Failed to retrieve the bids'),
+                          const Text('Failed to retrieve the bids'),
                           const SizedBox(height: 8),
                           CustomElevatedButton(
                             onPressed: () => context
@@ -220,12 +271,11 @@ class _DetailesScreenState extends State<DetailesScreen> {
                     ),
                     success: (offers) {
                       if (offers is! List<OfferResponse>) {
-                        return Center(child: Text('Unexpected data'));
+                        return const Center(child: Text('Unexpected data'));
                       }
 
-                      // if closed → only accepted offer, if open → all
                       final displayedOffers = isBidOpen
-                          ? offers
+                          ? _applySort(offers)
                           : offers
                           .where((o) => o.status == "accepted")
                           .toList();
@@ -240,7 +290,7 @@ class _DetailesScreenState extends State<DetailesScreen> {
                       }
 
                       return ListView.builder(
-                        padding: EdgeInsets.all(2.0),
+                        padding: const EdgeInsets.all(2.0),
                         itemCount: displayedOffers.length,
                         itemBuilder: (context, index) {
                           final offer = displayedOffers[index];
@@ -254,10 +304,8 @@ class _DetailesScreenState extends State<DetailesScreen> {
                               num_work: 0,
                               comment: offer.message,
                               showSelectButton: isBidOpen,
-                              onAccept: () => _handleAcceptOffer(
-                                context,
-                                offer.id,
-                              ),
+                              onAccept: () =>
+                                  _handleAcceptOffer(context, offer.id),
                             ),
                           );
                         },

@@ -40,57 +40,32 @@ Widget _buildPostCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Image + Status badge overlay ──────────────────
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-                child: config.imageUrl != null
-                    ? Image.network(
-                  config.imageUrl!,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  errorBuilder: (_, __, ___) => Container(
-                    height: 120,
-                    color: Colors.grey.shade100,
-                    child: const Center(
-                      child: Icon(
-                        Icons.image_not_supported,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                )
-                    : Container(
-                  height: 120,
-                  color: Colors.grey.shade100,
-                  child: const Center(
-                    child: Icon(Icons.image, color: Colors.grey),
+          // ── Image ─────────────────────────────────────────
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            child: config.imageUrl != null
+                ? Image.network(
+              config.imageUrl!,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              errorBuilder: (_, __, ___) => Container(
+                height: 120,
+                color: Colors.grey.shade100,
+                child: const Center(
+                  child: Icon(
+                    Icons.image_not_supported,
+                    color: Colors.grey,
                   ),
                 ),
               ),
-
-              // Status badge — top right of photo
-              if (config.showStatus && config.status != null)
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 10.w,
-                      vertical: 4.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: _statusColor(config.status!),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      config.status!,
-                      style: AppStyle.medBackground.copyWith(fontSize: 12.sp),
-                    ),
-                  ),
-                ),
-            ],
+            )
+                : Container(
+              height: 120,
+              color: Colors.grey.shade100,
+              child: const Center(
+                child: Icon(Icons.image, color: Colors.grey),
+              ),
+            ),
           ),
 
           Padding(
@@ -98,9 +73,8 @@ Widget _buildPostCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ── Name + Edit icon ──────────────────────────
+                // ── Name + Status badge in same row ───────────
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
                       child: Text(
@@ -110,28 +84,38 @@ Widget _buildPostCard(
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    if (config.showPrice && config.price != null)
-                      Text(
-                        '\$${config.price}',
-                        style: AppStyle.medTernary.copyWith(fontSize: 14.sp),
+                    if (config.showStatus && config.status != null) ...[
+                      SizedBox(width: 6.w),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10.w,
+                          vertical: 6.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _statusColor(config.status!),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          config.status!,
+                          style: AppStyle.smallBackground.copyWith(fontWeight: FontWeight.bold)
+                        ),
                       ),
-                    SizedBox(width: 6.w,),
+                    ],
                   ],
                 ),
 
                 // SizedBox(height: 6.h),
 
-                // ── Price + Date ──────────────────────────────
+                // ── Price + Edit button in same row ───────────
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    if (config.showDate && config.bidsDate != null)
+                    if (config.showPrice && config.price != null)
                       Text(
-                        '${config.bidsDate}',
-                        style: AppStyle.body6.copyWith(fontSize: 12.sp),
+                        '\$${config.price}',
+                        style: AppStyle.medTernary.copyWith(fontSize: 17.sp),
                       ),
-                    if (config.showEdit && config.onEdit != null) ...[
-                      Spacer(),
+                    const Spacer(),
+                    if (config.showEdit && config.onEdit != null)
                       IconButton(
                         onPressed: config.onEdit,
                         icon: Icon(Icons.edit, color: mainColor),
@@ -139,7 +123,6 @@ Widget _buildPostCard(
                         constraints: const BoxConstraints(),
                         iconSize: 25,
                       ),
-                    ],
                   ],
                 ),
               ],

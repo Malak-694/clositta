@@ -63,6 +63,13 @@ abstract class ApiService {
     @Header("Authorization") String token,
     @Path("id") String id,
   );
+
+  @GET(ApiEndpoints.offers)
+  Future<List<OfferResponse>> viewOffersCustomer(
+      @Header("Authorization") String token,
+      @Path("id") String id,
+      );
+
   @POST(ApiEndpoints.offers)
   Future<JoinBiddingResponse> joinBidding(
     @Header("Authorization") String token,
@@ -109,6 +116,18 @@ abstract class ApiService {
       @Path("offerId") String offerId,
       );
 
+  @DELETE(ApiEndpoints.editeOffer)
+  Future<void> deleteOffer(
+      @Header("Authorization") String token,
+      @Path("offerId") String offerId,
+      );
+
+  @PUT(ApiEndpoints.editeOffer)
+  Future<void> updateOffer({
+    @Header("Authorization") required String token,
+    @Path("offerId") required String offerId,
+    @Body() required Map<String, dynamic> body,
+  });
   //seller-products
   @GET(ApiEndpoints.sellerProducts)
   Future<List<ProductModel>> getProductsSeller(

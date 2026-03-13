@@ -61,8 +61,6 @@ class _PostScreenState extends State<PostScreen> {
       appBar: CustomAppBar(
         title: "Your Requests",
         style: AppStyle.medPrimery,
-        leadingIcon: Icons.arrow_back,
-        leading: true,
         showCartIcon: true,
         onCartTap: () =>
             Navigator.pushNamed(context, RouteNames.customer_cart_screen),

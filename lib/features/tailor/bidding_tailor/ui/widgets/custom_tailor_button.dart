@@ -1,8 +1,9 @@
+
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
 import 'package:flutter/material.dart';
 
-class CustomButton extends StatelessWidget {
+class CustomTailorButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
   final IconData? icon;
@@ -12,7 +13,7 @@ class CustomButton extends StatelessWidget {
   final double width;
   final double height;
 
-  const CustomButton({
+  const CustomTailorButton({
     super.key,
     required this.text,
     required this.onPressed,
@@ -20,8 +21,8 @@ class CustomButton extends StatelessWidget {
     this.iconUrl,
     required this.backgroundColor,
     required this.foregroundColor,
-    this.width = 112,
-    this.height = 39,
+    this.width = 120,
+    this.height = 35,
   });
 
   @override
@@ -51,7 +52,7 @@ class CustomButton extends StatelessWidget {
                 ? BorderSide(width: 1, color: AppColors.light)
                 : BorderSide.none,
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
         ),
       ),
     );

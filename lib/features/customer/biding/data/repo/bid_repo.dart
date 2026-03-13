@@ -44,8 +44,16 @@ class BiddingCustomerRepo {
   // }
 
 
+  Future<List<OfferResponse>> getOffers(String token, String id) async {
+    try {
+      final response = await apiService.viewOffersCustomer("Bearer $token", id);
+      return response;
+    } catch (e) {
+      throw Exception("Failed to fetch offers: $e");
+    }
+  }
 
-  // ✅ GET /api/offers/:bidId/best → getBestOffers
+  //  getBestOffers
   Future<List<OfferResponse>> getBestOffers(String token, String bidId) async {
     try {
       final response = await apiService.getBestOffers("Bearer $token", bidId);

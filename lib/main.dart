@@ -39,7 +39,7 @@ void main() async {
   final role = await prefs.getSecureData(SharedPrefKey.role);
   String initialRoute;
   
-  if (role != "tailor") {
+  if (role != "customer") {
     initialRoute = RouteNames.login;
   }else{
   initialRoute = RouteNames.customer_products_screen;}

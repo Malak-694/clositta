@@ -84,7 +84,7 @@ class PostScreenTailor extends StatelessWidget {
                                 itemBuilder: (context, index) {
                                   final post = posts[index];
                                   return GestureDetector(
-                                    onTap: () => post.status == "open"
+                                    onTap: () => post.status != "closed"
                                         ? Navigator.pushNamed(
                                             context,
                                             RouteNames.view_offers_tailor,
@@ -131,12 +131,11 @@ class PostScreenTailor extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: FutureBuilder<String?>(
-        future: prefs.getSecureData(SharedPrefKey.role),
-        builder: (context, snapshot) {
-          final role = snapshot.data ?? "Customer";
-          return FloatingNavBar(userRole: role, selectedIndex: 0);
-        },
+      bottomNavigationBar: FloatingNavBar(
+        userRole: 'tailor',
+        selectedIndex: 0,
+        focused: AppColors.secondary,
+        notSelected: AppColors.darksecondary,
       ),
     );
   }

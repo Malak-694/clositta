@@ -12,7 +12,7 @@ import '../widgets/seller_product_screen_body.dart';
 class SellerProductsScreen extends StatelessWidget {
   final prefs = getIt<SharedPrefHelper>();
 
-   SellerProductsScreen({super.key});
+  SellerProductsScreen({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,8 +31,8 @@ class SellerProductsScreen extends StatelessWidget {
       bottomNavigationBar: FloatingNavBar(
         userRole: 'seller',
         selectedIndex: 0,
-        focused: AppColors.lightternary,
-        notSelected: AppColors.primery,
+        focused: AppColors.ternary,
+        notSelected: AppColors.darkternary,
       ),
     );
   }

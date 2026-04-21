@@ -15,10 +15,10 @@ String getInitialRoute(String? token, String? role) {
 
   switch (role) {
     case 'customer':
-      return RouteNames.customer_cart_screen;
+      return RouteNames.login;
 
     case 'tailor':
-      return RouteNames.view_bidding_tailor;
+      return RouteNames.tailor_cart_screen;
 
     case 'clothes_seller':
     case 'material_seller':

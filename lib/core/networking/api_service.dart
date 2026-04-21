@@ -4,6 +4,8 @@ import 'package:chicora/features/auth/data/model/login_model.dart';
 import 'package:chicora/features/auth/data/model/sign_up_model.dart';
 import 'package:chicora/features/customer/closet/data/models/closet_item_response_model.dart';
 import 'package:chicora/features/ecommerce_multi/data/models/cart_models/delete_cart_response_model.dart';
+import 'package:chicora/features/ecommerce_multi/data/models/order_models/order_request_model.dart';
+import 'package:chicora/features/ecommerce_multi/data/models/order_models/order_response_model.dart';
 import 'package:chicora/features/ecommerce_multi/data/models/product_models/product_response_model.dart';
 import 'package:chicora/features/ecommerce_multi/data/models/rating%20models/rating_request_model.dart';
 import 'package:chicora/features/seller/products/data/models/product_model_response.dart';
@@ -19,6 +21,7 @@ import '../../features/customer/biding/data/models/offer_model.dart';
 
 import '../../features/ecommerce_multi/data/models/cart_models/cart_request_model.dart';
 import '../../features/ecommerce_multi/data/models/cart_models/cart_response_model.dart';
+import '../../features/ecommerce_multi/data/models/order_models/cancel_order_request_model.dart';
 import '../../features/ecommerce_multi/data/models/rating models/rating_response_model.dart';
 import '../../features/profile/data/model/profile_model.dart';
 import '../../features/tailor/portfolio/data/models/portfolio_tailor_response_model.dart';
@@ -280,4 +283,28 @@ abstract class ApiService {
     @Part(name: "image") MultipartFile? image, // ✅ optional
   );
 
+  //checkout
+  @POST(ApiEndpoints.placeOrder)
+  Future<MessageModel> placeOrder(
+    @Header("Authorization") String token,
+    @Body() OrderRequestModel body,
+  );
+
+  @PUT(ApiEndpoints.cancelOrder)
+  Future<MessageModel> cancelOrder(
+    @Header("Authorization") String token,
+    @Path("orderId") String orderId,
+    @Body() CancelOrderRequestModel body,
+  );
+
+  @GET(ApiEndpoints.getMyOrders)
+  Future<List<OrderDataModel>> getMyOrders(
+    @Header("Authorization") String token,
+  );
+
+  @GET(ApiEndpoints.getOrderById)
+  Future<OrderDataModel> getOrderById(
+    @Header("Authorization") String token,
+    @Path("orderId") String orderId,
+  );
 }

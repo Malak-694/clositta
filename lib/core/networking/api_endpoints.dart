@@ -36,4 +36,9 @@ class ApiEndpoints {
   //ecommerce-cart
   static const String cart = '/api/cart';
   static const String updateCartItems = '/api/cart/item/{productId}';
+  //ecommerce-checkout
+  static const String placeOrder = '/api/orders';
+  static const String cancelOrder = '/api/orders/{orderId}/cancel';
+  static const String getOrderById = '/api/orders/{orderId}';
+  static const String getMyOrders = '/api/orders/my';
 }

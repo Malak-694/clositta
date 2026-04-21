@@ -6,6 +6,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'core/router/app_router.dart';
 import 'core/router/route_names.dart';
 
+final GlobalKey<NavigatorState> appNavigatorKey = GlobalKey<NavigatorState>();
+
 String getInitialRoute(String? token, String? role) {
   if (token == null || token.isEmpty) {
     return RouteNames.login;
@@ -13,7 +15,7 @@ String getInitialRoute(String? token, String? role) {
 
   switch (role) {
     case 'customer':
-      return RouteNames.customer_products_screen;
+      return RouteNames.customer_cart_screen;
 
     case 'tailor':
       return RouteNames.view_bidding_tailor;
@@ -37,13 +39,7 @@ void main() async {
   final prefs = getIt<SharedPrefHelper>();
   final token = await prefs.getSecureData(SharedPrefKey.token);
   final role = await prefs.getSecureData(SharedPrefKey.role);
-  String initialRoute;
-
-  if (role != "customer") {
-    initialRoute = RouteNames.login;
-  } else {
-    initialRoute = RouteNames.customer_products_screen;
-  }
+  final initialRoute = getInitialRoute(token, role);
 
   print(role);
   print(initialRoute);
@@ -63,6 +59,7 @@ class ChicoraApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp(
           title: 'Chicora',
+          navigatorKey: appNavigatorKey,
           initialRoute: initialRoute,
           onGenerateRoute: AppRouter.generateRoute,
           debugShowCheckedModeBanner: false,

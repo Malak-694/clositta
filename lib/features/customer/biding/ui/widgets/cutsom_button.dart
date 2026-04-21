@@ -1,6 +1,7 @@
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
@@ -20,16 +21,16 @@ class CustomButton extends StatelessWidget {
     this.iconUrl,
     required this.backgroundColor,
     required this.foregroundColor,
-    this.width = 112,
-    this.height = 39,
+    this.width = 165,
+    this.height = 45,
   });
 
   @override
   Widget build(BuildContext context) {
     // If we have an icon, use ElevatedButton.icon
     return SizedBox(
-      width: width,
-      height: height,
+      width: width.w,
+      height: height.h,
       child: ElevatedButton.icon(
         onPressed: onPressed,
         icon: Icon(icon, size: 20),

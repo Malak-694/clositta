@@ -15,6 +15,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.showCartIcon,
     this.cartItemCount = 0,
     required this.onCartTap,
+    this.extraActions = const [], // ✅ new
   });
 
   final String title;
@@ -24,6 +25,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool showCartIcon;
   final int cartItemCount;
   final VoidCallback? onCartTap;
+  final List<Widget> extraActions; // ✅ new
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -53,6 +55,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
       actions: [
+        // ✅ extra actions (delete icon etc.)
+        ...extraActions,
+
         if (showCartIcon)
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
@@ -66,7 +71,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                   onPressed: onCartTap,
                 ),
-                // Badge — only shows when cartItemCount > 0
                 if (cartItemCount > 0)
                   Positioned(
                     top: 6,
@@ -113,6 +117,6 @@ TextStyle _styleForRole(String role) {
     case 'admin':
       return AppStyle.medPrimery.copyWith(color: Colors.red);
     default:
-      return AppStyle.medPrimery; // default style
+      return AppStyle.medPrimery;
   }
 }

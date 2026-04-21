@@ -16,17 +16,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:chicora/features/tailor/bidding_tailor/logic/cubit/bidding_tailor_cubit.dart';
 import 'package:chicora/features/tailor/bidding_tailor/logic/cubit/bidding_tailor_state.dart';
 
-class DetailesScreenTailor extends StatelessWidget {
+class DetailesScreenTailor extends StatefulWidget {
   final String urlImage;
   final String describtion;
-  final int bids_num = 0;
   final String price;
   final String period;
-  final String status = "pending";
-  final prefs = getIt<SharedPrefHelper>();
   final String postId;
 
-  DetailesScreenTailor({
+  const DetailesScreenTailor({
     super.key,
     required this.urlImage,
     required this.describtion,
@@ -34,6 +31,75 @@ class DetailesScreenTailor extends StatelessWidget {
     required this.period,
     required this.postId,
   });
+
+  @override
+  State<DetailesScreenTailor> createState() => _DetailesScreenTailorState();
+}
+
+class _DetailesScreenTailorState extends State<DetailesScreenTailor> {
+  final prefs = getIt<SharedPrefHelper>();
+  String? _myTailorId;
+  // ✅ tracks my own offer if exists
+  BidModelReponse? _myOffer;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMyId();
+  }
+
+  Future<void> _loadMyId() async {
+    final id = await prefs.getSecureData(SharedPrefKey.id);
+    if (mounted) setState(() => _myTailorId = id);
+
+  }
+
+  // ✅ Finds my offer from the loaded list
+  void _updateMyOffer(List<BidModelReponse> offers) {
+    final found = offers.where((o) => o.tailor.id == _myTailorId).firstOrNull;
+    if (_myOffer?.id != found?.id) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) setState(() => _myOffer = found);
+      });
+    }
+
+  }
+
+  void _confirmDeleteOffer(BuildContext context, String offerId) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            const Icon(Icons.warning_amber_rounded, color: Colors.red),
+            const SizedBox(width: 8),
+            Text('Delete Offer', style: AppStyle.body6),
+          ],
+        ),
+        content: Text(
+          'Are you sure you want to delete this offer? This action cannot be undone.',
+          style: AppStyle.body6.copyWith(fontWeight: FontWeight.normal),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text('Cancel', style: AppStyle.medSecondary),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              context.read<BiddingTailorCubit>().deleteOffer(
+                offerId: offerId,
+                postId: widget.postId,
+              );
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,107 +120,135 @@ class DetailesScreenTailor extends StatelessWidget {
           children: [
             Text("Tailor bids", style: AppStyle.boldSecondary),
             SizedBox(height: 5.h),
+            // ── Post image ───────────────────────────────────
             Container(
               height: 275.h,
               width: 400.w,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20.sp),
                 image: DecorationImage(
-                  image: NetworkImage(urlImage),
+                  image: NetworkImage(widget.urlImage),
                   fit: BoxFit.cover,
                 ),
               ),
             ),
-            Text(describtion, style: AppStyle.medLight),
-            SizedBox(height: 15.h),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(2.0),
-                child: Builder(
-                  builder: (context) {
-                    // If a postId is provided, trigger loading offers
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      if (postId.isNotEmpty) {
-                        context.read<BiddingTailorCubit>().getOffers(postId);
-                      }
-                    });
 
-                    return BlocBuilder<BiddingTailorCubit, BiddingTailorState>(
-                      builder: (context, state) {
-                        return state.when(
-                          initial: () => const CircularProgressIndicator(
-                            color: AppColors.primery,
+            Text(widget.describtion, style: AppStyle.medLight),
+            SizedBox(height: 15.h),
+
+            // ── Offers list ──────────────────────────────────
+            Expanded(
+              child: Builder(
+                builder: (context) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (widget.postId.isNotEmpty) {
+                      context.read<BiddingTailorCubit>().getOffers(widget.postId);
+                    }
+                  });
+
+                  return BlocBuilder<BiddingTailorCubit, BiddingTailorState>(
+                    builder: (context, state) {
+                      return state.when(
+                        initial: () => const CircularProgressIndicator(
+                          color: AppColors.secondary,
+                          strokeWidth: 5.0,
+                        ),
+                        loading: () => const Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.secondary,
                             strokeWidth: 5.0,
                           ),
-                          loading: () => const Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.primery,
-                              strokeWidth: 5.0,
-                            ),
-                          ),
-                          fail: (msg) => Center(child: Text(msg)),
-                          success: (data) {
-                            if (data is List<BidModelReponse>) {
-                              final offers = data;
-                              if (offers.isEmpty) {
-                                return Center(child: Text('No offers yet'));
-                              }
-                              return ListView.separated(
-                                itemCount: offers.length,
-                                separatorBuilder: (_, __) =>
-                                    const SizedBox(height: 10),
-                                itemBuilder: (context, index) {
-                                  final offer = offers[index];
-                                  return BidItemTailor(
-                                    tailorName: offer.tailor.name,
-                                    duration: offer.timeInDays,
-                                    price: offer.price,
-                                    comment: offer.message,
-                                  );
-                                },
-                              );
+                        ),
+                        fail: (msg) => Center(child: Text(msg)),
+                        success: (data) {
+                          if (data is List<BidModelReponse>) {
+                            // ✅ update my offer reference
+                            _updateMyOffer(data);
+
+                            if (data.isEmpty) {
+                              return const Center(child: Text('No offers yet'));
                             }
 
-                            return Center(child: Text('Unexpected data'));
-                          },
-                        );
-                      },
-                    );
-                  },
-                ),
+                            return ListView.separated(
+                              itemCount: data.length,
+                              separatorBuilder: (_, __) =>
+                                  SizedBox(height: 10.h),
+                              itemBuilder: (context, index) {
+                                final offer = data[index];
+                                final isMyOffer =
+                                    offer.tailor.id == _myTailorId;
+
+                                return BidItemTailor(
+                                  tailorName: offer.tailor.name,
+                                  duration: offer.timeInDays,
+                                  price: offer.price,
+                                  comment: offer.message,
+                                  isMyOffer: isMyOffer,
+                                  onEdit: ()=> Navigator.pushNamed(
+                                    context,
+                                    RouteNames.join_bidding,
+                                    arguments: {
+                                      'urlImage': widget.urlImage,
+                                      'price': widget.price,
+                                      'period': widget.period,
+                                      'title': widget.describtion,
+                                      'postId': widget.postId,
+                                      'offerId': offer.id,
+                                      'initialPrice': offer.price?.toString(),
+                                      'initialDays': offer.timeInDays?.toString(),
+                                      'initialMessage': offer.message ?? '',
+                                    },
+                                  ).then((_) {
+                                    // ✅ refreshOffers resets flag then reloads fresh data
+                                    if (context.mounted) {
+                                      context.read<BiddingTailorCubit>().refreshOffers(widget.postId);
+                                    }
+                                  }),
+                                  onDelete: () =>
+                                      _confirmDeleteOffer(context, offer.id),
+                                );
+                              },
+                            );
+                          }
+                          return const Center(child: Text('Unexpected data'));
+                        },
+                      );
+                    },
+                  );
+                },
               ),
             ),
-            Center(
-              child: status == "closed"
-                  ? Container()
-                  : CustomElevatedButton(
-                      value: 'join Bidding',
-                      onPressed: () {
-                        Navigator.pushNamed(
-                          context,
-                          RouteNames.join_bidding,
-                          arguments: {
-                            'urlImage': urlImage,
-                            'price': price,
-                            'period': period,
-                            'title': describtion,
-                            'postId': postId,
-                          },
-                        );
-                      },
-                      height: 39,
-                      width: 260,
-                    ),
-            ),
+
+            // ── Join / Edit my offer button ──────────────────
+            if (_myOffer == null)
+              Center(
+                child: CustomElevatedButton(
+                  value: 'Join Bidding',
+                  height: 50.h,
+                  width: 350.w,
+                  onPressed: () => Navigator.pushNamed(
+                    context,
+                    RouteNames.join_bidding,
+                    arguments: {
+                      'urlImage': widget.urlImage,
+                      'price': widget.price,
+                      'period': widget.period,
+                      'title': widget.describtion,
+                      'postId': widget.postId,
+                    },
+                  ),
+                ),
+              ),
+
+            SizedBox(height: 10.h),
           ],
         ),
       ),
-      bottomNavigationBar: FutureBuilder<String?>(
-        future: prefs.getSecureData(SharedPrefKey.role),
-        builder: (context, snapshot) {
-          final role = snapshot.data ?? "Customer";
-          return FloatingNavBar(userRole: role, selectedIndex: 0);
-        },
+      bottomNavigationBar: FloatingNavBar(
+        userRole: 'tailor',
+        selectedIndex: 0,
+        focused: AppColors.secondary,
+        notSelected: AppColors.darksecondary,
       ),
     );
   }

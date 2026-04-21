@@ -16,10 +16,20 @@ import '../../../../../core/router/route_names.dart';
 import '../../../../../core/widgets/custom_app_bar.dart';
 import '../../../../../core/widgets/pinterest_grid.dart';
 import '../../../../../core/widgets/pinterest_grid_config.dart';
+import '../../../../auth/ui/widgets/drop_down_type.dart';
 
-class PostScreen extends StatelessWidget {
-  PostScreen({super.key});
+class PostScreen extends StatefulWidget {
+  const PostScreen({super.key});
+
+  @override
+  State<PostScreen> createState() => _PostScreenState();
+}
+
+class _PostScreenState extends State<PostScreen> {
   final prefs = getIt<SharedPrefHelper>();
+
+  final List<String> _categories = ["All", "Open", "Updated", "Closed"];
+  String _selectedCategory = "All";
 
   String _formatDate(dynamic dateValue) {
     try {
@@ -31,11 +41,17 @@ class PostScreen extends StatelessWidget {
       } else {
         return 'N/A';
       }
-      // Return formatted date: 2026-02-17
       return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}';
     } catch (e) {
       return 'N/A';
     }
+  }
+
+  List<BidResponse> _filterBids(List<BidResponse> bids) {
+    if (_selectedCategory == "All") return bids;
+    return bids
+        .where((b) => b.status.toLowerCase() == _selectedCategory.toLowerCase())
+        .toList();
   }
 
   @override
@@ -45,8 +61,6 @@ class PostScreen extends StatelessWidget {
       appBar: CustomAppBar(
         title: "Your Requests",
         style: AppStyle.medPrimery,
-        leadingIcon: Icons.arrow_back,
-        leading: true,
         showCartIcon: true,
         onCartTap: () =>
             Navigator.pushNamed(context, RouteNames.customer_cart_screen),
@@ -58,13 +72,27 @@ class PostScreen extends StatelessWidget {
           padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
           child: Column(
             children: [
+              // ── Top Row: Dropdown + New Request ──────────────────
               Row(
                 children: [
-                  Spacer(),
+                  CustomDropdown(
+                    value: _selectedCategory,
+                    hintText: "Filter",
+                    items: _categories,
+                    width: 140,
+                    vPadding: 8,
+                    style: AppStyle.medPrimery,
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() => _selectedCategory = value);
+                      }
+                    },
+                  ),
+                  const Spacer(),
                   CustomElevatedButton(
-                    value: "+ New Request",
+                    value: "+ New Post",
                     style: AppStyle.medBackground,
-                    height: 25.h,
+                    height: 50.h,
                     width: 200.w,
                     onPressed: () {
                       Navigator.pushNamed(context, "upload_post");
@@ -73,16 +101,15 @@ class PostScreen extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 10.h),
+
+              // ── Bids Grid ────────────────────────────────────────
               Expanded(
                 child: Builder(
                   builder: (context) {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       context.read<CustomerBiddingCubit>().getMyBids();
                     });
-                    return BlocBuilder<
-                      CustomerBiddingCubit,
-                      CustomerBiddingState
-                    >(
+                    return BlocBuilder<CustomerBiddingCubit, CustomerBiddingState>(
                       builder: (context, state) {
                         return state.when(
                           initial: () => Center(child: circleIndicator()),
@@ -91,7 +118,7 @@ class PostScreen extends StatelessWidget {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text('failed to retrive the posts'),
+                                Text('Failed to retrieve the posts'),
                                 const SizedBox(height: 8),
                                 CustomElevatedButton(
                                   onPressed: () => context
@@ -104,14 +131,21 @@ class PostScreen extends StatelessWidget {
                           ),
                           success: (data) {
                             if (data is List<BidResponse>) {
-                              final bids = data;
-                              if (bids.isEmpty) {
-                                return const Center(
-                                  child: Text('No posts available'),
+                              final filteredBids = _filterBids(data);
+
+                              if (filteredBids.isEmpty) {
+                                return Center(
+                                  child: Text(
+                                    _selectedCategory == "All"
+                                        ? 'No posts available'
+                                        : 'No $_selectedCategory requests',
+                                    style: AppStyle.medLight,
+                                  ),
                                 );
                               }
+
                               return PinterestGrid<BidResponse>(
-                                items: bids,
+                                items: filteredBids,
                                 mainColor: AppColors.ternary,
                                 darkColor: AppColors.ternary,
                                 onTap: (post) => Navigator.pushNamed(
@@ -121,24 +155,34 @@ class PostScreen extends StatelessWidget {
                                     'bidId': post.id,
                                     'urlImage': post.imageUrl,
                                     'description': post.requestDescription,
+                                    'status': post.status,
                                   },
                                 ),
                                 configBuilder: (post) => PinterestCardConfig(
                                   imageUrl: post.imageUrl,
                                   name: post.requestDescription,
                                   status: post.status,
-                                  price: post.price
-                                      ?.toInt(), // adjust to your model field
-                                  bidsDate: _formatDate(
-                                    post.createdAt,
-                                  ), // adjust to your model field
+                                  price: post.price?.toInt(),
+                                  bidsDate: _formatDate(post.createdAt),
                                   showStatus: true,
                                   showPrice: true,
                                   showBidsCount: false,
                                   showDate: true,
                                   showCart: false,
                                   showRating: false,
-                                  showEdit: false,
+                                  // ✅ Only show edit for open posts
+                                  showEdit: post.status.toLowerCase() != 'closed',
+                                  onEdit: post.status.toLowerCase() != 'closed'
+                                      ? () => Navigator.pushNamed(
+                                    context,
+                                    RouteNames.upload_post,
+                                    arguments: {
+                                      'bidId': post.id,
+                                      'initialDescription': post.requestDescription,
+                                      'initialImageUrl': post.imageUrl,
+                                      'initialPrice': post.price,
+                                    },
+                                  ) : null,
                                 ),
                               );
                             }

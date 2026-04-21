@@ -3,6 +3,7 @@ import 'package:chicora/core/networking/api_service.dart';
 import 'package:chicora/features/tailor/bidding_tailor/data/models/bid_model.dart';
 import 'package:chicora/features/tailor/bidding_tailor/data/models/join_bidding_model.dart';
 import 'package:chicora/features/tailor/bidding_tailor/data/models/post_tailor_model.dart';
+import 'package:dio/dio.dart';
 
 class BiddingTailorRepo {
   ApiService apiService;
@@ -39,6 +40,46 @@ class BiddingTailorRepo {
       return response;
     } catch (e) {
       throw Exception("Failed to join bidding: $e");
+    }
+  }
+  Future<void> deleteOffer({
+    required String token,
+    required String offerId,
+  }) async {
+    try {
+      await apiService.deleteOffer("Bearer $token", offerId);
+    } on DioException catch (e) {
+      throw Exception(e.response != null
+          ? "Server error: ${e.response?.statusCode} - ${e.response?.data}"
+          : "Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Failed to delete offer: $e");
+    }
+  }
+  Future<void> updateOffer({
+    required String token,
+    required String offerId,
+    String? price,
+    String? timeInDays,
+    String? message,
+  }) async {
+    try {
+      final body = <String, dynamic>{};
+      if (price != null) body['price'] = int.tryParse(price) ?? price;
+      if (timeInDays != null) body['timeInDays'] = int.tryParse(timeInDays) ?? timeInDays;
+      if (message != null) body['message'] = message;
+
+      await apiService.updateOffer(
+        token: "Bearer $token",
+        offerId: offerId,
+        body: body,
+      );
+    } on DioException catch (e) {
+      throw Exception(e.response != null
+          ? "Server error: ${e.response?.statusCode} - ${e.response?.data}"
+          : "Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Failed to update offer: $e");
     }
   }
 }

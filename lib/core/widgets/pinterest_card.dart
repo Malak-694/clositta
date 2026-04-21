@@ -24,10 +24,10 @@ Widget buildPinterestCard(
 
 // ── POST CARD ────────────────────────────────────────────
 Widget _buildPostCard(
-  PinterestCardConfig config,
-  VoidCallback onTap, {
-  Color mainColor = AppColors.primery,
-}) {
+    PinterestCardConfig config,
+    VoidCallback onTap, {
+      Color mainColor = AppColors.primery,
+    }) {
   return InkWell(
     onTap: onTap,
     borderRadius: BorderRadius.circular(20),
@@ -40,32 +40,32 @@ Widget _buildPostCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Image
+          // ── Image ─────────────────────────────────────────
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             child: config.imageUrl != null
                 ? Image.network(
-                    config.imageUrl!,
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    errorBuilder: (_, __, ___) => Container(
-                      height: 120,
-                      color: Colors.grey.shade100,
-                      child: const Center(
-                        child: Icon(
-                          Icons.image_not_supported,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                  )
-                : Container(
-                    height: 120,
-                    color: Colors.grey.shade100,
-                    child: const Center(
-                      child: Icon(Icons.image, color: Colors.grey),
-                    ),
+              config.imageUrl!,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              errorBuilder: (_, __, ___) => Container(
+                height: 120,
+                color: Colors.grey.shade100,
+                child: const Center(
+                  child: Icon(
+                    Icons.image_not_supported,
+                    color: Colors.grey,
                   ),
+                ),
+              ),
+            )
+                : Container(
+              height: 120,
+              color: Colors.grey.shade100,
+              child: const Center(
+                child: Icon(Icons.image, color: Colors.grey),
+              ),
+            ),
           ),
 
           Padding(
@@ -73,9 +73,8 @@ Widget _buildPostCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Name + Status badge
+                // ── Name + Status badge in same row ───────────
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
                       child: Text(
@@ -90,7 +89,7 @@ Widget _buildPostCard(
                       Container(
                         padding: EdgeInsets.symmetric(
                           horizontal: 10.w,
-                          vertical: 4.h,
+                          vertical: 6.h,
                         ),
                         decoration: BoxDecoration(
                           color: _statusColor(config.status!),
@@ -98,30 +97,31 @@ Widget _buildPostCard(
                         ),
                         child: Text(
                           config.status!,
-                          style: AppStyle.medBackground.copyWith(
-                            fontSize: 12.sp,
-                          ),
+                          style: AppStyle.smallBackground.copyWith(fontWeight: FontWeight.bold)
                         ),
                       ),
                     ],
                   ],
                 ),
 
-                SizedBox(height: 6.h),
+                // SizedBox(height: 6.h),
 
-                // Price + Bids count
+                // ── Price + Edit button in same row ───────────
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     if (config.showPrice && config.price != null)
                       Text(
                         '\$${config.price}',
-                        style: AppStyle.medTernary.copyWith(fontSize: 14.sp),
+                        style: AppStyle.medTernary.copyWith(fontSize: 17.sp),
                       ),
-                    if (config.showDate && config.bidsDate != null)
-                      Text(
-                        '${config.bidsDate} ',
-                        style: AppStyle.body6.copyWith(fontSize: 12.sp),
+                    const Spacer(),
+                    if (config.showEdit && config.onEdit != null)
+                      IconButton(
+                        onPressed: config.onEdit,
+                        icon: Icon(Icons.edit, color: mainColor),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        iconSize: 25,
                       ),
                   ],
                 ),

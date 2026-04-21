@@ -35,6 +35,7 @@ class PostItemTailor extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black12),
         borderRadius: BorderRadius.circular(15),
+        color: AppColors.background
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -126,26 +127,26 @@ class PostItemTailor extends StatelessWidget {
             ],
           ),
           SizedBox(height: 8.h),
-          status == "closed"
-              ? Container()
-              : CustomElevatedButton(
-                  value: 'join Bidding',
-                  onPressed: () {
-                    Navigator.pushNamed(
-                      context,
-                      RouteNames.join_bidding,
-                      arguments: {
-                        'urlImage': Image_url,
-                        'price': price,
-                        'period': period,
-                        'title': title,
-                        'postId': id,
-                      },
-                    );
-                  },
-                  height: 39,
-                  width: 260,
-                ),
+          // status == "closed"
+          //     ? Container()
+          //     : CustomElevatedButton(
+          //         value: 'join Bidding',
+          //         onPressed: () {
+          //           Navigator.pushNamed(
+          //             context,
+          //             RouteNames.join_bidding,
+          //             arguments: {
+          //               'urlImage': Image_url,
+          //               'price': price,
+          //               'period': period,
+          //               'title': title,
+          //               'postId': id,
+          //             },
+          //           );
+          //         },
+          //         height: 39,
+          //         width: 260,
+          //       ),
           SizedBox(height: 10.h),
         ],
       ),

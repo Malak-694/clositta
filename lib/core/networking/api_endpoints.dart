@@ -3,9 +3,14 @@ class ApiEndpoints {
       'https://graduationproject-production-8b09.up.railway.app';
   static const String login = '/api/auth/login';
   static const String signUp = '/api/auth/register';
+
+  static const String profile = "/api/auth/profile";
+  static const String delete_profile_image = "/api/auth/profile/image" ;
   //Tailor
   static const String viewBiddingTailor = '/api/bids/all';
   static const String offers = '/api/offers/{id}';
+  static const String acceptOffer = "/api/offers/{offerId}/accept" ;
+  static const String editeOffer = '/api/offers/{offerId}' ;
   //Tailor-portfolio
   static const String viewPortfolioTailor = '/api/portfolio/my';
   static const String deletePortfolioTailor = '/api/portfolio/{itemId}';
@@ -14,6 +19,7 @@ class ApiEndpoints {
   //customer
   static const String myBids = '/api/bids';
   static const String createBid = '/api/bids';
+  static const String updateBid = "/api/bids/{bidId}" ;
   static const String bestOffers = '/api/offers/{bidId}/best';
   //customer-closet
   static const String viewClosetItems = '/api/closet';

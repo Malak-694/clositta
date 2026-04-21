@@ -9,6 +9,8 @@ class CustomCategorySelector extends StatelessWidget {
   final ValueChanged<String> onCategorySelected;
   final Color selectedColor;
   final Color unselectedColor;
+  final Color? selectedTextColor;
+  final Color? unselectedTextColor;
 
   const CustomCategorySelector({
     super.key,
@@ -17,7 +19,19 @@ class CustomCategorySelector extends StatelessWidget {
     required this.onCategorySelected,
     required this.selectedColor,
     required this.unselectedColor,
+    this.selectedTextColor,
+    this.unselectedTextColor,
   });
+
+  TextStyle _textStyle(Color color) => TextStyle(
+    fontSize: 12.sp,
+    fontWeight: FontWeight.w800,
+    fontFamily: 'Raleway',
+    foreground: Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = .3
+      ..color = color,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +58,11 @@ class CustomCategorySelector extends StatelessWidget {
               ),
               child: Text(
                 categories[i],
-                style: AppStyle.smallBackground,
+                style: _textStyle(
+                  selectedCategory == categories[i]
+                      ? (selectedTextColor ?? Colors.white)
+                      : (unselectedTextColor ?? Colors.white),
+                ),
               ),
             ),
             if (i != categories.length - 1) SizedBox(width: 5.w),

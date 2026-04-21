@@ -6,26 +6,30 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class BidItem extends StatelessWidget {
+  final String offerId;
   final String tailor;
   final int price;
   final int num_work;
   final int duration;
   final String? comment;
-
+  final bool showSelectButton;
+  final VoidCallback? onAccept;
   const BidItem({
     super.key,
+    required this.offerId,
     required this.tailor,
     required this.duration,
     required this.price,
     required this.num_work,
     this.comment,
+    this.showSelectButton = true,
+    this.onAccept,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      // width: 150.w,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: ShapeDecoration(
         color: AppColors.background,
         shape: RoundedRectangleBorder(
@@ -34,8 +38,8 @@ class BidItem extends StatelessWidget {
         ),
         shadows: [
           BoxShadow(
-            color: const Color.fromARGB(255, 228, 228, 228),
-            blurRadius: 5,
+            color: AppColors.primery,
+            blurRadius: 4,
             offset: Offset(0, .5),
           ),
         ],
@@ -67,22 +71,29 @@ class BidItem extends StatelessWidget {
           if (comment != null) Text(comment!, style: AppStyle.body6),
           const SizedBox(height: 10),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: showSelectButton
+                ? MainAxisAlignment.spaceEvenly
+                : MainAxisAlignment.center,
             children: [
               CustomButton(
                 text: "chat",
-                onPressed: () {},
-                backgroundColor: AppColors.background,
-                foregroundColor: AppColors.light,
-                icon: LucideIcons.messageCircle,
-              ),
-              CustomButton(
-                text: "Select",
-                onPressed: () {},
+                onPressed: (){
+                  Navigator.pushNamed(context, "chat_screen" , arguments: {"personName" : tailor});
+                },
                 backgroundColor: AppColors.primery,
                 foregroundColor: AppColors.background,
-                icon: LucideIcons.userRoundCheck,
-              ),
+                icon: LucideIcons.messageCircle,
+                // width: showSelectButton ? 112 : 130,
+                // height: showSelectButton ? 39 : 47,
+                              ),
+              if (showSelectButton)
+                CustomButton(
+                  text: "Select",
+                  onPressed: onAccept ?? () {}, // 👈
+                  backgroundColor: AppColors.background,
+                  foregroundColor: AppColors.light,
+                  icon: LucideIcons.userRoundCheck,
+                ),
             ],
           ),
         ],

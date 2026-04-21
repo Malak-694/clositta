@@ -20,6 +20,7 @@ import '../../features/customer/biding/data/models/offer_model.dart';
 import '../../features/ecommerce_multi/data/models/cart_models/cart_request_model.dart';
 import '../../features/ecommerce_multi/data/models/cart_models/cart_response_model.dart';
 import '../../features/ecommerce_multi/data/models/rating models/rating_response_model.dart';
+import '../../features/profile/data/model/profile_model.dart';
 import '../../features/tailor/portfolio/data/models/portfolio_tailor_response_model.dart';
 
 part 'api_service.g.dart';
@@ -36,11 +37,39 @@ abstract class ApiService {
   Future<List<PostTailorResponse>> viewBiddingTailor(
     @Header("Authorization") String token,
   );
+
+  @GET(ApiEndpoints.profile)
+  Future<ProfileResponse> getProfile(
+      @Header("Authorization") String token,
+      );
+
+  @MultiPart()
+  @PUT(ApiEndpoints.profile)
+  Future<MessageModel> updateProfile({
+    @Header("Authorization") required String token,
+    @Part() String? name,
+    @Part() String? email,
+    @Part() String? phone,
+    @Part() MultipartFile? image,
+  });
+
+  @DELETE(ApiEndpoints.delete_profile_image)
+  Future<MessageModel> deleteProfileImage(
+      @Header("Authorization") String token,
+      );
+
   @GET(ApiEndpoints.offers)
   Future<List<BidModelReponse>> viewOffers(
     @Header("Authorization") String token,
     @Path("id") String id,
   );
+
+  @GET(ApiEndpoints.offers)
+  Future<List<OfferResponse>> viewOffersCustomer(
+      @Header("Authorization") String token,
+      @Path("id") String id,
+      );
+
   @POST(ApiEndpoints.offers)
   Future<JoinBiddingResponse> joinBidding(
     @Header("Authorization") String token,
@@ -59,11 +88,46 @@ abstract class ApiService {
     @Part(name: "time") String? time,
     @Part(name: "image") required MultipartFile image,
   });
+  @PUT(ApiEndpoints.updateBid)
+  @MultiPart()
+  Future<BidResponse> updateBid(
+      @Header("Authorization") String token,
+      @Path("bidId") String bidId,
+      @Part(name: "requestDescription") String description,
+      @Part(name: "image") MultipartFile? image,
+      @Part(name: "price") String? price,
+      @Part(name: "time") String? time,
+      );
+
+  @DELETE(ApiEndpoints.updateBid)
+  Future<void> deleteBid(
+      @Header("Authorization") String token,
+      @Path("bidId") String bidId,
+      );
+
   @GET(ApiEndpoints.bestOffers)
   Future<List<OfferResponse>> getBestOffers(
     @Header("Authorization") String token,
     @Path("bidId") String bidId,
   );
+  @PATCH(ApiEndpoints.acceptOffer)
+  Future<void> acceptOffer(
+      @Header("Authorization") String token,
+      @Path("offerId") String offerId,
+      );
+
+  @DELETE(ApiEndpoints.editeOffer)
+  Future<void> deleteOffer(
+      @Header("Authorization") String token,
+      @Path("offerId") String offerId,
+      );
+
+  @PUT(ApiEndpoints.editeOffer)
+  Future<void> updateOffer({
+    @Header("Authorization") required String token,
+    @Path("offerId") required String offerId,
+    @Body() required Map<String, dynamic> body,
+  });
   //seller-products
   @GET(ApiEndpoints.sellerProducts)
   Future<List<ProductModel>> getProductsSeller(
@@ -215,4 +279,5 @@ abstract class ApiService {
     @Part(name: "description") String description,
     @Part(name: "image") MultipartFile? image, // ✅ optional
   );
+
 }

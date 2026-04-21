@@ -44,8 +44,16 @@ class BiddingCustomerRepo {
   // }
 
 
+  Future<List<OfferResponse>> getOffers(String token, String id) async {
+    try {
+      final response = await apiService.viewOffersCustomer("Bearer $token", id);
+      return response;
+    } catch (e) {
+      throw Exception("Failed to fetch offers: $e");
+    }
+  }
 
-  // ✅ GET /api/offers/:bidId/best → getBestOffers
+  //  getBestOffers
   Future<List<OfferResponse>> getBestOffers(String token, String bidId) async {
     try {
       final response = await apiService.getBestOffers("Bearer $token", bidId);
@@ -99,6 +107,74 @@ class BiddingCustomerRepo {
       }
     } catch (e) {
       throw Exception("Failed to create bid: $e");
+    }
+  }
+
+  Future<void> acceptOffer(String token, String offerId) async {
+    try {
+      await apiService.acceptOffer("Bearer $token", offerId);
+    } catch (e) {
+      throw Exception("Failed to accept offer: $e");
+    }
+  }
+
+  //update bid
+
+  Future<BidResponse> updateBid({
+    required String token,
+    required String bidId,
+    required String description,
+    String? imagePath,
+    double? price,
+    String? time,
+  }) async {
+    try {
+      MultipartFile? multipartFile;
+
+      if (imagePath != null) {
+        final file = File(imagePath);
+        if (!await file.exists()) throw Exception("Image file not found");
+        multipartFile = await MultipartFile.fromFile(
+          file.path,
+          filename: file.path.split('/').last,
+        );
+      }
+
+      final response = await apiService.updateBid(
+        "Bearer $token",
+        bidId,
+        description,
+        multipartFile,
+        price?.toString(),
+        time,
+      );
+      return response;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception("Server error: ${e.response?.statusCode} - ${e.response?.data}");
+      } else {
+        throw Exception("Network error: ${e.message}");
+      }
+    } catch (e) {
+      throw Exception("Failed to update bid: $e");
+    }
+  }
+
+  //delete bid
+  Future<void> deleteBid({
+    required String token,
+    required String bidId,
+  }) async {
+    try {
+      await apiService.deleteBid("Bearer $token", bidId);
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception("Server error: ${e.response?.statusCode} - ${e.response?.data}");
+      } else {
+        throw Exception("Network error: ${e.message}");
+      }
+    } catch (e) {
+      throw Exception("Failed to delete bid: $e");
     }
   }
 }

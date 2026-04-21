@@ -12,8 +12,7 @@ class RateProductWidget extends StatefulWidget {
   final String productId;
   final void Function(int rating, String comment)? onRated;
 
-  const RateProductWidget({Key? key, required this.productId, this.onRated})
-    : super(key: key);
+  const RateProductWidget({super.key, required this.productId, this.onRated});
 
   @override
   State<RateProductWidget> createState() => _RateProductWidgetState();

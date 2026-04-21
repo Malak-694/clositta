@@ -21,8 +21,7 @@ import '../../../../core/models/message_model.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final ProductModelBuyer product;
-  const ProductDetailScreen({Key? key, required this.product})
-    : super(key: key);
+  const ProductDetailScreen({super.key, required this.product});
 
   @override
   State<ProductDetailScreen> createState() => _ProductDetailScreenState();

@@ -15,7 +15,7 @@ import '../../data/models/portfolio_tailor_response_model.dart';
 import '../../logic/cubit/portfolio_tailor_state.dart';
 
 class PortfolioTailorBody extends StatefulWidget {
-  PortfolioTailorBody({super.key});
+  const PortfolioTailorBody({super.key});
 
   @override
   State<PortfolioTailorBody> createState() => _PortfolioTailorBodyState();

@@ -1,5 +1,4 @@
 import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
-import 'package:chicora/features/ecommerce_multi/logic/view_product_logic/view_products_cubit.dart';
 import 'package:chicora/features/ecommerce_multi/ui/screens/cart_screen.dart';
 import 'package:flutter/material.dart';
 

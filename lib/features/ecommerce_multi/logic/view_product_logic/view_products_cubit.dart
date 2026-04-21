@@ -64,8 +64,4 @@ class ViewProductsCubit extends Cubit<ViewProductsState> {
     return;
   }
 
-  @override
-  Future<void> close() {
-    return super.close();
-  }
 }

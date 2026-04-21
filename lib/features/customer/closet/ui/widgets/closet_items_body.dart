@@ -15,7 +15,7 @@ import '../../logic/cubit/closet_cubit.dart';
 import '../../logic/cubit/closet_state.dart';
 
 class ClosetItemsScreenBody extends StatefulWidget {
-  ClosetItemsScreenBody({super.key});
+  const ClosetItemsScreenBody({super.key});
 
   @override
   State<ClosetItemsScreenBody> createState() => _ClosetItemsScreenBodyState();

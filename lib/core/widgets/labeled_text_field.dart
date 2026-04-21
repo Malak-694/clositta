@@ -162,7 +162,7 @@ class LabeledTextField extends StatelessWidget {
 
     // If size constraints are provided, wrap the text field
     if (height != null || width != null ) {
-      return Container(
+      return SizedBox(
         height: height,
         width: width,
         child: textField,

@@ -19,7 +19,7 @@ class CustomDropdownList extends StatelessWidget {
   // final double? height ;
   // final double? width;
 
-  CustomDropdownList({
+  const CustomDropdownList({
     super.key,
     required this.label,
     required this.value,
@@ -52,7 +52,7 @@ class CustomDropdownList extends StatelessWidget {
 
         // Dropdown
         DropdownButtonFormField(
-          value: value,
+          initialValue: value,
           items: items.map((item) {
             return DropdownMenuItem(
               value: item,

@@ -13,7 +13,7 @@ import '../../../../../core/widgets/custom_search_bar.dart';
 import 'product_list_widget.dart';
 
 class SellerProductScreenBody extends StatefulWidget {
-  SellerProductScreenBody({super.key});
+  const SellerProductScreenBody({super.key});
 
   @override
   State<SellerProductScreenBody> createState() =>

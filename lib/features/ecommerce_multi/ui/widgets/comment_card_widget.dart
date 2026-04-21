@@ -11,11 +11,11 @@ class CommentCard extends StatelessWidget {
   final void Function(String ratingId)? onDelete;
 
   const CommentCard({
-    Key? key,
+    super.key,
     required this.comment,
     this.isOwn = false,
     this.onDelete,
-  }) : super(key: key);
+  });
 
   String _formatDate(dynamic dateValue) {
     try {

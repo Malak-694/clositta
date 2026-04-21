@@ -84,6 +84,7 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
     super.dispose();
   }
 
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(

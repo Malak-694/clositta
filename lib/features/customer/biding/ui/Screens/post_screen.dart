@@ -1,7 +1,6 @@
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
 import 'package:chicora/core/di/dependency_injection.dart';
-import 'package:chicora/core/helper/shared_key.dart';
 import 'package:chicora/core/helper/shared_pref_helper.dart';
 import 'package:chicora/core/widgets/circle_indicator.dart';
 import 'package:chicora/core/widgets/custom_elevated_button.dart';
@@ -12,7 +11,6 @@ import 'package:chicora/features/customer/biding/logic/cubit/customer_bidding_st
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../../core/router/route_names.dart';
 import '../../../../../core/widgets/custom_app_bar.dart';

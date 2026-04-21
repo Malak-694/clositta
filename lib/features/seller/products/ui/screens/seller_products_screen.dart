@@ -1,5 +1,4 @@
 import 'package:chicora/features/seller/products/logic/cubit/seller_products_cubit.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -12,6 +11,8 @@ import '../widgets/seller_product_screen_body.dart';
 
 class SellerProductsScreen extends StatelessWidget {
   final prefs = getIt<SharedPrefHelper>();
+
+   SellerProductsScreen({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(

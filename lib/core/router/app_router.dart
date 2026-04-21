@@ -34,6 +34,7 @@ import '../../features/customer/profile/ui/customer_profile_screen.dart';
 import '../../features/ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
 import '../../features/profile/logic/profile_cubit.dart';
 import '../../features/seller/products/data/models/product_model_response.dart';
+import '../../features/seller/orders/ui/screens/order_mangement_screen.dart';
 import '../../features/seller/products/ui/screens/seller_products_screen.dart';
 import '../../features/seller/profile/ui/seller_profile_screen.dart' hide TailorProfileScreen;
 import '../../features/tailor/bidding_tailor/ui/Screens/posts_tailor_screen.dart';
@@ -194,6 +195,8 @@ class AppRouter {
         );
       case RouteNames.seller_products_screen:
         return MaterialPageRoute(builder: (_) => SellerProductsScreen());
+      case RouteNames.seller_orders_screen:
+        return MaterialPageRoute(builder: (_) => const OrderMangementScreen());
       case RouteNames.added_product_item:
         return MaterialPageRoute(
           builder: (_) => BlocProvider(

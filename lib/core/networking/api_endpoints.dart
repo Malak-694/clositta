@@ -41,4 +41,6 @@ class ApiEndpoints {
   static const String cancelOrder = '/api/orders/{orderId}/cancel';
   static const String getOrderById = '/api/orders/{orderId}';
   static const String getMyOrders = '/api/orders/my';
+  static const String getAllOrdersSeller = '/api/orders/all';
+  static const String updateOrderStatusSeller = '/api/orders/{orderId}/status';
 }

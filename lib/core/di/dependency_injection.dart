@@ -17,6 +17,8 @@ import 'package:chicora/features/ecommerce_multi/logic/view_product_logic/view_p
 import 'package:chicora/features/tailor/bidding_tailor/data/repo/bidding_tailor_repo.dart';
 import 'package:chicora/features/tailor/bidding_tailor/logic/cubit/bidding_tailor_cubit.dart';
 import 'package:chicora/features/seller/products/data/repo/seller_product_repo.dart';
+import 'package:chicora/features/seller/orders/data/repo/order_mangement_repo.dart';
+import 'package:chicora/features/seller/orders/logic/cubit/order_mangement_cubit.dart';
 import 'package:chicora/features/seller/products/logic/cubit/seller_products_cubit.dart';
 import 'package:chicora/features/tailor/portfolio/logic/cubit/portfolio_tailor_cubit.dart';
 import 'package:dio/dio.dart';
@@ -104,6 +106,13 @@ Future<void> setupGetIt() async {
   );
   getIt.registerFactory<OrderCubit>(
     () => OrderCubit(getIt()),
+  );
+  //Seller orders management
+  getIt.registerLazySingleton<OrderMangementRepo>(
+    () => OrderMangementRepo(apiService: getIt()),
+  );
+  getIt.registerFactory<OrderMangementCubit>(
+    () => OrderMangementCubit(repo: getIt()),
   );
 
 }

@@ -1,0 +1,355 @@
+{
+  "baseUrl": "/api/orders",
+  "auth": "All endpoints require authenticated user (authMiddleware).",
+  "models": {
+    "ObjectId": "string (MongoDB ObjectId)",
+    "ShippingAddress": {
+      "fullName": "string",
+      "phone": "string",
+      "address": "string",
+      "city": "string",
+      "governorate": "string",
+      "postalCode": "string | null",
+      "notes": "string | null"
+    },
+    "OrderItemWithPopulatedProduct": {
+      "product": {
+        "_id": "ObjectId",
+        "name": "string",
+        "imageUrl": "string",
+        "price": "number"
+      },
+      "name": "string",
+      "imageUrl": "string",
+      "price": "number",
+      "quantity": "number",
+      "subtotal": "number",
+      "_id": "ObjectId"
+    },
+    "OrderItemWithProductId": {
+      "product": "ObjectId",
+      "name": "string",
+      "imageUrl": "string",
+      "price": "number",
+      "quantity": "number",
+      "subtotal": "number",
+      "_id": "ObjectId"
+    },
+    "UserSummarySellerView": {
+      "_id": "ObjectId",
+      "name": "string",
+      "email": "string",
+      "phone": "string | undefined"
+    },
+    "OrderResponseUserView": {
+      "_id": "ObjectId",
+      "user": "ObjectId",
+      "items": [
+        "OrderItemWithPopulatedProduct"
+      ],
+      "shippingAddress": "ShippingAddress",
+      "paymentMethod": "cash_on_delivery",
+      "paymentStatus": "pending | paid",
+      "orderStatus": "placed | confirmed | shipped | delivered | cancelled",
+      "itemsTotal": "number",
+      "shippingFee": "number",
+      "totalAmount": "number",
+      "cancelReason": "string | undefined",
+      "createdAt": "string (ISO date-time)",
+      "updatedAt": "string (ISO date-time)",
+      "__v": "number"
+    },
+    "OrderResponseSellerView": {
+      "_id": "ObjectId",
+      "user": "UserSummarySellerView",
+      "items": [
+        "OrderItemWithPopulatedProduct"
+      ],
+      "shippingAddress": "ShippingAddress",
+      "paymentMethod": "cash_on_delivery",
+      "paymentStatus": "pending | paid",
+      "orderStatus": "placed | confirmed | shipped | delivered | cancelled",
+      "itemsTotal": "number",
+      "shippingFee": "number",
+      "totalAmount": "number",
+      "cancelReason": "string | undefined",
+      "createdAt": "string (ISO date-time)",
+      "updatedAt": "string (ISO date-time)",
+      "__v": "number"
+    }
+  },
+  "endpoints": [
+    {
+      "name": "Place Order",
+      "controller": "placeOrder",
+      "method": "POST",
+      "url": "/api/orders",
+      "parameters": {
+        "path": {},
+        "query": {}
+      },
+      "requestBody": {
+        "type": "object",
+        "required": [
+          "fullName",
+          "phone",
+          "address",
+          "city",
+          "governorate"
+        ],
+        "properties": {
+          "fullName": "string",
+          "phone": "string",
+          "address": "string",
+          "city": "string",
+          "governorate": "string",
+          "postalCode": "string",
+          "notes": "string"
+        }
+      },
+      "responseBody": {
+        "success": {
+          "statusCode": 201,
+          "bodyModel": {
+            "message": "string",
+            "order": "OrderResponseUserView"
+          }
+        },
+        "errors": [
+          {
+            "statusCode": 400,
+            "body": {
+              "message": "fullName, phone, address, city, and governorate are required"
+            }
+          },
+          {
+            "statusCode": 400,
+            "body": {
+              "message": "Your cart is empty"
+            }
+          },
+          {
+            "statusCode": 400,
+            "body": {
+              "message": "Stock issues",
+              "errors": [
+                "string"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Get My Orders",
+      "controller": "getMyOrders",
+      "method": "GET",
+      "url": "/api/orders/my",
+      "parameters": {
+        "path": {},
+        "query": {}
+      },
+      "requestBody": {
+        "type": "none"
+      },
+      "responseBody": {
+        "success": {
+          "statusCode": 200,
+          "bodyModel": [
+            "OrderResponseUserView"
+          ]
+        },
+        "errors": []
+      }
+    },
+    {
+      "name": "Get Order By ID",
+      "controller": "getOrderById",
+      "method": "GET",
+      "url": "/api/orders/:orderId",
+      "parameters": {
+        "path": {
+          "orderId": "string (required)"
+        },
+        "query": {}
+      },
+      "requestBody": {
+        "type": "none"
+      },
+      "responseBody": {
+        "success": {
+          "statusCode": 200,
+          "bodyModel": "OrderResponseUserView"
+        },
+        "errors": [
+          {
+            "statusCode": 404,
+            "body": {
+              "message": "Order not found"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Cancel Order",
+      "controller": "cancelOrder",
+      "method": "PUT",
+      "url": "/api/orders/:orderId/cancel",
+      "parameters": {
+        "path": {
+          "orderId": "string (required)"
+        },
+        "query": {}
+      },
+      "requestBody": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "reason": "string"
+        }
+      },
+      "responseBody": {
+        "success": {
+          "statusCode": 200,
+          "bodyModel": {
+            "message": "Order cancelled successfully",
+            "order": {
+              "_id": "ObjectId",
+              "user": "ObjectId",
+              "items": [
+                "OrderItemWithProductId"
+              ],
+              "shippingAddress": "ShippingAddress",
+              "paymentMethod": "cash_on_delivery",
+              "paymentStatus": "pending | paid",
+              "orderStatus": "cancelled",
+              "itemsTotal": "number",
+              "shippingFee": "number",
+              "totalAmount": "number",
+              "cancelReason": "string",
+              "createdAt": "string (ISO date-time)",
+              "updatedAt": "string (ISO date-time)",
+              "__v": "number"
+            }
+          }
+        },
+        "errors": [
+          {
+            "statusCode": 404,
+            "body": {
+              "message": "Order not found"
+            }
+          },
+          {
+            "statusCode": 400,
+            "body": {
+              "message": "Cannot cancel order with status \"<status>\". Only \"placed\" orders can be cancelled"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Get All Orders (Seller)",
+      "controller": "getAllOrders",
+      "method": "GET",
+      "url": "/api/orders/all",
+      "parameters": {
+        "path": {},
+        "query": {
+          "status": "string (optional, filters by orderStatus)"
+        }
+      },
+      "requestBody": {
+        "type": "none"
+      },
+      "responseBody": {
+        "success": {
+          "statusCode": 200,
+          "bodyModel": [
+            "OrderResponseSellerView"
+          ]
+        },
+        "errors": [
+          {
+            "statusCode": 403,
+            "body": {
+              "message": "Seller access only"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Update Order Status (Seller)",
+      "controller": "updateOrderStatus",
+      "method": "PUT",
+      "url": "/api/orders/:orderId/status",
+      "parameters": {
+        "path": {
+          "orderId": "string (required)"
+        },
+        "query": {}
+      },
+      "requestBody": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "orderStatus": "placed | confirmed | shipped | delivered | cancelled",
+          "paymentStatus": "pending | paid"
+        }
+      },
+      "responseBody": {
+        "success": {
+          "statusCode": 200,
+          "bodyModel": {
+            "message": "Order status updated",
+            "order": {
+              "_id": "ObjectId",
+              "user": {
+                "_id": "ObjectId",
+                "name": "string",
+                "email": "string"
+              },
+              "items": [
+                "OrderItemWithProductId"
+              ],
+              "shippingAddress": "ShippingAddress",
+              "paymentMethod": "cash_on_delivery",
+              "paymentStatus": "pending | paid",
+              "orderStatus": "placed | confirmed | shipped | delivered | cancelled",
+              "itemsTotal": "number",
+              "shippingFee": "number",
+              "totalAmount": "number",
+              "cancelReason": "string | undefined",
+              "createdAt": "string (ISO date-time)",
+              "updatedAt": "string (ISO date-time)",
+              "__v": "number"
+            }
+          }
+        },
+        "errors": [
+          {
+            "statusCode": 403,
+            "body": {
+              "message": "Seller access only"
+            }
+          },
+          {
+            "statusCode": 400,
+            "body": {
+              "message": "Invalid order status"
+            }
+          },
+          {
+            "statusCode": 404,
+            "body": {
+              "message": "Order not found"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

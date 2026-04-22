@@ -13,6 +13,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/router/route_names.dart';
+import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
+import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_state.dart';
+import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_total_quantity.dart';
+
 import '../../../../../core/widgets/custom_app_bar.dart';
 import '../../../../../core/widgets/pinterest_grid.dart';
 import '../../../../../core/widgets/pinterest_grid_config.dart';
@@ -58,12 +62,22 @@ class _PostScreenState extends State<PostScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: CustomAppBar(
-        title: "Your Requests",
-        style: AppStyle.medPrimery,
-        showCartIcon: true,
-        onCartTap: () =>
-            Navigator.pushNamed(context, RouteNames.customer_cart_screen),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: BlocBuilder<CartCubit, CartState<dynamic>>(
+          builder: (context, state) {
+            return CustomAppBar(
+              title: "Your Requests",
+              style: AppStyle.medPrimery,
+              showCartIcon: true,
+              cartItemCount: cartTotalItemQuantity(state),
+              onCartTap: () => Navigator.pushNamed(
+                context,
+                RouteNames.customer_cart_screen,
+              ),
+            );
+          },
+        ),
       ),
       body: SafeArea(
         child: Container(
@@ -74,21 +88,24 @@ class _PostScreenState extends State<PostScreen> {
             children: [
               // ── Top Row: Dropdown + New Request ──────────────────
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CustomDropdown(
-                    value: _selectedCategory,
-                    hintText: "Filter",
-                    items: _categories,
-                    width: 140,
-                    vPadding: 8,
-                    style: AppStyle.medPrimery,
-                    onChanged: (value) {
-                      if (value != null) {
-                        setState(() => _selectedCategory = value);
-                      }
-                    },
+                  Expanded(
+                    child: CustomDropdown(
+                      value: _selectedCategory,
+                      hintText: "Filter",
+                      items: _categories,
+                      width: 400,
+                      vPadding: 8,
+                      style: AppStyle.medPrimery,
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() => _selectedCategory = value);
+                        }
+                      },
+                    ),
                   ),
-                  const Spacer(),
+                  SizedBox(width: 8.w),
                   CustomElevatedButton(
                     value: "+ New Post",
                     style: AppStyle.medBackground,
@@ -109,7 +126,10 @@ class _PostScreenState extends State<PostScreen> {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       context.read<CustomerBiddingCubit>().getMyBids();
                     });
-                    return BlocBuilder<CustomerBiddingCubit, CustomerBiddingState>(
+                    return BlocBuilder<
+                      CustomerBiddingCubit,
+                      CustomerBiddingState
+                    >(
                       builder: (context, state) {
                         return state.when(
                           initial: () => Center(child: circleIndicator()),
@@ -171,18 +191,21 @@ class _PostScreenState extends State<PostScreen> {
                                   showCart: false,
                                   showRating: false,
                                   // ✅ Only show edit for open posts
-                                  showEdit: post.status.toLowerCase() != 'closed',
+                                  showEdit:
+                                      post.status.toLowerCase() != 'closed',
                                   onEdit: post.status.toLowerCase() != 'closed'
                                       ? () => Navigator.pushNamed(
-                                    context,
-                                    RouteNames.upload_post,
-                                    arguments: {
-                                      'bidId': post.id,
-                                      'initialDescription': post.requestDescription,
-                                      'initialImageUrl': post.imageUrl,
-                                      'initialPrice': post.price,
-                                    },
-                                  ) : null,
+                                          context,
+                                          RouteNames.upload_post,
+                                          arguments: {
+                                            'bidId': post.id,
+                                            'initialDescription':
+                                                post.requestDescription,
+                                            'initialImageUrl': post.imageUrl,
+                                            'initialPrice': post.price,
+                                          },
+                                        )
+                                      : null,
                                 ),
                               );
                             }
@@ -200,7 +223,7 @@ class _PostScreenState extends State<PostScreen> {
       ),
       bottomNavigationBar: FloatingNavBar(
         userRole: 'customer',
-        selectedIndex: 1,
+        selectedIndex: 3,
         focused: AppColors.primery,
         notSelected: AppColors.darkprimery,
       ),

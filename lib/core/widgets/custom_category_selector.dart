@@ -27,10 +27,7 @@ class CustomCategorySelector extends StatelessWidget {
     fontSize: 12.sp,
     fontWeight: FontWeight.w800,
     fontFamily: 'Raleway',
-    foreground: Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = .3
-      ..color = color,
+    color: color,
   );
 
   @override

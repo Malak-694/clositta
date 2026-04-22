@@ -81,9 +81,18 @@ class AppRouter {
         );
       case RouteNames.posts_customer:
         return MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (_) => getIt<CustomerBiddingCubit>(),
-            child: PostScreen(),
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (_) => getIt<CustomerBiddingCubit>()),
+              BlocProvider(
+                create: (_) {
+                  final cart = getIt<CartCubit>();
+                  cart.getCart();
+                  return cart;
+                },
+              ),
+            ],
+            child: const PostScreen(),
           ),
         );
       // case RouteNames.upload_post:

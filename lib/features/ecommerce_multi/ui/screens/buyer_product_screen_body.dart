@@ -136,29 +136,63 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
               builder: (context, state) {
                 return state.when(
                   initial: () => const SizedBox(),
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
-                  success: (products) => PinterestGrid<ProductModelBuyer>(
-                    items: products,
-                    onTap: (product) => Navigator.pushNamed(
-                      context,
-                      RouteNames.product_details_screen,
-                      arguments: {
-                        'product': product,
-                        'cartCubit': context.read<CartCubit>(),
-                      },
-                    ),
-                    configBuilder: (product) => PinterestCardConfig(
-                      imageUrl: product.imageUrl,
-                      name: product.name,
-                      rating: product.averageRating,
-                      price: product.price,
-                      showCart: true,
-                      onTap: () {
-                        context.read<CartCubit>().addToCart(product.pId!, 1);
-                      },
-                    ),
+                  loading: () => Center(
+                    child: CircularProgressIndicator(color: _roleDark),
                   ),
+                  success: (products) => products.isEmpty
+                      ? Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 24.w),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.storefront_outlined,
+                                  size: 56.sp,
+                                  color: AppColors.light,
+                                ),
+                                SizedBox(height: 16.h),
+                                Text(
+                                  'No products found',
+                                  textAlign: TextAlign.center,
+                                  style: AppStyle.body6,
+                                ),
+                                SizedBox(height: 8.h),
+                                Text(
+                                  'Try another category or search term.',
+                                  textAlign: TextAlign.center,
+                                  style: AppStyle.medLight.copyWith(
+                                    fontSize: 15.sp,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : PinterestGrid<ProductModelBuyer>(
+                          items: products,
+                          onTap: (product) => Navigator.pushNamed(
+                            context,
+                            RouteNames.product_details_screen,
+                            arguments: {
+                              'product': product,
+                              'cartCubit': context.read<CartCubit>(),
+                            },
+                          ),
+                          configBuilder: (product) => PinterestCardConfig(
+                            imageUrl: product.imageUrl,
+                            name: product.name,
+                            rating: product.averageRating,
+                            price: product.price,
+                            showCart: true,
+                            onTap: () {
+                              context.read<CartCubit>().addToCart(
+                                product.pId!,
+                                1,
+                              );
+                            },
+                          ),
+                        ),
                   fail: (error) => Center(
                     child: Text(
                       'There is a connection error, please try again later',

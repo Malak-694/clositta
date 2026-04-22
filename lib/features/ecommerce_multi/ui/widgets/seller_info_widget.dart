@@ -2,45 +2,95 @@ import 'package:chicora/features/ecommerce_multi/data/models/product_models/sell
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/style.dart';
 
 class SellerInfo extends StatelessWidget {
   final SellerModel? seller;
-  const SellerInfo({super.key, this.seller});
+  final Color accent;
+  final Color accentDark;
+
+  const SellerInfo({
+    super.key,
+    this.seller,
+    this.accent = AppColors.primery,
+    this.accentDark = AppColors.darkprimery,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[300]!, width: 1),
-        borderRadius: BorderRadius.circular(12),
+        color: AppColors.lightprimery,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(
+          color: accent.withValues(alpha: 0.15),
+        ),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Sold by', style: AppStyle.medPrimery),
-              const SizedBox(height: 8),
-              Text(
-                seller?.name ?? 'Unknown Seller',
-                style: AppStyle.medBlack.copyWith(fontSize: 16),
-              ),
-            ],
+          Container(
+            padding: EdgeInsets.all(10.r),
+            decoration: BoxDecoration(
+              color: AppColors.background,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: accent.withValues(alpha: 0.12),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Icon(
+              Icons.storefront_outlined,
+              color: accentDark,
+              size: 24.sp,
+            ),
           ),
-          ElevatedButton(
+          SizedBox(width: 14.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Sold by',
+                  style: AppStyle.caption.copyWith(
+                    color: AppColors.light,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(height: 4.h),
+                Text(
+                  seller?.name ?? 'Unknown seller',
+                  style: AppStyle.body6.copyWith(
+                    color: AppColors.dark,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          OutlinedButton(
             onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
-              side: BorderSide(color: Colors.grey[300]!, width: 1),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: accentDark,
+              side: BorderSide(
+                color: accent.withValues(alpha: 0.4),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
+              ),
             ),
             child: Text(
-              'View More',
-              style: AppStyle.medBlack.copyWith(fontSize: 16.sp),
+              'View store',
+              style: AppStyle.smallBlack.copyWith(
+                fontSize: 13.sp,
+                color: accentDark,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],

@@ -27,6 +27,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../features/auth/ui/screens/sign_up_screen.dart';
+import '../../features/chat/data/repo/chat_repo.dart';
+import '../../features/chat/logic/chat_cubit/chat_cubit.dart';
+import '../../features/chat/ui/screens/conversations_screen.dart';
+import '../../features/customer/biding/ui/Screens/tailor_info_screen.dart';
 import '../../features/customer/closet/data/models/closet_item_response_model.dart';
 import '../../features/customer/ecommerce/view_products/customer_cart_screen.dart';
 import '../../features/customer/ecommerce/view_products/ui/screens/customer_products_screen.dart';
@@ -42,6 +46,7 @@ import '../../features/tailor/ecommerce/view_products/ui/screens/tailor_products
 import '../../features/tailor/portfolio/data/models/portfolio_tailor_response_model.dart';
 import '../../features/tailor/portfolio/ui/screens/portfolio_tailor_screen.dart';
 import '../../features/tailor/profile/ui/tailor_profile_screen.dart';
+import '../networking/socket_service.dart';
 
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -61,11 +66,30 @@ class AppRouter {
           ),
         );
       case RouteNames.passord_recovery:
-        return MaterialPageRoute(builder: (_) => PasswordRecoveryScreen());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<AuthCubit>(),
+            child: PasswordRecoveryScreen(),
+          ),
+        );
+
       case RouteNames.recovery_code:
-        return MaterialPageRoute(builder: (_) => RecoveryCodeScreen());
+        final email = settings.arguments as String? ?? '';
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<AuthCubit>(),
+            child: RecoveryCodeScreen(email: email),
+          ),
+        );
+
       case RouteNames.reset_password:
-        return MaterialPageRoute(builder: (_) => ResetPasswordScreen());
+        final email = settings.arguments as String? ?? '';
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<AuthCubit>(),
+            child: ResetPasswordScreen(email: email),
+          ),
+        );
       case RouteNames.profile_customer_screen:
         return MaterialPageRoute(
           builder: (_) => const CustomerProfileScreen(),
@@ -86,13 +110,13 @@ class AppRouter {
             child: PostScreen(),
           ),
         );
-      // case RouteNames.upload_post:
-      //   return MaterialPageRoute(
-      //     builder: (_) => BlocProvider(
-      //       create: (_) => getIt<CustomerBiddingCubit>(),
-      //       child: FormScreen(),
-      //     ),
-      //   );
+    // case RouteNames.upload_post:
+    //   return MaterialPageRoute(
+    //     builder: (_) => BlocProvider(
+    //       create: (_) => getIt<CustomerBiddingCubit>(),
+    //       child: FormScreen(),
+    //     ),
+    //   );
       case RouteNames.upload_post:
         final args = settings.arguments as Map<String, dynamic>?;
         return MaterialPageRoute(
@@ -115,7 +139,7 @@ class AppRouter {
           ),
         );
 
-      case RouteNames.post_details_customer: // ✅ Define this constant
+      case RouteNames.post_details_customer:
         final args = settings.arguments as Map<String, dynamic>? ?? {};
         final bidId = args['bidId'] as String? ?? '';
         final urlImage = args['urlImage'] as String? ?? '';
@@ -153,26 +177,39 @@ class AppRouter {
             ),
           ),
         );
-      // case RouteNames.join_bidding:
-      //   final args = settings.arguments as Map<String, dynamic>? ?? {};
-      //   final urlImage = args['urlImage'] as String? ?? '';
-      //   final price = args['price'] as String? ?? '';
-      //   final period = args['period'] as String? ?? '';
-      //   final title = args['title'] as String? ?? '';
-      //   final postId = args['postId'] as String? ?? '';
-      //
-      //   return MaterialPageRoute(
-      //     builder: (_) => BlocProvider(
-      //       create: (_) => getIt<BiddingTailorCubit>(),
-      //       child: JoinBiddingScreen(
-      //         imageUrl: urlImage,
-      //         price: price,
-      //         period: period,
-      //         title: title,
-      //         postId: postId,
-      //       ),
-      //     ),
-      //   );
+    // case RouteNames.join_bidding:
+    //   final args = settings.arguments as Map<String, dynamic>? ?? {};
+    //   final urlImage = args['urlImage'] as String? ?? '';
+    //   final price = args['price'] as String? ?? '';
+    //   final period = args['period'] as String? ?? '';
+    //   final title = args['title'] as String? ?? '';
+    //   final postId = args['postId'] as String? ?? '';
+    //
+    //   return MaterialPageRoute(
+    //     builder: (_) => BlocProvider(
+    //       create: (_) => getIt<BiddingTailorCubit>(),
+    //       child: JoinBiddingScreen(
+    //         imageUrl: urlImage,
+    //         price: price,
+    //         period: period,
+    //         title: title,
+    //         postId: postId,
+    //       ),
+    //     ),
+    //   );
+      case RouteNames.tailor_info_screen:
+        final args = settings.arguments as Map<String, dynamic>? ?? {};
+        return MaterialPageRoute(
+          builder: (_) => TailorInfoScreen(
+            name: args['name'] as String? ?? '',
+            imageUrl: args['imageUrl'] as String?,
+            location: args['location'] as String?,
+            rating: args['rating'] as double?,
+            reviewCount: args['reviewCount'] as int?,
+            email: args['email'] as String?,
+            products: (args['products'] as List<Map<String, dynamic>>?) ?? [],
+          ),
+        );
       case RouteNames.join_bidding:
         final args = settings.arguments as Map<String, dynamic>? ?? {};
         return MaterialPageRoute(
@@ -221,7 +258,7 @@ class AppRouter {
         if (product == null || cartCubit == null) {
           return MaterialPageRoute(
             builder: (_) =>
-                const Scaffold(body: Center(child: Text('Product not found'))),
+            const Scaffold(body: Center(child: Text('Product not found'))),
           );
         }
 
@@ -275,11 +312,30 @@ class AppRouter {
       case RouteNames.tailor_cart_screen:
         return MaterialPageRoute(builder: (_) => TailorCartScreen());
       case RouteNames.chat_screen:
-        final args = settings.arguments as Map<String, dynamic>? ?? {};
-        final personName  = args['personName'] as String? ?? '';
+        final args         = settings.arguments as Map<String, dynamic>? ?? {};
+        final receiverId   = args['receiverId']   as String? ?? '';
+        final receiverName = args['receiverName'] as String? ?? '';
 
         return MaterialPageRoute(
-          builder: (_) => ChatScreen(personName: personName)
+          builder: (_) => BlocProvider(
+            create: (_) => ChatCubit(
+              getIt<SocketService>(),
+              getIt<ChatRepo>(),
+            ),
+            child: ChatScreen(
+              receiverId:   receiverId,
+              receiverName: receiverName,
+            ),
+          ),
+        );
+      case RouteNames.conversations_screen:
+        final args = settings.arguments as Map<String, dynamic>? ?? {};
+        final currentUserId = args['currentUserId'] as String? ?? '';
+
+        return MaterialPageRoute(
+          builder: (_) => ConversationsScreen(
+            currentUserId: currentUserId,
+          ),
         );
       default:
         return MaterialPageRoute(

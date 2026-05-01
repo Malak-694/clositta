@@ -20,10 +20,15 @@ import 'package:chicora/features/tailor/portfolio/logic/cubit/portfolio_tailor_c
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
+import '../../features/chat/data/repo/chat_repo.dart';
+import '../../features/chat/data/repo/conversations_repo.dart';
+import '../../features/chat/logic/chat_cubit/chat_cubit.dart';
+import '../../features/chat/logic/conversations_cubit/conversations_cubit.dart';
 import '../../features/customer/biding/data/repo/bid_repo.dart';
 import '../../features/profile/data/repo/profile_repo.dart';
 import '../../features/profile/logic/profile_cubit.dart';
 import '../../features/tailor/portfolio/data/repo/portfolio_tailor_repo.dart';
+import '../networking/socket_service.dart';
 
 final GetIt getIt = GetIt.instance;
 Future<void> setupGetIt() async {
@@ -44,57 +49,78 @@ Future<void> setupGetIt() async {
   );
   //BiddingTailor
   getIt.registerLazySingleton<BiddingTailorRepo>(
-    () => BiddingTailorRepo(apiService: getIt()),
+        () => BiddingTailorRepo(apiService: getIt()),
   );
   getIt.registerFactory<BiddingTailorCubit>(() => BiddingTailorCubit(getIt()));
   //BiddingCustomer
   getIt.registerLazySingleton<BiddingCustomerRepo>(
-    () => BiddingCustomerRepo(apiService: getIt()),
+        () => BiddingCustomerRepo(apiService: getIt()),
   );
   getIt.registerFactory<CustomerBiddingCubit>(
-    () => CustomerBiddingCubit(getIt()),
+        () => CustomerBiddingCubit(getIt()),
   );
   //SellerProduct
   getIt.registerLazySingleton<SellerProductRepo>(
-    () => SellerProductRepo(apiService: getIt()),
+        () => SellerProductRepo(apiService: getIt()),
   );
   getIt.registerFactory<SellerProductsCubit>(
-    () => SellerProductsCubit(sellerProductRepo: getIt()),
+        () => SellerProductsCubit(sellerProductRepo: getIt()),
   );
   //ViewProducts
   getIt.registerLazySingleton<ViewProductsRepo>(
-    () => ViewProductsRepo(apiService: getIt()),
+        () => ViewProductsRepo(apiService: getIt()),
   );
   getIt.registerFactory<ViewProductsCubit>(
-    () => ViewProductsCubit(viewProductsRepo: getIt()),
+        () => ViewProductsCubit(viewProductsRepo: getIt()),
   );
   //RateProducts
   getIt.registerLazySingleton<RateProductsRepo>(
-    () => RateProductsRepo(apiService: getIt()),
+        () => RateProductsRepo(apiService: getIt()),
   );
   getIt.registerFactory<RateProductsCubit>(
-    () => RateProductsCubit(rateProductsRepo: getIt()),
+        () => RateProductsCubit(rateProductsRepo: getIt()),
   );
   //Closet
   getIt.registerLazySingleton<ClosetRepo>(
-    () => ClosetRepo(apiService: getIt()),
+        () => ClosetRepo(apiService: getIt()),
   );
   getIt.registerFactory<ClosetCubit>(
-    () => ClosetCubit(closetRepo: getIt()),
+        () => ClosetCubit(closetRepo: getIt()),
   );
   //PortfolioTailor
   getIt.registerLazySingleton<PortfolioTailorRepo>(
-    () => PortfolioTailorRepo(apiService: getIt()),
+        () => PortfolioTailorRepo(apiService: getIt()),
   );
   getIt.registerFactory<PortfolioTailorCubit>(
-    () => PortfolioTailorCubit(portfolioTailorRepo: getIt()),
-  );  
+        () => PortfolioTailorCubit(portfolioTailorRepo: getIt()),
+  );
   //Cart
   getIt.registerLazySingleton<CartRepo>(
-    () => CartRepo(apiService: getIt()),
+        () => CartRepo(apiService: getIt()),
   );
   getIt.registerFactory<CartCubit>(
-    () => CartCubit(cartRepo: getIt()),
+        () => CartCubit(cartRepo: getIt()),
   );
 
+  getIt.registerLazySingleton<SocketService>(() => SocketService());
+
+  getIt.registerLazySingleton<ConversationsRepo>(
+        () => ConversationsRepo(getIt<ApiService>()),
+  );
+  getIt.registerFactory<ConversationsCubit>(
+        () => ConversationsCubit(getIt<ConversationsRepo>()),
+  );
+
+  // Register ChatRepo
+  getIt.registerLazySingleton<ChatRepo>(
+        () => ChatRepo(getIt<ApiService>()),
+  );
+
+// Register ChatCubit (factory so a new instance is created each time)
+  getIt.registerFactory<ChatCubit>(
+        () => ChatCubit(
+      getIt<SocketService>(),
+      getIt<ChatRepo>(),
+    ),
+  );
 }

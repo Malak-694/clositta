@@ -15,7 +15,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.showCartIcon,
     this.cartItemCount = 0,
     required this.onCartTap,
-    this.extraActions = const [], // ✅ new
+    this.extraActions = const [],
+    // ✅ new chat params
+    this.showChatIcon = false,
+    this.unreadChatCount = 0,
+    this.onChatTap,
   });
 
   final String title;
@@ -25,7 +29,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool showCartIcon;
   final int cartItemCount;
   final VoidCallback? onCartTap;
-  final List<Widget> extraActions; // ✅ new
+  final List<Widget> extraActions;
+  // ✅ new chat params
+  final bool showChatIcon;
+  final int unreadChatCount;
+  final VoidCallback? onChatTap;
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -55,9 +63,51 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
       actions: [
-        // ✅ extra actions (delete icon etc.)
         ...extraActions,
 
+        if (showChatIcon)
+          Padding(
+            padding: const EdgeInsets.only(right: 4.0),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                IconButton(
+                  icon: Icon(
+                    Icons.chat_bubble_outline,
+                    color: AppColors.dark,
+                  ),
+                  onPressed: onChatTap,
+                ),
+                if (unreadChatCount > 0)
+                  Positioned(
+                    top: 6,
+                    right: 6,
+                    child: Container(
+                      padding: const EdgeInsets.all(3),
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 16,
+                        minHeight: 16,
+                      ),
+                      child: Text(
+                        unreadChatCount > 99 ? '99+' : '$unreadChatCount',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+
+        // Cart icon
         if (showCartIcon)
           Padding(
             padding: const EdgeInsets.only(right: 8.0),

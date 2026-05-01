@@ -52,6 +52,8 @@ dependencies:
   retrofit: ^4.9.1
   shared_preferences: ^2.5.3
   url_launcher: ^6.3.2
+  socket_io_client: ^2.0.3
+
 
 dev_dependencies:
   build_runner: ^2.10.4

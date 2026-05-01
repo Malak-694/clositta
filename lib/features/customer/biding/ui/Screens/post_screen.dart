@@ -64,6 +64,21 @@ class _PostScreenState extends State<PostScreen> {
         showCartIcon: true,
         onCartTap: () =>
             Navigator.pushNamed(context, RouteNames.customer_cart_screen),
+        showChatIcon: true,
+        unreadChatCount: 5,
+        onChatTap: () async {
+          final userId = await prefs.getSecureData('id') ?? '';
+          print(userId);
+          if (context.mounted) {
+            Navigator.pushNamed(
+              context,
+              RouteNames.conversations_screen,
+              arguments: {
+                'currentUserId': userId,
+              },
+            );
+          }
+        },
       ),
       body: SafeArea(
         child: Container(
@@ -72,7 +87,6 @@ class _PostScreenState extends State<PostScreen> {
           padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
           child: Column(
             children: [
-              // ── Top Row: Dropdown + New Request ──────────────────
               Row(
                 children: [
                   CustomDropdown(
@@ -101,8 +115,6 @@ class _PostScreenState extends State<PostScreen> {
                 ],
               ),
               SizedBox(height: 10.h),
-
-              // ── Bids Grid ────────────────────────────────────────
               Expanded(
                 child: Builder(
                   builder: (context) {
@@ -170,7 +182,6 @@ class _PostScreenState extends State<PostScreen> {
                                   showDate: true,
                                   showCart: false,
                                   showRating: false,
-                                  // ✅ Only show edit for open posts
                                   showEdit: post.status.toLowerCase() != 'closed',
                                   onEdit: post.status.toLowerCase() != 'closed'
                                       ? () => Navigator.pushNamed(

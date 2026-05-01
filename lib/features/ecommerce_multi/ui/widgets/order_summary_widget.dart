@@ -1,3 +1,4 @@
+import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,10 +9,14 @@ class OrderSummary extends StatelessWidget {
     super.key,
     required this.subtotal,
     this.shippingCost = 0.0,
+    this.backgroundColor = const Color(0xFFF0EFFF),
+    this.accentColor = AppColors.primery,
   });
 
   final double subtotal;
   final double shippingCost;
+  final Color backgroundColor;
+  final Color accentColor;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +26,7 @@ class OrderSummary extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF0EFFF),
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -29,7 +34,10 @@ class OrderSummary extends StatelessWidget {
           _SummaryRow(
             label: 'Subtotal',
             value: '\$${subtotal.toStringAsFixed(2)}',
-            labelStyle: AppStyle.medPrimery.copyWith(fontSize: 14.sp),
+            labelStyle: AppStyle.medPrimery.copyWith(
+              fontSize: 14.sp,
+              color: accentColor,
+            ),
             valueStyle: AppStyle.medBlack.copyWith(fontSize: 14.sp),
           ),
           const SizedBox(height: 8),
@@ -38,7 +46,10 @@ class OrderSummary extends StatelessWidget {
             value: shippingCost == 0
                 ? 'Free'
                 : '\$${shippingCost.toStringAsFixed(2)}',
-            labelStyle: AppStyle.medPrimery.copyWith(fontSize: 14.sp),
+            labelStyle: AppStyle.medPrimery.copyWith(
+              fontSize: 14.sp,
+              color: accentColor,
+            ),
             valueStyle: AppStyle.medBlack.copyWith(fontSize: 14.sp),
           ),
           const Divider(height: 20, thickness: 0.8),
@@ -46,7 +57,10 @@ class OrderSummary extends StatelessWidget {
             label: 'Total',
             value: '\$${total.toStringAsFixed(2)}',
             labelStyle: AppStyle.medBlack.copyWith(fontSize: 16.sp),
-            valueStyle: AppStyle.medPrimery.copyWith(fontSize: 20.sp),
+            valueStyle: AppStyle.medPrimery.copyWith(
+              fontSize: 20.sp,
+              color: accentColor,
+            ),
           ),
         ],
       ),

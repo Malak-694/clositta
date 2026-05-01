@@ -101,9 +101,9 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
                     ),
                   ),
                   CustomElevatedButton(
-                    value: "+ Add Product ",
+                    value: "+ Product ",
                     onPressed: () {
-                       Navigator.pushNamed(context, "added_product_item");
+                      Navigator.pushNamed(context, "added_product_item");
                     },
                     height: 40.h,
                     width: 190.w,

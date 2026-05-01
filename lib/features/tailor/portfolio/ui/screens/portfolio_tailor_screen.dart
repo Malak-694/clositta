@@ -33,8 +33,8 @@ class PortfolioTailorScreen extends StatelessWidget {
         bottomNavigationBar: FloatingNavBar(
           userRole: 'tailor',
           selectedIndex: 1,
-          focused: AppColors.primery,
-          notSelected: AppColors.darkprimery,
+         focused: AppColors.secondary,
+        notSelected: AppColors.darksecondary,
         ),
       ),
     );

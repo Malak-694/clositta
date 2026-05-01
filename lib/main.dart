@@ -18,7 +18,7 @@ String getInitialRoute(String? token, String? role) {
       return RouteNames.customer_cart_screen;
 
     case 'tailor':
-      return RouteNames.view_bidding_tailor;
+      return RouteNames.login;
 
     case 'clothes_seller':
     case 'material_seller':

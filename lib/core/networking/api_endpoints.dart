@@ -4,6 +4,7 @@ class ApiEndpoints {
 
   static const String login = '/api/auth/login';
   static const String signUp = '/api/auth/register';
+
   static const String profile = "/api/auth/profile";
   static const String delete_profile_image = "/api/auth/profile/image";
   static const String forget_password = "/api/auth/forgot-password";
@@ -36,9 +37,16 @@ class ApiEndpoints {
   // Ecommerce
   static const String products = '/api/products/all';
   static const String ratePoduct = '/api/products/{productId}/rate';
-  // Ecommerce-cart
+  //ecommerce-cart
   static const String cart = '/api/cart';
   static const String updateCartItems = '/api/cart/item/{productId}';
+  //ecommerce-checkout
+  static const String placeOrder = '/api/orders';
+  static const String cancelOrder = '/api/orders/{orderId}/cancel';
+  static const String getOrderById = '/api/orders/{orderId}';
+  static const String getMyOrders = '/api/orders/my';
+  static const String getAllOrdersSeller = '/api/orders/all';
+  static const String updateOrderStatusSeller = '/api/orders/{orderId}/status';
 
   static const String socketUrl =
       'https://graduationproject-production-b435.up.railway.app';

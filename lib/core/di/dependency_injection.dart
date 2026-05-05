@@ -7,14 +7,18 @@ import 'package:chicora/features/customer/biding/logic/cubit/customer_bidding_cu
 import 'package:chicora/features/customer/closet/data/repo/closet_repo.dart';
 import 'package:chicora/features/customer/closet/logic/cubit/closet_cubit.dart';
 import 'package:chicora/features/ecommerce_multi/data/repo/cart_repo.dart';
+import 'package:chicora/features/ecommerce_multi/data/repo/order_repo.dart';
 import 'package:chicora/features/ecommerce_multi/data/repo/rate_products_repo.dart';
 import 'package:chicora/features/ecommerce_multi/data/repo/view_products_repo.dart';
 import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
+import 'package:chicora/features/ecommerce_multi/logic/order_cubit/order_cubit.dart';
 import 'package:chicora/features/ecommerce_multi/logic/rate_products_logic/rate_products_cubit.dart';
 import 'package:chicora/features/ecommerce_multi/logic/view_product_logic/view_products_cubit.dart';
 import 'package:chicora/features/tailor/bidding_tailor/data/repo/bidding_tailor_repo.dart';
 import 'package:chicora/features/tailor/bidding_tailor/logic/cubit/bidding_tailor_cubit.dart';
 import 'package:chicora/features/seller/products/data/repo/seller_product_repo.dart';
+import 'package:chicora/features/seller/orders/data/repo/order_mangement_repo.dart';
+import 'package:chicora/features/seller/orders/logic/cubit/order_mangement_cubit.dart';
 import 'package:chicora/features/seller/products/logic/cubit/seller_products_cubit.dart';
 import 'package:chicora/features/tailor/portfolio/logic/cubit/portfolio_tailor_cubit.dart';
 import 'package:dio/dio.dart';
@@ -95,6 +99,20 @@ Future<void> setupGetIt() async {
   );
   getIt.registerFactory<CartCubit>(
     () => CartCubit(cartRepo: getIt()),
+  );
+  //Order
+  getIt.registerLazySingleton<OrderRepo>(
+    () => OrderRepo(apiService: getIt()),
+  );
+  getIt.registerFactory<OrderCubit>(
+    () => OrderCubit(getIt()),
+  );
+  //Seller orders management
+  getIt.registerLazySingleton<OrderMangementRepo>(
+    () => OrderMangementRepo(apiService: getIt()),
+  );
+  getIt.registerFactory<OrderMangementCubit>(
+    () => OrderMangementCubit(repo: getIt()),
   );
 
 }

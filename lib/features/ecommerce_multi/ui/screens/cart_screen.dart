@@ -5,12 +5,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/style.dart';
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/models/message_model.dart';
 import '../../../../core/widgets/custom_elevated_button.dart';
 import '../../data/models/cart_models/cart_response_model.dart';
 import '../../data/models/cart_models/delete_cart_response_model.dart';
 import '../../logic/cart_cubit/cart_cubit.dart';
 import '../../logic/cart_cubit/cart_state.dart';
+import '../../logic/order_cubit/order_cubit.dart';
+import '../screens/checkout_screen.dart';
+import '../screens/order_view_screen.dart';
 import '../widgets/order_summary_widget.dart';
 
 class CartScreenBody extends StatefulWidget {
@@ -24,9 +28,20 @@ class _CartScreenBodyState extends State<CartScreenBody> {
   // Keeps track of item IDs that are currently updating quantity/removing
   final Set<String> _updatingItems = {};
   List<Item> _cachedCartItems = [];
+  Color _rolePrimary = AppColors.primery;
+  Color _roleDark = AppColors.darkprimery;
+
   @override
   void initState() {
     super.initState();
+    AppColors.primaryForCurrentUser().then((color) {
+      if (!mounted) return;
+      setState(() => _rolePrimary = color);
+    });
+    AppColors.darkForCurrentUser().then((color) {
+      if (!mounted) return;
+      setState(() => _roleDark = color);
+    });
     context.read<CartCubit>().getCart();
   }
 
@@ -79,18 +94,42 @@ class _CartScreenBodyState extends State<CartScreenBody> {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: isMainLoading
-              ? const Center(child: CircularProgressIndicator())
+              ? Center(child: CircularProgressIndicator(color: _rolePrimary))
               : Column(
                   children: [
                     Expanded(
                       child: _cachedCartItems.isEmpty
-                          ? const Center(
-                              child: Text(
-                                'Your cart is empty',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                          ? Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Your cart is empty',
+                                    style: AppStyle.medBlack.copyWith(
+                                      fontSize: 16.sp,
+                                    ),
+                                  ),
+                                  SizedBox(height: 12.h),
+                                  CustomElevatedButton(
+                                    value: 'View my orders',
+                                    height: 46.h,
+                                    width: 190.w,
+                                    background: _rolePrimary,
+                                    style: AppStyle.smallBackground.copyWith(
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) =>
+                                              const OrderViewScreen(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
                               ),
                             )
                           : ListView.builder(
@@ -101,7 +140,13 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                               itemCount: _cachedCartItems.length + 1,
                               itemBuilder: (context, i) {
                                 if (i == _cachedCartItems.length) {
-                                  return OrderSummary(subtotal: subtotal);
+                                  return OrderSummary(
+                                    subtotal: subtotal,
+                                    backgroundColor: _rolePrimary.withOpacity(
+                                      0.12,
+                                    ),
+                                    accentColor: _roleDark,
+                                  );
                                 }
                                 final item = _cachedCartItems[i];
                                 return ProductCartCard(
@@ -147,19 +192,65 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                         value: 'Proceed to Checkout',
                         height: 50.h,
                         style: AppStyle.medBackground.copyWith(fontSize: 18.sp),
-                        onPressed: () {},
+                        background: _rolePrimary,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => MultiBlocProvider(
+                                providers: [
+                                  BlocProvider.value(
+                                    value: context.read<CartCubit>(),
+                                  ),
+                                  BlocProvider(
+                                    create: (_) => getIt<OrderCubit>(),
+                                  ),
+                                ],
+                                child: const CheckoutScreen(),
+                              ),
+                            ),
+                          );
+                        },
                       ),
                       SizedBox(height: 16.h),
 
-                      CustomElevatedButton(
-                        value: 'Remove All items from cart',
-                        height: 50.h,
-                        style: AppStyle.boldBackground.copyWith(
-                          fontSize: 18.sp,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CustomElevatedButton(
+                              value: 'View my orders',
+                              height: 46.h,
+                              width: 190.w,
+                              style: AppStyle.smallBackground.copyWith(
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              background: _rolePrimary,
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const OrderViewScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                            SizedBox(width: 10.w),
+                            CustomElevatedButton(
+                              value: 'Remove cart',
+                              height: 46.h,
+                              width: 130.w,
+                              style: AppStyle.boldBackground.copyWith(
+                                fontSize: 12.sp,
+                              ),
+                              onPressed: () =>
+                                  context.read<CartCubit>().removeAllCart(),
+                              background: AppColors.ternary,
+                            ),
+                          ],
                         ),
-                        onPressed: () =>
-                            context.read<CartCubit>().removeAllCart(),
-                        background: AppColors.ternary,
                       ),
                     ],
                     SizedBox(height: 30.h),

@@ -1,0 +1,147 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'order_seller_response_model.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+OrderSellerResponseModel _$OrderSellerResponseModelFromJson(
+  Map<String, dynamic> json,
+) => OrderSellerResponseModel(
+  id: json['_id'] as String?,
+  user: json['user'] == null
+      ? null
+      : UserSummarySellerViewModel.fromJson(
+          json['user'] as Map<String, dynamic>,
+        ),
+  items: (json['items'] as List<dynamic>?)
+      ?.map(
+        (e) => OrderItemWithPopulatedProductModel.fromJson(
+          e as Map<String, dynamic>,
+        ),
+      )
+      .toList(),
+  shippingAddress: json['shippingAddress'] == null
+      ? null
+      : ShippingAddressSellerOrderModel.fromJson(
+          json['shippingAddress'] as Map<String, dynamic>,
+        ),
+  paymentMethod: json['paymentMethod'] as String?,
+  paymentStatus: json['paymentStatus'] as String?,
+  orderStatus: json['orderStatus'] as String?,
+  itemsTotal: (json['itemsTotal'] as num?)?.toInt(),
+  shippingFee: (json['shippingFee'] as num?)?.toInt(),
+  totalAmount: (json['totalAmount'] as num?)?.toInt(),
+  cancelReason: json['cancelReason'] as String?,
+  createdAt: json['createdAt'] as String?,
+  updatedAt: json['updatedAt'] as String?,
+  iV: (json['__v'] as num?)?.toInt(),
+);
+
+Map<String, dynamic> _$OrderSellerResponseModelToJson(
+  OrderSellerResponseModel instance,
+) => <String, dynamic>{
+  '_id': instance.id,
+  'user': instance.user,
+  'items': instance.items,
+  'shippingAddress': instance.shippingAddress,
+  'paymentMethod': instance.paymentMethod,
+  'paymentStatus': instance.paymentStatus,
+  'orderStatus': instance.orderStatus,
+  'itemsTotal': instance.itemsTotal,
+  'shippingFee': instance.shippingFee,
+  'totalAmount': instance.totalAmount,
+  'cancelReason': instance.cancelReason,
+  'createdAt': instance.createdAt,
+  'updatedAt': instance.updatedAt,
+  '__v': instance.iV,
+};
+
+UserSummarySellerViewModel _$UserSummarySellerViewModelFromJson(
+  Map<String, dynamic> json,
+) => UserSummarySellerViewModel(
+  id: json['_id'] as String?,
+  name: json['name'] as String?,
+  email: json['email'] as String?,
+  phone: json['phone'] as String?,
+);
+
+Map<String, dynamic> _$UserSummarySellerViewModelToJson(
+  UserSummarySellerViewModel instance,
+) => <String, dynamic>{
+  '_id': instance.id,
+  'name': instance.name,
+  'email': instance.email,
+  'phone': instance.phone,
+};
+
+OrderItemWithPopulatedProductModel _$OrderItemWithPopulatedProductModelFromJson(
+  Map<String, dynamic> json,
+) => OrderItemWithPopulatedProductModel(
+  product: json['product'] == null
+      ? null
+      : OrderItemProductSellerModel.fromJson(
+          json['product'] as Map<String, dynamic>,
+        ),
+  name: json['name'] as String?,
+  imageUrl: json['imageUrl'] as String?,
+  price: (json['price'] as num?)?.toInt(),
+  quantity: (json['quantity'] as num?)?.toInt(),
+  subtotal: (json['subtotal'] as num?)?.toInt(),
+  id: json['_id'] as String?,
+);
+
+Map<String, dynamic> _$OrderItemWithPopulatedProductModelToJson(
+  OrderItemWithPopulatedProductModel instance,
+) => <String, dynamic>{
+  'product': instance.product,
+  'name': instance.name,
+  'imageUrl': instance.imageUrl,
+  'price': instance.price,
+  'quantity': instance.quantity,
+  'subtotal': instance.subtotal,
+  '_id': instance.id,
+};
+
+OrderItemProductSellerModel _$OrderItemProductSellerModelFromJson(
+  Map<String, dynamic> json,
+) => OrderItemProductSellerModel(
+  id: json['_id'] as String?,
+  name: json['name'] as String?,
+  imageUrl: json['imageUrl'] as String?,
+  price: (json['price'] as num?)?.toInt(),
+);
+
+Map<String, dynamic> _$OrderItemProductSellerModelToJson(
+  OrderItemProductSellerModel instance,
+) => <String, dynamic>{
+  '_id': instance.id,
+  'name': instance.name,
+  'imageUrl': instance.imageUrl,
+  'price': instance.price,
+};
+
+ShippingAddressSellerOrderModel _$ShippingAddressSellerOrderModelFromJson(
+  Map<String, dynamic> json,
+) => ShippingAddressSellerOrderModel(
+  fullName: json['fullName'] as String?,
+  phone: json['phone'] as String?,
+  address: json['address'] as String?,
+  city: json['city'] as String?,
+  governorate: json['governorate'] as String?,
+  postalCode: json['postalCode'] as String?,
+  notes: json['notes'] as String?,
+);
+
+Map<String, dynamic> _$ShippingAddressSellerOrderModelToJson(
+  ShippingAddressSellerOrderModel instance,
+) => <String, dynamic>{
+  'fullName': instance.fullName,
+  'phone': instance.phone,
+  'address': instance.address,
+  'city': instance.city,
+  'governorate': instance.governorate,
+  'postalCode': instance.postalCode,
+  'notes': instance.notes,
+};

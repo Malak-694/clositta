@@ -36,4 +36,6 @@ class ApiEndpoints {
   //ecommerce-cart
   static const String cart = '/api/cart';
   static const String updateCartItems = '/api/cart/item/{productId}';
+  //seller-analysis
+  static const String sellerAnalysis = '/api/analytics/seller';
 }

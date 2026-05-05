@@ -19,6 +19,7 @@ class RouteNames {
   static const view_offers_tailor = "view_offers";
 
   static const seller_products_screen = "seller_products_screen";
+  static const analysis_seller_screen = "analysis_seller_screen";
   static const added_product_item = "added_product_item";
   static const customer_products_screen = "customer_products_screen";
   static const update_product_screen = "update_product_screen";

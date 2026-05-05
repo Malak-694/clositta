@@ -82,6 +82,11 @@ class FloatingNavBar extends StatelessWidget {
         "name": "Profile",
         "route": RouteNames.profile_seller_screen,
       },
+      {
+        "icon": Icons.analytics,
+        "name": "Analysis",
+        "route": RouteNames.analysis_seller_screen,
+      },
     ],
   };
 

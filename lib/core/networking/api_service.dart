@@ -21,6 +21,7 @@ import '../../features/ecommerce_multi/data/models/cart_models/cart_request_mode
 import '../../features/ecommerce_multi/data/models/cart_models/cart_response_model.dart';
 import '../../features/ecommerce_multi/data/models/rating models/rating_response_model.dart';
 import '../../features/profile/data/model/profile_model.dart';
+import '../../features/seller/analysis/data/models/analysis_response_model.dart';
 import '../../features/tailor/portfolio/data/models/portfolio_tailor_response_model.dart';
 
 part 'api_service.g.dart';
@@ -279,5 +280,10 @@ abstract class ApiService {
     @Part(name: "description") String description,
     @Part(name: "image") MultipartFile? image, // ✅ optional
   );
-
+  
+  //seller-analysis
+  @GET(ApiEndpoints.sellerAnalysis)
+  Future<AnalyticsResponseModel> getSellerAnalysis(
+    @Header("Authorization") String token,
+  );
 }

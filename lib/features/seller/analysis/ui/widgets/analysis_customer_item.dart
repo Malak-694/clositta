@@ -39,7 +39,12 @@ class AnalysisCustomerItem extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text('\$${customer.totalSpent}', style: AppStyle.boldTernary),
+              Text(
+                '\$${customer.totalSpent}',
+                style: AppStyle.boldTernary.copyWith(
+                  color: AppColors.darkternary,
+                ),
+              ),
               const SizedBox(height: 2),
               Text(
                 'Orders: ${customer.totalOrders}',

@@ -26,9 +26,10 @@ class AnalysisStatTile extends StatelessWidget {
       child: Row(
         children: [
           if (icon != null) ...[
-            Icon(icon, color: AppColors.ternary, size: 18),
+            Icon(icon, color: AppColors.lightternary, size: 25),
             const SizedBox(width: 8),
           ],
+          SizedBox(width: 8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,7 +38,9 @@ class AnalysisStatTile extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   value,
-                  style: AppStyle.boldTernary.copyWith(color: AppColors.darkternary),
+                  style: AppStyle.boldTernary.copyWith(
+                    color: AppColors.darkternary,
+                  ),
                 ),
               ],
             ),

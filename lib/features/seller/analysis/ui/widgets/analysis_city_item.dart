@@ -20,8 +20,11 @@ class AnalysisCityItem extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.location_city_outlined, color: AppColors.ternary),
-          const SizedBox(width: 10),
+          const Icon(
+            Icons.location_city_outlined,
+            color: AppColors.lightternary,
+          ),
+          const SizedBox(width: 20),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,7 +35,10 @@ class AnalysisCityItem extends StatelessWidget {
               ],
             ),
           ),
-          Text('\$${city.revenue}', style: AppStyle.boldTernary),
+          Text(
+            '\$${city.revenue}',
+            style: AppStyle.boldTernary.copyWith(color: AppColors.darkternary),
+          ),
         ],
       ),
     );

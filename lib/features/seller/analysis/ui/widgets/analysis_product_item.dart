@@ -49,7 +49,10 @@ class AnalysisProductItem extends StatelessWidget {
               ],
             ),
           ),
-          Text('\$${product.totalRevenue}', style: AppStyle.boldTernary),
+          Text(
+            '\$${product.totalRevenue}',
+            style: AppStyle.boldTernary.copyWith(color: AppColors.darkternary),
+          ),
         ],
       ),
     );

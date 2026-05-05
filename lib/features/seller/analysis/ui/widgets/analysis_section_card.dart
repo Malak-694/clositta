@@ -33,7 +33,7 @@ class AnalysisSectionCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: AppStyle.medTernary),
+          Text(title, style: AppStyle.medPrimery),
           const SizedBox(height: 10),
           child,
         ],

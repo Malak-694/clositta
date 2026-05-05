@@ -72,9 +72,9 @@ class FloatingNavBar extends StatelessWidget {
         "route": RouteNames.seller_products_screen,
       },
       {
-        "icon": Icons.cut,
-        "name": "Portfolio",
-        "route": RouteNames.seller_products_screen,
+        "icon": Icons.receipt_long,
+        "name": "Orders",
+        "route": RouteNames.seller_orders_screen,
       },
 
       {

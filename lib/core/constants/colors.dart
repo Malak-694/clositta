@@ -10,13 +10,13 @@ class AppColors {
   static const lightprimery = Color(0xFFEDEDFF);
   static const primery = Color(0xFF5E50B6);
   static const darkprimery = Color.fromRGBO(39, 32, 83, 1);
-  static const secondary = Color.fromARGB(255, 227, 169, 62);
-  static const darksecondary = Color(0xFF9A7A3A);
-  static const lightsecondary = Color(0xFFF2E8D0);
+  static const secondary = Color(0xFFAF5A8D );
+  static const darksecondary = Color(0xFF6F3A6A);
+  static const lightsecondary = Color.fromARGB(255, 195, 155, 179);
 
   static const ternary = Color(0xFFFF6464);
 
-  static const darkternary = Color.fromARGB(255, 163, 46, 46);
+  static const darkternary = Color(0xFFDD2C00);
   static const lightternary = Color(0xFFF18C88);
 
   /// Returns a primary color based on a user role string.

@@ -30,18 +30,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../features/auth/ui/screens/sign_up_screen.dart';
 import '../../features/customer/closet/data/models/closet_item_response_model.dart';
-import '../../features/customer/ecommerce/view_products/customer_cart_screen.dart';
-import '../../features/customer/ecommerce/view_products/ui/screens/customer_products_screen.dart';
+import '../../features/customer/ecommerce/customer_cart_screen.dart';
+import '../../features/customer/ecommerce/customer_products_screen.dart';
 import '../../features/customer/profile/ui/customer_profile_screen.dart';
 import '../../features/ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
 import '../../features/profile/logic/profile_cubit.dart';
+import '../../features/seller/orders/logic/cubit/order_mangement_cubit.dart';
 import '../../features/seller/products/data/models/product_model_response.dart';
 import '../../features/seller/analysis/ui/screens/analysis_seller_screen.dart';
+import '../../features/seller/orders/ui/screens/order_mangement_screen.dart';
 import '../../features/seller/products/ui/screens/seller_products_screen.dart';
 import '../../features/seller/profile/ui/seller_profile_screen.dart' hide TailorProfileScreen;
 import '../../features/tailor/bidding_tailor/ui/Screens/posts_tailor_screen.dart';
-import '../../features/tailor/ecommerce/view_products/tailor_cart_screen.dart';
-import '../../features/tailor/ecommerce/view_products/ui/screens/tailor_products_screen.dart';
+import '../../features/tailor/ecommerce/tailor_cart_screen.dart';
+import '../../features/tailor/ecommerce/tailor_products_screen.dart';
 import '../../features/tailor/portfolio/data/models/portfolio_tailor_response_model.dart';
 import '../../features/tailor/portfolio/ui/screens/portfolio_tailor_screen.dart';
 import '../../features/tailor/profile/ui/tailor_profile_screen.dart';
@@ -216,6 +218,13 @@ class AppRouter {
           builder: (_) => BlocProvider(
             create: (_) => getIt<AnalysisSellerCubit>()..getSellerAnalysis(),
             child: const AnalysisSellerScreen(),
+          ),
+        );
+      case RouteNames.seller_orders_screen:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<OrderMangementCubit>(),
+            child: const OrderMangementScreen(),
           ),
         );
       case RouteNames.added_product_item:

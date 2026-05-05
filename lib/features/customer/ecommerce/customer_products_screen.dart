@@ -1,14 +1,14 @@
+import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
+import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_state.dart';
+import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_total_quantity.dart';
+import 'package:chicora/features/ecommerce_multi/ui/screens/buyer_product_screen_body.dart';
 import 'package:flutter/material.dart';
-
-import '../../../../../../core/constants/colors.dart';
-import '../../../../../../core/router/route_names.dart';
-import '../../../../../../core/widgets/custom_app_bar.dart';
-import '../../../../../../core/widgets/custom_nav_bar.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../../ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
-import '../../../../../ecommerce_multi/logic/cart_cubit/cart_state.dart';
-import '../../../../../ecommerce_multi/logic/cart_cubit/cart_total_quantity.dart';
-import '../../../../../ecommerce_multi/ui/screens/buyer_product_screen_body.dart';
+
+import '../../../core/constants/colors.dart';
+import '../../../core/router/route_names.dart';
+import '../../../core/widgets/custom_app_bar.dart';
+import '../../../core/widgets/custom_nav_bar.dart';
 
 class CustomerProductsScreen extends StatelessWidget {
   const CustomerProductsScreen({super.key});

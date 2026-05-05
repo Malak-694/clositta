@@ -26,8 +26,8 @@ class SellerProductsScreen extends StatelessWidget {
       bottomNavigationBar: FloatingNavBar(
         userRole: 'seller',
         selectedIndex: 0,
-        focused: AppColors.lightternary,
-        notSelected: AppColors.primery,
+        focused: AppColors.ternary,
+        notSelected: AppColors.darkternary,
       ),
     );
   }

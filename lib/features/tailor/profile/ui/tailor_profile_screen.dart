@@ -19,8 +19,8 @@ class TailorProfileScreen extends StatelessWidget {
         bottomNavigationBar: FloatingNavBar(
           userRole: 'tailor',
           selectedIndex: 2,
-          focused: AppColors.primery,
-          notSelected: AppColors.darkprimery,
+          focused: AppColors.secondary,
+          notSelected: AppColors.darksecondary,
         ),
       ),
     );

@@ -98,7 +98,7 @@ class LabeledTextField extends StatelessWidget {
   }
 
   Widget _buildTextField(BuildContext context) {
-    final effectiveBorderRadius = borderRadius ?? 8.r;
+    final effectiveBorderRadius = borderRadius ?? 12.r;
     final effectiveBorderColor = borderColor ?? Colors.grey[300]!;
     final effectiveFocusedBorderColor =
         focusedBorderColor ?? Theme.of(context).primaryColor;
@@ -110,14 +110,14 @@ class LabeledTextField extends StatelessWidget {
       keyboardType: keyboardType,
       validator: validator ?? (required ? _defaultValidator : null),
       onChanged: onChanged,
-      style: textStyle,
+      style: textStyle ?? AppStyle.body6,
       decoration: InputDecoration(
-
         hintText: hintText,
-        hintStyle: hintStyle,
+        hintStyle: hintStyle ?? AppStyle.smallBlack.copyWith(fontSize: 14.sp),
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
-        contentPadding: contentPadding ?? EdgeInsets.all(12.w),
+        contentPadding:
+            contentPadding ?? EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
         filled: filled,
         fillColor: fillColor,
 

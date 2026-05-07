@@ -24,13 +24,15 @@ Future<void> showCancelOrderDialog({
           TextField(
             controller: reasonController,
             maxLines: 3,
+            style: AppStyle.body6,
             decoration: InputDecoration(
               hintText: 'Reason',
+              hintStyle: AppStyle.smallBlack.copyWith(color: AppColors.light),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.r),
+                borderRadius: BorderRadius.circular(12.r),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.r),
+                borderRadius: BorderRadius.circular(12.r),
                 borderSide: const BorderSide(color: AppColors.primery),
               ),
             ),

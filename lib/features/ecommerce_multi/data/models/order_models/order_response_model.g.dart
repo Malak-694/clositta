@@ -21,8 +21,8 @@ OrderDataModel _$OrderDataModelFromJson(Map<String, dynamic> json) =>
     OrderDataModel(
       id: json['_id'] as String?,
       user: json['user'] as String?,
-      items: (json['items'] as List<dynamic>?)
-          ?.map((e) => OrderItemModel.fromJson(e as Map<String, dynamic>))
+      subOrders: (json['subOrders'] as List<dynamic>?)
+          ?.map((e) => SubOrderModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       shippingAddress: json['shippingAddress'] == null
           ? null
@@ -31,9 +31,6 @@ OrderDataModel _$OrderDataModelFromJson(Map<String, dynamic> json) =>
             ),
       paymentMethod: json['paymentMethod'] as String?,
       paymentStatus: json['paymentStatus'] as String?,
-      orderStatus: json['orderStatus'] as String?,
-      itemsTotal: (json['itemsTotal'] as num?)?.toInt(),
-      shippingFee: (json['shippingFee'] as num?)?.toInt(),
       totalAmount: (json['totalAmount'] as num?)?.toInt(),
       createdAt: json['createdAt'] as String?,
       updatedAt: json['updatedAt'] as String?,
@@ -44,17 +41,53 @@ Map<String, dynamic> _$OrderDataModelToJson(OrderDataModel instance) =>
     <String, dynamic>{
       '_id': instance.id,
       'user': instance.user,
-      'items': instance.items,
+      'subOrders': instance.subOrders,
       'shippingAddress': instance.shippingAddress,
       'paymentMethod': instance.paymentMethod,
       'paymentStatus': instance.paymentStatus,
-      'orderStatus': instance.orderStatus,
-      'itemsTotal': instance.itemsTotal,
-      'shippingFee': instance.shippingFee,
       'totalAmount': instance.totalAmount,
       'createdAt': instance.createdAt,
       'updatedAt': instance.updatedAt,
       '__v': instance.iV,
+    };
+
+SubOrderModel _$SubOrderModelFromJson(Map<String, dynamic> json) =>
+    SubOrderModel(
+      seller: json['seller'] == null
+          ? null
+          : SellerModel.fromJson(json['seller'] as Map<String, dynamic>),
+      items: (json['items'] as List<dynamic>?)
+          ?.map((e) => OrderItemModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      itemsTotal: (json['itemsTotal'] as num?)?.toInt(),
+      shippingFee: (json['shippingFee'] as num?)?.toInt(),
+      subTotal: (json['subTotal'] as num?)?.toInt(),
+      orderStatus: json['orderStatus'] as String?,
+      id: json['_id'] as String?,
+    );
+
+Map<String, dynamic> _$SubOrderModelToJson(SubOrderModel instance) =>
+    <String, dynamic>{
+      'seller': instance.seller,
+      'items': instance.items,
+      'itemsTotal': instance.itemsTotal,
+      'shippingFee': instance.shippingFee,
+      'subTotal': instance.subTotal,
+      'orderStatus': instance.orderStatus,
+      '_id': instance.id,
+    };
+
+SellerModel _$SellerModelFromJson(Map<String, dynamic> json) => SellerModel(
+  id: json['_id'] as String?,
+  name: json['name'] as String?,
+  email: json['email'] as String?,
+);
+
+Map<String, dynamic> _$SellerModelToJson(SellerModel instance) =>
+    <String, dynamic>{
+      '_id': instance.id,
+      'name': instance.name,
+      'email': instance.email,
     };
 
 OrderItemModel _$OrderItemModelFromJson(Map<String, dynamic> json) =>

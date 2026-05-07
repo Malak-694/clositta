@@ -28,6 +28,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
   // Keeps track of item IDs that are currently updating quantity/removing
   final Set<String> _updatingItems = {};
   List<Item> _cachedCartItems = [];
+  List<CartSubOrder> _cachedSubOrders = [];
   Color _rolePrimary = AppColors.primery;
   Color _roleDark = AppColors.darkprimery;
 
@@ -49,8 +50,22 @@ class _CartScreenBodyState extends State<CartScreenBody> {
     if (items == null) return 0;
     return items.fold(
       0,
-      (sum, item) => sum + (item.priceAtAddTime ?? 0) * (item.quantity ?? 1),
+      (sum, item) =>
+          sum +
+          (item.subtotal ?? (item.priceAtAddTime ?? 0) * (item.quantity ?? 1)),
     );
+  }
+
+  List<MapEntry<String, List<Item>>> _groupItemsBySeller(List<Item> items) {
+    final grouped = <String, List<Item>>{};
+    for (final item in items) {
+      final sellerId = item.product?.seller;
+      final key = (sellerId != null && sellerId.isNotEmpty)
+          ? sellerId
+          : 'unknown_seller';
+      grouped.putIfAbsent(key, () => <Item>[]).add(item);
+    }
+    return grouped.entries.toList();
   }
 
   @override
@@ -62,11 +77,13 @@ class _CartScreenBodyState extends State<CartScreenBody> {
           success: (data) {
             if (data is CartResponseModel) {
               setState(() {
+                _cachedSubOrders = data.subOrders ?? [];
                 _cachedCartItems = data.items ?? [];
                 _updatingItems.clear();
               });
             } else if (data is DeleteCartResponseModel) {
               setState(() {
+                _cachedSubOrders = data.cart?.subOrders ?? [];
                 _cachedCartItems = data.cart?.items ?? [];
                 _updatingItems.clear();
               });
@@ -88,8 +105,16 @@ class _CartScreenBodyState extends State<CartScreenBody> {
         );
       },
       builder: (context, state) {
-        final bool isMainLoading = state is Loading && _cachedCartItems.isEmpty;
-        final double subtotal = _calculateSubtotal(_cachedCartItems);
+        final bool isMainLoading =
+            state is Loading &&
+            _cachedCartItems.isEmpty &&
+            _cachedSubOrders.isEmpty;
+        final List<Item> displayItems = _cachedSubOrders.isNotEmpty
+            ? _cachedSubOrders
+                  .expand((subOrder) => subOrder.items ?? const <Item>[])
+                  .toList()
+            : _cachedCartItems;
+        final double subtotal = _calculateSubtotal(displayItems);
 
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -98,7 +123,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
               : Column(
                   children: [
                     Expanded(
-                      child: _cachedCartItems.isEmpty
+                      child: displayItems.isEmpty
                           ? Center(
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
@@ -132,62 +157,93 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                                 ],
                               ),
                             )
-                          : ListView.builder(
+                          : ListView(
                               padding: const EdgeInsets.only(
                                 top: 8,
                                 bottom: 16,
                               ),
-                              itemCount: _cachedCartItems.length + 1,
-                              itemBuilder: (context, i) {
-                                if (i == _cachedCartItems.length) {
-                                  return OrderSummary(
-                                    subtotal: subtotal,
-                                    backgroundColor: _rolePrimary.withOpacity(
-                                      0.12,
-                                    ),
-                                    accentColor: _roleDark,
+                              children: [
+                                ..._groupItemsBySeller(displayItems).map((
+                                  sellerGroup,
+                                ) {
+                                  final sellerId = sellerGroup.key;
+                                  final sellerItems = sellerGroup.value;
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                          left: 4.w,
+                                          right: 4.w,
+                                          top: 8.h,
+                                          bottom: 6.h,
+                                        ),
+                                        child: Text(
+                                          sellerId == 'unknown_seller'
+                                              ? 'Seller'
+                                              : 'Seller: $sellerId',
+                                          style: AppStyle.medBlack.copyWith(
+                                            fontSize: 14.sp,
+                                          ),
+                                        ),
+                                      ),
+                                      ...sellerItems.map((item) {
+                                        return ProductCartCard(
+                                          item: item,
+                                          isUpdating: _updatingItems.contains(
+                                            item.product?.pId,
+                                          ),
+                                          onIncrement: () {
+                                            final pId = item.product?.pId;
+                                            if (pId != null) {
+                                              context
+                                                  .read<CartCubit>()
+                                                  .updateCart(
+                                                    pId,
+                                                    (item.quantity ?? 1) + 1,
+                                                  );
+                                            }
+                                          },
+                                          onDecrement: () {
+                                            final pId = item.product?.pId;
+                                            if (pId != null &&
+                                                (item.quantity ?? 1) > 1) {
+                                              context
+                                                  .read<CartCubit>()
+                                                  .updateCart(
+                                                    pId,
+                                                    (item.quantity ?? 1) - 1,
+                                                  );
+                                            }
+                                          },
+                                          onRemove: () {
+                                            final pId = item.product?.pId;
+                                            if (pId != null) {
+                                              context
+                                                  .read<CartCubit>()
+                                                  .removeFromCart(pId);
+                                            }
+                                          },
+                                        );
+                                      }),
+                                      SizedBox(height: 4.h),
+                                    ],
                                   );
-                                }
-                                final item = _cachedCartItems[i];
-                                return ProductCartCard(
-                                  item: item,
-                                  isUpdating: _updatingItems.contains(
-                                    item.product?.pId,
+                                }),
+                                OrderSummary(
+                                  subtotal: subtotal,
+                                  shippingValueText: 'Calculated at checkout',
+                                  backgroundColor: _rolePrimary.withOpacity(
+                                    0.12,
                                   ),
-                                  onIncrement: () {
-                                    final pId = item.product?.pId;
-                                    if (pId != null) {
-                                      context.read<CartCubit>().updateCart(
-                                        pId,
-                                        (item.quantity ?? 1) + 1,
-                                      );
-                                    }
-                                  },
-                                  onDecrement: () {
-                                    final pId = item.product?.pId;
-                                    if (pId != null &&
-                                        (item.quantity ?? 1) > 1) {
-                                      context.read<CartCubit>().updateCart(
-                                        pId,
-                                        (item.quantity ?? 1) - 1,
-                                      );
-                                    }
-                                  },
-                                  onRemove: () {
-                                    final pId = item.product?.pId;
-                                    if (pId != null) {
-                                      // We can use the same update loading UI for remove
-                                      context.read<CartCubit>().removeFromCart(
-                                        pId,
-                                      );
-                                    }
-                                  },
-                                );
-                              },
+                                  accentColor: _roleDark,
+                                ),
+                              ],
                             ),
                     ),
                     SizedBox(height: 10.h),
-                    if (_cachedCartItems.isNotEmpty) ...[
+                    if (displayItems.isNotEmpty) ...[
                       CustomElevatedButton(
                         value: 'Proceed to Checkout',
                         height: 50.h,

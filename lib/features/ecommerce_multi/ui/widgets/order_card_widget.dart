@@ -5,11 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class OrderCardWidget extends StatelessWidget {
-  const OrderCardWidget({
-    super.key,
-    required this.order,
-    this.onTap,
-  });
+  const OrderCardWidget({super.key, required this.order, this.onTap});
 
   final OrderDataModel order;
   final VoidCallback? onTap;
@@ -24,12 +20,12 @@ class OrderCardWidget extends StatelessWidget {
     }
   }
 
-  Color _statusColor(String? status) {
+  Color _paymentStatusColor(String? status) {
     final s = (status ?? '').toLowerCase();
-    if (s.contains('delivered') || s.contains('completed')) {
+    if (s.contains('paid') || s.contains('refunded')) {
       return Colors.green;
     }
-    if (s.contains('cancel')) {
+    if (s.contains('failed')) {
       return AppColors.ternary;
     }
     return AppColors.secondary;
@@ -37,7 +33,12 @@ class OrderCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final itemsCount = order.items?.length ?? 0;
+    final subOrders = order.subOrders ?? const <SubOrderModel>[];
+    final itemsCount = subOrders.fold<int>(
+      0,
+      (sum, subOrder) => sum + (subOrder.items?.length ?? 0),
+    );
+    final paymentStatus = order.paymentStatus;
     return InkWell(
       borderRadius: BorderRadius.circular(14.r),
       onTap: onTap,
@@ -61,15 +62,20 @@ class OrderCardWidget extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 4.h,
+                  ),
                   decoration: BoxDecoration(
-                    color: _statusColor(order.orderStatus).withValues(alpha: 0.15),
+                    color: _paymentStatusColor(
+                      paymentStatus,
+                    ).withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(20.r),
                   ),
                   child: Text(
-                    order.orderStatus ?? 'Pending',
+                    paymentStatus ?? 'pending',
                     style: AppStyle.smallBlack.copyWith(
-                      color: _statusColor(order.orderStatus),
+                      color: _paymentStatusColor(paymentStatus),
                       fontWeight: FontWeight.w700,
                     ),
                   ),

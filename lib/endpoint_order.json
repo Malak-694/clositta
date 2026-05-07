@@ -1,0 +1,337 @@
+{"orders": [
+          {
+              "id": "order_place",
+              "method": "POST",
+              "path": "/orders",
+              "description": "Place new order (Customer only)",
+              "tokenRequired": true,
+              "roles": [
+                  "customer"
+              ],
+              "requestBody": {
+                  "type": "application/json",
+                  "fields": {
+                      "fullName": {
+                          "type": "string",
+                          "required": true,
+                          "example": "John Doe"
+                      },
+                      "phone": {
+                          "type": "string",
+                          "required": true,
+                          "example": "+20 123456789"
+                      },
+                      "address": {
+                          "type": "string",
+                          "required": true,
+                          "example": "123 Main Street"
+                      },
+                      "city": {
+                          "type": "string",
+                          "required": true,
+                          "example": "Cairo"
+                      },
+                      "governorate": {
+                          "type": "string",
+                          "required": true,
+                          "example": "Cairo"
+                      },
+                      "postalCode": {
+                          "type": "string",
+                          "required": false,
+                          "example": "12345"
+                      },
+                      "notes": {
+                          "type": "string",
+                          "required": false,
+                          "example": "Please ring the doorbell"
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 201,
+                      "body": {
+                          "message": "Order placed successfully",
+                          "order": {
+                              "_id": "string (ObjectId)",
+                              "user": "string (ObjectId)",
+                              "subOrders": [
+                                  {
+                                      "_id": "string (ObjectId)",
+                                      "seller": {
+                                          "_id": "string (ObjectId)",
+                                          "name": "string"
+                                      },
+                                      "items": "array",
+                                      "itemsTotal": "number",
+                                      "shippingFee": "number",
+                                      "subTotal": "number",
+                                      "orderStatus": "placed"
+                                  }
+                              ],
+                              "shippingAddress": "object",
+                              "totalAmount": "number",
+                              "createdAt": "string (ISO date)"
+                          }
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 400,
+                          "message": "Your cart is empty"
+                      },
+                      {
+                          "statusCode": 400,
+                          "message": "Stock issues"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "order_get_my_orders",
+              "method": "GET",
+              "path": "/orders/my",
+              "description": "Get my orders (Customer only)",
+              "tokenRequired": true,
+              "roles": [
+                  "customer"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": [
+                          {
+                              "_id": "string (ObjectId)",
+                              "user": "string (ObjectId)",
+                              "subOrders": "array",
+                              "shippingAddress": "object",
+                              "totalAmount": "number",
+                              "createdAt": "string (ISO date)"
+                          }
+                      ]
+                  }
+              }
+          },
+          {
+              "id": "order_get_by_id",
+              "method": "GET",
+              "path": "/orders/:orderId",
+              "description": "Get single order by ID",
+              "tokenRequired": true,
+              "roles": [
+                  "customer",
+                  "material_seller"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "_id": "string (ObjectId)",
+                          "user": "string (ObjectId)",
+                          "subOrders": "array",
+                          "shippingAddress": "object",
+                          "totalAmount": "number",
+                          "createdAt": "string (ISO date)"
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Order not found"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "order_get_seller_orders",
+              "method": "GET",
+              "path": "/orders/seller",
+              "description": "Get seller orders (Material Seller only)",
+              "tokenRequired": true,
+              "roles": [
+                  "material_seller"
+              ],
+              "queryParameters": {
+                  "status": {
+                      "type": "string",
+                      "required": false,
+                      "enum": [
+                          "placed",
+                          "confirmed",
+                          "shipped",
+                          "delivered",
+                          "cancelled"
+                      ],
+                      "example": "placed"
+                  }
+              },
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": [
+                          {
+                              "_id": "string (ObjectId)",
+                              "user": {
+                                  "_id": "string (ObjectId)",
+                                  "name": "string"
+                              },
+                              "subOrders": "array",
+                              "totalAmount": "number"
+                          }
+                      ]
+                  }
+              }
+          },
+          {
+              "id": "order_get_all",
+              "method": "GET",
+              "path": "/orders/all",
+              "description": "Get all orders (Admin only)",
+              "tokenRequired": true,
+              "roles": [
+                  "admin"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": [
+                          {
+                              "_id": "string (ObjectId)",
+                              "user": "string (ObjectId)",
+                              "subOrders": "array",
+                              "totalAmount": "number"
+                          }
+                      ]
+                  }
+              }
+          },
+          {
+              "id": "order_cancel",
+              "method": "PUT",
+              "path": "/orders/:orderId/cancel",
+              "description": "Cancel entire order (only if all sub-orders are 'placed')",
+              "tokenRequired": true,
+              "roles": [
+                  "customer"
+              ],
+              "requestBody": {
+                  "type": "application/json",
+                  "fields": {
+                      "reason": {
+                          "type": "string",
+                          "required": false,
+                          "example": "Changed my mind"
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Order cancelled successfully",
+                          "order": {
+                              "_id": "string (ObjectId)",
+                              "subOrders": "array"
+                          }
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Order not found"
+                      },
+                      {
+                          "statusCode": 400,
+                          "message": "Cannot cancel order - some sub-orders already processed"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "order_cancel_sub_order",
+              "method": "PUT",
+              "path": "/orders/:orderId/suborders/:subOrderId/cancel",
+              "description": "Cancel specific sub-order",
+              "tokenRequired": true,
+              "roles": [
+                  "customer"
+              ],
+              "requestBody": {
+                  "type": "application/json",
+                  "fields": {
+                      "reason": {
+                          "type": "string",
+                          "required": false,
+                          "example": "Out of stock"
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Sub-order cancelled successfully"
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Order or sub-order not found"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "order_update_sub_order_status",
+              "method": "PUT",
+              "path": "/orders/:orderId/suborders/:subOrderId/status",
+              "description": "Update sub-order status (Material Seller only)",
+              "tokenRequired": true,
+              "roles": [
+                  "material_seller"
+              ],
+              "requestBody": {
+                  "type": "application/json",
+                  "fields": {
+                      "status": {
+                          "type": "string",
+                          "required": true,
+                          "enum": [
+                              "confirmed",
+                              "shipped",
+                              "delivered",
+                              "cancelled"
+                          ],
+                          "example": "shipped"
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Sub-order status updated",
+                          "order": {
+                              "_id": "string (ObjectId)",
+                              "subOrders": "array"
+                          }
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Order or sub-order not found"
+                      },
+                      {
+                          "statusCode": 403,
+                          "message": "Unauthorized - this is not your sub-order"
+                      }
+                  ]
+              }
+          }
+      ]}

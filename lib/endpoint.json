@@ -1,355 +1,2510 @@
 {
-  "baseUrl": "/api/orders",
-  "auth": "All endpoints require authenticated user (authMiddleware).",
-  "models": {
-    "ObjectId": "string (MongoDB ObjectId)",
-    "ShippingAddress": {
-      "fullName": "string",
-      "phone": "string",
-      "address": "string",
-      "city": "string",
-      "governorate": "string",
-      "postalCode": "string | null",
-      "notes": "string | null"
-    },
-    "OrderItemWithPopulatedProduct": {
-      "product": {
-        "_id": "ObjectId",
-        "name": "string",
-        "imageUrl": "string",
-        "price": "number"
-      },
-      "name": "string",
-      "imageUrl": "string",
-      "price": "number",
-      "quantity": "number",
-      "subtotal": "number",
-      "_id": "ObjectId"
-    },
-    "OrderItemWithProductId": {
-      "product": "ObjectId",
-      "name": "string",
-      "imageUrl": "string",
-      "price": "number",
-      "quantity": "number",
-      "subtotal": "number",
-      "_id": "ObjectId"
-    },
-    "UserSummarySellerView": {
-      "_id": "ObjectId",
-      "name": "string",
-      "email": "string",
-      "phone": "string | undefined"
-    },
-    "OrderResponseUserView": {
-      "_id": "ObjectId",
-      "user": "ObjectId",
-      "items": [
-        "OrderItemWithPopulatedProduct"
-      ],
-      "shippingAddress": "ShippingAddress",
-      "paymentMethod": "cash_on_delivery",
-      "paymentStatus": "pending | paid",
-      "orderStatus": "placed | confirmed | shipped | delivered | cancelled",
-      "itemsTotal": "number",
-      "shippingFee": "number",
-      "totalAmount": "number",
-      "cancelReason": "string | undefined",
-      "createdAt": "string (ISO date-time)",
-      "updatedAt": "string (ISO date-time)",
-      "__v": "number"
-    },
-    "OrderResponseSellerView": {
-      "_id": "ObjectId",
-      "user": "UserSummarySellerView",
-      "items": [
-        "OrderItemWithPopulatedProduct"
-      ],
-      "shippingAddress": "ShippingAddress",
-      "paymentMethod": "cash_on_delivery",
-      "paymentStatus": "pending | paid",
-      "orderStatus": "placed | confirmed | shipped | delivered | cancelled",
-      "itemsTotal": "number",
-      "shippingFee": "number",
-      "totalAmount": "number",
-      "cancelReason": "string | undefined",
-      "createdAt": "string (ISO date-time)",
-      "updatedAt": "string (ISO date-time)",
-      "__v": "number"
-    }
-  },
-  "endpoints": [
-    {
-      "name": "Place Order",
-      "controller": "placeOrder",
-      "method": "POST",
-      "url": "/api/orders",
-      "parameters": {
-        "path": {},
-        "query": {}
-      },
-      "requestBody": {
-        "type": "object",
-        "required": [
-          "fullName",
-          "phone",
-          "address",
-          "city",
-          "governorate"
-        ],
-        "properties": {
-          "fullName": "string",
-          "phone": "string",
-          "address": "string",
-          "city": "string",
-          "governorate": "string",
-          "postalCode": "string",
-          "notes": "string"
-        }
-      },
-      "responseBody": {
-        "success": {
-          "statusCode": 201,
-          "bodyModel": {
-            "message": "string",
-            "order": "OrderResponseUserView"
-          }
-        },
-        "errors": [
+  "apiVersion": "1.0",
+  "baseUrl": "http://localhost:5000/api",
+  "endpoints": {
+      "auth": [
           {
-            "statusCode": 400,
-            "body": {
-              "message": "fullName, phone, address, city, and governorate are required"
-            }
-          },
-          {
-            "statusCode": 400,
-            "body": {
-              "message": "Your cart is empty"
-            }
-          },
-          {
-            "statusCode": 400,
-            "body": {
-              "message": "Stock issues",
-              "errors": [
-                "string"
-              ]
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "Get My Orders",
-      "controller": "getMyOrders",
-      "method": "GET",
-      "url": "/api/orders/my",
-      "parameters": {
-        "path": {},
-        "query": {}
-      },
-      "requestBody": {
-        "type": "none"
-      },
-      "responseBody": {
-        "success": {
-          "statusCode": 200,
-          "bodyModel": [
-            "OrderResponseUserView"
-          ]
-        },
-        "errors": []
-      }
-    },
-    {
-      "name": "Get Order By ID",
-      "controller": "getOrderById",
-      "method": "GET",
-      "url": "/api/orders/:orderId",
-      "parameters": {
-        "path": {
-          "orderId": "string (required)"
-        },
-        "query": {}
-      },
-      "requestBody": {
-        "type": "none"
-      },
-      "responseBody": {
-        "success": {
-          "statusCode": 200,
-          "bodyModel": "OrderResponseUserView"
-        },
-        "errors": [
-          {
-            "statusCode": 404,
-            "body": {
-              "message": "Order not found"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "Cancel Order",
-      "controller": "cancelOrder",
-      "method": "PUT",
-      "url": "/api/orders/:orderId/cancel",
-      "parameters": {
-        "path": {
-          "orderId": "string (required)"
-        },
-        "query": {}
-      },
-      "requestBody": {
-        "type": "object",
-        "required": [],
-        "properties": {
-          "reason": "string"
-        }
-      },
-      "responseBody": {
-        "success": {
-          "statusCode": 200,
-          "bodyModel": {
-            "message": "Order cancelled successfully",
-            "order": {
-              "_id": "ObjectId",
-              "user": "ObjectId",
-              "items": [
-                "OrderItemWithProductId"
+              "id": "auth_register",
+              "method": "POST",
+              "path": "/auth/register",
+              "description": "Register a new user",
+              "tokenRequired": false,
+              "roles": [
+                  "any"
               ],
-              "shippingAddress": "ShippingAddress",
-              "paymentMethod": "cash_on_delivery",
-              "paymentStatus": "pending | paid",
-              "orderStatus": "cancelled",
-              "itemsTotal": "number",
-              "shippingFee": "number",
-              "totalAmount": "number",
-              "cancelReason": "string",
-              "createdAt": "string (ISO date-time)",
-              "updatedAt": "string (ISO date-time)",
-              "__v": "number"
-            }
-          }
-        },
-        "errors": [
-          {
-            "statusCode": 404,
-            "body": {
-              "message": "Order not found"
-            }
-          },
-          {
-            "statusCode": 400,
-            "body": {
-              "message": "Cannot cancel order with status \"<status>\". Only \"placed\" orders can be cancelled"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "Get All Orders (Seller)",
-      "controller": "getAllOrders",
-      "method": "GET",
-      "url": "/api/orders/all",
-      "parameters": {
-        "path": {},
-        "query": {
-          "status": "string (optional, filters by orderStatus)"
-        }
-      },
-      "requestBody": {
-        "type": "none"
-      },
-      "responseBody": {
-        "success": {
-          "statusCode": 200,
-          "bodyModel": [
-            "OrderResponseSellerView"
-          ]
-        },
-        "errors": [
-          {
-            "statusCode": 403,
-            "body": {
-              "message": "Seller access only"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "Update Order Status (Seller)",
-      "controller": "updateOrderStatus",
-      "method": "PUT",
-      "url": "/api/orders/:orderId/status",
-      "parameters": {
-        "path": {
-          "orderId": "string (required)"
-        },
-        "query": {}
-      },
-      "requestBody": {
-        "type": "object",
-        "required": [],
-        "properties": {
-          "orderStatus": "placed | confirmed | shipped | delivered | cancelled",
-          "paymentStatus": "pending | paid"
-        }
-      },
-      "responseBody": {
-        "success": {
-          "statusCode": 200,
-          "bodyModel": {
-            "message": "Order status updated",
-            "order": {
-              "_id": "ObjectId",
-              "user": {
-                "_id": "ObjectId",
-                "name": "string",
-                "email": "string"
+              "requestBody": {
+                  "type": "multipart/form-data",
+                  "fields": {
+                      "name": {
+                          "type": "string",
+                          "required": true,
+                          "example": "John Doe"
+                      },
+                      "email": {
+                          "type": "string",
+                          "required": true,
+                          "format": "email",
+                          "example": "john@example.com"
+                      },
+                      "password": {
+                          "type": "string",
+                          "required": true,
+                          "minLength": 6,
+                          "example": "password123"
+                      },
+                      "confirmpassword": {
+                          "type": "string",
+                          "required": true,
+                          "example": "password123"
+                      },
+                      "phone": {
+                          "type": "string",
+                          "required": true,
+                          "example": "+20 123456789"
+                      },
+                      "role": {
+                          "type": "string",
+                          "required": true,
+                          "enum": [
+                              "customer",
+                              "tailor",
+                              "material_seller"
+                          ],
+                          "example": "customer"
+                      },
+                      "image": {
+                          "type": "file",
+                          "required": false,
+                          "description": "User profile image"
+                      }
+                  }
               },
-              "items": [
-                "OrderItemWithProductId"
+              "responseBody": {
+                  "success": {
+                      "statusCode": 201,
+                      "body": {
+                          "message": "User registered successfully",
+                          "user": {
+                              "id": "string (ObjectId)",
+                              "name": "string",
+                              "email": "string",
+                              "phone": "string",
+                              "role": "string",
+                              "imageUrl": "string or null"
+                          }
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 400,
+                          "message": "Email already registered"
+                      },
+                      {
+                          "statusCode": 400,
+                          "message": "Passwords do not match"
+                      },
+                      {
+                          "statusCode": 400,
+                          "message": "Invalid role. Must be customer, tailor, or material_seller"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "auth_login",
+              "method": "POST",
+              "path": "/auth/login",
+              "description": "Login user",
+              "tokenRequired": false,
+              "roles": [
+                  "any"
               ],
-              "shippingAddress": "ShippingAddress",
-              "paymentMethod": "cash_on_delivery",
-              "paymentStatus": "pending | paid",
-              "orderStatus": "placed | confirmed | shipped | delivered | cancelled",
-              "itemsTotal": "number",
-              "shippingFee": "number",
-              "totalAmount": "number",
-              "cancelReason": "string | undefined",
-              "createdAt": "string (ISO date-time)",
-              "updatedAt": "string (ISO date-time)",
-              "__v": "number"
-            }
-          }
-        },
-        "errors": [
-          {
-            "statusCode": 403,
-            "body": {
-              "message": "Seller access only"
-            }
+              "requestBody": {
+                  "type": "application/json",
+                  "fields": {
+                      "email": {
+                          "type": "string",
+                          "required": true,
+                          "example": "john@example.com"
+                      },
+                      "password": {
+                          "type": "string",
+                          "required": true,
+                          "example": "password123"
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "token": "string (JWT)",
+                          "role": "string",
+                          "id": "string (ObjectId)",
+                          "name": "string",
+                          "email": "string",
+                          "phone": "string",
+                          "imageUrl": "string or null"
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 400,
+                          "message": "Invalid credentials"
+                      }
+                  ]
+              }
           },
           {
-            "statusCode": 400,
-            "body": {
-              "message": "Invalid order status"
-            }
+              "id": "auth_forgot_password",
+              "method": "POST",
+              "path": "/auth/forgot-password",
+              "description": "Request password reset code",
+              "tokenRequired": false,
+              "roles": [
+                  "any"
+              ],
+              "requestBody": {
+                  "type": "application/json",
+                  "fields": {
+                      "email": {
+                          "type": "string",
+                          "required": true,
+                          "example": "john@example.com"
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Reset code sent to email"
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "User not found"
+                      }
+                  ]
+              }
           },
           {
-            "statusCode": 404,
-            "body": {
-              "message": "Order not found"
-            }
+              "id": "auth_verify_reset_code",
+              "method": "POST",
+              "path": "/auth/verify-reset-code",
+              "description": "Verify password reset code",
+              "tokenRequired": false,
+              "roles": [
+                  "any"
+              ],
+              "requestBody": {
+                  "type": "application/json",
+                  "fields": {
+                      "email": {
+                          "type": "string",
+                          "required": true,
+                          "example": "john@example.com"
+                      },
+                      "resetCode": {
+                          "type": "string",
+                          "required": true,
+                          "example": "123456"
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Reset code verified"
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 400,
+                          "message": "Invalid or expired reset code"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "auth_reset_password",
+              "method": "POST",
+              "path": "/auth/reset-password",
+              "description": "Reset password after verification",
+              "tokenRequired": false,
+              "roles": [
+                  "any"
+              ],
+              "requestBody": {
+                  "type": "application/json",
+                  "fields": {
+                      "email": {
+                          "type": "string",
+                          "required": true,
+                          "example": "john@example.com"
+                      },
+                      "newPassword": {
+                          "type": "string",
+                          "required": true,
+                          "minLength": 6,
+                          "example": "newpassword123"
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Password reset successfully"
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 400,
+                          "message": "Reset code not verified"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "auth_get_profile",
+              "method": "GET",
+              "path": "/auth/profile",
+              "description": "Get current user profile",
+              "tokenRequired": true,
+              "roles": [
+                  "customer",
+                  "tailor",
+                  "material_seller",
+                  "admin"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "_id": "string (ObjectId)",
+                          "name": "string",
+                          "email": "string",
+                          "phone": "string",
+                          "role": "string",
+                          "imageUrl": "string or null",
+                          "createdAt": "string (ISO date)",
+                          "updatedAt": "string (ISO date)"
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "User not found"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "auth_update_profile",
+              "method": "PUT",
+              "path": "/auth/profile",
+              "description": "Update user profile",
+              "tokenRequired": true,
+              "roles": [
+                  "customer",
+                  "tailor",
+                  "material_seller",
+                  "admin"
+              ],
+              "requestBody": {
+                  "type": "multipart/form-data",
+                  "fields": {
+                      "name": {
+                          "type": "string",
+                          "required": false,
+                          "example": "Jane Doe"
+                      },
+                      "email": {
+                          "type": "string",
+                          "required": false,
+                          "format": "email",
+                          "example": "jane@example.com"
+                      },
+                      "phone": {
+                          "type": "string",
+                          "required": false,
+                          "example": "+20 987654321"
+                      },
+                      "image": {
+                          "type": "file",
+                          "required": false,
+                          "description": "New profile image"
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Profile updated successfully",
+                          "user": {
+                              "_id": "string (ObjectId)",
+                              "name": "string",
+                              "email": "string",
+                              "phone": "string",
+                              "role": "string",
+                              "imageUrl": "string"
+                          }
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "User not found"
+                      },
+                      {
+                          "statusCode": 400,
+                          "message": "Email is already in use"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "auth_change_password",
+              "method": "PUT",
+              "path": "/auth/change-password",
+              "description": "Change user password",
+              "tokenRequired": true,
+              "roles": [
+                  "customer",
+                  "tailor",
+                  "material_seller",
+                  "admin"
+              ],
+              "requestBody": {
+                  "type": "application/json",
+                  "fields": {
+                      "oldPassword": {
+                          "type": "string",
+                          "required": true,
+                          "example": "password123"
+                      },
+                      "newPassword": {
+                          "type": "string",
+                          "required": true,
+                          "minLength": 6,
+                          "example": "newpassword123"
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Password changed successfully"
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 400,
+                          "message": "Invalid current password"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "auth_delete_profile_image",
+              "method": "DELETE",
+              "path": "/auth/profile/image",
+              "description": "Delete user profile image",
+              "tokenRequired": true,
+              "roles": [
+                  "customer",
+                  "tailor",
+                  "material_seller",
+                  "admin"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Image deleted successfully",
+                          "user": {
+                              "_id": "string (ObjectId)",
+                              "name": "string",
+                              "imageUrl": null
+                          }
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "User not found"
+                      }
+                  ]
+              }
           }
-        ]
+      ],
+      "products": [
+          {
+              "id": "product_add",
+              "method": "POST",
+              "path": "/products",
+              "description": "Add new product (Material Seller only)",
+              "tokenRequired": true,
+              "roles": [
+                  "material_seller"
+              ],
+              "requestBody": {
+                  "type": "multipart/form-data",
+                  "fields": {
+                      "name": {
+                          "type": "string",
+                          "required": true,
+                          "example": "Cotton Fabric"
+                      },
+                      "description": {
+                          "type": "string",
+                          "required": true,
+                          "example": "High quality cotton fabric"
+                      },
+                      "price": {
+                          "type": "number",
+                          "required": true,
+                          "example": 250.50
+                      },
+                      "stock": {
+                          "type": "integer",
+                          "required": true,
+                          "example": 100
+                      },
+                      "category": {
+                          "type": "string",
+                          "required": true,
+                          "example": "fabric"
+                      },
+                      "type": {
+                          "type": "string",
+                          "required": true,
+                          "example": "cotton"
+                      },
+                      "image": {
+                          "type": "file",
+                          "required": true,
+                          "description": "Product image"
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 201,
+                      "body": {
+                          "_id": "string (ObjectId)",
+                          "seller": "string (ObjectId)",
+                          "name": "string",
+                          "description": "string",
+                          "price": "number",
+                          "stock": "integer",
+                          "category": "string",
+                          "type": "string",
+                          "imageUrl": "string",
+                          "ratings": "array",
+                          "createdAt": "string (ISO date)"
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 403,
+                          "message": "Only sellers can add products"
+                      },
+                      {
+                          "statusCode": 400,
+                          "message": "Missing required fields"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "product_get_all",
+              "method": "GET",
+              "path": "/products/all",
+              "description": "Get all products with filters and search",
+              "tokenRequired": false,
+              "roles": [
+                  "any"
+              ],
+              "queryParameters": {
+                  "category": {
+                      "type": "string",
+                      "required": false,
+                      "example": "fabric"
+                  },
+                  "sellerId": {
+                      "type": "string",
+                      "required": false,
+                      "example": "60d5ec49c1234567890abcd1"
+                  },
+                  "search": {
+                      "type": "string",
+                      "required": false,
+                      "example": "cotton"
+                  },
+                  "minPrice": {
+                      "type": "number",
+                      "required": false,
+                      "example": 100
+                  },
+                  "maxPrice": {
+                      "type": "number",
+                      "required": false,
+                      "example": 500
+                  },
+                  "type": {
+                      "type": "string",
+                      "required": false,
+                      "example": "cotton"
+                  },
+                  "inStock": {
+                      "type": "boolean",
+                      "required": false,
+                      "example": true
+                  }
+              },
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": [
+                          {
+                              "_id": "string (ObjectId)",
+                              "seller": {
+                                  "_id": "string (ObjectId)",
+                                  "name": "string",
+                                  "email": "string"
+                              },
+                              "name": "string",
+                              "description": "string",
+                              "price": "number",
+                              "stock": "integer",
+                              "category": "string",
+                              "type": "string",
+                              "imageUrl": "string",
+                              "ratings": "array",
+                              "createdAt": "string (ISO date)"
+                          }
+                      ]
+                  }
+              }
+          },
+          {
+              "id": "product_get_by_id",
+              "method": "GET",
+              "path": "/products/:productId",
+              "description": "Get single product by ID",
+              "tokenRequired": false,
+              "roles": [
+                  "any"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "_id": "string (ObjectId)",
+                          "seller": {
+                              "_id": "string (ObjectId)",
+                              "name": "string",
+                              "email": "string"
+                          },
+                          "name": "string",
+                          "description": "string",
+                          "price": "number",
+                          "stock": "integer",
+                          "category": "string",
+                          "type": "string",
+                          "imageUrl": "string",
+                          "ratings": "array",
+                          "createdAt": "string (ISO date)"
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Product not found"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "product_get_my_products",
+              "method": "GET",
+              "path": "/products/my/products",
+              "description": "Get my products (Material Seller only)",
+              "tokenRequired": true,
+              "roles": [
+                  "material_seller"
+              ],
+              "queryParameters": {
+                  "category": {
+                      "type": "string",
+                      "required": false,
+                      "example": "fabric"
+                  },
+                  "search": {
+                      "type": "string",
+                      "required": false,
+                      "example": "cotton"
+                  }
+              },
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": [
+                          {
+                              "_id": "string (ObjectId)",
+                              "seller": "string (ObjectId)",
+                              "name": "string",
+                              "description": "string",
+                              "price": "number",
+                              "stock": "integer",
+                              "category": "string",
+                              "type": "string",
+                              "imageUrl": "string",
+                              "ratings": "array",
+                              "createdAt": "string (ISO date)"
+                          }
+                      ]
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 403,
+                          "message": "Only sellers can access this endpoint"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "product_update",
+              "method": "PUT",
+              "path": "/products/:productId",
+              "description": "Update product (Material Seller only - own products)",
+              "tokenRequired": true,
+              "roles": [
+                  "material_seller"
+              ],
+              "requestBody": {
+                  "type": "multipart/form-data",
+                  "fields": {
+                      "name": {
+                          "type": "string",
+                          "required": false,
+                          "example": "Premium Cotton Fabric"
+                      },
+                      "description": {
+                          "type": "string",
+                          "required": false,
+                          "example": "High quality premium cotton"
+                      },
+                      "price": {
+                          "type": "number",
+                          "required": false,
+                          "example": 300
+                      },
+                      "stock": {
+                          "type": "integer",
+                          "required": false,
+                          "example": 150
+                      },
+                      "category": {
+                          "type": "string",
+                          "required": false,
+                          "example": "fabric"
+                      },
+                      "type": {
+                          "type": "string",
+                          "required": false,
+                          "example": "cotton"
+                      },
+                      "image": {
+                          "type": "file",
+                          "required": false,
+                          "description": "New product image"
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Product updated successfully",
+                          "product": {
+                              "_id": "string (ObjectId)",
+                              "name": "string",
+                              "price": "number",
+                              "stock": "integer",
+                              "imageUrl": "string"
+                          }
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Product not found or not yours"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "product_delete",
+              "method": "DELETE",
+              "path": "/products/:productId",
+              "description": "Delete product (Material Seller only - own products)",
+              "tokenRequired": true,
+              "roles": [
+                  "material_seller"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Product deleted successfully"
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Product not found or not yours"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "product_rate",
+              "method": "POST",
+              "path": "/products/:productId/rate",
+              "description": "Rate product (Customers and Tailors only)",
+              "tokenRequired": true,
+              "roles": [
+                  "customer",
+                  "tailor"
+              ],
+              "requestBody": {
+                  "type": "application/json",
+                  "fields": {
+                      "rating": {
+                          "type": "integer",
+                          "required": true,
+                          "min": 1,
+                          "max": 5,
+                          "example": 4
+                      },
+                      "review": {
+                          "type": "string",
+                          "required": false,
+                          "example": "Great quality fabric"
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 201,
+                      "body": {
+                          "message": "Rating added successfully",
+                          "product": {
+                              "_id": "string (ObjectId)",
+                              "name": "string",
+                              "ratings": "array"
+                          }
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Product not found"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "product_delete_rating",
+              "method": "DELETE",
+              "path": "/products/:productId/rate",
+              "description": "Delete my rating (Customers and Tailors only)",
+              "tokenRequired": true,
+              "roles": [
+                  "customer",
+                  "tailor"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Rating deleted successfully"
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Product not found"
+                      }
+                  ]
+              }
+          }
+      ],
+      "cart": [
+          {
+              "id": "cart_get",
+              "method": "GET",
+              "path": "/cart",
+              "description": "Get my cart",
+              "tokenRequired": true,
+              "roles": [
+                  "customer"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "_id": "string (ObjectId)",
+                          "user": "string (ObjectId)",
+                          "items": [
+                              {
+                                  "_id": "string (ObjectId)",
+                                  "product": {
+                                      "_id": "string (ObjectId)",
+                                      "name": "string",
+                                      "price": "number",
+                                      "imageUrl": "string"
+                                  },
+                                  "quantity": "integer"
+                              }
+                          ],
+                          "createdAt": "string (ISO date)"
+                      }
+                  }
+              }
+          },
+          {
+              "id": "cart_add_item",
+              "method": "POST",
+              "path": "/cart",
+              "description": "Add item to cart",
+              "tokenRequired": true,
+              "roles": [
+                  "customer"
+              ],
+              "requestBody": {
+                  "type": "application/json",
+                  "fields": {
+                      "productId": {
+                          "type": "string",
+                          "required": true,
+                          "example": "60d5ec49c1234567890abcd1"
+                      },
+                      "quantity": {
+                          "type": "integer",
+                          "required": true,
+                          "min": 1,
+                          "example": 2
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 201,
+                      "body": {
+                          "message": "Product added to cart",
+                          "cart": {
+                              "_id": "string (ObjectId)",
+                              "items": "array"
+                          }
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Product not found"
+                      },
+                      {
+                          "statusCode": 400,
+                          "message": "Not enough stock available"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "cart_update_item",
+              "method": "PUT",
+              "path": "/cart/item/:productId",
+              "description": "Update cart item quantity",
+              "tokenRequired": true,
+              "roles": [
+                  "customer"
+              ],
+              "requestBody": {
+                  "type": "application/json",
+                  "fields": {
+                      "quantity": {
+                          "type": "integer",
+                          "required": true,
+                          "min": 1,
+                          "example": 3
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Cart item updated",
+                          "cart": {
+                              "_id": "string (ObjectId)",
+                              "items": "array"
+                          }
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 400,
+                          "message": "Not enough stock available"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "cart_remove_item",
+              "method": "DELETE",
+              "path": "/cart/item/:productId",
+              "description": "Remove item from cart",
+              "tokenRequired": true,
+              "roles": [
+                  "customer"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Item removed from cart",
+                          "cart": {
+                              "_id": "string (ObjectId)",
+                              "items": "array"
+                          }
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 400,
+                          "message": "Item not found in cart"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "cart_clear",
+              "method": "DELETE",
+              "path": "/cart",
+              "description": "Clear entire cart",
+              "tokenRequired": true,
+              "roles": [
+                  "customer"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Cart cleared successfully",
+                          "cart": {
+                              "_id": "string (ObjectId)",
+                              "items": []
+                          }
+                      }
+                  }
+              }
+          }
+      ],
+      "orders": [
+          {
+              "id": "order_place",
+              "method": "POST",
+              "path": "/orders",
+              "description": "Place new order (Customer only)",
+              "tokenRequired": true,
+              "roles": [
+                  "customer"
+              ],
+              "requestBody": {
+                  "type": "application/json",
+                  "fields": {
+                      "fullName": {
+                          "type": "string",
+                          "required": true,
+                          "example": "John Doe"
+                      },
+                      "phone": {
+                          "type": "string",
+                          "required": true,
+                          "example": "+20 123456789"
+                      },
+                      "address": {
+                          "type": "string",
+                          "required": true,
+                          "example": "123 Main Street"
+                      },
+                      "city": {
+                          "type": "string",
+                          "required": true,
+                          "example": "Cairo"
+                      },
+                      "governorate": {
+                          "type": "string",
+                          "required": true,
+                          "example": "Cairo"
+                      },
+                      "postalCode": {
+                          "type": "string",
+                          "required": false,
+                          "example": "12345"
+                      },
+                      "notes": {
+                          "type": "string",
+                          "required": false,
+                          "example": "Please ring the doorbell"
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 201,
+                      "body": {
+                          "message": "Order placed successfully",
+                          "order": {
+                              "_id": "string (ObjectId)",
+                              "user": "string (ObjectId)",
+                              "subOrders": [
+                                  {
+                                      "_id": "string (ObjectId)",
+                                      "seller": {
+                                          "_id": "string (ObjectId)",
+                                          "name": "string"
+                                      },
+                                      "items": "array",
+                                      "itemsTotal": "number",
+                                      "shippingFee": "number",
+                                      "subTotal": "number",
+                                      "orderStatus": "placed"
+                                  }
+                              ],
+                              "shippingAddress": "object",
+                              "totalAmount": "number",
+                              "createdAt": "string (ISO date)"
+                          }
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 400,
+                          "message": "Your cart is empty"
+                      },
+                      {
+                          "statusCode": 400,
+                          "message": "Stock issues"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "order_get_my_orders",
+              "method": "GET",
+              "path": "/orders/my",
+              "description": "Get my orders (Customer only)",
+              "tokenRequired": true,
+              "roles": [
+                  "customer"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": [
+                          {
+                              "_id": "string (ObjectId)",
+                              "user": "string (ObjectId)",
+                              "subOrders": "array",
+                              "shippingAddress": "object",
+                              "totalAmount": "number",
+                              "createdAt": "string (ISO date)"
+                          }
+                      ]
+                  }
+              }
+          },
+          {
+              "id": "order_get_by_id",
+              "method": "GET",
+              "path": "/orders/:orderId",
+              "description": "Get single order by ID",
+              "tokenRequired": true,
+              "roles": [
+                  "customer",
+                  "material_seller"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "_id": "string (ObjectId)",
+                          "user": "string (ObjectId)",
+                          "subOrders": "array",
+                          "shippingAddress": "object",
+                          "totalAmount": "number",
+                          "createdAt": "string (ISO date)"
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Order not found"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "order_get_seller_orders",
+              "method": "GET",
+              "path": "/orders/seller",
+              "description": "Get seller orders (Material Seller only)",
+              "tokenRequired": true,
+              "roles": [
+                  "material_seller"
+              ],
+              "queryParameters": {
+                  "status": {
+                      "type": "string",
+                      "required": false,
+                      "enum": [
+                          "placed",
+                          "confirmed",
+                          "shipped",
+                          "delivered",
+                          "cancelled"
+                      ],
+                      "example": "placed"
+                  }
+              },
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": [
+                          {
+                              "_id": "string (ObjectId)",
+                              "user": {
+                                  "_id": "string (ObjectId)",
+                                  "name": "string"
+                              },
+                              "subOrders": "array",
+                              "totalAmount": "number"
+                          }
+                      ]
+                  }
+              }
+          },
+          {
+              "id": "order_get_all",
+              "method": "GET",
+              "path": "/orders/all",
+              "description": "Get all orders (Admin only)",
+              "tokenRequired": true,
+              "roles": [
+                  "admin"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": [
+                          {
+                              "_id": "string (ObjectId)",
+                              "user": "string (ObjectId)",
+                              "subOrders": "array",
+                              "totalAmount": "number"
+                          }
+                      ]
+                  }
+              }
+          },
+          {
+              "id": "order_cancel",
+              "method": "PUT",
+              "path": "/orders/:orderId/cancel",
+              "description": "Cancel entire order (only if all sub-orders are 'placed')",
+              "tokenRequired": true,
+              "roles": [
+                  "customer"
+              ],
+              "requestBody": {
+                  "type": "application/json",
+                  "fields": {
+                      "reason": {
+                          "type": "string",
+                          "required": false,
+                          "example": "Changed my mind"
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Order cancelled successfully",
+                          "order": {
+                              "_id": "string (ObjectId)",
+                              "subOrders": "array"
+                          }
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Order not found"
+                      },
+                      {
+                          "statusCode": 400,
+                          "message": "Cannot cancel order - some sub-orders already processed"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "order_cancel_sub_order",
+              "method": "PUT",
+              "path": "/orders/:orderId/suborders/:subOrderId/cancel",
+              "description": "Cancel specific sub-order",
+              "tokenRequired": true,
+              "roles": [
+                  "customer"
+              ],
+              "requestBody": {
+                  "type": "application/json",
+                  "fields": {
+                      "reason": {
+                          "type": "string",
+                          "required": false,
+                          "example": "Out of stock"
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Sub-order cancelled successfully"
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Order or sub-order not found"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "order_update_sub_order_status",
+              "method": "PUT",
+              "path": "/orders/:orderId/suborders/:subOrderId/status",
+              "description": "Update sub-order status (Material Seller only)",
+              "tokenRequired": true,
+              "roles": [
+                  "material_seller"
+              ],
+              "requestBody": {
+                  "type": "application/json",
+                  "fields": {
+                      "status": {
+                          "type": "string",
+                          "required": true,
+                          "enum": [
+                              "confirmed",
+                              "shipped",
+                              "delivered",
+                              "cancelled"
+                          ],
+                          "example": "shipped"
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Sub-order status updated",
+                          "order": {
+                              "_id": "string (ObjectId)",
+                              "subOrders": "array"
+                          }
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Order or sub-order not found"
+                      },
+                      {
+                          "statusCode": 403,
+                          "message": "Unauthorized - this is not your sub-order"
+                      }
+                  ]
+              }
+          }
+      ],
+      "bids": [
+          {
+              "id": "bid_create",
+              "method": "POST",
+              "path": "/bids",
+              "description": "Create bid (Customer only)",
+              "tokenRequired": true,
+              "roles": [
+                  "customer"
+              ],
+              "requestBody": {
+                  "type": "multipart/form-data",
+                  "fields": {
+                      "requestDescription": {
+                          "type": "string",
+                          "required": true,
+                          "example": "Need custom wedding dress tailoring"
+                      },
+                      "price": {
+                          "type": "number",
+                          "required": false,
+                          "example": 5000
+                      },
+                      "time": {
+                          "type": "number",
+                          "required": false,
+                          "example": 30
+                      },
+                      "image": {
+                          "type": "file",
+                          "required": true,
+                          "description": "Reference image"
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 201,
+                      "body": {
+                          "_id": "string (ObjectId)",
+                          "customer": "string (ObjectId)",
+                          "requestDescription": "string",
+                          "imageUrl": "string",
+                          "price": "number or null",
+                          "time": "number or null",
+                          "status": "open",
+                          "createdAt": "string (ISO date)"
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 403,
+                          "message": "Only customers can create bids"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "bid_update",
+              "method": "PUT",
+              "path": "/bids/:bidId",
+              "description": "Update bid (Customer only - open or updated bids)",
+              "tokenRequired": true,
+              "roles": [
+                  "customer"
+              ],
+              "requestBody": {
+                  "type": "multipart/form-data",
+                  "fields": {
+                      "requestDescription": {
+                          "type": "string",
+                          "required": false,
+                          "example": "Updated bid description"
+                      },
+                      "price": {
+                          "type": "number",
+                          "required": false,
+                          "example": 5500
+                      },
+                      "time": {
+                          "type": "number",
+                          "required": false,
+                          "example": 35
+                      },
+                      "image": {
+                          "type": "file",
+                          "required": false,
+                          "description": "New reference image"
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Bid updated successfully",
+                          "bid": {
+                              "_id": "string (ObjectId)",
+                              "requestDescription": "string",
+                              "price": "number",
+                              "time": "number",
+                              "status": "updated"
+                          }
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Bid not found or not yours"
+                      },
+                      {
+                          "statusCode": 400,
+                          "message": "Cannot update a closed bid"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "bid_get_my_bids",
+              "method": "GET",
+              "path": "/bids",
+              "description": "Get my bids (Customer only)",
+              "tokenRequired": true,
+              "roles": [
+                  "customer"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": [
+                          {
+                              "_id": "string (ObjectId)",
+                              "requestDescription": "string",
+                              "imageUrl": "string",
+                              "status": "string",
+                              "createdAt": "string (ISO date)"
+                          }
+                      ]
+                  }
+              }
+          },
+          {
+              "id": "bid_get_all_for_tailors",
+              "method": "GET",
+              "path": "/bids/all",
+              "description": "Get all open bids (Tailor only)",
+              "tokenRequired": true,
+              "roles": [
+                  "tailor"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": [
+                          {
+                              "_id": "string (ObjectId)",
+                              "customer": {
+                                  "_id": "string (ObjectId)",
+                                  "name": "string"
+                              },
+                              "requestDescription": "string",
+                              "imageUrl": "string",
+                              "status": "open",
+                              "createdAt": "string (ISO date)"
+                          }
+                      ]
+                  }
+              }
+          },
+          {
+              "id": "bid_close",
+              "method": "PUT",
+              "path": "/bids/:bidId/close",
+              "description": "Close bid (Customer only)",
+              "tokenRequired": true,
+              "roles": [
+                  "customer"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Bid closed successfully",
+                          "bid": {
+                              "_id": "string (ObjectId)",
+                              "status": "closed"
+                          }
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Bid not found or not yours"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "bid_delete",
+              "method": "DELETE",
+              "path": "/bids/:bidId",
+              "description": "Delete bid (Customer only)",
+              "tokenRequired": true,
+              "roles": [
+                  "customer"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Bid deleted successfully"
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Bid not found or not yours"
+                      }
+                  ]
+              }
+          }
+      ],
+      "offers": [
+          {
+              "id": "offer_create",
+              "method": "POST",
+              "path": "/offers/:bidId",
+              "description": "Create offer for bid (Tailor only)",
+              "tokenRequired": true,
+              "roles": [
+                  "tailor"
+              ],
+              "requestBody": {
+                  "type": "application/json",
+                  "fields": {
+                      "proposedPrice": {
+                          "type": "number",
+                          "required": true,
+                          "example": 4500
+                      },
+                      "estimatedTime": {
+                          "type": "number",
+                          "required": true,
+                          "example": 25
+                      },
+                      "description": {
+                          "type": "string",
+                          "required": false,
+                          "example": "I can do this in 25 days"
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 201,
+                      "body": {
+                          "_id": "string (ObjectId)",
+                          "bid": "string (ObjectId)",
+                          "tailor": "string (ObjectId)",
+                          "proposedPrice": "number",
+                          "estimatedTime": "number",
+                          "description": "string",
+                          "status": "pending",
+                          "createdAt": "string (ISO date)"
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 403,
+                          "message": "Only tailors can create offers"
+                      },
+                      {
+                          "statusCode": 404,
+                          "message": "Bid not found"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "offer_update",
+              "method": "PUT",
+              "path": "/offers/:offerId",
+              "description": "Update offer (Tailor only - own pending offers)",
+              "tokenRequired": true,
+              "roles": [
+                  "tailor"
+              ],
+              "requestBody": {
+                  "type": "application/json",
+                  "fields": {
+                      "proposedPrice": {
+                          "type": "number",
+                          "required": false,
+                          "example": 4200
+                      },
+                      "estimatedTime": {
+                          "type": "number",
+                          "required": false,
+                          "example": 20
+                      },
+                      "description": {
+                          "type": "string",
+                          "required": false,
+                          "example": "Updated offer"
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Offer updated successfully",
+                          "offer": {
+                              "_id": "string (ObjectId)",
+                              "proposedPrice": "number",
+                              "estimatedTime": "number"
+                          }
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Offer not found or not yours"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "offer_get_for_bid",
+              "method": "GET",
+              "path": "/offers/:bidId",
+              "description": "Get all offers for bid",
+              "tokenRequired": true,
+              "roles": [
+                  "customer",
+                  "tailor"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": [
+                          {
+                              "_id": "string (ObjectId)",
+                              "tailor": {
+                                  "_id": "string (ObjectId)",
+                                  "name": "string",
+                                  "imageUrl": "string"
+                              },
+                              "proposedPrice": "number",
+                              "estimatedTime": "number",
+                              "description": "string",
+                              "status": "pending",
+                              "createdAt": "string (ISO date)"
+                          }
+                      ]
+                  }
+              }
+          },
+          {
+              "id": "offer_get_best",
+              "method": "GET",
+              "path": "/offers/:bidId/best",
+              "description": "Get best 3 offers for bid",
+              "tokenRequired": true,
+              "roles": [
+                  "customer",
+                  "tailor"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": [
+                          {
+                              "_id": "string (ObjectId)",
+                              "tailor": {
+                                  "_id": "string (ObjectId)",
+                                  "name": "string",
+                                  "imageUrl": "string"
+                              },
+                              "proposedPrice": "number",
+                              "estimatedTime": "number",
+                              "description": "string",
+                              "createdAt": "string (ISO date)"
+                          }
+                      ]
+                  }
+              }
+          },
+          {
+              "id": "offer_accept",
+              "method": "PATCH",
+              "path": "/offers/:offerId/accept",
+              "description": "Accept offer (Customer only)",
+              "tokenRequired": true,
+              "roles": [
+                  "customer"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Offer accepted successfully",
+                          "offer": {
+                              "_id": "string (ObjectId)",
+                              "status": "accepted"
+                          }
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Offer not found"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "offer_reject",
+              "method": "PATCH",
+              "path": "/offers/:offerId/reject",
+              "description": "Reject offer (Customer only)",
+              "tokenRequired": true,
+              "roles": [
+                  "customer"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Offer rejected successfully",
+                          "offer": {
+                              "_id": "string (ObjectId)",
+                              "status": "rejected"
+                          }
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Offer not found"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "offer_delete",
+              "method": "DELETE",
+              "path": "/offers/:offerId",
+              "description": "Delete offer (Tailor only - own offers)",
+              "tokenRequired": true,
+              "roles": [
+                  "tailor"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Offer deleted successfully"
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Offer not found or not yours"
+                      }
+                  ]
+              }
+          }
+      ],
+      "chat": [
+          {
+              "id": "chat_get_conversations",
+              "method": "GET",
+              "path": "/chat/conversations",
+              "description": "Get my conversations",
+              "tokenRequired": true,
+              "roles": [
+                  "customer",
+                  "tailor",
+                  "material_seller"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": [
+                          {
+                              "_id": "string (ObjectId)",
+                              "participants": "array",
+                              "lastMessage": "string",
+                              "updatedAt": "string (ISO date)"
+                          }
+                      ]
+                  }
+              }
+          },
+          {
+              "id": "chat_get_unread_count",
+              "method": "GET",
+              "path": "/chat/unread",
+              "description": "Get unread message count",
+              "tokenRequired": true,
+              "roles": [
+                  "customer",
+                  "tailor",
+                  "material_seller"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "unreadCount": "integer"
+                      }
+                  }
+              }
+          },
+          {
+              "id": "chat_get_unread_messages",
+              "method": "GET",
+              "path": "/chat/unread/messages",
+              "description": "Get unread messages",
+              "tokenRequired": true,
+              "roles": [
+                  "customer",
+                  "tailor",
+                  "material_seller"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": [
+                          {
+                              "_id": "string (ObjectId)",
+                              "sender": {
+                                  "_id": "string (ObjectId)",
+                                  "name": "string"
+                              },
+                              "message": "string",
+                              "createdAt": "string (ISO date)"
+                          }
+                      ]
+                  }
+              }
+          },
+          {
+              "id": "chat_get_conversation",
+              "method": "GET",
+              "path": "/chat/:userId",
+              "description": "Get conversation with specific user",
+              "tokenRequired": true,
+              "roles": [
+                  "customer",
+                  "tailor",
+                  "material_seller"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": [
+                          {
+                              "_id": "string (ObjectId)",
+                              "sender": "string (ObjectId)",
+                              "message": "string",
+                              "createdAt": "string (ISO date)"
+                          }
+                      ]
+                  }
+              }
+          }
+      ],
+      "closet": [
+          {
+              "id": "closet_add_item",
+              "method": "POST",
+              "path": "/closet",
+              "description": "Add closet item (Customer only)",
+              "tokenRequired": true,
+              "roles": [
+                  "customer"
+              ],
+              "requestBody": {
+                  "type": "multipart/form-data",
+                  "fields": {
+                      "name": {
+                          "type": "string",
+                          "required": true,
+                          "example": "Blue Wedding Dress"
+                      },
+                      "category": {
+                          "type": "string",
+                          "required": true,
+                          "example": "dress"
+                      },
+                      "color": {
+                          "type": "string",
+                          "required": false,
+                          "example": "blue"
+                      },
+                      "size": {
+                          "type": "string",
+                          "required": false,
+                          "example": "M"
+                      },
+                      "description": {
+                          "type": "string",
+                          "required": false,
+                          "example": "My favorite wedding dress"
+                      },
+                      "image": {
+                          "type": "file",
+                          "required": true,
+                          "description": "Closet item image"
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 201,
+                      "body": {
+                          "_id": "string (ObjectId)",
+                          "user": "string (ObjectId)",
+                          "name": "string",
+                          "category": "string",
+                          "color": "string",
+                          "size": "string",
+                          "imageUrl": "string",
+                          "createdAt": "string (ISO date)"
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 403,
+                          "message": "Only customers can add closet items"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "closet_get_my_closet",
+              "method": "GET",
+              "path": "/closet",
+              "description": "Get my closet items with optional filters",
+              "tokenRequired": true,
+              "roles": [
+                  "customer"
+              ],
+              "queryParameters": {
+                  "category": {
+                      "type": "string",
+                      "required": false,
+                      "example": "dress"
+                  },
+                  "color": {
+                      "type": "string",
+                      "required": false,
+                      "example": "blue"
+                  },
+                  "size": {
+                      "type": "string",
+                      "required": false,
+                      "example": "M"
+                  }
+              },
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": [
+                          {
+                              "_id": "string (ObjectId)",
+                              "name": "string",
+                              "category": "string",
+                              "color": "string",
+                              "size": "string",
+                              "imageUrl": "string",
+                              "createdAt": "string (ISO date)"
+                          }
+                      ]
+                  }
+              }
+          },
+          {
+              "id": "closet_get_item_by_id",
+              "method": "GET",
+              "path": "/closet/:itemId",
+              "description": "Get single closet item by ID",
+              "tokenRequired": true,
+              "roles": [
+                  "customer"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "_id": "string (ObjectId)",
+                          "name": "string",
+                          "category": "string",
+                          "color": "string",
+                          "size": "string",
+                          "description": "string",
+                          "imageUrl": "string",
+                          "createdAt": "string (ISO date)"
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Closet item not found"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "closet_update_item",
+              "method": "PUT",
+              "path": "/closet/:itemId",
+              "description": "Update closet item (Customer only - own items)",
+              "tokenRequired": true,
+              "roles": [
+                  "customer"
+              ],
+              "requestBody": {
+                  "type": "multipart/form-data",
+                  "fields": {
+                      "name": {
+                          "type": "string",
+                          "required": false,
+                          "example": "Blue Evening Dress"
+                      },
+                      "category": {
+                          "type": "string",
+                          "required": false,
+                          "example": "dress"
+                      },
+                      "color": {
+                          "type": "string",
+                          "required": false,
+                          "example": "blue"
+                      },
+                      "size": {
+                          "type": "string",
+                          "required": false,
+                          "example": "M"
+                      },
+                      "description": {
+                          "type": "string",
+                          "required": false,
+                          "example": "Updated description"
+                      },
+                      "image": {
+                          "type": "file",
+                          "required": false,
+                          "description": "New closet item image"
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Closet item updated successfully",
+                          "item": {
+                              "_id": "string (ObjectId)",
+                              "name": "string",
+                              "category": "string",
+                              "imageUrl": "string"
+                          }
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Closet item not found or not yours"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "closet_delete_item",
+              "method": "DELETE",
+              "path": "/closet/:itemId",
+              "description": "Delete closet item (Customer only - own items)",
+              "tokenRequired": true,
+              "roles": [
+                  "customer"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Closet item deleted successfully"
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Closet item not found or not yours"
+                      }
+                  ]
+              }
+          }
+      ],
+      "portfolio": [
+          {
+              "id": "portfolio_add_item",
+              "method": "POST",
+              "path": "/portfolio",
+              "description": "Add portfolio item (Tailor only)",
+              "tokenRequired": true,
+              "roles": [
+                  "tailor"
+              ],
+              "requestBody": {
+                  "type": "multipart/form-data",
+                  "fields": {
+                      "title": {
+                          "type": "string",
+                          "required": true,
+                          "example": "Wedding Dress Design"
+                      },
+                      "description": {
+                          "type": "string",
+                          "required": true,
+                          "example": "Custom wedding dress with embroidery"
+                      },
+                      "category": {
+                          "type": "string",
+                          "required": true,
+                          "example": "wedding"
+                      },
+                      "image": {
+                          "type": "file",
+                          "required": true,
+                          "description": "Portfolio item image"
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 201,
+                      "body": {
+                          "_id": "string (ObjectId)",
+                          "tailor": "string (ObjectId)",
+                          "title": "string",
+                          "description": "string",
+                          "category": "string",
+                          "imageUrl": "string",
+                          "createdAt": "string (ISO date)"
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 403,
+                          "message": "Only tailors can add portfolio items"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "portfolio_get_all",
+              "method": "GET",
+              "path": "/portfolio/all",
+              "description": "Browse all portfolios (Public)",
+              "tokenRequired": false,
+              "roles": [
+                  "any"
+              ],
+              "queryParameters": {
+                  "category": {
+                      "type": "string",
+                      "required": false,
+                      "example": "wedding"
+                  }
+              },
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": [
+                          {
+                              "_id": "string (ObjectId)",
+                              "tailor": {
+                                  "_id": "string (ObjectId)",
+                                  "name": "string",
+                                  "imageUrl": "string"
+                              },
+                              "title": "string",
+                              "description": "string",
+                              "category": "string",
+                              "imageUrl": "string",
+                              "createdAt": "string (ISO date)"
+                          }
+                      ]
+                  }
+              }
+          },
+          {
+              "id": "portfolio_get_tailor_portfolio",
+              "method": "GET",
+              "path": "/portfolio/tailor/:tailorId",
+              "description": "View specific tailor's portfolio (Public)",
+              "tokenRequired": false,
+              "roles": [
+                  "any"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": [
+                          {
+                              "_id": "string (ObjectId)",
+                              "title": "string",
+                              "description": "string",
+                              "category": "string",
+                              "imageUrl": "string",
+                              "createdAt": "string (ISO date)"
+                          }
+                      ]
+                  }
+              }
+          },
+          {
+              "id": "portfolio_get_item_by_id",
+              "method": "GET",
+              "path": "/portfolio/item/:itemId",
+              "description": "View single portfolio item (Public)",
+              "tokenRequired": false,
+              "roles": [
+                  "any"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "_id": "string (ObjectId)",
+                          "tailor": {
+                              "_id": "string (ObjectId)",
+                              "name": "string",
+                              "imageUrl": "string"
+                          },
+                          "title": "string",
+                          "description": "string",
+                          "category": "string",
+                          "imageUrl": "string",
+                          "createdAt": "string (ISO date)"
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Portfolio item not found"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "portfolio_get_my_portfolio",
+              "method": "GET",
+              "path": "/portfolio/my",
+              "description": "Get my portfolio (Tailor only)",
+              "tokenRequired": true,
+              "roles": [
+                  "tailor"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": [
+                          {
+                              "_id": "string (ObjectId)",
+                              "title": "string",
+                              "description": "string",
+                              "category": "string",
+                              "imageUrl": "string",
+                              "createdAt": "string (ISO date)"
+                          }
+                      ]
+                  }
+              }
+          },
+          {
+              "id": "portfolio_update_item",
+              "method": "PUT",
+              "path": "/portfolio/:itemId",
+              "description": "Update portfolio item (Tailor only - own items)",
+              "tokenRequired": true,
+              "roles": [
+                  "tailor"
+              ],
+              "requestBody": {
+                  "type": "multipart/form-data",
+                  "fields": {
+                      "title": {
+                          "type": "string",
+                          "required": false,
+                          "example": "Premium Wedding Dress"
+                      },
+                      "description": {
+                          "type": "string",
+                          "required": false,
+                          "example": "Updated description"
+                      },
+                      "category": {
+                          "type": "string",
+                          "required": false,
+                          "example": "wedding"
+                      },
+                      "image": {
+                          "type": "file",
+                          "required": false,
+                          "description": "New portfolio item image"
+                      }
+                  }
+              },
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Portfolio item updated successfully",
+                          "item": {
+                              "_id": "string (ObjectId)",
+                              "title": "string",
+                              "description": "string",
+                              "imageUrl": "string"
+                          }
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Portfolio item not found or not yours"
+                      }
+                  ]
+              }
+          },
+          {
+              "id": "portfolio_delete_item",
+              "method": "DELETE",
+              "path": "/portfolio/:itemId",
+              "description": "Delete portfolio item (Tailor only - own items)",
+              "tokenRequired": true,
+              "roles": [
+                  "tailor"
+              ],
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "message": "Portfolio item deleted successfully"
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 404,
+                          "message": "Portfolio item not found or not yours"
+                      }
+                  ]
+              }
+          }
+      ],
+      "analytics": [
+          {
+              "id": "analytics_get_seller_analytics",
+              "method": "GET",
+              "path": "/analytics/seller",
+              "description": "Get seller analytics (Material Seller only)",
+              "tokenRequired": true,
+              "roles": [
+                  "material_seller"
+              ],
+              "queryParameters": {
+                  "period": {
+                      "type": "string",
+                      "required": false,
+                      "enum": [
+                          "day",
+                          "week",
+                          "month",
+                          "year"
+                      ],
+                      "example": "month"
+                  }
+              },
+              "requestBody": null,
+              "responseBody": {
+                  "success": {
+                      "statusCode": 200,
+                      "body": {
+                          "totalSales": "number",
+                          "totalOrders": "integer",
+                          "totalProducts": "integer",
+                          "averageOrderValue": "number",
+                          "topProducts": "array",
+                          "orderTrend": "array"
+                      }
+                  },
+                  "errors": [
+                      {
+                          "statusCode": 403,
+                          "message": "Only sellers can access this endpoint"
+                      }
+                  ]
+              }
+          }
+      ]
+  },
+  "authentication": {
+      "type": "Bearer Token",
+      "headerName": "Authorization",
+      "headerFormat": "Bearer {token}",
+      "tokenExpiration": "As configured in JWT_EXPIRES_IN environment variable",
+      "example": {
+          "request": {
+              "headers": {
+                  "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+              }
+          }
       }
-    }
-  ]
+  },
+  "roles": [
+      {
+          "name": "customer",
+          "description": "Regular customer who can place orders, browse products, create bids, and manage closet"
+      },
+      {
+          "name": "tailor",
+          "description": "Tailor who can create offers for bids, manage portfolio, and view bids"
+      },
+      {
+          "name": "material_seller",
+          "description": "Material seller who can add and manage products, receive orders, and view analytics"
+      },
+      {
+          "name": "admin",
+          "description": "Administrator with access to all admin endpoints"
+      }
+  ],
+  "errorCodes": {
+      "400": "Bad Request - Invalid parameters or data",
+      "401": "Unauthorized - Token missing or invalid",
+      "403": "Forbidden - User lacks required role/permissions",
+      "404": "Not Found - Resource does not exist",
+      "500": "Internal Server Error"
+  }
 }

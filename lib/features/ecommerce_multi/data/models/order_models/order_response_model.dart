@@ -20,13 +20,10 @@ class OrderDataModel {
   @JsonKey(name: '_id')
   String? id;
   String? user;
-  List<OrderItemModel>? items;
+  List<SubOrderModel>? subOrders;
   ShippingAddressModel? shippingAddress;
   String? paymentMethod;
   String? paymentStatus;
-  String? orderStatus;
-  int? itemsTotal;
-  int? shippingFee;
   int? totalAmount;
   String? createdAt;
   String? updatedAt;
@@ -36,13 +33,10 @@ class OrderDataModel {
   OrderDataModel({
     this.id,
     this.user,
-    this.items,
+    this.subOrders,
     this.shippingAddress,
     this.paymentMethod,
     this.paymentStatus,
-    this.orderStatus,
-    this.itemsTotal,
-    this.shippingFee,
     this.totalAmount,
     this.createdAt,
     this.updatedAt,
@@ -53,6 +47,48 @@ class OrderDataModel {
       _$OrderDataModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$OrderDataModelToJson(this);
+}
+
+@JsonSerializable()
+class SubOrderModel {
+  SellerModel? seller;
+  List<OrderItemModel>? items;
+  int? itemsTotal;
+  int? shippingFee;
+  int? subTotal;
+  String? orderStatus;
+  @JsonKey(name: '_id')
+  String? id;
+
+  SubOrderModel({
+    this.seller,
+    this.items,
+    this.itemsTotal,
+    this.shippingFee,
+    this.subTotal,
+    this.orderStatus,
+    this.id,
+  });
+
+  factory SubOrderModel.fromJson(Map<String, dynamic> json) =>
+      _$SubOrderModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SubOrderModelToJson(this);
+}
+
+@JsonSerializable()
+class SellerModel {
+  @JsonKey(name: '_id')
+  String? id;
+  String? name;
+  String? email;
+
+  SellerModel({this.id, this.name, this.email});
+
+  factory SellerModel.fromJson(Map<String, dynamic> json) =>
+      _$SellerModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SellerModelToJson(this);
 }
 
 @JsonSerializable()

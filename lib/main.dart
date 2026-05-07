@@ -43,7 +43,7 @@ void main() async {
 
   print(role);
   print(initialRoute);
-  runApp(ChicoraApp(initialRoute: initialRoute));
+  runApp(ChicoraApp(initialRoute: RouteNames.customer_cart_screen));
 }
 
 class ChicoraApp extends StatelessWidget {

@@ -8,6 +8,7 @@ class CartResponseModel {
   String? cId;
   String? user;
   List<Item>? items;
+  List<CartSubOrder>? subOrders;
   int? totalAmount;
   String? createdAt;
   String? updatedAt;
@@ -18,6 +19,7 @@ class CartResponseModel {
     this.cId,
     this.user,
     this.items,
+    this.subOrders,
     this.totalAmount,
     this.createdAt,
     this.updatedAt,
@@ -35,6 +37,7 @@ class Item {
   Product? product;
   int? quantity;
   int? priceAtAddTime;
+  int? subtotal;
   @JsonKey(name: '_id')
   String? iId;
   String? createdAt;
@@ -44,6 +47,7 @@ class Item {
     this.product,
     this.quantity,
     this.priceAtAddTime,
+    this.subtotal,
     this.iId,
     this.createdAt,
     this.updatedAt,
@@ -52,6 +56,20 @@ class Item {
   factory Item.fromJson(Map<String, dynamic> json) => _$ItemFromJson(json);
 
   Map<String, dynamic> toJson() => _$ItemToJson(this);
+}
+
+@JsonSerializable()
+class CartSubOrder {
+  String? sellerName;
+  List<Item>? items;
+  int? subTotal;
+
+  CartSubOrder({this.sellerName, this.items, this.subTotal});
+
+  factory CartSubOrder.fromJson(Map<String, dynamic> json) =>
+      _$CartSubOrderFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CartSubOrderToJson(this);
 }
 
 @JsonSerializable()

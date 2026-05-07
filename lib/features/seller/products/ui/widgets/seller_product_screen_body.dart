@@ -93,12 +93,7 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
                 children: [
                   Text(
                     "${_filteredProducts.length} Products",
-                    style: AppStyle.medPrimery.copyWith(
-                      foreground: Paint()
-                        ..style = PaintingStyle.stroke
-                        ..strokeWidth = 1
-                        ..color = AppColors.darkprimery,
-                    ),
+                    style: AppStyle.medPrimery,
                   ),
                   CustomElevatedButton(
                     value: "+ Product ",

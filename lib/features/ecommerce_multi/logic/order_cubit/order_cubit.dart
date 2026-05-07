@@ -66,6 +66,38 @@ class OrderCubit extends Cubit<OrderState> {
     }
   }
 
+  Future<void> cancelSubOrder(
+    String orderId,
+    String subOrderId,
+    String reason,
+  ) async {
+    emit(const OrderState.loading());
+    try {
+      final token = await prefs.getSecureData(SharedPrefKey.token);
+      if (token == null || token.isEmpty) {
+        emit(const OrderState.fail("Authentication token not found"));
+        return;
+      }
+
+      final ApiResult<MessageModel> result = await repo.cancelSubOrder(
+        token,
+        orderId,
+        subOrderId,
+        CancelOrderRequestModel(reason: reason),
+      );
+      result.when(
+        success: (MessageModel response) {
+          emit(OrderState.success(response));
+        },
+        failure: (error) {
+          emit(OrderState.fail(error));
+        },
+      );
+    } catch (e) {
+      emit(OrderState.fail("please try again later"));
+    }
+  }
+
   Future<void> getMyOrders() async {
     emit(const OrderState.loading());
     try {

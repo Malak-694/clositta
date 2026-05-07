@@ -17,7 +17,7 @@ class OrderRepo {
       final response = await apiService.placeOrder("Bearer $token", body);
       return ApiResult.success(response);
     } catch (e) {
-      return ApiResult.failure(e.toString());
+      return ApiResult.failure(mapErrorToUserMessage(e));
     }
   }
 
@@ -30,7 +30,26 @@ class OrderRepo {
       final response = await apiService.cancelOrder("Bearer $token", orderId, body);
       return ApiResult.success(response);
     } catch (e) {
-      return ApiResult.failure(e.toString());
+      return ApiResult.failure(mapErrorToUserMessage(e));
+    }
+  }
+
+  Future<ApiResult<MessageModel>> cancelSubOrder(
+    String token,
+    String orderId,
+    String subOrderId,
+    CancelOrderRequestModel body,
+  ) async {
+    try {
+      final response = await apiService.cancelSubOrder(
+        "Bearer $token",
+        orderId,
+        subOrderId,
+        body,
+      );
+      return ApiResult.success(response);
+    } catch (e) {
+      return ApiResult.failure(mapErrorToUserMessage(e));
     }
   }
 
@@ -39,7 +58,7 @@ class OrderRepo {
       final response = await apiService.getMyOrders("Bearer $token");
       return ApiResult.success(response);
     } catch (e) {
-      return ApiResult.failure(e.toString());
+      return ApiResult.failure(mapErrorToUserMessage(e));
     }
   }
 
@@ -51,7 +70,7 @@ class OrderRepo {
       final response = await apiService.getOrderById("Bearer $token"  , orderId);
       return ApiResult.success(response);
     } catch (e) {
-      return ApiResult.failure(e.toString());
+      return ApiResult.failure(mapErrorToUserMessage(e));
     }
   }
 }

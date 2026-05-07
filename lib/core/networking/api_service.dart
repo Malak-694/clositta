@@ -307,6 +307,14 @@ abstract class ApiService {
     @Body() CancelOrderRequestModel body,
   );
 
+  @PUT(ApiEndpoints.cancelSubOrder)
+  Future<MessageModel> cancelSubOrder(
+    @Header("Authorization") String token,
+    @Path("orderId") String orderId,
+    @Path("subOrderId") String subOrderId,
+    @Body() CancelOrderRequestModel body,
+  );
+
   @GET(ApiEndpoints.getMyOrders)
   Future<List<OrderDataModel>> getMyOrders(
     @Header("Authorization") String token,
@@ -327,7 +335,8 @@ abstract class ApiService {
   @PUT(ApiEndpoints.updateOrderStatusSeller)
   Future<OrderUpdateSellerResponseModel> updateOrderStatusSeller(
     @Header("Authorization") String token,
-    @Path("orderId") String orderId,
+    @Path("orderId") String orderId, 
+    @Path("suborderId") String suborderId,
     @Body() OrderUpdateSellerRequestModel body,
   );
 }

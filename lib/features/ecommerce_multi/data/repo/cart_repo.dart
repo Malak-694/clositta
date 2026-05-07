@@ -14,7 +14,7 @@ class CartRepo {
       final response = await apiService.getCart("Bearer $token");
       return ApiResult.success(response);
     } catch (e) {
-      return ApiResult.failure(e.toString());
+      return ApiResult.failure(mapErrorToUserMessage(e));
     }
   }
   Future<ApiResult<CartResponseModel>> addToCart(CartRequestModel body, String token) async {
@@ -22,7 +22,7 @@ class CartRepo {
       final response = await apiService.addToCart("Bearer $token", body);
       return ApiResult.success(response);
     } catch (e) {
-      return ApiResult.failure(e.toString());
+      return ApiResult.failure(mapErrorToUserMessage(e));
     }
   }
   Future<ApiResult<CartResponseModel>> updateCart(String productId, CartRequestModel body, String token) async {
@@ -30,7 +30,7 @@ class CartRepo {
       final response = await apiService.updateCart("Bearer $token", productId, body);
       return ApiResult.success(response);
     } catch (e) {
-      return ApiResult.failure(e.toString());
+      return ApiResult.failure(mapErrorToUserMessage(e));
     }
   }
   Future<ApiResult<DeleteCartResponseModel>> removeFromCart(String productId, String token) async {
@@ -38,7 +38,7 @@ class CartRepo {
       final response = await apiService.removeFromCart("Bearer $token", productId);
       return ApiResult.success(response);
     } catch (e) {
-      return ApiResult.failure(e.toString());
+      return ApiResult.failure(mapErrorToUserMessage(e));
     }
   }
   Future<ApiResult<MessageModel>> removeAllCart(String token) async {
@@ -46,7 +46,7 @@ class CartRepo {
       final response = await apiService.removeAllCart("Bearer $token");
       return ApiResult.success(response);
     } catch (e) {
-      return ApiResult.failure(e.toString());
+      return ApiResult.failure(mapErrorToUserMessage(e));
     }
   }
 }

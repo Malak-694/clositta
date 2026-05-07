@@ -11,7 +11,7 @@ class AuthRepo {
       final response = await apiService.signUp(body);
       return ApiResult.success(response);
     } catch (e) {
-      return ApiResult.failure(e.toString());
+      return ApiResult.failure(mapErrorToUserMessage(e));
     }
 
   }
@@ -20,7 +20,7 @@ class AuthRepo {
       final response = await apiService.logIn(body);
       return ApiResult.success(response);
     } catch (e) {
-      return ApiResult.failure(e.toString());
+      return ApiResult.failure(mapErrorToUserMessage(e));
     }
   }
 }

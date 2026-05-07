@@ -159,7 +159,7 @@ class _DetailesScreenTailorState extends State<DetailesScreenTailor> {
                             strokeWidth: 5.0,
                           ),
                         ),
-                        fail: (msg) => Center(child: Text(msg)),
+                        fail: (msg) => Center(child: Text(AppStyle.userMessage(msg))),
                         success: (data) {
                           if (data is List<BidModelReponse>) {
                             // ✅ update my offer reference

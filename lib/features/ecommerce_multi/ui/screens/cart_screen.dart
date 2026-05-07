@@ -99,7 +99,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
           fail: (message) {
             setState(() => _updatingItems.clear());
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(message, style: AppStyle.medBlack)),
+              SnackBar(content: Text(AppStyle.userMessage(message), style: AppStyle.medBlack)),
             );
           },
         );

@@ -143,7 +143,7 @@ class _CheckoutScreenBodyState extends State<CheckoutScreenBody> {
           fail: (message) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(message, style: AppStyle.smallBackground),
+                content: Text(AppStyle.userMessage(message), style: AppStyle.smallBackground),
                 backgroundColor: AppColors.ternary,
               ),
             );

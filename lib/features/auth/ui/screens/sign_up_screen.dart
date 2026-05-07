@@ -71,7 +71,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           fail: (error) {
             ScaffoldMessenger.of(
               context,
-            ).showSnackBar(SnackBar(content: Text(error)));
+            ).showSnackBar(SnackBar(content: Text(AppStyle.userMessage(error))));
           },
         );
       },

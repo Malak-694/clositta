@@ -20,24 +20,26 @@ class OrderMangementRepo {
       );
       return ApiResult.success(response);
     } catch (e) {
-      return ApiResult.failure(e.toString());
+      return ApiResult.failure(mapErrorToUserMessage(e));
     }
   }
 
   Future<ApiResult<OrderUpdateSellerResponseModel>> updateOrderStatusSeller(
     String token,
     String orderId,
+    String suborderId,
     OrderUpdateSellerRequestModel body,
   ) async {
     try {
       final response = await apiService.updateOrderStatusSeller(
         "Bearer $token",
         orderId,
+        suborderId,
         body,
       );
       return ApiResult.success(response);
     } catch (e) {
-      return ApiResult.failure(e.toString());
+      return ApiResult.failure(mapErrorToUserMessage(e));
     }
   }
 }

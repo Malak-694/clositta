@@ -40,8 +40,7 @@ class OrderViewScreen extends StatelessWidget {
 
 class OrderViewBody extends StatelessWidget {
   const OrderViewBody({super.key});
-  
-  
+
   List<OrderItemModel> _allOrderItems(OrderDataModel order) {
     final subOrders = order.subOrders;
     if (subOrders == null || subOrders.isEmpty) return const [];
@@ -90,7 +89,10 @@ class OrderViewBody extends StatelessWidget {
           fail: (message) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(message, style: AppStyle.smallBackground),
+                content: Text(
+                  AppStyle.userMessage(message),
+                  style: AppStyle.smallBackground,
+                ),
                 backgroundColor: AppColors.ternary,
               ),
             );
@@ -145,11 +147,13 @@ class OrderViewBody extends StatelessWidget {
       ),
       builder: (_) => OrderDetailsBottomSheet(
         order: order,
-        canCancel: _canCancel(order.subOrders),
+        canCancel: _canAllCancel(order.subOrders),
         subtotal: _orderSubtotal(order),
         shippingCost: _orderShipping(order),
         items: _allOrderItems(order),
         onCancelOrder: () => _showCancelOrderDialog(context, order),
+        onCancelSubOrder: (subOrderId) =>
+            _showCancelSubOrderDialog(context, order, subOrderId),
         onItemTap: (item) => _openProductDetails(context, item),
       ),
     );
@@ -163,7 +167,7 @@ class OrderViewBody extends StatelessWidget {
           content: Text(
             'Product details are unavailable for this item',
             style: AppStyle.smallBackground,
-                          ),
+          ),
           backgroundColor: AppColors.ternary,
         ),
       );
@@ -181,33 +185,117 @@ class OrderViewBody extends StatelessWidget {
     Navigator.pushNamed(
       context,
       RouteNames.product_details_screen,
-      arguments: {
-        'product': product,
-        'cartCubit': getIt<CartCubit>(),
-      },
+      arguments: {'product': product, 'cartCubit': getIt<CartCubit>()},
     );
   }
 
-  bool _canCancel(List<SubOrderModel>? subOrders) {
+  bool _canAllCancel(List<SubOrderModel>? subOrders) {
     if (subOrders == null || subOrders.isEmpty) return false;
-    return subOrders.every((subOrder) => _isCancellableStatus(subOrder.orderStatus));
+    return subOrders.every(
+      (subOrder) => _isCancellableStatus(subOrder.orderStatus),
+    );
   }
 
   bool _isCancellableStatus(String? status) {
     final normalized = (status ?? '').toLowerCase();
-    if (normalized.contains('cancel')) return false;
-    if (normalized.contains('deliver')) return false;
-    if (normalized.contains('complete')) return false;
-    return true;
+    if (normalized.contains('placed')) return true;
+    return false;
   }
 
   void _showCancelOrderDialog(BuildContext context, OrderDataModel order) {
+    if (order.id == null || order.id!.isEmpty) return;
+    final cancellableSubOrders = (order.subOrders ?? const <SubOrderModel>[])
+        .where(
+          (subOrder) =>
+              subOrder.id != null &&
+              subOrder.id!.isNotEmpty &&
+              _isCancellableStatus(subOrder.orderStatus),
+        )
+        .toList();
+
+    if (cancellableSubOrders.isEmpty) return;
+
+    if (cancellableSubOrders.length == 1) {
+      _showCancelSubOrderDialog(
+        context,
+        order,
+        cancellableSubOrders.first.id!,
+      );
+      return;
+    }
+
+  }
+
+  void _showSubOrderPicker(BuildContext context, OrderDataModel order) {
+    final cancellableSubOrders = (order.subOrders ?? const <SubOrderModel>[])
+        .where(
+          (subOrder) =>
+              subOrder.id != null &&
+              subOrder.id!.isNotEmpty &&
+              _isCancellableStatus(subOrder.orderStatus),
+        )
+        .toList();
+
+    if (cancellableSubOrders.isEmpty) return;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.background,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (bottomSheetContext) => SafeArea(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 20.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Select sub-order to cancel',
+                style: AppStyle.medBlack.copyWith(fontSize: 18.sp),
+              ),
+              SizedBox(height: 8.h),
+              ...cancellableSubOrders.map(
+                (subOrder) => ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(
+                    subOrder.seller?.name ?? 'Seller',
+                    style: AppStyle.body6,
+                  ),
+                  subtitle: Text(
+                    subOrder.orderStatus ?? 'Unknown status',
+                    style: AppStyle.smallBlack,
+                  ),
+                  trailing: const Icon(
+                    Icons.chevron_right,
+                    color: AppColors.lightsecondary,
+                  ),
+                  onTap: () {
+                    Navigator.pop(bottomSheetContext);
+                    _showCancelSubOrderDialog(context, order, subOrder.id!);
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showCancelSubOrderDialog(
+    BuildContext context,
+    OrderDataModel order,
+    String subOrderId,
+  ) {
+    if (order.id == null || order.id!.isEmpty) return;
     showCancelOrderDialog(
       context: context,
       onConfirm: (reason) {
-        if (order.id == null || order.id!.isEmpty) return;
-        context.read<OrderCubit>().cancelOrder(
+        context.read<OrderCubit>().cancelSubOrder(
           order.id!,
+          subOrderId,
           reason.isEmpty ? 'Cancelled by user' : reason,
         );
       },

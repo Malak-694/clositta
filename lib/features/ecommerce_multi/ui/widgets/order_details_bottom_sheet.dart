@@ -14,6 +14,7 @@ class OrderDetailsBottomSheet extends StatelessWidget {
     required this.items,
     required this.canCancel,
     required this.onCancelOrder,
+    required this.onCancelSubOrder,
     required this.onItemTap,
   });
 
@@ -23,6 +24,7 @@ class OrderDetailsBottomSheet extends StatelessWidget {
   final List<OrderItemModel> items;
   final bool canCancel;
   final VoidCallback onCancelOrder;
+  final ValueChanged<String> onCancelSubOrder;
   final ValueChanged<OrderItemModel> onItemTap;
 
   @override
@@ -93,16 +95,95 @@ class OrderDetailsBottomSheet extends StatelessWidget {
             SizedBox(height: 10.h),
             Text('Items', style: AppStyle.medPrimery.copyWith(fontSize: 16.sp)),
             SizedBox(height: 8.h),
-            ...items.map(
-              (item) => Padding(
-                padding: EdgeInsets.only(bottom: 8.h),
-                child: OrderItemTile(item: item, onTap: () => onItemTap(item)),
-              ),
-            ),
+            ..._buildItemsGroupedBySeller(),
           ],
         ),
       ),
     );
+  }
+
+  List<Widget> _buildItemsGroupedBySeller() {
+    final subOrders = order.subOrders;
+    if (subOrders == null || subOrders.isEmpty) {
+      return items
+          .map(
+            (item) => Padding(
+              padding: EdgeInsets.only(bottom: 8.h),
+              child: OrderItemTile(item: item, onTap: () => onItemTap(item)),
+            ),
+          )
+          .toList();
+    }
+
+    final groupedWidgets = <Widget>[];
+    for (final subOrder in subOrders) {
+      final sellerName = subOrder.seller?.name?.trim();
+      final subOrderItems = subOrder.items ?? const <OrderItemModel>[];
+      if (subOrderItems.isEmpty) continue;
+
+      final canCancelSubOrder =
+       
+          subOrder.id != null &&
+          subOrder.id!.isNotEmpty &&
+          !_isTerminalStatus(subOrder.orderStatus);
+
+      groupedWidgets.add(
+        Padding(
+          padding: EdgeInsets.only(bottom: 8.h),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  sellerName == null || sellerName.isEmpty
+                      ? 'Unknown seller'
+                      : sellerName,
+                  style: AppStyle.body6.copyWith(color: AppColors.darkprimery),
+                ),
+              ),
+              if (canCancelSubOrder)
+                TextButton.icon(
+                  onPressed: () => onCancelSubOrder(subOrder.id!),
+                  icon: const Icon(
+                    Icons.cancel_outlined,
+                    size: 18,
+                    color: AppColors.ternary,
+                  ),
+                  label: Text(
+                    'Cancel',
+                    style: AppStyle.smallBlack.copyWith(color: AppColors.ternary),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      );
+
+      groupedWidgets.addAll(
+        subOrderItems.map(
+          (item) => Padding(
+            padding: EdgeInsets.only(bottom: 8.h),
+            child: OrderItemTile(item: item, onTap: () => onItemTap(item)),
+          ),
+        ),
+      );
+    }
+
+    if (groupedWidgets.isNotEmpty) return groupedWidgets;
+
+    return items
+        .map(
+          (item) => Padding(
+            padding: EdgeInsets.only(bottom: 8.h),
+            child: OrderItemTile(item: item, onTap: () => onItemTap(item)),
+          ),
+        )
+        .toList();
+  }
+
+  bool _isTerminalStatus(String? status) {
+    final normalized = (status ?? '').toLowerCase();
+    if (normalized.contains('placed')) return false;
+    return true;
   }
 }
 

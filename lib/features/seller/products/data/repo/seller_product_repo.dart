@@ -64,7 +64,7 @@ class SellerProductRepo {
       }
       return ApiResult.failure("Network error: ${e.message}");
     } catch (e) {
-      return ApiResult.failure(e.toString());
+      return ApiResult.failure(mapErrorToUserMessage(e));
     }
   }
 
@@ -111,7 +111,7 @@ class SellerProductRepo {
       }
       return ApiResult.failure("Network error: ${e.message}");
     } catch (e) {
-      return ApiResult.failure(e.toString());
+      return ApiResult.failure(mapErrorToUserMessage(e));
     }
   }
 

@@ -25,14 +25,11 @@ OrderUpdateSellerOrderModel _$OrderUpdateSellerOrderModelFromJson(
   Map<String, dynamic> json,
 ) => OrderUpdateSellerOrderModel(
   id: json['_id'] as String?,
-  user: json['user'] == null
-      ? null
-      : OrderUpdateSellerUserModel.fromJson(
-          json['user'] as Map<String, dynamic>,
-        ),
-  items: (json['items'] as List<dynamic>?)
+  user: json['user'] as String?,
+  subOrders: (json['subOrders'] as List<dynamic>?)
       ?.map(
-        (e) => OrderUpdateSellerItemModel.fromJson(e as Map<String, dynamic>),
+        (e) =>
+            OrderUpdateSellerSubOrderModel.fromJson(e as Map<String, dynamic>),
       )
       .toList(),
   shippingAddress: json['shippingAddress'] == null
@@ -42,11 +39,7 @@ OrderUpdateSellerOrderModel _$OrderUpdateSellerOrderModelFromJson(
         ),
   paymentMethod: json['paymentMethod'] as String?,
   paymentStatus: json['paymentStatus'] as String?,
-  orderStatus: json['orderStatus'] as String?,
-  itemsTotal: (json['itemsTotal'] as num?)?.toInt(),
-  shippingFee: (json['shippingFee'] as num?)?.toInt(),
   totalAmount: (json['totalAmount'] as num?)?.toInt(),
-  cancelReason: json['cancelReason'] as String?,
   createdAt: json['createdAt'] as String?,
   updatedAt: json['updatedAt'] as String?,
   iV: (json['__v'] as num?)?.toInt(),
@@ -57,40 +50,50 @@ Map<String, dynamic> _$OrderUpdateSellerOrderModelToJson(
 ) => <String, dynamic>{
   '_id': instance.id,
   'user': instance.user,
-  'items': instance.items,
+  'subOrders': instance.subOrders,
   'shippingAddress': instance.shippingAddress,
   'paymentMethod': instance.paymentMethod,
   'paymentStatus': instance.paymentStatus,
-  'orderStatus': instance.orderStatus,
-  'itemsTotal': instance.itemsTotal,
-  'shippingFee': instance.shippingFee,
   'totalAmount': instance.totalAmount,
-  'cancelReason': instance.cancelReason,
   'createdAt': instance.createdAt,
   'updatedAt': instance.updatedAt,
   '__v': instance.iV,
 };
 
-OrderUpdateSellerUserModel _$OrderUpdateSellerUserModelFromJson(
+OrderUpdateSellerSubOrderModel _$OrderUpdateSellerSubOrderModelFromJson(
   Map<String, dynamic> json,
-) => OrderUpdateSellerUserModel(
+) => OrderUpdateSellerSubOrderModel(
+  seller: json['seller'] as String?,
+  items: (json['items'] as List<dynamic>?)
+      ?.map(
+        (e) => OrderUpdateSellerItemModel.fromJson(e as Map<String, dynamic>),
+      )
+      .toList(),
+  itemsTotal: (json['itemsTotal'] as num?)?.toInt(),
+  shippingFee: (json['shippingFee'] as num?)?.toInt(),
+  subTotal: (json['subTotal'] as num?)?.toInt(),
+  orderStatus: json['orderStatus'] as String?,
   id: json['_id'] as String?,
-  name: json['name'] as String?,
-  email: json['email'] as String?,
+  cancelReason: json['cancelReason'] as String?,
 );
 
-Map<String, dynamic> _$OrderUpdateSellerUserModelToJson(
-  OrderUpdateSellerUserModel instance,
+Map<String, dynamic> _$OrderUpdateSellerSubOrderModelToJson(
+  OrderUpdateSellerSubOrderModel instance,
 ) => <String, dynamic>{
+  'seller': instance.seller,
+  'items': instance.items,
+  'itemsTotal': instance.itemsTotal,
+  'shippingFee': instance.shippingFee,
+  'subTotal': instance.subTotal,
+  'orderStatus': instance.orderStatus,
   '_id': instance.id,
-  'name': instance.name,
-  'email': instance.email,
+  'cancelReason': instance.cancelReason,
 };
 
 OrderUpdateSellerItemModel _$OrderUpdateSellerItemModelFromJson(
   Map<String, dynamic> json,
 ) => OrderUpdateSellerItemModel(
-  product: json['product'] as String?,
+  product: _productIdFromJson(json['product']),
   name: json['name'] as String?,
   imageUrl: json['imageUrl'] as String?,
   price: (json['price'] as num?)?.toInt(),
@@ -102,7 +105,7 @@ OrderUpdateSellerItemModel _$OrderUpdateSellerItemModelFromJson(
 Map<String, dynamic> _$OrderUpdateSellerItemModelToJson(
   OrderUpdateSellerItemModel instance,
 ) => <String, dynamic>{
-  'product': instance.product,
+  'product': _productIdToJson(instance.product),
   'name': instance.name,
   'imageUrl': instance.imageUrl,
   'price': instance.price,

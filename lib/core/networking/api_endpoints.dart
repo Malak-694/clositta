@@ -41,8 +41,10 @@ class ApiEndpoints {
   //ecommerce-checkout
   static const String placeOrder = '/api/orders';
   static const String cancelOrder = '/api/orders/{orderId}/cancel';
+  static const String cancelSubOrder =
+      '/api/orders/{orderId}/suborders/{subOrderId}/cancel';
   static const String getOrderById = '/api/orders/{orderId}';
   static const String getMyOrders = '/api/orders/my';
   static const String getAllOrdersSeller = '/api/orders/seller';
-  static const String updateOrderStatusSeller = '/api/orders/{orderId}/status';
+  static const String updateOrderStatusSeller = '/api/orders/{orderId}/suborders/{suborderId}/status';
 }

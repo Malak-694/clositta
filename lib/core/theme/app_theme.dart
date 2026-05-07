@@ -1,4 +1,5 @@
 import 'package:chicora/core/constants/style.dart';
+import 'package:chicora/core/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -28,6 +29,13 @@ class AppTheme {
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.r),
         ),
+      ),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: AppColors.darkprimery,
+        contentTextStyle: AppStyle.smallBackground.copyWith(fontSize: 13.sp),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+        elevation: 3,
       ),
     );
   }

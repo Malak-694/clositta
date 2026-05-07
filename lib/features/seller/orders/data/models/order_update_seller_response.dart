@@ -19,16 +19,12 @@ class OrderUpdateSellerResponseModel {
 class OrderUpdateSellerOrderModel {
   @JsonKey(name: '_id')
   String? id;
-  OrderUpdateSellerUserModel? user;
-  List<OrderUpdateSellerItemModel>? items;
+  String? user;
+  List<OrderUpdateSellerSubOrderModel>? subOrders;
   OrderUpdateSellerShippingAddressModel? shippingAddress;
   String? paymentMethod;
   String? paymentStatus;
-  String? orderStatus;
-  int? itemsTotal;
-  int? shippingFee;
   int? totalAmount;
-  String? cancelReason;
   String? createdAt;
   String? updatedAt;
   @JsonKey(name: '__v')
@@ -37,15 +33,11 @@ class OrderUpdateSellerOrderModel {
   OrderUpdateSellerOrderModel({
     this.id,
     this.user,
-    this.items,
+    this.subOrders,
     this.shippingAddress,
     this.paymentMethod,
     this.paymentStatus,
-    this.orderStatus,
-    this.itemsTotal,
-    this.shippingFee,
     this.totalAmount,
-    this.cancelReason,
     this.createdAt,
     this.updatedAt,
     this.iV,
@@ -58,22 +50,37 @@ class OrderUpdateSellerOrderModel {
 }
 
 @JsonSerializable()
-class OrderUpdateSellerUserModel {
+class OrderUpdateSellerSubOrderModel {
+  String? seller;
+  List<OrderUpdateSellerItemModel>? items;
+  int? itemsTotal;
+  int? shippingFee;
+  int? subTotal;
+  String? orderStatus;
   @JsonKey(name: '_id')
   String? id;
-  String? name;
-  String? email;
+  String? cancelReason;
 
-  OrderUpdateSellerUserModel({this.id, this.name, this.email});
+  OrderUpdateSellerSubOrderModel({
+    this.seller,
+    this.items,
+    this.itemsTotal,
+    this.shippingFee,
+    this.subTotal,
+    this.orderStatus,
+    this.id,
+    this.cancelReason,
+  });
 
-  factory OrderUpdateSellerUserModel.fromJson(Map<String, dynamic> json) =>
-      _$OrderUpdateSellerUserModelFromJson(json);
+  factory OrderUpdateSellerSubOrderModel.fromJson(Map<String, dynamic> json) =>
+      _$OrderUpdateSellerSubOrderModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$OrderUpdateSellerUserModelToJson(this);
+  Map<String, dynamic> toJson() => _$OrderUpdateSellerSubOrderModelToJson(this);
 }
 
 @JsonSerializable()
 class OrderUpdateSellerItemModel {
+  @JsonKey(fromJson: _productIdFromJson, toJson: _productIdToJson)
   String? product;
   String? name;
   String? imageUrl;
@@ -98,6 +105,14 @@ class OrderUpdateSellerItemModel {
 
   Map<String, dynamic> toJson() => _$OrderUpdateSellerItemModelToJson(this);
 }
+
+String? _productIdFromJson(dynamic value) {
+  if (value is String) return value;
+  if (value is Map<String, dynamic>) return value['_id'] as String?;
+  return null;
+}
+
+dynamic _productIdToJson(String? value) => value;
 
 @JsonSerializable()
 class OrderUpdateSellerShippingAddressModel {

@@ -16,7 +16,7 @@ class RateProductsRepo {
     try {
       return ApiResult.success(await apiService.rateProduct( "Bearer $token", productId, body));
     } catch (e) {
-      return  ApiResult.failure(e.toString());
+      return  ApiResult.failure(mapErrorToUserMessage(e));
     }
   }
   Future<ApiResult<MessageModel>> deleteRateProduct(
@@ -26,7 +26,7 @@ class RateProductsRepo {
     try {
       return ApiResult.success(await apiService.deleteRateProduct( "Bearer $token", productId));
     } catch (e) {
-      return  ApiResult.failure(e.toString());
+      return  ApiResult.failure(mapErrorToUserMessage(e));
     }
   }
 }

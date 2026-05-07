@@ -3,6 +3,20 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'colors.dart'; // assuming AppColors is defined here
 
 class AppStyle {
+  static String userMessage(Object? error) {
+    final text = (error ?? '').toString().trim();
+    if (text.isEmpty) {
+      return 'Something went wrong. Please try again.';
+    }
+
+    if (text.contains('DioException') ||
+        text.contains('RequestOptions.validateStatus')) {
+      return 'Something went wrong. Please check your input and try again.';
+    }
+
+    return text;
+  }
+
   static BoxDecoration decoration({
     required double? radius,
     Color? color = AppColors.primery,

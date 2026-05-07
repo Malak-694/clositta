@@ -8,14 +8,8 @@ part of 'order_update_seller_request_model.dart';
 
 OrderUpdateSellerRequestModel _$OrderUpdateSellerRequestModelFromJson(
   Map<String, dynamic> json,
-) => OrderUpdateSellerRequestModel(
-  orderStatus: json['orderStatus'] as String?,
-  paymentStatus: json['paymentStatus'] as String?,
-);
+) => OrderUpdateSellerRequestModel(orderStatus: json['orderStatus'] as String?);
 
 Map<String, dynamic> _$OrderUpdateSellerRequestModelToJson(
   OrderUpdateSellerRequestModel instance,
-) => <String, dynamic>{
-  'orderStatus': ?instance.orderStatus,
-  'paymentStatus': ?instance.paymentStatus,
-};
+) => <String, dynamic>{'orderStatus': ?instance.orderStatus};

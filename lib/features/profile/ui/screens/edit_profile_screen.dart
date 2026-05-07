@@ -105,7 +105,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             if (!_imageRemoved) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(msg),
+                  content: Text(AppStyle.userMessage(msg)),
                   backgroundColor: Colors.red,
                 ),
               );

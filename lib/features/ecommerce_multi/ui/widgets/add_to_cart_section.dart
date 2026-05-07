@@ -75,7 +75,7 @@ class AddToCartSectionState extends State<AddToCartSection> {
           fail: (msg) {
             setState(() => _addedToCart = false);
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(msg, style: AppStyle.medBlack)),
+              SnackBar(content: Text(AppStyle.userMessage(msg), style: AppStyle.medBlack)),
             );
           },
         );

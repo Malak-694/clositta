@@ -10,7 +10,7 @@ class AnalysisSellerRepo {
       final response = await apiService.getSellerAnalysis("Bearer $token");
       return ApiResult.success(response);
     } catch (e) {
-      return ApiResult.failure(e.toString());
+      return ApiResult.failure(mapErrorToUserMessage(e));
     }
   }
 }

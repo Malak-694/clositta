@@ -5,9 +5,8 @@ part 'order_update_seller_request_model.g.dart';
 @JsonSerializable(includeIfNull: false)
 class OrderUpdateSellerRequestModel {
   String? orderStatus;
-  String? paymentStatus;
 
-  OrderUpdateSellerRequestModel({this.orderStatus, this.paymentStatus});
+  OrderUpdateSellerRequestModel({this.orderStatus });
 
   factory OrderUpdateSellerRequestModel.fromJson(Map<String, dynamic> json) =>
       _$OrderUpdateSellerRequestModelFromJson(json);

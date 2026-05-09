@@ -4,7 +4,6 @@ import 'package:chicora/core/constants/style.dart';
 import 'package:chicora/core/di/dependency_injection.dart';
 import 'package:chicora/core/helper/shared_pref_helper.dart';
 import 'package:chicora/core/router/route_names.dart';
-import 'package:chicora/features/ecommerce_multi/ui/screens/order_view_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -170,10 +169,8 @@ class ProfileMenuList extends StatelessWidget {
               ),
               onTap: () {
                 if ((item['title'] as String) == 'My Orders') {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const OrderViewScreen(),
-                    ),
+                  Navigator.of(context).pushNamed(
+                    RouteNames.order_view_screen,
                   );
                 }
               },

@@ -36,4 +36,27 @@ class Validators {
     }
     return null;
   }
+
+  /// Matches server rules: omit or blank is fine; otherwise must be parseable http(s).
+  static String? validateOptionalHttpUrl(String? value) {
+    if (value == null || value.trim().isEmpty) return null;
+    final uri = Uri.tryParse(value.trim());
+    if (uri == null || !uri.hasScheme) {
+      return 'Enter a valid URL';
+    }
+    if (uri.scheme != 'http' && uri.scheme != 'https') {
+      return 'URL must start with http or https';
+    }
+    return null;
+  }
+
+  /// Optional phone: blank ok, otherwise same digit rule as [validatePhone].
+  static String? validateOptionalPhone(String? value) {
+    if (value == null || value.trim().isEmpty) return null;
+    final digits = value.trim();
+    if (!RegExp(r'^[0-9]{11}$').hasMatch(digits)) {
+      return 'Enter a valid 11-digit phone number';
+    }
+    return null;
+  }
 }

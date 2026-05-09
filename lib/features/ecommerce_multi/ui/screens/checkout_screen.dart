@@ -5,15 +5,18 @@ import 'package:chicora/core/widgets/custom_app_bar.dart';
 import 'package:chicora/core/widgets/custom_elevated_button.dart';
 import 'package:chicora/features/ecommerce_multi/data/models/cart_models/cart_response_model.dart';
 import 'package:chicora/features/ecommerce_multi/data/models/order_models/order_request_model.dart';
+import 'package:chicora/features/ecommerce_multi/data/models/order_models/place_order_success.dart';
 import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
 import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_state.dart';
 import 'package:chicora/features/ecommerce_multi/logic/order_cubit/order_cubit.dart';
 import 'package:chicora/features/ecommerce_multi/logic/order_cubit/order_state.dart';
 import 'package:chicora/features/ecommerce_multi/ui/widgets/checkout_form_section.dart';
+import 'package:chicora/features/ecommerce_multi/ui/widgets/checkout_payment_method_section.dart';
 import 'package:chicora/features/ecommerce_multi/ui/widgets/order_summary_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CheckoutScreen extends StatelessWidget {
   const CheckoutScreen({super.key});
@@ -50,6 +53,7 @@ class _CheckoutScreenBodyState extends State<CheckoutScreenBody> {
   final _governorateController = TextEditingController();
   final _postalCodeController = TextEditingController();
   final _notesController = TextEditingController();
+  String _paymentMethod = OrderRequestModel.paymentCredit;
   Color _rolePrimary = AppColors.primery;
   Color _roleDark = AppColors.darkprimery;
 
@@ -102,6 +106,18 @@ class _CheckoutScreenBodyState extends State<CheckoutScreenBody> {
     return items.isEmpty ? 0 : 1;
   }
 
+  void _finishCheckoutSuccess(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message, style: AppStyle.smallBackground),
+        backgroundColor: _rolePrimary,
+      ),
+    );
+    context.read<CartCubit>().getCart();
+    Navigator.pop(context);
+  }
+
   void _submitOrder() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
@@ -116,6 +132,7 @@ class _CheckoutScreenBodyState extends State<CheckoutScreenBody> {
         notes: _notesController.text.trim().isEmpty
             ? null
             : _notesController.text.trim(),
+        paymentMethod: _paymentMethod,
       ),
     );
   }
@@ -126,18 +143,43 @@ class _CheckoutScreenBodyState extends State<CheckoutScreenBody> {
       listener: (context, state) {
         state.whenOrNull(
           success: (data) {
-            if (data is MessageModel) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    data.message ?? 'Order placed successfully',
-                    style: AppStyle.smallBackground,
-                  ),
-                  backgroundColor: _rolePrimary,
-                ),
+            if (data is PlaceOrderSuccess) {
+              final iframeUrl = data.paymentIframeUrl;
+              if (iframeUrl != null && iframeUrl.isNotEmpty) {
+                final uri = Uri.tryParse(iframeUrl);
+                if (uri != null) {
+                  launchUrl(uri, mode: LaunchMode.externalApplication)
+                      .then((opened) {
+                    if (!context.mounted) return;
+                    if (!opened) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Could not open the payment page',
+                            style: AppStyle.smallBackground,
+                          ),
+                          backgroundColor: AppColors.ternary,
+                        ),
+                      );
+                      return;
+                    }
+                    if (!context.mounted) return;
+                    _finishCheckoutSuccess(
+                      data.message ?? 'Complete payment in your browser',
+                    );
+                  });
+                  return;
+                }
+              }
+              _finishCheckoutSuccess(
+                data.message ?? 'Order placed successfully',
               );
-              context.read<CartCubit>().getCart();
-              Navigator.pop(context);
+              return;
+            }
+            if (data is MessageModel) {
+              _finishCheckoutSuccess(
+                data.message ?? 'Order placed successfully',
+              );
             }
           },
           fail: (message) {
@@ -198,6 +240,14 @@ class _CheckoutScreenBodyState extends State<CheckoutScreenBody> {
                       fillColor: _rolePrimary.withOpacity(0.06),
                       enabledBorderColor: _rolePrimary.withOpacity(0.3),
                       focusedBorderColor: _rolePrimary,
+                    ),
+                    SizedBox(height: 20.h),
+                    CheckoutPaymentMethodSection(
+                      selectedMethod: _paymentMethod,
+                      onMethodSelected: (method) =>
+                          setState(() => _paymentMethod = method),
+                      rolePrimary: _rolePrimary,
+                      roleDark: _roleDark,
                     ),
                     SizedBox(height: 16.h),
                     OrderSummary(

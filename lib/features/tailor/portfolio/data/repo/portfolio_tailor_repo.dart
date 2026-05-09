@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:chicora/core/networking/api_result.dart';
 import 'package:chicora/core/networking/api_service.dart';
-import 'package:chicora/features/tailor/portfolio/data/models/portfolio_tailor_response_model.dart';
+import 'package:chicora/features/tailor/portfolio/data/models/tailor_portfolio_bundle_model.dart';
 import 'package:dio/dio.dart';
 
 import '../../../../../core/models/message_model.dart';
@@ -10,14 +10,14 @@ import '../../../../../core/models/message_model.dart';
 class PortfolioTailorRepo {
   final ApiService apiService;
   PortfolioTailorRepo({required this.apiService});
-  Future<ApiResult<List<PortfolioTailorResponseModel>>> viewPortfolioTailor(
+
+  Future<ApiResult<TailorPortfolioBundleModel>> viewPortfolioTailor(
     String token,
     String? category,
   ) async {
     try {
       final response = await apiService.viewPortfolioTailor(
         "Bearer $token",
-
         category,
       );
       return ApiResult.success(response);
@@ -42,7 +42,7 @@ class PortfolioTailorRepo {
 
       final multipartFile = await MultipartFile.fromFile(
         file.path,
-        filename: file.path.split('/').last,
+        filename: file.path.split(RegExp(r'[/\\]')).last,
       );
 
       final response = await apiService.addPortfolioItem(
@@ -86,7 +86,7 @@ class PortfolioTailorRepo {
     required String title,
     required String category,
     required String description,
-    String? imagePath, // ✅ optional since user may not change image
+    String? imagePath,
   }) async {
     try {
       MultipartFile? multipartFile;
@@ -98,7 +98,7 @@ class PortfolioTailorRepo {
         }
         multipartFile = await MultipartFile.fromFile(
           file.path,
-          filename: file.path.split('/').last,
+          filename: file.path.split(RegExp(r'[/\\]')).last,
         );
       }
 
@@ -122,5 +122,4 @@ class PortfolioTailorRepo {
       return ApiResult.failure(mapErrorToUserMessage(e));
     }
   }
-
 }

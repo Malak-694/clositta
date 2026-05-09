@@ -1,6 +1,8 @@
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
 import 'package:chicora/core/di/dependency_injection.dart';
+import 'package:chicora/core/helper/shared_key.dart';
+import 'package:chicora/core/helper/shared_pref_helper.dart';
 import 'package:chicora/core/models/message_model.dart';
 import 'package:chicora/core/router/route_names.dart';
 import 'package:chicora/core/widgets/custom_app_bar.dart';
@@ -17,22 +19,52 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+Future<void> leaveOrdersScreen(
+  BuildContext context,
+  bool openedFromCart,
+) async {
+  if (openedFromCart) {
+    if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    }
+    return;
+  }
+
+  final role = await getIt<SharedPrefHelper>().getSecureData(
+    SharedPrefKey.role,
+  );
+  if (!context.mounted) return;
+  final cartRoute = role == 'tailor'
+      ? RouteNames.tailor_cart_screen
+      : RouteNames.customer_cart_screen;
+  Navigator.of(context).pushReplacementNamed(cartRoute);
+}
+
 class OrderViewScreen extends StatelessWidget {
-  const OrderViewScreen({super.key});
+  const OrderViewScreen({super.key, this.openedFromCart = false});
+
+  final bool openedFromCart;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => getIt<OrderCubit>()..getMyOrders(),
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        appBar: const CustomAppBar(
-          title: 'My Orders',
-          leading: true,
-          showCartIcon: false,
-          onCartTap: null,
+      child: PopScope(
+        canPop: openedFromCart,
+        onPopInvokedWithResult: (didPop, _) async {
+          if (!didPop) await leaveOrdersScreen(context, openedFromCart);
+        },
+        child: Scaffold(
+          backgroundColor: AppColors.background,
+          appBar: CustomAppBar(
+            title: 'My Orders',
+            leading: true,
+            showCartIcon: false,
+            onCartTap: null,
+            onLeadingPressed: () => leaveOrdersScreen(context, openedFromCart),
+          ),
+          body: const OrderViewBody(),
         ),
-        body: const OrderViewBody(),
       ),
     );
   }
@@ -216,14 +248,9 @@ class OrderViewBody extends StatelessWidget {
     if (cancellableSubOrders.isEmpty) return;
 
     if (cancellableSubOrders.length == 1) {
-      _showCancelSubOrderDialog(
-        context,
-        order,
-        cancellableSubOrders.first.id!,
-      );
+      _showCancelSubOrderDialog(context, order, cancellableSubOrders.first.id!);
       return;
     }
-
   }
 
   void _showSubOrderPicker(BuildContext context, OrderDataModel order) {

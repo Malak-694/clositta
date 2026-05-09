@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/colors.dart';
+import '../../../../core/router/route_names.dart';
 import '../../../../core/constants/style.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/models/message_model.dart';
@@ -14,7 +15,6 @@ import '../../logic/cart_cubit/cart_cubit.dart';
 import '../../logic/cart_cubit/cart_state.dart';
 import '../../logic/order_cubit/order_cubit.dart';
 import '../screens/checkout_screen.dart';
-import '../screens/order_view_screen.dart';
 import '../widgets/order_summary_widget.dart';
 
 class CartScreenBody extends StatefulWidget {
@@ -145,12 +145,10 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                                       fontWeight: FontWeight.w700,
                                     ),
                                     onPressed: () {
-                                      Navigator.push(
+                                      Navigator.pushNamed(
                                         context,
-                                        MaterialPageRoute(
-                                          builder: (_) =>
-                                              const OrderViewScreen(),
-                                        ),
+                                        RouteNames.order_view_screen,
+                                        arguments: {'fromCart': true},
                                       );
                                     },
                                   ),
@@ -285,11 +283,10 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                               ),
                               background: _rolePrimary,
                               onPressed: () {
-                                Navigator.push(
+                                Navigator.pushNamed(
                                   context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const OrderViewScreen(),
-                                  ),
+                                  RouteNames.order_view_screen,
+                                  arguments: {'fromCart': true},
                                 );
                               },
                             ),

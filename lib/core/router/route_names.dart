@@ -31,6 +31,7 @@ class RouteNames {
   //cart
   static const customer_cart_screen = "customer_cart_screen";
   static const tailor_cart_screen = "tailor_cart_screen";
+  static const order_view_screen = "order_view_screen";
 
   static const upload_closet_item = "upload_closet_item";
   static const closet_items_screen = "closet";

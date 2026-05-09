@@ -16,6 +16,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.cartItemCount = 0,
     required this.onCartTap,
     this.extraActions = const [], // ✅ new
+    this.onLeadingPressed,
   });
 
   final String title;
@@ -26,6 +27,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final int cartItemCount;
   final VoidCallback? onCartTap;
   final List<Widget> extraActions; // ✅ new
+  final VoidCallback? onLeadingPressed;
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -42,7 +44,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           if (leading)
             IconButton(
               icon: Icon(leadingIcon, color: AppColors.dark),
-              onPressed: () => Navigator.pop(context),
+              onPressed: onLeadingPressed ?? () => Navigator.pop(context),
             ),
           FutureBuilder<String?>(
             future: getIt<SharedPrefHelper>().getSecureData(SharedPrefKey.role),

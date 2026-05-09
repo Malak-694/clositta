@@ -4,7 +4,7 @@ import 'package:chicora/core/networking/api_service.dart';
 
 import '../../../../core/models/message_model.dart';
 import '../model/profile_model.dart';
-
+import '../model/update_profile_model.dart';
 
 class ProfileRepo {
   final ApiService apiService;
@@ -20,11 +20,13 @@ class ProfileRepo {
     }
   }
 
-  Future<MessageModel> updateProfile({
+  Future<UpdateProfileResponse> updateProfile({
     required String token,
     String? name,
     String? email,
     String? phone,
+    String? location,
+    String? mapsUrl,
     String? imagePath,
   }) async {
     try {
@@ -34,7 +36,7 @@ class ProfileRepo {
         if (!await file.exists()) throw Exception("Image file not found");
         image = await MultipartFile.fromFile(
           file.path,
-          filename: file.path.split('/').last,
+          filename: file.path.split(RegExp(r'[/\\]')).last,
         );
       }
       return await apiService.updateProfile(
@@ -42,6 +44,8 @@ class ProfileRepo {
         name: name,
         email: email,
         phone: phone,
+        location: location,
+        mapsUrl: mapsUrl,
         image: image,
       );
     } on DioException catch (e) {

@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:app_links/app_links.dart';
 import 'package:chicora/core/di/dependency_injection.dart';
 import 'package:chicora/core/helper/shared_key.dart';
 import 'package:chicora/core/helper/shared_pref_helper.dart';
@@ -44,12 +47,63 @@ void main() async {
 
   print(role);
   print(initialRoute);
-  runApp(ChicoraApp(initialRoute: RouteNames.customer_cart_screen));
+  runApp(ChicoraApp(initialRoute: initialRoute));
 }
 
-class ChicoraApp extends StatelessWidget {
+/// Matches Paymob HTML callback: `app://clositta.com/orders/?...`
+bool _isOrdersReturnDeepLink(Uri uri) {
+  if (uri.scheme != 'app' || uri.host != 'clositta.com') return false;
+  final p = uri.path;
+  return p == '/orders/' || p == '/orders';
+}
+
+class ChicoraApp extends StatefulWidget {
   final String initialRoute;
   const ChicoraApp({super.key, required this.initialRoute});
+
+  @override
+  State<ChicoraApp> createState() => _ChicoraAppState();
+}
+
+class _ChicoraAppState extends State<ChicoraApp> {
+  final AppLinks _appLinks = AppLinks();
+  StreamSubscription<Uri>? _linkSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _listenForOrderReturnDeepLinks();
+  }
+
+  Future<void> _listenForOrderReturnDeepLinks() async {
+    Uri? handledForDedup;
+
+    void handle(Uri uri) {
+      if (!_isOrdersReturnDeepLink(uri)) return;
+      if (handledForDedup == uri) return;
+      handledForDedup = uri;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final nav = appNavigatorKey.currentState;
+        if (nav == null || !nav.mounted) return;
+        nav.pushNamed(RouteNames.order_view_screen);
+      });
+    }
+
+    try {
+      final initial = await _appLinks.getInitialLink();
+      if (initial != null) handle(initial);
+    } catch (_) {
+      // ignore: plugin may fail on unsupported platforms during tests
+    }
+
+    _linkSubscription = _appLinks.uriLinkStream.listen(handle);
+  }
+
+  @override
+  void dispose() {
+    _linkSubscription?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +115,7 @@ class ChicoraApp extends StatelessWidget {
         return MaterialApp(
           title: 'Chicora',
           navigatorKey: appNavigatorKey,
-          initialRoute: initialRoute,
+          initialRoute: widget.initialRoute,
           onGenerateRoute: AppRouter.generateRoute,
           debugShowCheckedModeBanner: false,
           theme: AppTheme.lightTheme,

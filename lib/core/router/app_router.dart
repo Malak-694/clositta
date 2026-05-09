@@ -15,6 +15,7 @@ import 'package:chicora/features/customer/biding/logic/cubit/customer_bidding_cu
 import 'package:chicora/features/customer/biding/ui/Screens/detailes_screen.dart';
 import 'package:chicora/features/customer/biding/ui/Screens/form_screen.dart';
 import 'package:chicora/features/customer/biding/ui/Screens/post_screen.dart';
+import 'package:chicora/features/ecommerce_multi/ui/screens/order_view_screen.dart';
 import 'package:chicora/features/ecommerce_multi/ui/screens/product_details_screen.dart';
 import 'package:chicora/features/profile/ui/screens/profile_screen.dart';
 import 'package:chicora/features/seller/products/logic/cubit/seller_products_cubit.dart';
@@ -335,6 +336,13 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => CustomerCartScreen());
       case RouteNames.tailor_cart_screen:
         return MaterialPageRoute(builder: (_) => TailorCartScreen());
+      case RouteNames.order_view_screen:
+        final orderArgs =
+            settings.arguments as Map<String, dynamic>? ?? {};
+        final openedFromCart = orderArgs['fromCart'] as bool? ?? false;
+        return MaterialPageRoute(
+          builder: (_) => OrderViewScreen(openedFromCart: openedFromCart),
+        );
       case RouteNames.chat_screen:
         final args = settings.arguments as Map<String, dynamic>? ?? {};
         final personName  = args['personName'] as String? ?? '';

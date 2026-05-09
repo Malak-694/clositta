@@ -8,7 +8,7 @@ import 'package:chicora/features/customer/biding/data/models/bid_customer_model.
 import 'package:chicora/features/customer/biding/data/models/offer_model.dart';
 import 'package:chicora/features/customer/biding/data/models/send_bidding_model.dart';
 import 'package:chicora/features/customer/biding/data/repo/bid_repo.dart';
-import 'package:chicora/features/customer/biding/logic/cubit/customer_bidding_state.dart';
+import 'package:chicora/features/customer/biding/logic/cubit/custom_bidding_cubit/customer_bidding_state.dart';
 
 class CustomerBiddingCubit extends Cubit<CustomerBiddingState> {
   final BiddingCustomerRepo _repository;

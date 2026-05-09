@@ -11,7 +11,6 @@ import 'package:dio/dio.dart';
 class AuthRepo {
   ApiService apiService;
   AuthRepo({required this.apiService});
-  Future<ApiResult<SignUpResponse>> signUp(SignUpRequest body) async {
 
   String? _nonEmptyTrimmed(String? s) {
     final t = s?.trim();

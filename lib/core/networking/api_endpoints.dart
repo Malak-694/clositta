@@ -20,6 +20,7 @@ class ApiEndpoints {
   static const String deletePortfolioTailor = '/api/portfolio/{itemId}';
   static const String updatePortfolioTailor = '/api/portfolio/{itemId}';
   static const String createPortfolioTailor = '/api/portfolio';
+  static const String tailorInfo = '/api/portfolio/all' ;
   // Customer
   static const String myBids = '/api/bids';
   static const String createBid = '/api/bids';
@@ -53,8 +54,6 @@ class ApiEndpoints {
   //seller-orders
   static const String getAllOrdersSeller = '/api/orders/seller';
   static const String updateOrderStatusSeller = '/api/orders/{orderId}/suborders/{suborderId}/status';
-  static const String getAllOrdersSeller = '/api/orders/all';
-  static const String updateOrderStatusSeller = '/api/orders/{orderId}/status';
 
   static const String socketUrl =
       'https://graduationproject-production-b435.up.railway.app';

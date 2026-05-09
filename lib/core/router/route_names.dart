@@ -11,6 +11,7 @@ class RouteNames {
   static const profile_customer_screen = "profile_customer_screen";
   static const profile_tailor_screen   = "profile_tailor_screen";
   static const profile_seller_screen   = "profile_seller_screen";
+  static const edit_profile_screen = "edit_profile_screen" ;
 
   // customer bidding
   static const posts_customer          = "posts";
@@ -26,13 +27,10 @@ class RouteNames {
   static const seller_products_screen = "seller_products_screen";
   static const analysis_seller_screen = "analysis_seller_screen";
   static const seller_orders_screen = "seller_orders_screen";
-  static const added_product_item = "added_product_item";
-  static const customer_products_screen = "customer_products_screen";
-  static const update_product_screen = "update_product_screen";
   // seller products
-  static const seller_products_screen  = "seller_products_screen";
   static const added_product_item      = "added_product_item";
   static const update_product_screen   = "update_product_screen";
+  static const seller_info_screen = "seller_info_screen";
 
   // ecommerce
   static const customer_products_screen = "customer_products_screen";

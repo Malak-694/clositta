@@ -25,11 +25,13 @@ class CheckoutScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: const CustomAppBar(
+      appBar: CustomAppBar(
         title: "Checkout",
         leading: true,
         showCartIcon: false,
         onCartTap: null,
+        showChatIcon: false,
+        onChatTap: null,
       ),
       body: const CheckoutScreenBody(),
     );
@@ -60,14 +62,6 @@ class _CheckoutScreenBodyState extends State<CheckoutScreenBody> {
   @override
   void initState() {
     super.initState();
-    AppColors.primaryForCurrentUser().then((color) {
-      if (!mounted) return;
-      setState(() => _rolePrimary = color);
-    });
-    AppColors.darkForCurrentUser().then((color) {
-      if (!mounted) return;
-      setState(() => _roleDark = color);
-    });
     context.read<CartCubit>().getCart();
   }
 

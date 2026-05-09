@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/style.dart';
+import '../../../../core/router/route_names.dart';
 
 class SellerInfo extends StatelessWidget {
   final SellerModel? seller;
@@ -73,7 +74,17 @@ class SellerInfo extends StatelessWidget {
             ),
           ),
           OutlinedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(
+                context,
+                RouteNames.seller_info_screen,
+                arguments: {
+                  'name': seller?.name ?? '',
+                  'sellerId': seller?.sId ?? '',
+                  'email': seller?.email,
+                },
+              );
+            },
             style: OutlinedButton.styleFrom(
               foregroundColor: accentDark,
               side: BorderSide(

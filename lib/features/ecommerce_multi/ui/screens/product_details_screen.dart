@@ -51,18 +51,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         : ['https://via.placeholder.com/400x500?text=No+Image'];
     // initialize ratings list and load current user info
     _ratings = List<RatingModel>.from(widget.product.ratings ?? []);
-    AppColors.primaryForCurrentUser().then((color) {
-      if (!mounted) return;
-      setState(() {
-        _rolePrimary = color;
-      });
-    });
-    AppColors.darkForCurrentUser().then((color) {
-      if (!mounted) return;
-      setState(() {
-        _roleDark = color;
-      });
-    });
     _loadUserInfo();
   }
 

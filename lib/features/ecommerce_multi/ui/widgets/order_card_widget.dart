@@ -23,12 +23,12 @@ class OrderCardWidget extends StatelessWidget {
   Color _paymentStatusColor(String? status) {
     final s = (status ?? '').toLowerCase();
     if (s.contains('paid') || s.contains('refunded')) {
-      return Colors.green;
+      return AppColors.secondary;
     }
     if (s.contains('failed')) {
       return AppColors.ternary;
     }
-    return AppColors.secondary;
+    return AppColors.primery;
   }
 
   @override
@@ -49,6 +49,13 @@ class OrderCardWidget extends StatelessWidget {
           color: const Color(0xFFF8F7FF),
           borderRadius: BorderRadius.circular(14.r),
           border: Border.all(color: AppColors.lightprimery),
+          boxShadow: const [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 6,
+            offset: Offset(0, 1),
+          ),
+          ]
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

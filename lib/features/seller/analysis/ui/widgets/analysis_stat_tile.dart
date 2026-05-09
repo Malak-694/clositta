@@ -34,7 +34,7 @@ class AnalysisStatTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label, style: AppStyle.smallBlack),
+                Text(label, style: AppStyle.smallBlack.copyWith(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
                 Text(
                   value,

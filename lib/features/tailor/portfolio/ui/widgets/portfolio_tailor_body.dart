@@ -57,7 +57,7 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
               CustomDropdown(
                 color: AppColors.lightsecondary,
                 vPadding: 3.h,
-                style: AppStyle.medSecondary.copyWith(fontSize: 12.sp),
+                style: AppStyle.medSecondary.copyWith(color: AppColors.darksecondary),
                 items: _categories,
                 value: 'All',
                 hintText: 'Category',

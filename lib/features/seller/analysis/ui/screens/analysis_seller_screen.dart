@@ -50,9 +50,7 @@ class AnalysisSellerScreen extends StatelessWidget {
       ),
       bottomNavigationBar: FloatingNavBar(
         userRole: 'seller',
-        selectedIndex: 3,
-        focused: AppColors.lightternary,
-        notSelected: AppColors.primery,
+        selectedIndex: 2 ,
       ),
     );
   }
@@ -74,7 +72,7 @@ class _AnalysisContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 12),
+          const SizedBox(height: 20),
           AnalysisSectionCard(
             title: 'Overview',
             child: AnalysisOverviewGrid(overview: overview),

@@ -18,9 +18,7 @@ class SellerProfileScreen extends StatelessWidget {
         body: const ProfileScreen(),
         bottomNavigationBar: FloatingNavBar(
           userRole: 'seller',
-          selectedIndex: 2,
-          focused: AppColors.ternary,
-          notSelected: AppColors.darkternary,
+          selectedIndex: 3,
         ),
       ),
     );

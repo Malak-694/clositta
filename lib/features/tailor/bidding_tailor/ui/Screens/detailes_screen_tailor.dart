@@ -247,8 +247,6 @@ class _DetailesScreenTailorState extends State<DetailesScreenTailor> {
       bottomNavigationBar: FloatingNavBar(
         userRole: 'tailor',
         selectedIndex: 0,
-        focused: AppColors.secondary,
-        notSelected: AppColors.darksecondary,
       ),
     );
   }

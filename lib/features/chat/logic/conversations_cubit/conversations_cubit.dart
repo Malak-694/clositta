@@ -29,4 +29,17 @@ class ConversationsCubit
       emit(ConversationsState.fail(e.toString()));
     }
   }
+
+  int unreadCount = 0;
+
+  Future<void> loadUnreadCount() async {
+    try {
+      final prefs = getIt<SharedPrefHelper>();
+      final token = await prefs.getSecureData('token');
+      if (token == null) return;
+
+      unreadCount = await _repo.getUnreadCount(token);
+      emit(state);   // ← re-emit current state to trigger BlocBuilder rebuild
+    } catch (_) {}
+  }
 }

@@ -11,7 +11,7 @@ import 'package:chicora/features/auth/ui/screens/password_recovery_screen.dart';
 import 'package:chicora/features/auth/ui/screens/recovery_code_screen.dart';
 import 'package:chicora/features/auth/ui/screens/reset_password_screen.dart';
 import 'package:chicora/features/auth/ui/screens/log_in_screen.dart';
-import 'package:chicora/features/customer/biding/logic/cubit/customer_bidding_cubit.dart';
+import 'package:chicora/features/customer/biding/logic/cubit/custom_bidding_cubit/customer_bidding_cubit.dart';
 import 'package:chicora/features/customer/biding/ui/Screens/detailes_screen.dart';
 import 'package:chicora/features/customer/biding/ui/Screens/form_screen.dart';
 import 'package:chicora/features/customer/biding/ui/Screens/post_screen.dart';
@@ -32,14 +32,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../features/auth/ui/screens/sign_up_screen.dart';
 import '../../features/chat/data/repo/chat_repo.dart';
 import '../../features/chat/logic/chat_cubit/chat_cubit.dart';
+import '../../features/chat/logic/conversations_cubit/conversations_cubit.dart';
 import '../../features/chat/ui/screens/conversations_screen.dart';
 import '../../features/customer/biding/ui/Screens/tailor_info_screen.dart';
 import '../../features/customer/closet/data/models/closet_item_response_model.dart';
+import '../../features/customer/closet/data/repo/closet_repo.dart';
 import '../../features/customer/ecommerce/customer_cart_screen.dart';
 import '../../features/customer/ecommerce/customer_products_screen.dart';
 import '../../features/customer/profile/ui/customer_profile_screen.dart';
 import '../../features/ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
+import '../../features/ecommerce_multi/ui/screens/seller_info_screen.dart';
+import '../../features/profile/data/model/profile_model.dart';
 import '../../features/profile/logic/profile_cubit.dart';
+import '../../features/profile/ui/screens/edit_profile_screen.dart';
 import '../../features/seller/orders/logic/cubit/order_mangement_cubit.dart';
 import '../../features/seller/products/data/models/product_model_response.dart';
 import '../../features/seller/analysis/ui/screens/analysis_seller_screen.dart';
@@ -52,6 +57,7 @@ import '../../features/tailor/ecommerce/tailor_products_screen.dart';
 import '../../features/tailor/portfolio/data/models/portfolio_tailor_response_model.dart';
 import '../../features/tailor/portfolio/ui/screens/portfolio_tailor_screen.dart';
 import '../../features/tailor/profile/ui/tailor_profile_screen.dart';
+import '../constants/colors.dart';
 import '../networking/socket_service.dart';
 
 class AppRouter {
@@ -109,6 +115,30 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => const SellerProfileScreen(),
         );
+      case RouteNames.edit_profile_screen:
+        final args = settings.arguments as Map<String, dynamic>? ?? {};
+        final profile = args['profile'] as ProfileResponse?;
+        final primaryColor = args['primaryColor'] as Color? ?? AppColors.primery;
+        final lightColor = args['lightColor'] as Color? ?? AppColors.lightprimery;
+
+        if (profile == null) {
+          return MaterialPageRoute(
+            builder: (_) => const Scaffold(
+              body: Center(child: Text('Profile data not found')),
+            ),
+          );
+        }
+
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<ProfileCubit>(),
+            child: EditProfileScreen(
+              profile: profile,
+              primaryColor: primaryColor,
+              lightColor: lightColor,
+            ),
+          ),
+        );
       case RouteNames.posts_customer:
         return MaterialPageRoute(
           builder: (_) => MultiBlocProvider(
@@ -120,6 +150,10 @@ class AppRouter {
                   cart.getCart();
                   return cart;
                 },
+              ),
+              BlocProvider(create: (_) => getIt<ViewProductsCubit>()),
+              BlocProvider(                                     // ← add this
+                create: (_) => getIt<ConversationsCubit>()..loadUnreadCount(),
               ),
             ],
             child: const PostScreen(),
@@ -222,7 +256,7 @@ class AppRouter {
             rating: args['rating'] as double?,
             reviewCount: args['reviewCount'] as int?,
             email: args['email'] as String?,
-            products: (args['products'] as List<Map<String, dynamic>>?) ?? [],
+            tailorId: args['tailorId'] as String,
           ),
         );
       case RouteNames.join_bidding:
@@ -236,7 +270,6 @@ class AppRouter {
               period: args['period'] ?? '',
               title: args['title'] ?? '',
               postId: args['postId'] ?? '',
-              // ✅ these make it edit mode
               offerId: args['offerId'],
               initialPrice: args['initialPrice'],
               initialDays: args['initialDays'],
@@ -292,6 +325,9 @@ class AppRouter {
                 },
               ),
               BlocProvider(create: (_) => getIt<ViewProductsCubit>()),
+              BlocProvider(                                     // ← add this
+                create: (_) => getIt<ConversationsCubit>()..loadConversations(),
+              ),
             ],
             child: CustomerProductsScreen(),
           ),
@@ -335,8 +371,40 @@ class AppRouter {
             child: ProductDetailScreen(product: product),
           ),
         );
+      case RouteNames.seller_info_screen:
+        final args = settings.arguments as Map<String, dynamic>? ?? {};
+        return MaterialPageRoute(
+          builder: (_) => SellerInfoScreen(
+            name: args['name'] as String? ?? '',
+            sellerId: args['sellerId'] as String? ?? '',
+            imageUrl: args['imageUrl'] as String?,
+            email: args['email'] as String?,
+            location: args['location'] as String?,
+            rating: args['rating'] as double?,
+            reviewCount: args['reviewCount'] as int?,
+          ),
+        );
       case RouteNames.closet_items_screen:
-        return MaterialPageRoute(builder: (_) => ClosetItemsScreen());
+        return MaterialPageRoute(
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (_) {
+                  final cart = getIt<CartCubit>();
+                  cart.getCart();
+                  return cart;
+                },
+              ),
+              BlocProvider(
+                create: (_) => getIt<ConversationsCubit>()..loadUnreadCount(),
+              ),
+              BlocProvider(
+                create: (_) => ClosetCubit(closetRepo: getIt<ClosetRepo>()),
+              ),
+            ],
+            child: ClosetItemsScreen(),
+          ),
+        );
       case RouteNames.upload_closet_item:
         return MaterialPageRoute(
           builder: (_) => BlocProvider(

@@ -3,7 +3,7 @@ import 'package:chicora/core/networking/api_service.dart';
 import 'package:chicora/core/networking/dio_factory.dart';
 import 'package:chicora/features/auth/data/repo/auth_repo.dart';
 import 'package:chicora/features/auth/logic/cubit/authentication_cubit.dart';
-import 'package:chicora/features/customer/biding/logic/cubit/customer_bidding_cubit.dart';
+import 'package:chicora/features/customer/biding/logic/cubit/custom_bidding_cubit/customer_bidding_cubit.dart';
 import 'package:chicora/features/customer/closet/data/repo/closet_repo.dart';
 import 'package:chicora/features/customer/closet/logic/cubit/closet_cubit.dart';
 import 'package:chicora/features/ecommerce_multi/data/repo/cart_repo.dart';
@@ -31,6 +31,8 @@ import '../../features/chat/data/repo/conversations_repo.dart';
 import '../../features/chat/logic/chat_cubit/chat_cubit.dart';
 import '../../features/chat/logic/conversations_cubit/conversations_cubit.dart';
 import '../../features/customer/biding/data/repo/bid_repo.dart';
+import '../../features/customer/biding/data/repo/portfolio_repo.dart';
+import '../../features/customer/biding/logic/cubit/portfolio_cubit/portfolio_cubit.dart';
 import '../../features/profile/data/repo/profile_repo.dart';
 import '../../features/profile/logic/profile_cubit.dart';
 import '../../features/tailor/portfolio/data/repo/portfolio_tailor_repo.dart';
@@ -150,4 +152,7 @@ Future<void> setupGetIt() async {
       getIt<ChatRepo>(),
     ),
   );
+
+  getIt.registerFactory(() => PortfolioRepo(apiService: getIt<ApiService>()));
+  getIt.registerFactory(() => PortfolioCubit(getIt<PortfolioRepo>()));
 }

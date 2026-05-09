@@ -1,6 +1,7 @@
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class InfoCard extends StatelessWidget {
   final String name;
@@ -24,24 +25,26 @@ class InfoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
+      height: 120.h,
       decoration: BoxDecoration(
         color: AppColors.background,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.shade200,
-            blurRadius: 8,
+            color: Colors.grey.shade300,
+            blurRadius: 16,
             spreadRadius: 2,
-            offset: Offset(0, 4),
+            offset: Offset(0, 6),
           ),
         ],
       ),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
         children: [
-          // Avatar
+          IconButton(onPressed: (){Navigator.pop(context);},
+              icon: Icon(Icons.arrow_back_ios_new_rounded)),
           CircleAvatar(
-            radius: 45,
+            radius: 40,
             backgroundColor: AppColors.lightprimery,
             backgroundImage:
             imageUrl != null ? NetworkImage(imageUrl!) : null,
@@ -51,14 +54,11 @@ class InfoCard extends StatelessWidget {
           ),
           const SizedBox(width: 12),
 
-          // Name + location + rating
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Name
               Text(name, style: AppStyle.medBlack),
-
-              // Location (optional)
               if (location != null) ...[
                 const SizedBox(height: 2),
                 Row(
@@ -77,7 +77,7 @@ class InfoCard extends StatelessWidget {
                   children: [
                     Icon(Icons.email,
                         size: 16, color: AppColors.light),
-                    const SizedBox(width: 2),
+                    const SizedBox(width: 3),
                     Text(email!, style: AppStyle.body6),
                   ],
                 ),

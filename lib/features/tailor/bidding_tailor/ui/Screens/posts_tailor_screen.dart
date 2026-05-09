@@ -148,8 +148,6 @@ class PostScreenTailor extends StatelessWidget {
       bottomNavigationBar: FloatingNavBar(
         userRole: 'tailor',
         selectedIndex: 0,
-        focused: AppColors.secondary,
-        notSelected: AppColors.darksecondary,
       ),
     );
   }

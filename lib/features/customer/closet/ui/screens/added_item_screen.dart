@@ -18,8 +18,7 @@ import '../../logic/cubit/closet_cubit.dart';
 import '../../logic/cubit/closet_state.dart';
 
 class AddedClosetItemScreen extends StatefulWidget {
-  final ClosetItemResponseModel? item; // ✅ null = add, not null = update
-
+  final ClosetItemResponseModel? item;
   const AddedClosetItemScreen({super.key, this.item});
 
   @override
@@ -47,7 +46,6 @@ class _AddedClosetItemScreenState extends State<AddedClosetItemScreen> {
   void initState() {
     super.initState();
     if (_isUpdate) {
-      // ✅ pre-fill fields for update
       _nameController.text = widget.item!.name ?? '';
       _colorController.text = widget.item!.color ?? '';
       _selectedCategory = widget.item!.category;
@@ -104,7 +102,7 @@ class _AddedClosetItemScreenState extends State<AddedClosetItemScreen> {
                       imagePath: _selectedImagePath,
                       imageUrl: _selectedImagePath == null
                           ? _existingImageUrl
-                          : null, // ✅ show existing if no new image
+                          : null,
                       onTap: _pickImage,
                     ),
                   ],

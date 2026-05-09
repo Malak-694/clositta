@@ -26,7 +26,7 @@ class PortfolioTailorScreen extends StatelessWidget {
         backgroundColor: AppColors.background,
         appBar: CustomAppBar(
           title: "Your Portfolio",
-          style: AppStyle.boldSecondary,
+          style: AppStyle.medPrimery.copyWith(fontWeight: FontWeight.bold),
           showCartIcon: true,
           onCartTap: () =>
               Navigator.pushNamed(context, RouteNames.tailor_cart_screen),
@@ -47,8 +47,6 @@ class PortfolioTailorScreen extends StatelessWidget {
         bottomNavigationBar: FloatingNavBar(
           userRole: 'tailor',
           selectedIndex: 1,
-         focused: AppColors.secondary,
-        notSelected: AppColors.darksecondary,
         ),
       ),
     );

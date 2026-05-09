@@ -17,8 +17,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.onCartTap,
     this.extraActions = const [], // ✅ new
     this.onLeadingPressed,
-    this.extraActions = const [],
-    // ✅ new chat params
     this.showChatIcon = false,
     this.unreadChatCount = 0,
     this.onChatTap,
@@ -33,9 +31,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onCartTap;
   final List<Widget> extraActions; // ✅ new
   final VoidCallback? onLeadingPressed;
-  final List<Widget> extraActions;
-  // ✅ new chat params
-  final bool showChatIcon;
+ final bool showChatIcon;
   final int unreadChatCount;
   final VoidCallback? onChatTap;
 
@@ -46,14 +42,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       scrolledUnderElevation: 0,
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.primery,
       automaticallyImplyLeading: false,
       title: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           if (leading)
             IconButton(
-              icon: Icon(leadingIcon, color: AppColors.dark),
+              icon: Icon(leadingIcon, color: AppColors.background),
               onPressed: onLeadingPressed ?? () => Navigator.pop(context),
             ),
           FutureBuilder<String?>(
@@ -78,7 +74,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 IconButton(
                   icon: Icon(
                     Icons.chat_bubble_outline,
-                    color: AppColors.dark,
+                    color: AppColors.background,
                   ),
                   onPressed: onChatTap,
                 ),
@@ -121,7 +117,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 IconButton(
                   icon: Icon(
                     Icons.shopping_cart_outlined,
-                    color: AppColors.dark,
+                    color: AppColors.background,
                   ),
                   onPressed: onCartTap,
                 ),
@@ -161,16 +157,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 TextStyle _styleForRole(String role) {
   switch (role) {
     case 'customer':
-      return AppStyle.medPrimery;
+      return AppStyle.medBackground;
     case 'tailor':
-      return AppStyle.medSecondary;
+      return AppStyle.medBackground;
     case 'clothes_seller':
-      return AppStyle.medTernary;
+      return AppStyle.medBackground;
     case 'material_seller':
-      return AppStyle.medTernary;
+      return AppStyle.medBackground;
     case 'admin':
-      return AppStyle.medPrimery.copyWith(color: Colors.red);
+      return AppStyle.medBackground.copyWith(color: Colors.red);
     default:
-      return AppStyle.medPrimery;
+      return AppStyle.medBackground;
   }
 }

@@ -6,12 +6,13 @@ import 'package:chicora/core/widgets/circle_indicator.dart';
 import 'package:chicora/core/widgets/custom_elevated_button.dart';
 import 'package:chicora/core/widgets/custom_nav_bar.dart';
 import 'package:chicora/features/customer/biding/data/models/bid_customer_model.dart';
-import 'package:chicora/features/customer/biding/logic/cubit/customer_bidding_cubit.dart';
-import 'package:chicora/features/customer/biding/logic/cubit/customer_bidding_state.dart';
+import 'package:chicora/features/customer/biding/logic/cubit/custom_bidding_cubit/customer_bidding_cubit.dart';
+import 'package:chicora/features/customer/biding/logic/cubit/custom_bidding_cubit/customer_bidding_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../../core/helper/shared_key.dart';
 import '../../../../../core/router/route_names.dart';
 import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
 import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_state.dart';
@@ -21,6 +22,9 @@ import '../../../../../core/widgets/custom_app_bar.dart';
 import '../../../../../core/widgets/pinterest_grid.dart';
 import '../../../../../core/widgets/pinterest_grid_config.dart';
 import '../../../../auth/ui/widgets/drop_down_type.dart';
+import '../../../../chat/data/models/conversation_model.dart';
+import '../../../../chat/logic/conversations_cubit/conversations_cubit.dart';
+import '../../../../chat/logic/conversations_cubit/conversations_state.dart';
 
 class PostScreen extends StatefulWidget {
   const PostScreen({super.key});
@@ -31,6 +35,21 @@ class PostScreen extends StatefulWidget {
 
 class _PostScreenState extends State<PostScreen> {
   final prefs = getIt<SharedPrefHelper>();
+  String? _currentUserId;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserId();
+    context.read<ConversationsCubit>().loadUnreadCount();
+  }
+
+  Future<void> _loadUserId() async {
+    final prefs = getIt<SharedPrefHelper>();
+    final id = await prefs.getSecureData(SharedPrefKey.id);
+    if (!mounted) return;
+    setState(() => _currentUserId = id);
+  }
 
   final List<String> _categories = ["All", "Open", "Updated", "Closed"];
   String _selectedCategory = "All";
@@ -65,32 +84,32 @@ class _PostScreenState extends State<PostScreen> {
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: BlocBuilder<CartCubit, CartState<dynamic>>(
-          builder: (context, state) {
-            return CustomAppBar(
-              title: "Your Requests",
-              style: AppStyle.medPrimery,
-              showCartIcon: true,
-              cartItemCount: cartTotalItemQuantity(state),
-              onCartTap: () => Navigator.pushNamed(
-                context,
-                RouteNames.customer_cart_screen,
-              ),
+          builder: (context, cartState) {
+            return BlocBuilder<ConversationsCubit,
+                ConversationsState<List<ConversationModel>>>(
+              builder: (context, convState) {
+                final unreadCount = context.read<ConversationsCubit>().unreadCount;
+
+                return CustomAppBar(
+                  title: "Your Biddings",
+                  showCartIcon: true,
+                  cartItemCount: cartTotalItemQuantity(cartState),
+                  onCartTap: () => Navigator.pushNamed(
+                    context,
+                    RouteNames.customer_cart_screen,
+                  ),
+                  showChatIcon: true,
+                  unreadChatCount: unreadCount,
+                  onChatTap: () => Navigator.pushNamed(
+                    context,
+                    RouteNames.conversations_screen,
+                    arguments: {
+                      'currentUserId': _currentUserId ?? '',
+                    },
+                  ),
+                );
+              },
             );
-          },
-          showChatIcon: true,
-          unreadChatCount: 5,
-          onChatTap: () async {
-            final userId = await prefs.getSecureData('id') ?? '';
-            print(userId);
-            if (context.mounted) {
-              Navigator.pushNamed(
-                context,
-                RouteNames.conversations_screen,
-                arguments: {
-                  'currentUserId': userId,
-                },
-              );
-            }
           },
         ),
       ),
@@ -101,7 +120,6 @@ class _PostScreenState extends State<PostScreen> {
           padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
           child: Column(
             children: [
-              // ── Top Row: Dropdown + New Request ──────────────────
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -110,8 +128,8 @@ class _PostScreenState extends State<PostScreen> {
                       value: _selectedCategory,
                       hintText: "Filter",
                       items: _categories,
-                      width: 400,
-                      vPadding: 8,
+                      width: 50.w,
+                      vPadding: 11.h,
                       style: AppStyle.medPrimery,
                       onChanged: (value) {
                         if (value != null) {
@@ -120,7 +138,7 @@ class _PostScreenState extends State<PostScreen> {
                       },
                     ),
                   ),
-                  SizedBox(width: 8.w),
+                  SizedBox(width: 12.w),
                   CustomElevatedButton(
                     value: "+ New Post",
                     style: AppStyle.medBackground,
@@ -237,8 +255,6 @@ class _PostScreenState extends State<PostScreen> {
       bottomNavigationBar: FloatingNavBar(
         userRole: 'customer',
         selectedIndex: 3,
-        focused: AppColors.primery,
-        notSelected: AppColors.darkprimery,
       ),
     );
   }

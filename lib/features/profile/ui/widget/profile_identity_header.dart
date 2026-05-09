@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// Top-of-screen profile row: avatar, name/email, tailor workshop + maps, edit.
+/// Top-of-screen profile: avatar, name/email, role badge, tailor location + maps, theme toggle.
 class ProfileIdentityHeader extends StatelessWidget {
   const ProfileIdentityHeader({
     super.key,
@@ -17,6 +17,8 @@ class ProfileIdentityHeader extends StatelessWidget {
     required this.darkColor,
     required this.lightColor,
     required this.onEditProfile,
+    this.isDarkMode = false,
+    this.onThemeToggle,
   });
 
   final ProfileResponse? profile;
@@ -25,14 +27,31 @@ class ProfileIdentityHeader extends StatelessWidget {
   final Color darkColor;
   final Color lightColor;
   final void Function(ProfileResponse profile) onEditProfile;
+  final bool isDarkMode;
+  final VoidCallback? onThemeToggle;
+
+  String _getRoleDisplayName(String? role) {
+    if (role == null) return 'Customer';
+    switch (role.toLowerCase()) {
+      case 'tailor':
+        return 'Tailor';
+      case 'clothes_seller':
+      case 'material_seller':
+      case 'seller':
+        return 'Seller';
+      case 'customer':
+      default:
+        return 'Customer';
+    }
+  }
 
   /// Driving directions from the user's current location to the workshop.
   /// Tries HTTPS Maps directions, then `geo:`, then the original [mapsUrl].
   Future<void> _openMapsDirections(
-    BuildContext context,
-    String mapsUrl,
-    String? address,
-  ) async {
+      BuildContext context,
+      String mapsUrl,
+      String? address,
+      ) async {
     final trimmed = mapsUrl.trim();
     final dest = _sanitizeDirDestination(
       _directionsDestination(trimmed, address?.trim()),
@@ -46,8 +65,8 @@ class ProfileIdentityHeader extends StatelessWidget {
     if (dest != null && dest.isNotEmpty) {
       final https = Uri.parse(
         'https://www.google.com/maps/dir/?api=1'
-        '&destination=${Uri.encodeComponent(dest)}'
-        '&travelmode=driving',
+            '&destination=${Uri.encodeComponent(dest)}'
+            '&travelmode=driving',
       );
       ok = await openExternal(https);
 
@@ -124,90 +143,116 @@ class ProfileIdentityHeader extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      height: 130.h,
       color: AppColors.background,
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-      child: Row(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+      child: Column(
         children: [
+          // Theme toggle icon at top right
+          Align(
+            alignment: Alignment.topRight,
+            child: IconButton(
+              onPressed: onThemeToggle,
+              icon: Icon(
+                isDarkMode ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
+                size: 24.sp,
+                color: primaryColor,
+              ),
+            ),
+          ),
+          // Profile avatar
           CircleAvatar(
-            radius: 45.r,
+            radius: 60.r,
             backgroundColor: lightColor,
-            backgroundImage: p?.imageUrl != null
-                ? NetworkImage(p!.imageUrl!)
-                : null,
+            backgroundImage:
+            p?.imageUrl != null ? NetworkImage(p!.imageUrl!) : null,
             child: p?.imageUrl == null
-                ? Icon(Icons.person, size: 45.sp, color: primaryColor)
+                ? Icon(Icons.person, size: 60.sp, color: primaryColor)
                 : null,
           ),
-          SizedBox(width: 16.w),
-          Expanded(
-            child: isLoading
-                ? Center(child: circleIndicator())
-                : Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(p?.name ?? "—", style: AppStyle.medBlack),
-                      SizedBox(height: 4.h),
-                      Text(
-                        p?.email ?? "—",
-                        style: AppStyle.medLight.copyWith(fontSize: 14),
-                      ),
-                      if (hasLoc)
-                        Padding(
-                          padding: EdgeInsets.only(top: 6.h),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Icon(
-                                Icons.place_outlined,
-                                size: 16.sp,
-                                color: darkColor,
-                              ),
-                              SizedBox(width: 6.w),
-                              Expanded(
-                                child: Text(
-                                  loc,
-                                  style: AppStyle.medLight.copyWith(
-                                    fontSize: 13.sp,
-                                  ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      if (hasMaps)
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: TextButton.icon(
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              foregroundColor: primaryColor,
-                              minimumSize: Size.zero,
-                            ),
-                            onPressed: () =>
-                                _openMapsDirections(context, maps, loc),
-                            icon: Icon(Icons.map_outlined, size: 18.sp),
-                            label: Text(
-                              'Open workshop on Maps',
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                color: primaryColor,
-                              ),
-                            ),
-                          ),
-                        ),
-                      SizedBox(height: 6.h),
-                    ],
+          SizedBox(height: 16.h),
+
+          // Name
+          isLoading
+              ? circleIndicator()
+              : Text(
+            p?.name ?? "—",
+            style: AppStyle.medBlack.copyWith(
+              fontSize: 20.sp,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 4.h),
+
+          // Role badge
+          // Text(
+          //   _getRoleDisplayName(p?.role),
+          //   style: AppStyle.medLight.copyWith(
+          //     fontSize: 14.sp,
+          //     color: AppColors.light,
+          //   ),
+          // ),
+          // SizedBox(height: 8.h),
+
+          // Email
+          if (!isLoading && p?.email != null)
+            Text(
+              p!.email!,
+              style: AppStyle.medLight.copyWith(
+                fontSize: 13.sp,
+                color: AppColors.light,
+              ),
+            ),
+
+          // Tailor-specific: Location
+          if (hasLoc) ...[
+            SizedBox(height: 12.h),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.place_outlined,
+                  size: 16.sp,
+                  color: darkColor,
+                ),
+                SizedBox(width: 6.w),
+                Flexible(
+                  child: Text(
+                    loc,
+                    style: AppStyle.medLight.copyWith(
+                      fontSize: 13.sp,
+                      color: AppColors.dark,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-          ),
-          IconButton(
-            onPressed: p == null ? null : () => onEditProfile(p),
-            icon: Icon(Icons.edit, size: 28.sp, color: primaryColor),
-          ),
+                ),
+              ],
+            ),
+          ],
+
+          // Tailor-specific: Maps button
+          if (hasMaps) ...[
+            // SizedBox(height: 8.h),
+            TextButton.icon(
+              style: TextButton.styleFrom(
+                foregroundColor: primaryColor,
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+              ),
+              onPressed: () => _openMapsDirections(context, maps, loc),
+              icon: Icon(Icons.map_outlined, size: 18.sp),
+              label: Text(
+                'Open workshop on Maps',
+                style: TextStyle(
+                  fontSize: 13.sp,
+                  color: primaryColor,
+                ),
+              ),
+            ),
+          ],
+
+          SizedBox(height: 12.h),
         ],
       ),
     );

@@ -9,4 +9,10 @@ class ConversationsRepo {
   Future<List<ConversationModel>> getMyConversations(String token) async {
     return await _apiService.getMyConversations('Bearer $token');
   }
+
+  Future<int> getUnreadCount(String token) async {
+    final int response =
+    await _apiService.getUnreadCount('Bearer $token');
+    return response ?? 0;
+  }
 }

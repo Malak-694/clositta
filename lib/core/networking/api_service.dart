@@ -27,6 +27,7 @@ import '../../features/chat/data/models/conversation_model.dart';
 import '../../features/customer/biding/data/models/bid_customer_model.dart';
 import '../../features/customer/biding/data/models/offer_model.dart';
 
+import '../../features/customer/biding/data/models/portfolio_item_model.dart';
 import '../../features/ecommerce_multi/data/models/cart_models/cart_request_model.dart';
 import '../../features/ecommerce_multi/data/models/cart_models/cart_response_model.dart';
 import '../../features/ecommerce_multi/data/models/order_models/cancel_order_request_model.dart';
@@ -319,7 +320,7 @@ abstract class ApiService {
       );
 
   @GET(ApiEndpoints.unreadCount)
-  Future<void> getUnreadCount(
+  Future<int> getUnreadCount(
       @Header("Authorization") String token,
       );
 
@@ -343,6 +344,13 @@ abstract class ApiService {
   Future<AnalyticsResponseModel> getSellerAnalysis(
       @Header("Authorization") String token,
       );
+  @GET(ApiEndpoints.tailorInfo)
+  Future<List<PortfolioItem>> getPortfolio(
+      @Header('Authorization') String token,
+      @Query('tailorId') String tailorId,
+      );
+
+
 
   //checkout
   @POST(ApiEndpoints.placeOrder)

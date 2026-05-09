@@ -29,20 +29,9 @@ class _CartScreenBodyState extends State<CartScreenBody> {
   final Set<String> _updatingItems = {};
   List<Item> _cachedCartItems = [];
   List<CartSubOrder> _cachedSubOrders = [];
-  Color _rolePrimary = AppColors.primery;
-  Color _roleDark = AppColors.darkprimery;
-
   @override
   void initState() {
     super.initState();
-    AppColors.primaryForCurrentUser().then((color) {
-      if (!mounted) return;
-      setState(() => _rolePrimary = color);
-    });
-    AppColors.darkForCurrentUser().then((color) {
-      if (!mounted) return;
-      setState(() => _roleDark = color);
-    });
     context.read<CartCubit>().getCart();
   }
 
@@ -119,7 +108,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: isMainLoading
-              ? Center(child: CircularProgressIndicator(color: _rolePrimary))
+              ? Center(child: CircularProgressIndicator(color: AppColors.primery))
               : Column(
                   children: [
                     Expanded(
@@ -139,7 +128,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                                     value: 'View my orders',
                                     height: 46.h,
                                     width: 190.w,
-                                    background: _rolePrimary,
+                                    background: AppColors.primery,
                                     style: AppStyle.smallBackground.copyWith(
                                       fontSize: 14.sp,
                                       fontWeight: FontWeight.w700,
@@ -232,10 +221,10 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                                 OrderSummary(
                                   subtotal: subtotal,
                                   shippingValueText: 'Calculated at checkout',
-                                  backgroundColor: _rolePrimary.withOpacity(
+                                  backgroundColor: AppColors.primery.withOpacity(
                                     0.12,
                                   ),
-                                  accentColor: _roleDark,
+                                  accentColor: AppColors.darkprimery,
                                 ),
                               ],
                             ),
@@ -246,7 +235,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                         value: 'Proceed to Checkout',
                         height: 50.h,
                         style: AppStyle.medBackground.copyWith(fontSize: 18.sp),
-                        background: _rolePrimary,
+                        background: AppColors.primery,
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -276,12 +265,12 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                             CustomElevatedButton(
                               value: 'View my orders',
                               height: 46.h,
-                              width: 190.w,
+                              width: 150.w,
                               style: AppStyle.smallBackground.copyWith(
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w700,
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w900,
                               ),
-                              background: _rolePrimary,
+                              background: AppColors.primery,
                               onPressed: () {
                                 Navigator.pushNamed(
                                   context,
@@ -296,7 +285,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                               height: 46.h,
                               width: 130.w,
                               style: AppStyle.boldBackground.copyWith(
-                                fontSize: 12.sp,
+                                fontSize: 13.sp,
                               ),
                               onPressed: () =>
                                   context.read<CartCubit>().removeAllCart(),

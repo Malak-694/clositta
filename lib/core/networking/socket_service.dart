@@ -88,10 +88,10 @@ class SocketService {
       _onError.add(err.toString());
     });
 
-    _socket!.onConnectTimeout((_) {
-      print('⏱️ Connection timeout');
-      _onError.add('Connection timed out');
-    });
+    // _socket!.onConnectTimeout((_) {
+    //   print('⏱️ Connection timeout');
+    //   _onError.add('Connection timed out');
+    // });
 
     _socket!.on('connect_error', (data) {
       print('🔴 Server rejected: $data');

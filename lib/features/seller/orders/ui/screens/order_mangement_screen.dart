@@ -33,8 +33,6 @@ class OrderMangementScreen extends StatelessWidget {
       bottomNavigationBar: FloatingNavBar(
         userRole: 'seller',
         selectedIndex: 1,
-        focused: AppColors.ternary,
-        notSelected: AppColors.darkternary,
       ),
     );
   }
@@ -121,7 +119,7 @@ class _OrderMangementBodyState extends State<_OrderMangementBody> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(height: 8.h),
+              const SizedBox(height: 20),
               SellerOrderStatusFilterBar(
                 selectedStatus: _statusFilter,
                 onStatusSelected: (value) {

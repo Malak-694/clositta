@@ -66,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
           fail: (error) {
             ScaffoldMessenger.of(
               context,
-            ).showSnackBar(SnackBar(content: Text(error)));
+            ).showSnackBar(SnackBar(content: Text(AppStyle.userMessage(error))));
           },
         );
       },

@@ -50,9 +50,9 @@ class SellerOrderCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final orderStatus = order.orderStatus ?? '';
+    final orderStatus = order.resolvedOrderStatus ?? '';
     final paymentStatus = order.paymentStatus ?? '';
-    final statusColor = _orderStatusColor(order.orderStatus);
+    final statusColor = _orderStatusColor(order.resolvedOrderStatus);
 
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
@@ -71,7 +71,7 @@ class SellerOrderCardWidget extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    order.user?.name ?? 'Customer',
+                    order.resolvedCustomer?.name ?? 'Customer',
                     style: AppStyle.medBlack.copyWith(fontSize: 15.sp),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -109,7 +109,7 @@ class SellerOrderCardWidget extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  'Total: ${_formatMoney(order.totalAmount)}',
+                  'Total: ${_formatMoney(order.resolvedTotalAmount)}',
                   style: AppStyle.medPrimery.copyWith(
                     fontSize: 14.sp,
                     color: AppColors.ternary,
@@ -153,12 +153,12 @@ class SellerOrderCardWidget extends StatelessWidget {
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              'Items (${order.items?.length ?? 0})',
+              'Items (${order.resolvedItems?.length ?? 0})',
               style: AppStyle.medPrimery.copyWith(fontSize: 13.sp),
             ),
           ),
           SizedBox(height: 8.h),
-          ...?order.items?.map((item) {
+          ...?order.resolvedItems?.map((item) {
             final name = item.product?.name ?? item.name ?? 'Item';
             final qty = item.quantity ?? 0;
             final line = item.subtotal ?? item.price;

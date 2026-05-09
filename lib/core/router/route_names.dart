@@ -24,6 +24,7 @@ class RouteNames {
   static const view_offers_tailor      = "view_offers";
 
   static const seller_products_screen = "seller_products_screen";
+  static const analysis_seller_screen = "analysis_seller_screen";
   static const seller_orders_screen = "seller_orders_screen";
   static const added_product_item = "added_product_item";
   static const customer_products_screen = "customer_products_screen";
@@ -38,9 +39,10 @@ class RouteNames {
   static const tailor_products_screen   = "tailor_products_screen";
   static const product_details_screen   = "product_details_screen";
 
-  // cart
-  static const customer_cart_screen    = "customer_cart_screen";
-  static const tailor_cart_screen      = "tailor_cart_screen";
+  //cart
+  static const customer_cart_screen = "customer_cart_screen";
+  static const tailor_cart_screen = "tailor_cart_screen";
+  static const order_view_screen = "order_view_screen";
 
   // closet
   static const upload_closet_item      = "upload_closet_item";

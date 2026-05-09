@@ -45,6 +45,7 @@ class OrderMangementCubit extends Cubit<OrderMangementState> {
 
   Future<void> updateOrderStatusSeller({
     required String orderId,
+    required String suborderId,
     String? orderStatus,
     String? paymentStatus,
   }) async {
@@ -60,9 +61,9 @@ class OrderMangementCubit extends Cubit<OrderMangementState> {
           await repo.updateOrderStatusSeller(
             token,
             orderId,
+            suborderId,
             OrderUpdateSellerRequestModel(
               orderStatus: orderStatus,
-              paymentStatus: paymentStatus,
             ),
           );
 

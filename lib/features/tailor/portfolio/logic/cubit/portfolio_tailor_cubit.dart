@@ -1,12 +1,13 @@
 import 'package:bloc/bloc.dart';
 import 'package:chicora/features/tailor/portfolio/data/repo/portfolio_tailor_repo.dart';
 import 'package:chicora/features/tailor/portfolio/data/models/portfolio_tailor_response_model.dart';
+import 'package:chicora/features/tailor/portfolio/data/models/portfolio_tailor_user_model.dart';
+import 'package:chicora/features/tailor/portfolio/data/models/tailor_portfolio_bundle_model.dart';
 import 'package:chicora/features/tailor/portfolio/logic/cubit/portfolio_tailor_state.dart';
 
 import '../../../../../core/di/dependency_injection.dart';
 import '../../../../../core/helper/shared_key.dart';
 import '../../../../../core/helper/shared_pref_helper.dart';
-import '../../../../../core/models/message_model.dart';
 import '../../../../../core/networking/api_result.dart';
 
 class PortfolioTailorCubit extends Cubit<PortfolioTailorState> {
@@ -14,10 +15,12 @@ class PortfolioTailorCubit extends Cubit<PortfolioTailorState> {
   final SharedPrefHelper _prefs = getIt<SharedPrefHelper>();
   List<PortfolioTailorResponseModel> allItems = [];
   String selectedCategory = 'All';
-  String selectedSeason = 'All';
+
+  PortfolioTailorUserModel? tailorSummary;
 
   PortfolioTailorCubit({required this.portfolioTailorRepo})
-    : super(PortfolioTailorState.initial());
+      : super(PortfolioTailorState.initial());
+
   Future<String?> _getToken() async {
     return await _prefs.getSecureData(SharedPrefKey.token);
   }
@@ -35,25 +38,26 @@ class PortfolioTailorCubit extends Cubit<PortfolioTailorState> {
       category,
     );
     result.when(
-      success: (List<PortfolioTailorResponseModel> portfolioTailor) {
-        allItems = portfolioTailor;
+      success: (TailorPortfolioBundleModel bundle) {
+        tailorSummary = bundle.tailor;
+        allItems = bundle.items;
         selectedCategory = category ?? 'All';
-        emit(PortfolioTailorState.success(portfolioTailor));
+        emit(PortfolioTailorState.success(_filteredItems()));
       },
       failure: (error) => emit(PortfolioTailorState.fail(error)),
     );
   }
 
-  void filterByCategory(String category) {
-    List<PortfolioTailorResponseModel> filtered = allItems;
+  List<PortfolioTailorResponseModel> _filteredItems() {
+    if (selectedCategory == 'All') return List.from(allItems);
+    return allItems
+        .where((item) => item.category == selectedCategory)
+        .toList();
+  }
 
+  void filterByCategory(String category) {
     selectedCategory = category;
-    if (selectedCategory != 'All') {
-      filtered = filtered
-          .where((item) => item.category == selectedCategory)
-          .toList();
-    }
-    emit(PortfolioTailorState.success(filtered));
+    emit(PortfolioTailorState.success(_filteredItems()));
   }
 
   Future<void> deletePortfolioTailor(String itemId) async {
@@ -68,8 +72,10 @@ class PortfolioTailorCubit extends Cubit<PortfolioTailorState> {
       itemId,
     );
     result.when(
-      success: (MessageModel message) =>
-          emit(PortfolioTailorState.success(message.message)),
+      success: (_) {
+        allItems.removeWhere((e) => e.id == itemId);
+        emit(PortfolioTailorState.success(_filteredItems()));
+      },
       failure: (error) => emit(PortfolioTailorState.fail(error)),
     );
   }
@@ -95,9 +101,13 @@ class PortfolioTailorCubit extends Cubit<PortfolioTailorState> {
       imagePath: imagePath,
     );
 
-    respose.when(
-      success: (_) => emit(PortfolioTailorState.success(respose)),
-      failure: (error) => emit(PortfolioTailorState.fail(error)),
+    await respose.when(
+      success: (_) async {
+        await viewPortfolioTailor(null);
+      },
+      failure: (message) async {
+        emit(PortfolioTailorState.fail(message));
+      },
     );
   }
 
@@ -106,7 +116,7 @@ class PortfolioTailorCubit extends Cubit<PortfolioTailorState> {
     required String title,
     required String category,
     required String description,
-    String? imagePath, // ✅ optional
+    String? imagePath,
   }) async {
     emit(PortfolioTailorState.loading());
     final token = await _getToken();
@@ -124,10 +134,13 @@ class PortfolioTailorCubit extends Cubit<PortfolioTailorState> {
       imagePath: imagePath,
     );
 
-    response.when(
-      success: (_) => emit(PortfolioTailorState.success(response)),// ✅
-      failure: (error) => emit(PortfolioTailorState.fail(error)),
+    await response.when(
+      success: (_) async {
+        await viewPortfolioTailor(null);
+      },
+      failure: (message) async {
+        emit(PortfolioTailorState.fail(message));
+      },
     );
   }
-
 }

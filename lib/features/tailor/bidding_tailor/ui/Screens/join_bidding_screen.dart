@@ -11,7 +11,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/di/dependency_injection.dart';
 import '../../../../../core/helper/shared_key.dart';
 import '../../../../../core/helper/shared_pref_helper.dart';
-import '../../../../../core/router/route_names.dart';
 import '../../../../../core/widgets/custom_app_bar.dart';
 import '../../../../../core/widgets/custom_nav_bar.dart';
 
@@ -166,14 +165,18 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
                           Container(
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.grey[300]!),
-                              borderRadius: BorderRadius.circular(8.r),
+                              borderRadius: BorderRadius.circular(12.r),
                             ),
                             child: TextField(
                               enabled: !isLoading,
                               controller: _priceController,
                               keyboardType: TextInputType.number,
+                              style: AppStyle.body6,
                               decoration: InputDecoration(
                                 hintText: 'write the price',
+                                hintStyle: AppStyle.smallBlack.copyWith(
+                                  color: AppColors.light,
+                                ),
                                 border: InputBorder.none,
                                 contentPadding: EdgeInsets.all(12.w),
                                 prefixIcon: Icon(
@@ -196,14 +199,18 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
                           Container(
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.grey[300]!),
-                              borderRadius: BorderRadius.circular(8.r),
+                              borderRadius: BorderRadius.circular(12.r),
                             ),
                             child: TextField(
                               enabled: !isLoading,
                               controller: _durationController,
                               keyboardType: TextInputType.number,
+                              style: AppStyle.body6,
                               decoration: InputDecoration(
                                 hintText: 'write the duration',
+                                hintStyle: AppStyle.smallBlack.copyWith(
+                                  color: AppColors.light,
+                                ),
                                 border: InputBorder.none,
                                 contentPadding: EdgeInsets.all(12.w),
                                 suffixIcon: Icon(
@@ -230,14 +237,18 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
                 Container(
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey[300]!),
-                    borderRadius: BorderRadius.circular(8.r),
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
                   child: TextField(
                     enabled: !isLoading,
                     controller: _descriptionController,
                     maxLines: 3,
+                    style: AppStyle.body6,
                     decoration: InputDecoration(
                       hintText: 'What you can offer...',
+                      hintStyle: AppStyle.smallBlack.copyWith(
+                        color: AppColors.light,
+                      ),
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.all(12.w),
                     ),

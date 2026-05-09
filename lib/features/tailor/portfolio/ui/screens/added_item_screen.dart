@@ -217,7 +217,7 @@ class _AddedItemScreenState extends State<AddedItemScreen> {
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, style: AppStyle.body6),
+        content: Text(AppStyle.userMessage(message), style: AppStyle.body6),
         backgroundColor: AppColors.lightsecondary,
         behavior: SnackBarBehavior.floating,
       ),

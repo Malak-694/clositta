@@ -9,12 +9,14 @@ class CommentCard extends StatelessWidget {
   final RatingModel comment;
   final bool isOwn;
   final void Function(String ratingId)? onDelete;
+  final Color accent;
 
   const CommentCard({
     super.key,
     required this.comment,
     this.isOwn = false,
     this.onDelete,
+    this.accent = AppColors.primery,
   });
 
   String _formatDate(dynamic dateValue) {
@@ -45,11 +47,21 @@ class CommentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(12),
+      margin: EdgeInsets.only(bottom: 12.h),
+      padding: EdgeInsets.all(14.w),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[200]!, width: 1),
-        borderRadius: BorderRadius.circular(12),
+        color: AppColors.background,
+        border: Border.all(
+          color: accent.withValues(alpha: 0.12),
+        ),
+        borderRadius: BorderRadius.circular(14.r),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.dark.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,11 +74,15 @@ class CommentCard extends StatelessWidget {
               Row(
                 children: [
                   CircleAvatar(
-                    radius: 15,
-                    backgroundColor: AppColors.primery,
+                    radius: 18.r,
+                    backgroundColor: accent.withValues(alpha: 0.2),
                     child: Text(
                       _getInitials(comment.user.name),
-                      style: AppStyle.medBackground.copyWith(fontSize: 10.sp),
+                      style: AppStyle.smallBlack.copyWith(
+                        fontSize: 11.sp,
+                        color: accent,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -75,11 +91,13 @@ class CommentCard extends StatelessWidget {
                     children: [
                       Text(
                         comment.user.name,
-                        style: AppStyle.medPrimery.copyWith(fontSize: 16.sp),
+                        style: AppStyle.body6.copyWith(fontSize: 16.sp),
                       ),
                       Text(
                         _formatDate(comment.updatedAt),
-                        style: AppStyle.medLight.copyWith(fontSize: 10.sp),
+                        style: AppStyle.caption.copyWith(
+                          color: AppColors.light,
+                        ),
                       ),
                     ],
                   ),
@@ -90,11 +108,11 @@ class CommentCard extends StatelessWidget {
                 children: List.generate(
                   5,
                   (index) => Icon(
-                    Icons.star,
-                    size: 16,
+                    Icons.star_rounded,
+                    size: 16.sp,
                     color: index < comment.rating
-                        ? Colors.amber
-                        : Colors.grey[300],
+                        ? AppColors.secondary
+                        : AppColors.light.withValues(alpha: 0.35),
                   ),
                 ),
               ),
@@ -107,17 +125,24 @@ class CommentCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   comment.comment,
-                  style: AppStyle.medBlack.copyWith(fontSize: 16.sp),
+                  style: AppStyle.medLight.copyWith(
+                    fontSize: 15.sp,
+                    color: AppColors.dark,
+                    height: 1.4,
+                  ),
                   softWrap: true,
-                  maxLines: 3,
+                  maxLines: 5,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               if (isOwn)
                 IconButton(
-                  icon: const Icon(Icons.delete, size: 18),
+                  style: IconButton.styleFrom(
+                    foregroundColor: AppColors.ternary,
+                  ),
+                  icon: Icon(Icons.delete_outline_rounded, size: 20.sp),
                   onPressed: () {
-                    if (onDelete != null) onDelete!(comment.id);
+                    onDelete?.call(comment.id);
                   },
                 ),
             ],

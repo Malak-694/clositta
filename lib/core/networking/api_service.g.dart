@@ -22,14 +22,46 @@ class _ApiService implements ApiService {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<SignUpResponse> signUp(SignUpRequest body) async {
+  Future<SignUpResponse> signUp({
+    required String name,
+    required String email,
+    required String password,
+    required String confirmpassword,
+    String? phone,
+    required String role,
+    String? location,
+    String? mapsUrl,
+    MultipartFile? image,
+  }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(body.toJson());
+    final _data = FormData();
+    _data.fields.add(MapEntry('name', name));
+    _data.fields.add(MapEntry('email', email));
+    _data.fields.add(MapEntry('password', password));
+    _data.fields.add(MapEntry('confirmpassword', confirmpassword));
+    if (phone != null) {
+      _data.fields.add(MapEntry('phone', phone));
+    }
+    _data.fields.add(MapEntry('role', role));
+    if (location != null) {
+      _data.fields.add(MapEntry('location', location));
+    }
+    if (mapsUrl != null) {
+      _data.fields.add(MapEntry('mapsUrl', mapsUrl));
+    }
+    if (image != null) {
+      _data.files.add(MapEntry('image', image));
+    }
     final _options = _setStreamType<SignUpResponse>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
+      Options(
+            method: 'POST',
+            headers: _headers,
+            extra: _extra,
+            contentType: 'multipart/form-data',
+          )
           .compose(
             _dio.options,
             '/api/auth/register',
@@ -139,11 +171,13 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<MessageModel> updateProfile({
+  Future<UpdateProfileResponse> updateProfile({
     required String token,
     String? name,
     String? email,
     String? phone,
+    String? location,
+    String? mapsUrl,
     MultipartFile? image,
   }) async {
     final _extra = <String, dynamic>{};
@@ -161,10 +195,16 @@ class _ApiService implements ApiService {
     if (phone != null) {
       _data.fields.add(MapEntry('phone', phone));
     }
+    if (location != null) {
+      _data.fields.add(MapEntry('location', location));
+    }
+    if (mapsUrl != null) {
+      _data.fields.add(MapEntry('mapsUrl', mapsUrl));
+    }
     if (image != null) {
       _data.files.add(MapEntry('image', image));
     }
-    final _options = _setStreamType<MessageModel>(
+    final _options = _setStreamType<UpdateProfileResponse>(
       Options(
             method: 'PUT',
             headers: _headers,
@@ -180,9 +220,9 @@ class _ApiService implements ApiService {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late MessageModel _value;
+    late UpdateProfileResponse _value;
     try {
-      _value = MessageModel.fromJson(_result.data!);
+      _value = UpdateProfileResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, _result);
       rethrow;
@@ -1148,7 +1188,7 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<List<PortfolioTailorResponseModel>> viewPortfolioTailor(
+  Future<TailorPortfolioBundleModel> viewPortfolioTailor(
     String token,
     String? category,
   ) async {
@@ -1158,7 +1198,7 @@ class _ApiService implements ApiService {
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<List<PortfolioTailorResponseModel>>(
+    final _options = _setStreamType<TailorPortfolioBundleModel>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -1168,16 +1208,10 @@ class _ApiService implements ApiService {
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
-    final _result = await _dio.fetch<List<dynamic>>(_options);
-    late List<PortfolioTailorResponseModel> _value;
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late TailorPortfolioBundleModel _value;
     try {
-      _value = _result.data!
-          .map(
-            (dynamic i) => PortfolioTailorResponseModel.fromJson(
-              i as Map<String, dynamic>,
-            ),
-          )
-          .toList();
+      _value = TailorPortfolioBundleModel.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, _result);
       rethrow;
@@ -1307,14 +1341,45 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<MessageModel> placeOrder(String token, OrderRequestModel body) async {
+  Future<AnalyticsResponseModel> getSellerAnalysis(String token) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<AnalyticsResponseModel>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/analytics/seller',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AnalyticsResponseModel _value;
+    try {
+      _value = AnalyticsResponseModel.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<OrderResponseModel> placeOrder(
+    String token,
+    OrderRequestModel body,
+  ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     _data.addAll(body.toJson());
-    final _options = _setStreamType<MessageModel>(
+    final _options = _setStreamType<OrderResponseModel>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -1325,9 +1390,9 @@ class _ApiService implements ApiService {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late MessageModel _value;
+    late OrderResponseModel _value;
     try {
-      _value = MessageModel.fromJson(_result.data!);
+      _value = OrderResponseModel.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, _result);
       rethrow;
@@ -1361,6 +1426,72 @@ class _ApiService implements ApiService {
     late MessageModel _value;
     try {
       _value = MessageModel.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<MessageModel> cancelSubOrder(
+    String token,
+    String orderId,
+    String subOrderId,
+    CancelOrderRequestModel body,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
+    final _options = _setStreamType<MessageModel>(
+      Options(method: 'PUT', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/orders/${orderId}/suborders/${subOrderId}/cancel',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late MessageModel _value;
+    try {
+      _value = MessageModel.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<PaymentInitiateResponseModel> paymentInitiate(
+    String token,
+    PaymentInitiateRequestModel body,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
+    final _options = _setStreamType<PaymentInitiateResponseModel>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/payments/initiate',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late PaymentInitiateResponseModel _value;
+    try {
+      _value = PaymentInitiateResponseModel.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, _result);
       rethrow;
@@ -1443,7 +1574,7 @@ class _ApiService implements ApiService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/api/orders/all',
+            '/api/orders/seller',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1469,6 +1600,7 @@ class _ApiService implements ApiService {
   Future<OrderUpdateSellerResponseModel> updateOrderStatusSeller(
     String token,
     String orderId,
+    String suborderId,
     OrderUpdateSellerRequestModel body,
   ) async {
     final _extra = <String, dynamic>{};
@@ -1481,7 +1613,7 @@ class _ApiService implements ApiService {
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/api/orders/${orderId}/status',
+            '/api/orders/${orderId}/suborders/${suborderId}/status',
             queryParameters: queryParameters,
             data: _data,
           )

@@ -17,14 +17,15 @@ class AuthCubit extends Cubit<AuthState> {
   AuthCubit(this.repo) : super(AuthState.initial());
 
   Future<void> signUp(
-      String username,
-      String email,
-      String password,
-      String confirmPassword,
-      String phone,
-
-      String role,
-      ) async {
+    String username,
+    String email,
+    String password,
+    String confirmPassword,
+    String phone,
+    String role, {
+    String? workshopLocation,
+    String? workshopMapsUrl,
+  }) async {
     emit(const AuthState.loading());
     String rolefinal;
     switch (role) {
@@ -55,12 +56,16 @@ class AuthCubit extends Cubit<AuthState> {
         confirmpassword: confirmPassword,
         phone: phone,
         role: rolefinal,
+        location: rolefinal == 'tailor' ? workshopLocation?.trim() : null,
+        mapsUrl: rolefinal == 'tailor' ? workshopMapsUrl?.trim() : null,
       );
 
       final ApiResult<SignUpResponse> result = await repo.signUp(request);
       result.when(
         success: (SignUpResponse response) async {
-          emit(AuthState.success("${response.message} , You can now log in."));
+          emit(AuthState.success(
+            "${response.message ?? 'Registered successfully'} — you can now log in.",
+          ));
         },
         failure: (error) {
           emit(AuthState.fail("please try again later"));

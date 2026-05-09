@@ -202,7 +202,7 @@ class _DetailesScreenState extends State<DetailesScreen> {
                     fail: (msg) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(msg),
+                          content: Text(AppStyle.userMessage(msg)),
                           backgroundColor: Colors.red,
                         ),
                       );

@@ -83,7 +83,7 @@ class _SellerOrderUpdateSheetState extends State<_SellerOrderUpdateSheet> {
           ),
           SizedBox(height: 8.h),
           Text(
-            widget.order.user?.name ?? 'Customer',
+            widget.order.resolvedCustomer?.name ?? 'Customer',
             style: AppStyle.body6.copyWith(
               fontSize: 14.sp,
               color: AppColors.primery,

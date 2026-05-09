@@ -8,6 +8,7 @@ import 'package:chicora/features/customer/closet/data/models/closet_item_respons
 import 'package:chicora/features/ecommerce_multi/data/models/cart_models/delete_cart_response_model.dart';
 import 'package:chicora/features/ecommerce_multi/data/models/order_models/order_request_model.dart';
 import 'package:chicora/features/ecommerce_multi/data/models/order_models/order_response_model.dart';
+import 'package:chicora/features/ecommerce_multi/data/models/order_models/pay_model.dart';
 import 'package:chicora/features/ecommerce_multi/data/models/product_models/product_response_model.dart';
 import 'package:chicora/features/ecommerce_multi/data/models/rating%20models/rating_request_model.dart';
 import 'package:chicora/features/seller/orders/data/models/order_seller_response_model.dart';
@@ -31,7 +32,9 @@ import '../../features/ecommerce_multi/data/models/cart_models/cart_response_mod
 import '../../features/ecommerce_multi/data/models/order_models/cancel_order_request_model.dart';
 import '../../features/ecommerce_multi/data/models/rating models/rating_response_model.dart';
 import '../../features/profile/data/model/profile_model.dart';
-import '../../features/tailor/portfolio/data/models/portfolio_tailor_response_model.dart';
+import '../../features/profile/data/model/update_profile_model.dart';
+import '../../features/seller/analysis/data/models/analysis_response_model.dart';
+import '../../features/tailor/portfolio/data/models/tailor_portfolio_bundle_model.dart';
 
 part 'api_service.g.dart';
 
@@ -40,7 +43,18 @@ abstract class ApiService {
   factory ApiService(Dio dio) = _ApiService;
 
   @POST(ApiEndpoints.signUp)
-  Future<SignUpResponse> signUp(@Body() SignUpRequest body);
+  @MultiPart()
+    Future<SignUpResponse> signUp({
+      @Part(name: 'name') required String name,
+      @Part(name: 'email') required String email,
+      @Part(name: 'password') required String password,
+      @Part(name: 'confirmpassword') required String confirmpassword,
+      @Part(name: 'phone') String? phone,
+      @Part(name: 'role') required String role,
+      @Part(name: 'location') String? location,
+      @Part(name: 'mapsUrl') String? mapsUrl,
+      @Part(name: 'image') MultipartFile? image,
+  });
 
   @POST(ApiEndpoints.login)
   Future<LoginResponse> logIn(@Body() LoginRequest body);
@@ -56,11 +70,13 @@ abstract class ApiService {
 
   @MultiPart()
   @PUT(ApiEndpoints.profile)
-  Future<MessageModel> updateProfile({
+  Future<UpdateProfileResponse> updateProfile({
     @Header("Authorization") required String token,
     @Part() String? name,
     @Part() String? email,
     @Part() String? phone,
+    @Part(name: 'location') String? location,
+    @Part(name: 'mapsUrl') String? mapsUrl,
     @Part() MultipartFile? image,
   });
 
@@ -216,9 +232,9 @@ abstract class ApiService {
       );
   @DELETE(ApiEndpoints.updateCartItems)
   Future<DeleteCartResponseModel> removeFromCart(
-      @Header("Authorization") String token,
-      @Path("productId") String productId,
-      );
+    @Header("Authorization") String token,
+    @Path("productId") String productId,
+  );
 
   @DELETE(ApiEndpoints.cart)
   Future<MessageModel> removeAllCart(@Header("Authorization") String token);
@@ -260,10 +276,10 @@ abstract class ApiService {
 
   //tailor-portfolio
   @GET(ApiEndpoints.viewPortfolioTailor)
-  Future<List<PortfolioTailorResponseModel>> viewPortfolioTailor(
-      @Header("Authorization") String token,
-      @Query("category") String? category,
-      );
+  Future<TailorPortfolioBundleModel> viewPortfolioTailor(
+    @Header("Authorization") String token,
+    @Query("category") String? category,
+  );
   @DELETE(ApiEndpoints.deletePortfolioTailor)
   Future<MessageModel> deletePortfolioTailor(
       @Header("Authorization") String token,
@@ -322,11 +338,15 @@ abstract class ApiService {
       @Body() ResetPasswordRequest body
       );
 
-
+  //seller-analysis
+  @GET(ApiEndpoints.sellerAnalysis)
+  Future<AnalyticsResponseModel> getSellerAnalysis(
+      @Header("Authorization") String token,
+      );
 
   //checkout
   @POST(ApiEndpoints.placeOrder)
-  Future<MessageModel> placeOrder(
+  Future<OrderResponseModel> placeOrder(
     @Header("Authorization") String token,
     @Body() OrderRequestModel body,
   );
@@ -336,6 +356,19 @@ abstract class ApiService {
     @Header("Authorization") String token,
     @Path("orderId") String orderId,
     @Body() CancelOrderRequestModel body,
+  );
+
+  @PUT(ApiEndpoints.cancelSubOrder)
+  Future<MessageModel> cancelSubOrder(
+    @Header("Authorization") String token,
+    @Path("orderId") String orderId,
+    @Path("subOrderId") String subOrderId,
+    @Body() CancelOrderRequestModel body,
+  );
+  @POST(ApiEndpoints.paymentInitiate)
+  Future<PaymentInitiateResponseModel> paymentInitiate(
+    @Header("Authorization") String token,
+    @Body() PaymentInitiateRequestModel body,
   );
 
   @GET(ApiEndpoints.getMyOrders)
@@ -359,6 +392,7 @@ abstract class ApiService {
   Future<OrderUpdateSellerResponseModel> updateOrderStatusSeller(
     @Header("Authorization") String token,
     @Path("orderId") String orderId,
+    @Path("suborderId") String suborderId,
     @Body() OrderUpdateSellerRequestModel body,
   );
 }

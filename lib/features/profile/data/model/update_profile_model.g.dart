@@ -21,9 +21,11 @@ UpdatedUser _$UpdatedUserFromJson(Map<String, dynamic> json) => UpdatedUser(
   id: json['id'] as String,
   name: json['name'] as String,
   email: json['email'] as String,
-  phone: json['phone'] as String,
+  phone: json['phone'] as String?,
   role: json['role'] as String,
   imageUrl: json['imageUrl'] as String?,
+  location: json['location'] as String?,
+  mapsUrl: json['mapsUrl'] as String?,
 );
 
 Map<String, dynamic> _$UpdatedUserToJson(UpdatedUser instance) =>
@@ -34,4 +36,6 @@ Map<String, dynamic> _$UpdatedUserToJson(UpdatedUser instance) =>
       'phone': instance.phone,
       'role': instance.role,
       'imageUrl': instance.imageUrl,
+      'location': instance.location,
+      'mapsUrl': instance.mapsUrl,
     };

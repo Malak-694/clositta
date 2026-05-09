@@ -15,6 +15,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.showCartIcon,
     this.cartItemCount = 0,
     required this.onCartTap,
+    this.extraActions = const [], // ✅ new
+    this.onLeadingPressed,
     this.extraActions = const [],
     // ✅ new chat params
     this.showChatIcon = false,
@@ -29,6 +31,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool showCartIcon;
   final int cartItemCount;
   final VoidCallback? onCartTap;
+  final List<Widget> extraActions; // ✅ new
+  final VoidCallback? onLeadingPressed;
   final List<Widget> extraActions;
   // ✅ new chat params
   final bool showChatIcon;
@@ -50,7 +54,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           if (leading)
             IconButton(
               icon: Icon(leadingIcon, color: AppColors.dark),
-              onPressed: () => Navigator.pop(context),
+              onPressed: onLeadingPressed ?? () => Navigator.pop(context),
             ),
           FutureBuilder<String?>(
             future: getIt<SharedPrefHelper>().getSecureData(SharedPrefKey.role),

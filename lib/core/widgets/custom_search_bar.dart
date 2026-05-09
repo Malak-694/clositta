@@ -1,4 +1,5 @@
 import 'package:chicora/core/constants/colors.dart';
+import 'package:chicora/core/constants/style.dart';
 import 'package:flutter/material.dart';
 
 class CustomSearchBar extends StatelessWidget {
@@ -21,12 +22,14 @@ class CustomSearchBar extends StatelessWidget {
       width: width,
       child: TextField(
         controller: searchController,
+        style: AppStyle.body6,
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.symmetric(
             vertical: 10, // 👈 controls height
             horizontal: 12,
           ),
           hintText: "Search...",
+          hintStyle: AppStyle.smallBlack,
           filled: true,
           fillColor: const Color.fromARGB(255, 242, 242, 254),
           prefixIcon: IconButton(
@@ -34,20 +37,20 @@ class CustomSearchBar extends StatelessWidget {
             onPressed: () => onSearch(searchController.text.trim()),
           ),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
               color: const Color.fromARGB(255, 242, 242, 254),
             ),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
               color: AppColors.primery, // Focused border color
               width: 2.0,
             ),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
               color: const Color.fromARGB(
                 255,
@@ -59,7 +62,7 @@ class CustomSearchBar extends StatelessWidget {
             ),
           ),
           errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(12),
             borderSide: const BorderSide(color: AppColors.ternary, width: 2.0),
           ),
         ),

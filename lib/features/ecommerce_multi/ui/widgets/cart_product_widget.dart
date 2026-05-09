@@ -23,7 +23,11 @@ class ProductCartCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final subtotal = item.priceAtAddTime! * item.quantity!;
+    final quantity = item.quantity ?? 1;
+    final unitPrice = (item.priceAtAddTime ?? item.product?.price ?? 0).toDouble();
+    final subtotal = (item.subtotal ?? (unitPrice * quantity).toInt()).toDouble();
+    final imageUrl = item.product?.imageUrl;
+    final productName = item.product?.name ?? 'Unknown product';
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -49,18 +53,25 @@ class ProductCartCard extends StatelessWidget {
               // Product Image
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: Image.network(
-                  item.product!.imageUrl!,
-                  width: 72,
-                  height: 72,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
-                    width: 72,
-                    height: 72,
-                    color: Colors.grey.shade100,
-                    child: const Icon(Icons.image, color: Colors.grey),
+                child: imageUrl == null || imageUrl.isEmpty
+                    ? Container(
+                        width: 72,
+                        height: 72,
+                        color: Colors.grey.shade100,
+                        child: const Icon(Icons.image, color: Colors.grey),
+                      )
+                    : Image.network(
+                        imageUrl,
+                        width: 72,
+                        height: 72,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          width: 72,
+                          height: 72,
+                          color: Colors.grey.shade100,
+                          child: const Icon(Icons.image, color: Colors.grey),
+                        ),
                   ),
-                ),
               ),
               const SizedBox(width: 12),
 
@@ -69,10 +80,10 @@ class ProductCartCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(item.product!.name!, style: AppStyle.medBlack),
+                    Text(productName, style: AppStyle.medBlack),
                     const SizedBox(height: 4),
                     Text(
-                      '\$${item.priceAtAddTime!.toStringAsFixed(2)}',
+                      '\$${unitPrice.toStringAsFixed(2)}',
                       style: AppStyle.medPrimery.copyWith(fontSize: 14.sp),
                     ),
                     const SizedBox(height: 10),
@@ -83,7 +94,7 @@ class ProductCartCard extends StatelessWidget {
                             child: CircularProgressIndicator(),
                           )
                         : QuantityCounter(
-                            quantity: item.quantity!,
+                            quantity: quantity,
                             onIncrement: onIncrement,
                             onDecrement: onDecrement,
                           ),

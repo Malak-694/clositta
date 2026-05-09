@@ -115,7 +115,7 @@ class _FormScreenState extends State<FormScreen> {
 
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(message, style: AppStyle.body6),
+                content: Text(AppStyle.userMessage(message), style: AppStyle.body6),
                 backgroundColor: AppColors.lightprimery,
                 behavior: SnackBarBehavior.floating,
               ),
@@ -364,7 +364,7 @@ class _FormScreenState extends State<FormScreen> {
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, style: AppStyle.body6),
+        content: Text(AppStyle.userMessage(message), style: AppStyle.body6),
         backgroundColor: AppColors.lightsecondary,
         behavior: SnackBarBehavior.floating,
       ),

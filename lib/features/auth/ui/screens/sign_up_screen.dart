@@ -5,6 +5,7 @@ import 'package:chicora/features/auth/logic/cubit/authentication_cubit.dart';
 import 'package:chicora/features/auth/logic/cubit/authentication_state.dart';
 import 'package:chicora/features/auth/ui/widgets/custom_text_form_field.dart';
 import 'package:chicora/features/auth/ui/widgets/drop_down_type.dart';
+import 'package:chicora/features/auth/ui/widgets/sign_up_tailor_extra_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -31,6 +32,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   final TextEditingController _phone = TextEditingController();
 
+  final TextEditingController _workshopLocation = TextEditingController();
+
+  final TextEditingController _mapsLink = TextEditingController();
+
   String? _selectedType;
   final List<String> _types = [
     'Customer',
@@ -54,6 +59,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         confirmPassword,
         phone,
         role,
+        workshopLocation:
+            _selectedType == 'Tailor' ? _workshopLocation.text : null,
+        workshopMapsUrl: _selectedType == 'Tailor' ? _mapsLink.text : null,
       );
     }
   }
@@ -71,7 +79,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           fail: (error) {
             ScaffoldMessenger.of(
               context,
-            ).showSnackBar(SnackBar(content: Text(error)));
+            ).showSnackBar(SnackBar(content: Text(AppStyle.userMessage(error))));
           },
         );
       },
@@ -119,7 +127,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         CustomTextFormField(
                           text: "Phone",
                           controller: _phone,
-                          validator: Validators.validatePhone,
+                          validator: Validators.validateOptionalPhone,
                         ),
                         SizedBox(height: 10.h),
 
@@ -152,6 +160,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           },
                         ),
 
+                        SignUpTailorExtraFields(
+                          visible: _selectedType == 'Tailor',
+                          workshopLocation: _workshopLocation,
+                          mapsLink: _mapsLink,
+                        ),
+
                         SizedBox(height: 30.h),
                         CustomMediumButton(
                           value: "Sign Up",
@@ -181,5 +195,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    _name.dispose();
+    _email.dispose();
+    _password.dispose();
+    _confirm_password.dispose();
+    _phone.dispose();
+    _workshopLocation.dispose();
+    _mapsLink.dispose();
+    super.dispose();
   }
 }

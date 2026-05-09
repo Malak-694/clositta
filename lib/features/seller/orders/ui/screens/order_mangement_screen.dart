@@ -1,5 +1,6 @@
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/constants.dart';
+import 'package:chicora/core/constants/style.dart';
 import 'package:chicora/core/di/dependency_injection.dart';
 import 'package:chicora/core/widgets/custom_app_bar.dart';
 import 'package:chicora/core/widgets/custom_nav_bar.dart';
@@ -67,7 +68,7 @@ class _OrderMangementBodyState extends State<_OrderMangementBody> {
           },
           fail: (message) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(message)),
+              SnackBar(content: Text(AppStyle.userMessage(message))),
             );
           },
         );
@@ -143,10 +144,12 @@ class _OrderMangementBodyState extends State<_OrderMangementBody> {
                   },
                   onUpdateStatus: (order,
                       {orderStatus, paymentStatus}) async {
-                    final id = order.id;
-                    if (id == null) return;
+                    final id = order.resolvedOrderId;
+                    final subOrderId = order.resolvedSubOrderId;
+                    if (id == null || subOrderId == null) return;
                     await context.read<OrderMangementCubit>().updateOrderStatusSeller(
                           orderId: id,
+                          suborderId: subOrderId,
                           orderStatus: orderStatus,
                           paymentStatus: paymentStatus,
                         );

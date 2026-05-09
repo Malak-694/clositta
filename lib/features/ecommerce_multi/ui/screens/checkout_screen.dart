@@ -5,15 +5,18 @@ import 'package:chicora/core/widgets/custom_app_bar.dart';
 import 'package:chicora/core/widgets/custom_elevated_button.dart';
 import 'package:chicora/features/ecommerce_multi/data/models/cart_models/cart_response_model.dart';
 import 'package:chicora/features/ecommerce_multi/data/models/order_models/order_request_model.dart';
+import 'package:chicora/features/ecommerce_multi/data/models/order_models/place_order_success.dart';
 import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
 import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_state.dart';
 import 'package:chicora/features/ecommerce_multi/logic/order_cubit/order_cubit.dart';
 import 'package:chicora/features/ecommerce_multi/logic/order_cubit/order_state.dart';
 import 'package:chicora/features/ecommerce_multi/ui/widgets/checkout_form_section.dart';
+import 'package:chicora/features/ecommerce_multi/ui/widgets/checkout_payment_method_section.dart';
 import 'package:chicora/features/ecommerce_multi/ui/widgets/order_summary_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CheckoutScreen extends StatelessWidget {
   const CheckoutScreen({super.key});
@@ -41,6 +44,7 @@ class CheckoutScreenBody extends StatefulWidget {
 }
 
 class _CheckoutScreenBodyState extends State<CheckoutScreenBody> {
+  static const double _shippingFeePerSubOrder = 50.0;
   final _formKey = GlobalKey<FormState>();
   final _fullNameController = TextEditingController();
   final _phoneController = TextEditingController();
@@ -49,6 +53,7 @@ class _CheckoutScreenBodyState extends State<CheckoutScreenBody> {
   final _governorateController = TextEditingController();
   final _postalCodeController = TextEditingController();
   final _notesController = TextEditingController();
+  String _paymentMethod = OrderRequestModel.paymentCredit;
   Color _rolePrimary = AppColors.primery;
   Color _roleDark = AppColors.darkprimery;
 
@@ -82,8 +87,35 @@ class _CheckoutScreenBodyState extends State<CheckoutScreenBody> {
     if (items == null) return 0;
     return items.fold(
       0,
-      (sum, item) => sum + (item.priceAtAddTime ?? 0) * (item.quantity ?? 1),
+      (sum, item) =>
+          sum + (item.subtotal ?? (item.priceAtAddTime ?? 0) * (item.quantity ?? 1)),
     );
+  }
+
+  int _calculateSubOrderCount(List<Item> items, List<CartSubOrder> subOrders) {
+    if (subOrders.isNotEmpty) return subOrders.length;
+
+    final sellerIds = <String>{};
+    for (final item in items) {
+      final sellerId = item.product?.seller;
+      if (sellerId != null && sellerId.isNotEmpty) {
+        sellerIds.add(sellerId);
+      }
+    }
+    if (sellerIds.isNotEmpty) return sellerIds.length;
+    return items.isEmpty ? 0 : 1;
+  }
+
+  void _finishCheckoutSuccess(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message, style: AppStyle.smallBackground),
+        backgroundColor: _rolePrimary,
+      ),
+    );
+    context.read<CartCubit>().getCart();
+    Navigator.pop(context);
   }
 
   void _submitOrder() {
@@ -100,6 +132,7 @@ class _CheckoutScreenBodyState extends State<CheckoutScreenBody> {
         notes: _notesController.text.trim().isEmpty
             ? null
             : _notesController.text.trim(),
+        paymentMethod: _paymentMethod,
       ),
     );
   }
@@ -110,24 +143,49 @@ class _CheckoutScreenBodyState extends State<CheckoutScreenBody> {
       listener: (context, state) {
         state.whenOrNull(
           success: (data) {
-            if (data is MessageModel) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    data.message ?? 'Order placed successfully',
-                    style: AppStyle.smallBackground,
-                  ),
-                  backgroundColor: _rolePrimary,
-                ),
+            if (data is PlaceOrderSuccess) {
+              final iframeUrl = data.paymentIframeUrl;
+              if (iframeUrl != null && iframeUrl.isNotEmpty) {
+                final uri = Uri.tryParse(iframeUrl);
+                if (uri != null) {
+                  launchUrl(uri, mode: LaunchMode.externalApplication)
+                      .then((opened) {
+                    if (!context.mounted) return;
+                    if (!opened) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Could not open the payment page',
+                            style: AppStyle.smallBackground,
+                          ),
+                          backgroundColor: AppColors.ternary,
+                        ),
+                      );
+                      return;
+                    }
+                    if (!context.mounted) return;
+                    _finishCheckoutSuccess(
+                      data.message ?? 'Complete payment in your browser',
+                    );
+                  });
+                  return;
+                }
+              }
+              _finishCheckoutSuccess(
+                data.message ?? 'Order placed successfully',
               );
-              context.read<CartCubit>().getCart();
-              Navigator.pop(context);
+              return;
+            }
+            if (data is MessageModel) {
+              _finishCheckoutSuccess(
+                data.message ?? 'Order placed successfully',
+              );
             }
           },
           fail: (message) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(message, style: AppStyle.smallBackground),
+                content: Text(AppStyle.userMessage(message), style: AppStyle.smallBackground),
                 backgroundColor: AppColors.ternary,
               ),
             );
@@ -142,14 +200,21 @@ class _CheckoutScreenBodyState extends State<CheckoutScreenBody> {
         return BlocBuilder<CartCubit, CartState>(
           builder: (context, cartState) {
             List<Item> items = [];
+            List<CartSubOrder> subOrders = [];
             cartState.whenOrNull(
               success: (data) {
                 if (data is CartResponseModel) {
+                  subOrders = data.subOrders ?? [];
                   items = data.items ?? [];
                 }
               },
             );
-            final subtotal = _calculateSubtotal(items);
+            final displayItems = subOrders.isNotEmpty
+                ? subOrders.expand((subOrder) => subOrder.items ?? const <Item>[]).toList()
+                : items;
+            final subtotal = _calculateSubtotal(displayItems);
+            final subOrderCount = _calculateSubOrderCount(displayItems, subOrders);
+            final shippingCost = subOrderCount * _shippingFeePerSubOrder;
 
             return SingleChildScrollView(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
@@ -176,12 +241,64 @@ class _CheckoutScreenBodyState extends State<CheckoutScreenBody> {
                       enabledBorderColor: _rolePrimary.withOpacity(0.3),
                       focusedBorderColor: _rolePrimary,
                     ),
+                    SizedBox(height: 20.h),
+                    CheckoutPaymentMethodSection(
+                      selectedMethod: _paymentMethod,
+                      onMethodSelected: (method) =>
+                          setState(() => _paymentMethod = method),
+                      rolePrimary: _rolePrimary,
+                      roleDark: _roleDark,
+                    ),
                     SizedBox(height: 16.h),
                     OrderSummary(
                       subtotal: subtotal,
+                      shippingCost: shippingCost,
                       backgroundColor: _rolePrimary.withOpacity(0.12),
                       accentColor: _roleDark,
                     ),
+                    if (subOrderCount > 0) ...[
+                      SizedBox(height: 8.h),
+                      Container(
+                        width: double.infinity,
+                        margin: EdgeInsets.symmetric(horizontal: 16.w),
+                        padding: EdgeInsets.all(12.w),
+                        decoration: BoxDecoration(
+                          color: _rolePrimary.withOpacity(0.06),
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(color: _rolePrimary.withOpacity(0.2)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Shipping per seller',
+                              style: AppStyle.body6.copyWith(color: _roleDark),
+                            ),
+                            SizedBox(height: 8.h),
+                            ...List.generate(
+                              subOrderCount,
+                              (index) => Padding(
+                                padding: EdgeInsets.only(bottom: 4.h),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Seller ${index + 1}',
+                                      style: AppStyle.smallBlack,
+                                    ),
+                                    Text(
+                                      '${_shippingFeePerSubOrder.toStringAsFixed(0)} EGP',
+                                      style: AppStyle.smallPrimery,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                     SizedBox(height: 20.h),
                     isSubmitting
                         ? Center(

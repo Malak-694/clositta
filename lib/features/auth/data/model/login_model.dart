@@ -20,16 +20,21 @@ class LoginResponse {
   final String id;
   final String name;
   final String email;
-  final String phone;
+  final String? phone;
   String? imageUrl;
+  final String? location;
+  final String? mapsUrl;
+
   LoginResponse({
     required this.token,
     required this.role,
     required this.id,
     required this.name,
     required this.email,
-    required this.phone,
+    this.phone,
     this.imageUrl,
+    this.location,
+    this.mapsUrl,
   });
   factory LoginResponse.fromJson(Map<String, dynamic> json) =>
       _$LoginResponseFromJson(json);

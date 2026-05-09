@@ -59,17 +59,20 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                   },
                 )
               : null,
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(25.r),
-            borderSide: BorderSide(color: AppColors.lightprimery),
-          ),
-          disabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(25.r),
-            borderSide: BorderSide(color: AppColors.lightprimery),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(25.r),
-            borderSide: BorderSide(color: AppColors.lightprimery),
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: const BorderSide(color: AppColors.lightprimery),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: const BorderSide(color: AppColors.lightprimery),
+          ),
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: const BorderSide(color: AppColors.lightprimery),
           ),
         ),
         validator: widget.validator,

@@ -9,7 +9,9 @@ import '../../../../../core/widgets/custom_app_bar.dart';
 import '../../../../../core/widgets/custom_nav_bar.dart';
 import '../../data/repo/portfolio_tailor_repo.dart';
 import '../../logic/cubit/portfolio_tailor_cubit.dart';
+import '../../logic/cubit/portfolio_tailor_state.dart';
 import '../widgets/portfolio_tailor_body.dart';
+import '../widgets/portfolio_workshop_location_bar.dart';
 
 class PortfolioTailorScreen extends StatelessWidget {
   const PortfolioTailorScreen({super.key});
@@ -29,7 +31,19 @@ class PortfolioTailorScreen extends StatelessWidget {
           onCartTap: () =>
               Navigator.pushNamed(context, RouteNames.tailor_cart_screen),
         ),
-        body: PortfolioTailorBody(),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            BlocBuilder<PortfolioTailorCubit, PortfolioTailorState>(
+              builder: (context, state) {
+                final tailor =
+                    context.read<PortfolioTailorCubit>().tailorSummary;
+                return PortfolioWorkshopLocationBar(tailor: tailor);
+              },
+            ),
+            Expanded(child: PortfolioTailorBody()),
+          ],
+        ),
         bottomNavigationBar: FloatingNavBar(
           userRole: 'tailor',
           selectedIndex: 1,

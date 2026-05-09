@@ -35,10 +35,7 @@ Widget _buildStarRating(double rating) {
         '$rating',
         style: AppStyle.body6.copyWith(
           fontSize: 12.sp,
-          foreground: Paint()
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = .4
-            ..color = AppColors.primery,
+          color: AppColors.primery,
         ),
       ),
     ],
@@ -88,12 +85,7 @@ Widget buildProductCard(BuildContext context, ProductModel product) {
               width: 120.w,
               child: Text(
                 name,
-                style: AppStyle.medBlack.copyWith(
-                  fontSize: 14.sp,
-                  foreground: Paint()
-                    ..style = PaintingStyle.stroke
-                    ..strokeWidth = .5,
-                ),
+                style: AppStyle.medBlack.copyWith(fontSize: 14.sp),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -108,24 +100,9 @@ Widget buildProductCard(BuildContext context, ProductModel product) {
             SizedBox(height: 6.h),
             Text(
               '£$pricePerYard/Meter',
-              style: AppStyle.medPrimery.copyWith(
-                fontSize: 16.sp,
-                foreground: Paint()
-                  ..style = PaintingStyle.stroke
-                  ..strokeWidth = .4
-                  ..color = AppColors.ternary,
-              ),
+              style: AppStyle.medGray.copyWith(fontSize: 16.sp),
             ),
-            Text(
-              'Stock: $stock',
-              style: AppStyle.body6.copyWith(
-                fontSize: 12.sp,
-                foreground: Paint()
-                  ..style = PaintingStyle.stroke
-                  ..strokeWidth = .4
-                  ..color = AppColors.primery,
-              ),
-            ),
+            Text('Stock: $stock', style: AppStyle.smallPrimery),
           ],
         ),
         Expanded(
@@ -157,7 +134,6 @@ Widget buildProductCard(BuildContext context, ProductModel product) {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-
                   IconButton(
                     onPressed: () {
                       showDialog(
@@ -166,7 +142,9 @@ Widget buildProductCard(BuildContext context, ProductModel product) {
                           return AlertDialog(
                             content: Text(
                               'Are you sure you want to Delete this product?',
-                              style: AppStyle.medBlack.copyWith(fontSize: 16.sp),
+                              style: AppStyle.medBlack.copyWith(
+                                fontSize: 16.sp,
+                              ),
                             ),
                             actions: [
                               TextButton(
@@ -182,12 +160,15 @@ Widget buildProductCard(BuildContext context, ProductModel product) {
                                       .deleteProduct(product.id);
                                   Navigator.pop(dialogContext);
                                 },
-                                child: Text('Delete', style: AppStyle.medTernary),
+                                child: Text(
+                                  'Delete',
+                                  style: AppStyle.medTernary,
+                                ),
                               ),
                             ],
                           );
                         },
-                      );// keep existing delete dialog
+                      ); // keep existing delete dialog
                     },
                     icon: Icon(Icons.delete, color: AppColors.primery),
                     padding: EdgeInsets.zero,
@@ -204,7 +185,7 @@ Widget buildProductCard(BuildContext context, ProductModel product) {
                         context.read<SellerProductsCubit>().getProducts();
                       });
                     },
-                    icon: Icon(Icons.edit, color:  AppColors.primery),
+                    icon: Icon(Icons.edit, color: AppColors.primery),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
                     iconSize: 22,

@@ -1,6 +1,4 @@
-import 'package:chicora/features/seller/products/logic/cubit/seller_products_cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/colors.dart';
 import '../../../../../core/di/dependency_injection.dart';
@@ -24,10 +22,7 @@ class SellerProductsScreen extends StatelessWidget {
         showCartIcon: false,
         onCartTap: () {},
       ),
-      body: BlocProvider(
-        create: (context) => getIt<SellerProductsCubit>()..getProducts(),
-        child: SellerProductScreenBody(),
-      ),
+      body: SellerProductScreenBody(),
       bottomNavigationBar: FloatingNavBar(
         userRole: 'seller',
         selectedIndex: 0,

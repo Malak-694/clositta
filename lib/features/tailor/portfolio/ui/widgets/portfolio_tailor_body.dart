@@ -31,12 +31,10 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
     'Shoes',
     'Accessories',
   ];
-  late String _selectedCategory;
 
   @override
   void initState() {
     super.initState();
-    _selectedCategory = 'All';
     // Load portfolio items on init
     context.read<PortfolioTailorCubit>().viewPortfolioTailor(null);
   }
@@ -52,6 +50,7 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
     return Padding(
       padding: EdgeInsetsGeometry.all(kHorizontalPadding),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
             children: [
@@ -64,11 +63,8 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
                 hintText: 'Category',
                 width: 130.w,
                 onChanged: (category) {
-                  setState(() {
-                    _selectedCategory = category!;
-                  });
                   context.read<PortfolioTailorCubit>().filterByCategory(
-                    category!,
+                    category ?? 'All',
                   );
                 },
               ),
@@ -126,12 +122,14 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
                           showPrice: false,
                           showEdit: true,
                           onEdit: () {
+                            final cubit =
+                                context.read<PortfolioTailorCubit>();
                             Navigator.pushNamed(
                               context,
                               RouteNames.update_work_screen,
                               arguments: item,
                             ).then((_) {
-                              context.read<PortfolioTailorCubit>().viewPortfolioTailor(null);
+                              cubit.viewPortfolioTailor(null);
                             });
                           },
                           onTap: () {

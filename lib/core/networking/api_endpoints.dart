@@ -40,11 +40,19 @@ class ApiEndpoints {
   //ecommerce-cart
   static const String cart = '/api/cart';
   static const String updateCartItems = '/api/cart/item/{productId}';
+  //seller-analysis
+  static const String sellerAnalysis = '/api/analytics/seller';
   //ecommerce-checkout
   static const String placeOrder = '/api/orders';
   static const String cancelOrder = '/api/orders/{orderId}/cancel';
+  static const String cancelSubOrder =
+      '/api/orders/{orderId}/suborders/{subOrderId}/cancel';
   static const String getOrderById = '/api/orders/{orderId}';
   static const String getMyOrders = '/api/orders/my';
+  static const String paymentInitiate = '/api/payments/initiate';
+  //seller-orders
+  static const String getAllOrdersSeller = '/api/orders/seller';
+  static const String updateOrderStatusSeller = '/api/orders/{orderId}/suborders/{suborderId}/status';
   static const String getAllOrdersSeller = '/api/orders/all';
   static const String updateOrderStatusSeller = '/api/orders/{orderId}/status';
 

@@ -24,10 +24,10 @@ Widget buildPinterestCard(
 
 // ── POST CARD ────────────────────────────────────────────
 Widget _buildPostCard(
-    PinterestCardConfig config,
-    VoidCallback onTap, {
-      Color mainColor = AppColors.primery,
-    }) {
+  PinterestCardConfig config,
+  VoidCallback onTap, {
+  Color mainColor = AppColors.primery,
+}) {
   return InkWell(
     onTap: onTap,
     borderRadius: BorderRadius.circular(20),
@@ -45,24 +45,27 @@ Widget _buildPostCard(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             child: config.imageUrl != null
                 ? Image.network(
-              config.imageUrl!,
-              fit: BoxFit.cover,
-              width: double.infinity,
-              errorBuilder: (_, __, ___) => Container(
-                height: 120,
-                color: Colors.grey.shade100,
-                child: const Center(
-                  child: Icon(Icons.image_not_supported,
-                      color: Colors.grey),
-                ),
-              ),
-            )
+                    config.imageUrl!,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    errorBuilder: (_, __, ___) => Container(
+                      height: 120,
+                      color: Colors.grey.shade100,
+                      child: const Center(
+                        child: Icon(
+                          Icons.image_not_supported,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  )
                 : Container(
-              height: 120,
-              color: Colors.grey.shade100,
-              child:
-              const Center(child: Icon(Icons.image, color: Colors.grey)),
-            ),
+                    height: 120,
+                    color: Colors.grey.shade100,
+                    child: const Center(
+                      child: Icon(Icons.image, color: Colors.grey),
+                    ),
+                  ),
           ),
 
           Padding(
@@ -94,8 +97,9 @@ Widget _buildPostCard(
                         ),
                         child: Text(
                           config.status!,
-                          style: AppStyle.smallBackground
-                              .copyWith(fontWeight: FontWeight.bold),
+                          style: AppStyle.smallBackground.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],
@@ -139,10 +143,7 @@ Widget _buildStarRating(double rating) {
         '$rating',
         style: AppStyle.body6.copyWith(
           fontSize: 12.sp,
-          foreground: Paint()
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = .4
-            ..color = AppColors.primery,
+          color: AppColors.primery,
         ),
       ),
     ],

@@ -24,17 +24,21 @@ class UpdatedUser {
   final String id;
   final String name;
   final String email;
-  final String phone;
+  final String? phone;
   final String role;
   final String? imageUrl;
+  final String? location;
+  final String? mapsUrl;
 
   UpdatedUser({
     required this.id,
     required this.name,
     required this.email,
-    required this.phone,
+    this.phone,
     required this.role,
     this.imageUrl,
+    this.location,
+    this.mapsUrl,
   });
 
   factory UpdatedUser.fromJson(Map<String, dynamic> json) =>

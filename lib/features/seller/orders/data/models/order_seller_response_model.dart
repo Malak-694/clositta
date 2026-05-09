@@ -6,7 +6,10 @@ part 'order_seller_response_model.g.dart';
 class OrderSellerResponseModel {
   @JsonKey(name: '_id')
   String? id;
+  String? orderId;
   UserSummarySellerViewModel? user;
+  UserSummarySellerViewModel? customer;
+  SellerSubOrderModel? subOrder;
   List<OrderItemWithPopulatedProductModel>? items;
   ShippingAddressSellerOrderModel? shippingAddress;
   String? paymentMethod;
@@ -23,7 +26,10 @@ class OrderSellerResponseModel {
 
   OrderSellerResponseModel({
     this.id,
+    this.orderId,
     this.user,
+    this.customer,
+    this.subOrder,
     this.items,
     this.shippingAddress,
     this.paymentMethod,
@@ -37,6 +43,14 @@ class OrderSellerResponseModel {
     this.updatedAt,
     this.iV,
   });
+
+  String? get resolvedOrderId => orderId ?? id;
+  String? get resolvedSubOrderId => subOrder?.id;
+  UserSummarySellerViewModel? get resolvedCustomer => customer ?? user;
+  String? get resolvedOrderStatus => subOrder?.orderStatus ?? orderStatus;
+  int? get resolvedTotalAmount => subOrder?.subTotal ?? totalAmount;
+  List<OrderItemWithPopulatedProductModel>? get resolvedItems =>
+      subOrder?.items ?? items;
 
   factory OrderSellerResponseModel.fromJson(Map<String, dynamic> json) =>
       _$OrderSellerResponseModelFromJson(json);
@@ -104,6 +118,35 @@ class OrderItemProductSellerModel {
       _$OrderItemProductSellerModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$OrderItemProductSellerModelToJson(this);
+}
+
+@JsonSerializable()
+class SellerSubOrderModel {
+  String? seller;
+  List<OrderItemWithPopulatedProductModel>? items;
+  int? itemsTotal;
+  int? shippingFee;
+  int? subTotal;
+  String? orderStatus;
+  @JsonKey(name: '_id')
+  String? id;
+  String? cancelReason;
+
+  SellerSubOrderModel({
+    this.seller,
+    this.items,
+    this.itemsTotal,
+    this.shippingFee,
+    this.subTotal,
+    this.orderStatus,
+    this.id,
+    this.cancelReason,
+  });
+
+  factory SellerSubOrderModel.fromJson(Map<String, dynamic> json) =>
+      _$SellerSubOrderModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SellerSubOrderModelToJson(this);
 }
 
 @JsonSerializable()

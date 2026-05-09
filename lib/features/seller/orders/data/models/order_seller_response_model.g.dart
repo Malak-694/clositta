@@ -10,11 +10,20 @@ OrderSellerResponseModel _$OrderSellerResponseModelFromJson(
   Map<String, dynamic> json,
 ) => OrderSellerResponseModel(
   id: json['_id'] as String?,
+  orderId: json['orderId'] as String?,
   user: json['user'] == null
       ? null
       : UserSummarySellerViewModel.fromJson(
           json['user'] as Map<String, dynamic>,
         ),
+  customer: json['customer'] == null
+      ? null
+      : UserSummarySellerViewModel.fromJson(
+          json['customer'] as Map<String, dynamic>,
+        ),
+  subOrder: json['subOrder'] == null
+      ? null
+      : SellerSubOrderModel.fromJson(json['subOrder'] as Map<String, dynamic>),
   items: (json['items'] as List<dynamic>?)
       ?.map(
         (e) => OrderItemWithPopulatedProductModel.fromJson(
@@ -43,7 +52,10 @@ Map<String, dynamic> _$OrderSellerResponseModelToJson(
   OrderSellerResponseModel instance,
 ) => <String, dynamic>{
   '_id': instance.id,
+  'orderId': instance.orderId,
   'user': instance.user,
+  'customer': instance.customer,
+  'subOrder': instance.subOrder,
   'items': instance.items,
   'shippingAddress': instance.shippingAddress,
   'paymentMethod': instance.paymentMethod,
@@ -120,6 +132,37 @@ Map<String, dynamic> _$OrderItemProductSellerModelToJson(
   'name': instance.name,
   'imageUrl': instance.imageUrl,
   'price': instance.price,
+};
+
+SellerSubOrderModel _$SellerSubOrderModelFromJson(Map<String, dynamic> json) =>
+    SellerSubOrderModel(
+      seller: json['seller'] as String?,
+      items: (json['items'] as List<dynamic>?)
+          ?.map(
+            (e) => OrderItemWithPopulatedProductModel.fromJson(
+              e as Map<String, dynamic>,
+            ),
+          )
+          .toList(),
+      itemsTotal: (json['itemsTotal'] as num?)?.toInt(),
+      shippingFee: (json['shippingFee'] as num?)?.toInt(),
+      subTotal: (json['subTotal'] as num?)?.toInt(),
+      orderStatus: json['orderStatus'] as String?,
+      id: json['_id'] as String?,
+      cancelReason: json['cancelReason'] as String?,
+    );
+
+Map<String, dynamic> _$SellerSubOrderModelToJson(
+  SellerSubOrderModel instance,
+) => <String, dynamic>{
+  'seller': instance.seller,
+  'items': instance.items,
+  'itemsTotal': instance.itemsTotal,
+  'shippingFee': instance.shippingFee,
+  'subTotal': instance.subTotal,
+  'orderStatus': instance.orderStatus,
+  '_id': instance.id,
+  'cancelReason': instance.cancelReason,
 };
 
 ShippingAddressSellerOrderModel _$ShippingAddressSellerOrderModelFromJson(

@@ -1,6 +1,9 @@
 // profile_menu_list.dart
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
+import 'package:chicora/core/di/dependency_injection.dart';
+import 'package:chicora/core/helper/shared_pref_helper.dart';
+import 'package:chicora/core/router/route_names.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -90,7 +93,43 @@ class ProfileMenuList extends StatelessWidget {
                   color: AppColors.light,
                   size: 30.sp,
                 ),
-                onTap: () {},
+                onTap: () async {
+                  final shouldLogout = await showDialog<bool>(
+                    context: context,
+                    builder: (dialogContext) => AlertDialog(
+                      title: const Text('Logout'),
+                      content: const Text(
+                        'Are you sure you want to logout?',
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(dialogContext).pop(false);
+                          },
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(dialogContext).pop(true);
+                          },
+                          child: const Text('Logout'),
+                        ),
+                      ],
+                    ),
+                  );
+
+                  if (shouldLogout != true) return;
+
+                  final prefs = getIt<SharedPrefHelper>();
+                  await prefs.clearAll();
+                  await prefs.clearAllSecure();
+
+                  if (!context.mounted) return;
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    RouteNames.sing_up,
+                    (route) => false,
+                  );
+                },
               ),
             ),
           );
@@ -128,7 +167,13 @@ class ProfileMenuList extends StatelessWidget {
                 color: AppColors.light,
                 size: 30.sp,
               ),
-              onTap: () {},
+              onTap: () {
+                if ((item['title'] as String) == 'My Orders') {
+                  Navigator.of(context).pushNamed(
+                    RouteNames.order_view_screen,
+                  );
+                }
+              },
             ),
           ),
         );

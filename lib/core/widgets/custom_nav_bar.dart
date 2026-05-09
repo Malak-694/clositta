@@ -30,6 +30,11 @@ class FloatingNavBar extends StatelessWidget {
         "name": "closet",
         "route": RouteNames.closet_items_screen,
       },
+      {
+        "icon": Icons.request_page,
+        "name": "Biddings",
+        "route": RouteNames.posts_customer,
+      },
 
       {
         "icon": Icons.person,
@@ -76,6 +81,11 @@ class FloatingNavBar extends StatelessWidget {
         "icon": Icons.person,
         "name": "Profile",
         "route": RouteNames.profile_seller_screen,
+      },
+      {
+        "icon": Icons.analytics,
+        "name": "Analysis",
+        "route": RouteNames.analysis_seller_screen,
       },
     ],
   };

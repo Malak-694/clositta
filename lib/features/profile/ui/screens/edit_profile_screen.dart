@@ -5,14 +5,15 @@ import 'package:chicora/core/widgets/circle_indicator.dart';
 import 'package:chicora/core/widgets/custom_app_bar.dart';
 import 'package:chicora/core/widgets/custom_elevated_button.dart';
 import 'package:chicora/core/widgets/labeled_text_field.dart';
+import 'package:chicora/core/utils/validator.dart';
 import 'package:chicora/features/profile/data/model/profile_model.dart';
+import 'package:chicora/features/profile/data/model/update_profile_model.dart';
 import 'package:chicora/features/profile/logic/profile_cubit.dart';
 import 'package:chicora/features/profile/logic/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../../../../core/models/message_model.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -32,9 +33,13 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+  final _formKey = GlobalKey<FormState>();
+
   late final TextEditingController _nameController;
   late final TextEditingController _emailController;
   late final TextEditingController _phoneController;
+  late final TextEditingController _locationController;
+  late final TextEditingController _mapsUrlController;
 
   String? _newImagePath;
   bool _imageRemoved = false;
@@ -42,9 +47,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _nameController  = TextEditingController(text: widget.profile.name);
+    _nameController = TextEditingController(text: widget.profile.name);
     _emailController = TextEditingController(text: widget.profile.email);
-    _phoneController = TextEditingController(text: widget.profile.phone);
+    _phoneController =
+        TextEditingController(text: widget.profile.phone ?? '');
+    _locationController =
+        TextEditingController(text: widget.profile.location ?? '');
+    _mapsUrlController =
+        TextEditingController(text: widget.profile.mapsUrl ?? '');
   }
 
   @override
@@ -52,6 +62,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
+    _locationController.dispose();
+    _mapsUrlController.dispose();
     super.dispose();
   }
 
@@ -74,14 +86,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   void _save() {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
     if (_imageRemoved && widget.profile.imageUrl != null) {
       context.read<ProfileCubit>().deleteProfileImage();
     }
+    final tailor = widget.profile.role.toLowerCase() == 'tailor';
     context.read<ProfileCubit>().updateProfile(
-      name:      _nameController.text.trim(),
-      email:     _emailController.text.trim(),
-      phone:     _phoneController.text.trim(),
+      name: _nameController.text.trim(),
+      email: _emailController.text.trim(),
+      phone: _phoneController.text.trim(),
       imagePath: _newImagePath,
+      location: tailor ? _locationController.text.trim() : null,
+      mapsUrl: tailor ? _mapsUrlController.text.trim() : null,
     );
   }
 
@@ -91,10 +107,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       listener: (context, state) {
         state.maybeWhen(
           success: (data) {
-            if (data is MessageModel) {
+            if (data is UpdateProfileResponse || data is MessageModel) {
+              final msg = data is UpdateProfileResponse
+                  ? data.message
+                  : (data as MessageModel).message;
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(data.message ?? "Profile updated successfully"),
+                  content: Text(msg ?? "Profile updated successfully"),
                   backgroundColor: Colors.green,
                 ),
               );
@@ -105,7 +124,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             if (!_imageRemoved) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(msg),
+                  content: Text(AppStyle.userMessage(msg)),
                   backgroundColor: Colors.red,
                 ),
               );
@@ -137,10 +156,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               imageToShow = NetworkImage(widget.profile.imageUrl!);
             }
 
-            return SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
-              child: Column(
-                children: [
+            return Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
+                child: Column(
+                  children: [
 
                   Center(
                     child: Stack(
@@ -227,7 +249,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     label: "Phone",
                     keyboardType: TextInputType.phone,
                     focusedBorderColor: widget.primaryColor,
+                    validator: Validators.validateOptionalPhone,
                   ),
+                  if (widget.profile.role.toLowerCase() == 'tailor') ...[
+                    SizedBox(height: 16.h),
+                    LabeledTextField(
+                      controller: _locationController,
+                      hintText: "e.g. Maadi, Cairo (optional)",
+                      label: "Workshop address",
+                      required: false,
+                      focusedBorderColor: widget.primaryColor,
+                      maxLines: 2,
+                    ),
+                    SizedBox(height: 16.h),
+                    LabeledTextField(
+                      controller: _mapsUrlController,
+                      hintText: "https://www.google.com/maps/...",
+                      label: "Google Maps link",
+                      required: false,
+                      keyboardType: TextInputType.url,
+                      focusedBorderColor: widget.primaryColor,
+                      validator: Validators.validateOptionalHttpUrl,
+                    ),
+                  ],
                   SizedBox(height: 40.h),
 
                   isLoading
@@ -239,7 +283,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     background: widget.primaryColor,
                     onPressed: _save,
                   ),
-                ],
+                  ],
+                ),
               ),
             );
           },

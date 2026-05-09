@@ -40,6 +40,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   late List<String> productPhotos;
   Color _rolePrimary = AppColors.primery;
+  Color _roleDark = AppColors.darkprimery;
 
   @override
   void initState() {
@@ -54,6 +55,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       if (!mounted) return;
       setState(() {
         _rolePrimary = color;
+      });
+    });
+    AppColors.darkForCurrentUser().then((color) {
+      if (!mounted) return;
+      setState(() {
+        _roleDark = color;
       });
     });
     _loadUserInfo();
@@ -87,11 +94,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        child: InteractiveViewer(
-          boundaryMargin: const EdgeInsets.all(20),
-          minScale: 0.5,
-          maxScale: 4,
-          child: Image.network(imageUrl, fit: BoxFit.cover),
+        backgroundColor: AppColors.background,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: InteractiveViewer(
+            boundaryMargin: const EdgeInsets.all(20),
+            minScale: 0.5,
+            maxScale: 4,
+            child: Image.network(imageUrl, fit: BoxFit.contain),
+          ),
         ),
       ),
     );
@@ -100,7 +112,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       appBar: CustomAppBar(
         title: "Product Detail",
         leading: true,
@@ -126,10 +138,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
-                    'please try again later ',
-                    style: AppStyle.smallBackground,
+                    'Please try again later',
+                    style: AppStyle.medBackground,
                   ),
-                  backgroundColor: Colors.red,
+                  backgroundColor: AppColors.ternary,
                 ),
               );
             },
@@ -147,69 +159,89 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     context,
                     productPhotos[_selectedPhotoIndex],
                   ),
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.all(Radius.circular(20)),
-                    child: Container(
-                      constraints: BoxConstraints(maxHeight: 350),
-                      child: Image.network(
-                        productPhotos[_selectedPhotoIndex],
-                        key: ValueKey(_selectedPhotoIndex),
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        cacheWidth: 800,
-                        cacheHeight: 680,
-
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Colors.grey[300],
-                            child: const Center(
-                              child: Icon(Icons.image_not_supported),
-                            ),
-                          );
-                        },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20.r),
+                      boxShadow: [
+                        BoxShadow(
+                          color: _rolePrimary.withValues(alpha: 0.12),
+                          blurRadius: 24,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(20.r)),
+                      child: Container(
+                        color: AppColors.lightprimery,
+                        constraints: BoxConstraints(maxHeight: 360.h),
+                        child: Image.network(
+                          productPhotos[_selectedPhotoIndex],
+                          key: ValueKey(_selectedPhotoIndex),
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          cacheWidth: 800,
+                          cacheHeight: 680,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              height: 200.h,
+                              color: AppColors.lightprimery,
+                              child: Center(
+                                child: Icon(
+                                  Icons.image_not_supported_outlined,
+                                  size: 48.sp,
+                                  color: AppColors.light,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12.h),
                 // Photo Thumbnails
                 SizedBox(
-                  height: 80,
+                  height: 80.h,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: productPhotos.length,
                     itemBuilder: (context, index) {
                       final isSelected = index == _selectedPhotoIndex;
                       return Padding(
-                        padding: const EdgeInsets.only(right: 8),
+                        padding: EdgeInsets.only(right: 8.w),
                         child: GestureDetector(
                           onTap: () {
                             setState(() {
                               _selectedPhotoIndex = index;
                             });
                           },
-                          child: Container(
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(12.r),
                               border: Border.all(
                                 color: isSelected
-                                    ? _rolePrimary
-                                    : Colors.grey[300]!,
-                                width: isSelected ? 3 : 1,
+                                    ? _roleDark
+                                    : AppColors.light.withValues(alpha: 0.4),
+                                width: isSelected ? 2.5 : 1,
                               ),
                             ),
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(12.r),
                               child: Image.network(
                                 productPhotos[index],
                                 key: ValueKey(index),
                                 fit: BoxFit.cover,
-                                width: 70,
+                                width: 70.w,
                                 errorBuilder: (context, error, stackTrace) {
                                   return Container(
-                                    color: Colors.grey[300],
-                                    child: const Center(
-                                      child: Icon(Icons.image_not_supported),
+                                    color: AppColors.lightprimery,
+                                    width: 70.w,
+                                    child: Icon(
+                                      Icons.broken_image_outlined,
+                                      color: AppColors.light,
                                     ),
                                   );
                                 },
@@ -221,85 +253,114 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     },
                   ),
                 ),
-                const SizedBox(height: 24),
-                // Product Title
-                Row(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.product.name ?? 'Unknown Product',
-                          style: AppStyle.headline1,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          widget.product.category ?? 'Uncategorized',
-                          style: AppStyle.medPrimery.copyWith(
-                            foreground: Paint()
-                              ..style = PaintingStyle.stroke
-                              ..strokeWidth = .5
-                              ..color = _rolePrimary,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(width: 20.w),
-                    Expanded(
-                      child: AddToCartSection(productId: widget.product.pId!),
-                    ),
-                    SizedBox(width: 20.w),
-                  ],
+                SizedBox(height: 24.h),
+                Text(
+                  widget.product.name ?? 'Unknown Product',
+                  style: AppStyle.headline1,
                 ),
-
-                SizedBox(height: 10.h),
-                // Price and Rating
+                SizedBox(height: 8.h),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 5.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: _rolePrimary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: Text(
+                    widget.product.category ?? 'Uncategorized',
+                    style: AppStyle.caption.copyWith(
+                      color: _rolePrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20.h),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
                       '\$${widget.product.price ?? 0}',
-                      style: AppStyle.boldSecondary.copyWith(
-                        foreground: Paint()
-                          ..style = PaintingStyle.stroke
-                          ..strokeWidth = 1
-                          ..color = _rolePrimary,
+                      style: AppStyle.boldSecondary.copyWith(color: _roleDark),
+                    ),
+                    const Spacer(),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10.w,
+                        vertical: 6.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.lightsecondary,
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.star_rounded,
+                            color: AppColors.secondary,
+                            size: 20.sp,
+                          ),
+                          SizedBox(width: 4.w),
+                          Text(
+                            widget.product.averageRating?.toStringAsFixed(1) ??
+                                '0',
+                            style: AppStyle.body6,
+                          ),
+                          SizedBox(width: 4.w),
+                          Text(
+                            '(${widget.product.totalRatings ?? 0})',
+                            style: AppStyle.body5,
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(width: 16),
                   ],
                 ),
-                Row(
-                  children: [
-                    const Icon(Icons.star, color: Colors.amber, size: 20),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${widget.product.averageRating?.toStringAsFixed(1) ?? 0}',
-                      style: AppStyle.medLight,
+                SizedBox(height: 20.h),
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 20.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.lightprimery,
+                    borderRadius: BorderRadius.circular(16.r),
+                    border: Border.all(
+                      color: _rolePrimary.withValues(alpha: 0.12),
                     ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '(${widget.product.totalRatings ?? 0} reviews)',
-                      style: AppStyle.body5,
-                    ),
-                  ],
+                  ),
+                  child: AddToCartSection(
+                    productId: widget.product.pId!,
+                    accent: _rolePrimary,
+                    accentDark: _roleDark,
+                  ),
                 ),
-
-                SizedBox(height: 24.h),
+                SizedBox(height: 28.h),
                 // Description
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Description', style: AppStyle.medBlack),
-                    const SizedBox(height: 12),
-                    Text(
-                      widget.product.description ?? 'No description available',
-                      style: AppStyle.medLight.copyWith(fontSize: 15.sp),
-                    ),
-                  ],
+                Text(
+                  'Description',
+                  style: AppStyle.body6.copyWith(
+                    color: _roleDark,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+                SizedBox(height: 10.h),
+                Text(
+                  widget.product.description ?? 'No description available',
+                  style: AppStyle.medLight.copyWith(
+                    fontSize: 15.sp,
+                    height: 1.45,
+                  ),
                 ),
                 SizedBox(height: 24.h),
-                // Seller Info
-                SellerInfo(seller: widget.product.seller),
+                SellerInfo(
+                  seller: widget.product.seller,
+                  accent: _rolePrimary,
+                  accentDark: _roleDark,
+                ),
 
                 SizedBox(height: 24.h),
 
@@ -307,6 +368,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 if (!_userHasRated)
                   RateProductWidget(
                     productId: widget.product.pId ?? '',
+                    accent: _rolePrimary,
+                    accentDark: _roleDark,
                     onRated: (r, comment) {
                       // create a temporary RatingModel and add to top of list
                       final now = DateTime.now();
@@ -325,25 +388,20 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       });
                     },
                   ),
-                SizedBox(height: 24.h),
-
-                // Review Text Field
-                const SizedBox(height: 12),
-
-                const SizedBox(height: 24),
-                // Customer Reviews Section
+                SizedBox(height: 8.h),
                 CommentSection(
                   productComments: _ratings,
                   userRating: _userRatingModel,
                   currentUserId: _userId,
+                  accent: _rolePrimary,
+                  accentDark: _roleDark,
                   onDelete: (ratingId) {
-                    // call cubit to delete current user's rating for this product
                     context.read<RateProductsCubit>().deleteRateProduct(
                       widget.product.pId ?? '',
                     );
                   },
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 32.h),
               ],
             ),
           ),

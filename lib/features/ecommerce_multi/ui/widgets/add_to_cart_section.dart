@@ -12,7 +12,16 @@ import '../../../../core/widgets/quantity_counter_widget.dart';
 
 class AddToCartSection extends StatefulWidget {
   final String productId;
-  const AddToCartSection({required this.productId, super.key});
+  /// Role-based primary accent (buttons, loading).
+  final Color accent;
+  final Color accentDark;
+
+  const AddToCartSection({
+    required this.productId,
+    super.key,
+    this.accent = AppColors.primery,
+    this.accentDark = AppColors.darkprimery,
+  });
 
   @override
   State<AddToCartSection> createState() => AddToCartSectionState();
@@ -66,7 +75,7 @@ class AddToCartSectionState extends State<AddToCartSection> {
           fail: (msg) {
             setState(() => _addedToCart = false);
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(msg, style: AppStyle.medBlack)),
+              SnackBar(content: Text(AppStyle.userMessage(msg), style: AppStyle.medBlack)),
             );
           },
         );
@@ -76,27 +85,39 @@ class AddToCartSectionState extends State<AddToCartSection> {
 
         return Column(
           children: [
-            // ✅ Always show counter, quantity reflects cart or local selection
-            QuantityCounter(
-              quantity: _quantity,
-              onIncrement: () => setState(() => _quantity++),
-              onDecrement: () {
-                if (_quantity > 1) setState(() => _quantity--);
-              },
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                QuantityCounter(
+                  quantity: _quantity,
+                  accent: widget.accent,
+                  onIncrement: () => setState(() => _quantity++),
+                  onDecrement: () {
+                    if (_quantity > 1) setState(() => _quantity--);
+                  },
+                ),
+              ],
             ),
-            SizedBox(height: 8.h),
-
+            SizedBox(height: 16.h),
             isLoading
-                ? const Center(child: CircularProgressIndicator())
+                ? Center(
+                    child: SizedBox(
+                      width: 28.w,
+                      height: 28.h,
+                      child: CircularProgressIndicator(
+                        color: widget.accent,
+                        strokeWidth: 2.5,
+                      ),
+                    ),
+                  )
                 : _addedToCart
                 ? CustomElevatedButton(
-                    value: '✓ Added to Cart',
-                    style: AppStyle.medBlack,
-                    height: 40.h,
-                    width: 200.w,
+                    value: 'Added to cart',
+                    style: AppStyle.medBlack.copyWith(fontSize: 18.sp),
+                    height: 48.h,
+                    width: 1.sw - 64.w,
                     background: AppColors.lightprimery,
                     onPressed: () {
-                      // ✅ tapping again resets so user can re-add
                       setState(() {
                         _addedToCart = false;
                         _quantity = 1;
@@ -104,9 +125,10 @@ class AddToCartSectionState extends State<AddToCartSection> {
                     },
                   )
                 : CustomElevatedButton(
-                    value: 'Add to Cart',
-                    height: 40.h,
-                    width: 200.w,
+                    value: 'Add to cart',
+                    height: 48.h,
+                    width: 1.sw - 64.w,
+                    background: widget.accentDark,
                     onPressed: () {
                       context.read<CartCubit>().addToCart(
                         widget.productId,

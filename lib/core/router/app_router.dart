@@ -4,6 +4,7 @@ import 'package:chicora/features/customer/closet/logic/cubit/closet_cubit.dart';
 import 'package:chicora/features/customer/closet/ui/screens/added_item_screen.dart';
 import 'package:chicora/features/customer/closet/ui/screens/closet_items_screen.dart';
 import 'package:chicora/features/ecommerce_multi/logic/rate_products_logic/rate_products_cubit.dart';
+import 'package:chicora/features/ecommerce_multi/logic/view_product_logic/view_products_cubit.dart';
 import 'package:chicora/core/router/route_names.dart';
 import 'package:chicora/features/auth/logic/cubit/authentication_cubit.dart';
 import 'package:chicora/features/auth/ui/screens/password_recovery_screen.dart';
@@ -14,9 +15,11 @@ import 'package:chicora/features/customer/biding/logic/cubit/customer_bidding_cu
 import 'package:chicora/features/customer/biding/ui/Screens/detailes_screen.dart';
 import 'package:chicora/features/customer/biding/ui/Screens/form_screen.dart';
 import 'package:chicora/features/customer/biding/ui/Screens/post_screen.dart';
+import 'package:chicora/features/ecommerce_multi/ui/screens/order_view_screen.dart';
 import 'package:chicora/features/ecommerce_multi/ui/screens/product_details_screen.dart';
 import 'package:chicora/features/profile/ui/screens/profile_screen.dart';
 import 'package:chicora/features/seller/products/logic/cubit/seller_products_cubit.dart';
+import 'package:chicora/features/seller/analysis/logic/cubit/analysis_seller_cubit.dart';
 import 'package:chicora/features/seller/products/ui/screens/added_product_form.dart';
 import 'package:chicora/features/tailor/bidding_tailor/logic/cubit/bidding_tailor_cubit.dart';
 import 'package:chicora/features/tailor/bidding_tailor/ui/Screens/detailes_screen_tailor.dart';
@@ -37,7 +40,9 @@ import '../../features/customer/ecommerce/customer_products_screen.dart';
 import '../../features/customer/profile/ui/customer_profile_screen.dart';
 import '../../features/ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
 import '../../features/profile/logic/profile_cubit.dart';
+import '../../features/seller/orders/logic/cubit/order_mangement_cubit.dart';
 import '../../features/seller/products/data/models/product_model_response.dart';
+import '../../features/seller/analysis/ui/screens/analysis_seller_screen.dart';
 import '../../features/seller/orders/ui/screens/order_mangement_screen.dart';
 import '../../features/seller/products/ui/screens/seller_products_screen.dart';
 import '../../features/seller/profile/ui/seller_profile_screen.dart' hide TailorProfileScreen;
@@ -106,9 +111,18 @@ class AppRouter {
         );
       case RouteNames.posts_customer:
         return MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (_) => getIt<CustomerBiddingCubit>(),
-            child: PostScreen(),
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (_) => getIt<CustomerBiddingCubit>()),
+              BlocProvider(
+                create: (_) {
+                  final cart = getIt<CartCubit>();
+                  cart.getCart();
+                  return cart;
+                },
+              ),
+            ],
+            child: const PostScreen(),
           ),
         );
     // case RouteNames.upload_post:
@@ -231,9 +245,26 @@ class AppRouter {
           ),
         );
       case RouteNames.seller_products_screen:
-        return MaterialPageRoute(builder: (_) => SellerProductsScreen());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<SellerProductsCubit>()..getProducts(),
+            child: SellerProductsScreen(),
+          ),
+        );
+      case RouteNames.analysis_seller_screen:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<AnalysisSellerCubit>()..getSellerAnalysis(),
+            child: const AnalysisSellerScreen(),
+          ),
+        );
       case RouteNames.seller_orders_screen:
-        return MaterialPageRoute(builder: (_) => const OrderMangementScreen());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<OrderMangementCubit>(),
+            child: const OrderMangementScreen(),
+          ),
+        );
       case RouteNames.added_product_item:
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
@@ -250,9 +281,37 @@ class AppRouter {
           ),
         );
       case RouteNames.customer_products_screen:
-        return MaterialPageRoute(builder: (_) => CustomerProductsScreen());
+        return MaterialPageRoute(
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (_) {
+                  final cart = getIt<CartCubit>();
+                  cart.getCart();
+                  return cart;
+                },
+              ),
+              BlocProvider(create: (_) => getIt<ViewProductsCubit>()),
+            ],
+            child: CustomerProductsScreen(),
+          ),
+        );
       case RouteNames.tailor_products_screen:
-        return MaterialPageRoute(builder: (_) => TailorProductsScreen());
+        return MaterialPageRoute(
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (_) {
+                  final cart = getIt<CartCubit>();
+                  cart.getCart();
+                  return cart;
+                },
+              ),
+              BlocProvider(create: (_) => getIt<ViewProductsCubit>()),
+            ],
+            child: TailorProductsScreen(),
+          ),
+        );
       case RouteNames.product_details_screen:
         final args = settings.arguments as Map<String, dynamic>? ?? {};
         final product = args['product'];
@@ -314,6 +373,13 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => CustomerCartScreen());
       case RouteNames.tailor_cart_screen:
         return MaterialPageRoute(builder: (_) => TailorCartScreen());
+      case RouteNames.order_view_screen:
+        final orderArgs =
+            settings.arguments as Map<String, dynamic>? ?? {};
+        final openedFromCart = orderArgs['fromCart'] as bool? ?? false;
+        return MaterialPageRoute(
+          builder: (_) => OrderViewScreen(openedFromCart: openedFromCart),
+        );
       case RouteNames.chat_screen:
         final args         = settings.arguments as Map<String, dynamic>? ?? {};
         final receiverId   = args['receiverId']   as String? ?? '';

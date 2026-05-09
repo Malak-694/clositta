@@ -15,6 +15,7 @@ OrderRequestModel _$OrderRequestModelFromJson(Map<String, dynamic> json) =>
       governorate: json['governorate'] as String?,
       postalCode: json['postalCode'] as String?,
       notes: json['notes'] as String?,
+      paymentMethod: json['paymentMethod'] as String?,
     );
 
 Map<String, dynamic> _$OrderRequestModelToJson(OrderRequestModel instance) =>
@@ -26,4 +27,5 @@ Map<String, dynamic> _$OrderRequestModelToJson(OrderRequestModel instance) =>
       'governorate': instance.governorate,
       'postalCode': instance.postalCode,
       'notes': instance.notes,
+      'paymentMethod': instance.paymentMethod,
     };

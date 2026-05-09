@@ -40,6 +40,8 @@ class ProfileCubit extends Cubit<ProfileState> {
     String? email,
     String? phone,
     String? imagePath,
+    String? location,
+    String? mapsUrl,
   }) async {
     emit(const ProfileState.loading());
     try {
@@ -53,6 +55,8 @@ class ProfileCubit extends Cubit<ProfileState> {
         name: name,
         email: email,
         phone: phone,
+        location: location,
+        mapsUrl: mapsUrl,
         imagePath: imagePath,
       );
       emit(ProfileState.success(result));

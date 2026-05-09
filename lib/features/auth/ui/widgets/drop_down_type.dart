@@ -26,15 +26,42 @@ class CustomDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textStyle = style ?? AppStyle.medPrimery;
+    final hintStyle = style ?? AppStyle.medBlack;
+
     return SizedBox(
       width: width.w,
       child: DropdownButtonFormField<String>(
+        isExpanded: true,
         initialValue: value,
-        hint: Text(hintText, style: style ?? AppStyle.medBlack),
+        hint: Text(
+          hintText,
+          style: hintStyle,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        selectedItemBuilder: (context) {
+          return items.map((String item) {
+            return Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: Text(
+                item,
+                style: textStyle,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            );
+          }).toList();
+        },
         items: items.map((item) {
           return DropdownMenuItem<String>(
             value: item,
-            child: Text(item, style: style ?? AppStyle.medPrimery),
+            child: Text(
+              item,
+              style: textStyle,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           );
         }).toList(),
         onChanged: onChanged,
@@ -43,8 +70,9 @@ class CustomDropdown extends StatelessWidget {
         decoration: InputDecoration(
           filled: true,
           fillColor: color ?? AppColors.lightprimery,
+          isDense: true,
           contentPadding: EdgeInsets.symmetric(
-            horizontal: 15.w,
+            horizontal: 12.w,
             vertical: vPadding ?? 18.h,
           ),
           border: OutlineInputBorder(

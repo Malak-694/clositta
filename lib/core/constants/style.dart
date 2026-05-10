@@ -97,7 +97,7 @@ class AppStyle {
   );
   static TextStyle get medBackground => TextStyle(
     fontSize: 19.sp,
-    fontWeight: FontWeight.w700,
+    fontWeight: FontWeight.bold,
 
     color: AppColors.background,
     fontFamily: 'Raleway',
@@ -112,14 +112,14 @@ class AppStyle {
   //Small
   static TextStyle get smallBlack => TextStyle(
     fontSize: 12.sp,
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w600,
     color: AppColors.dark,
 
     fontFamily: 'Raleway',
   );
   static TextStyle get smallPrimery => TextStyle(
     fontSize: 12.sp,
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w600,
     color: AppColors.primery,
     fontFamily: 'Raleway',
   );
@@ -175,7 +175,7 @@ class AppStyle {
   );
   static TextStyle get body6 => TextStyle(
     fontSize: 15.sp,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w900,
 
     color: AppColors.dark,
     fontFamily: 'Raleway',

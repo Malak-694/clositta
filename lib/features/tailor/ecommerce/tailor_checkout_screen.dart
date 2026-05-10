@@ -33,8 +33,6 @@ class TailorCheckoutScreen extends StatelessWidget {
       bottomNavigationBar: FloatingNavBar(
         userRole: 'tailor',
         selectedIndex: 3,
-        focused: AppColors.secondary,
-        notSelected: AppColors.darksecondary,
       ),
     );
   }

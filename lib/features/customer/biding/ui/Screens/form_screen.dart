@@ -9,8 +9,8 @@ import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:chicora/features/customer/biding/logic/cubit/customer_bidding_cubit.dart';
-import 'package:chicora/features/customer/biding/logic/cubit/customer_bidding_state.dart';
+import 'package:chicora/features/customer/biding/logic/cubit/custom_bidding_cubit/customer_bidding_cubit.dart';
+import 'package:chicora/features/customer/biding/logic/cubit/custom_bidding_cubit/customer_bidding_state.dart';
 import 'package:chicora/features/customer/biding/data/models/send_bidding_model.dart';
 
 class FormScreen extends StatefulWidget {

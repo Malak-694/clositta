@@ -3,8 +3,8 @@ import 'package:chicora/core/constants/style.dart';
 import 'package:chicora/core/widgets/circle_indicator.dart';
 import 'package:chicora/core/widgets/custom_elevated_button.dart';
 import 'package:chicora/features/customer/biding/data/models/offer_model.dart';
-import 'package:chicora/features/customer/biding/logic/cubit/customer_bidding_cubit.dart';
-import 'package:chicora/features/customer/biding/logic/cubit/customer_bidding_state.dart';
+import 'package:chicora/features/customer/biding/logic/cubit/custom_bidding_cubit/customer_bidding_cubit.dart';
+import 'package:chicora/features/customer/biding/logic/cubit/custom_bidding_cubit/customer_bidding_state.dart';
 import 'package:chicora/features/customer/biding/ui/widgets/bid_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,6 +29,7 @@ class DetailesScreen extends StatefulWidget {
   @override
   State<DetailesScreen> createState() => _DetailesScreenState();
 }
+
 class _DetailesScreenState extends State<DetailesScreen> {
   late bool isBidOpen;
 
@@ -113,13 +114,14 @@ class _DetailesScreenState extends State<DetailesScreen> {
         backgroundColor: AppColors.background,
       ),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(15, 0, 15,15),
+        padding: const EdgeInsets.fromLTRB(15, 0, 15, 15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Tailor bids", style: AppStyle.boldSecondary),
             SizedBox(height: 5.h),
 
+            // ── Bid Image ──────────────────────────────────────
             Container(
               decoration: BoxDecoration(
                 color: Colors.grey.shade100,
@@ -158,68 +160,39 @@ class _DetailesScreenState extends State<DetailesScreen> {
             Text(widget.description, style: AppStyle.medLight),
             SizedBox(height: 10.h),
 
-            // ── Status Badge ─────────────────────────────────
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Container(
-                //   padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-                //   decoration: BoxDecoration(
-                //     color: isBidOpen
-                //         ? AppColors.lightprimery
-                //         : AppColors.lightternary.withOpacity(0.2),
-                //     borderRadius: BorderRadius.circular(20.r),
-                //   ),
-                //   child: Row(
-                //     mainAxisSize: MainAxisSize.min,
-                //     children: [
-                //       Icon(
-                //         isBidOpen ? Icons.lock_open : Icons.lock,
-                //         size: 14.sp,
-                //         color: isBidOpen ? AppColors.primery : AppColors.ternary,
-                //       ),
-                //       SizedBox(width: 4.w),
-                //       Text(
-                //         isBidOpen ? "Open for offers" : "Closed",
-                //         style: TextStyle(
-                //           fontSize: 12.sp,
-                //           fontWeight: FontWeight.w600,
-                //           color: isBidOpen ? AppColors.primery : AppColors.ternary,
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
-                // Spacer(),
-                if (isBidOpen) ...[
-                      Text('Show', style: AppStyle.body6),
-                      SizedBox(width: 6.w),
-                      CustomCategorySelector(
-                        categories: _filterCategories,
-                        selectedCategory: _filterType,
-                        onCategorySelected: _onFilterChanged,
-                        selectedColor: AppColors.primery,
-                        unselectedColor: AppColors.lightprimery,
-                        unselectedTextColor: AppColors.darkprimery,
-                      ),
-                      Spacer(),
-                      Text('Sort by', style: AppStyle.body6),
-                      SizedBox(width: 6.w),
-                      CustomCategorySelector(
-                        categories: _sortCategories,
-                        selectedCategory: _sortType,
-                        onCategorySelected: (val) =>
-                            setState(() => _sortType = val),
-                        selectedColor: AppColors.primery,
-                        unselectedColor: AppColors.lightprimery,
-                        unselectedTextColor: AppColors.darkprimery,
-                      ),
-
-                  SizedBox(height: 10.h),
+            // ── Filter & Sort Row ──────────────────────────────
+            if (isBidOpen)
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text('Show', style: AppStyle.body6),
+                  SizedBox(width: 6.w),
+                  CustomCategorySelector(
+                    categories: _filterCategories,
+                    selectedCategory: _filterType,
+                    onCategorySelected: _onFilterChanged,
+                    selectedColor: AppColors.primery,
+                    unselectedColor: AppColors.lightprimery,
+                    unselectedTextColor: AppColors.darkprimery,
+                  ),
+                  const Spacer(),
+                  Text('Sort by', style: AppStyle.body6),
+                  SizedBox(width: 6.w),
+                  CustomCategorySelector(
+                    categories: _sortCategories,
+                    selectedCategory: _sortType,
+                    onCategorySelected: (val) =>
+                        setState(() => _sortType = val),
+                    selectedColor: AppColors.primery,
+                    unselectedColor: AppColors.lightprimery,
+                    unselectedTextColor: AppColors.darkprimery,
+                  ),
                 ],
-              ],
-            ),
+              ),
+
             SizedBox(height: 15.h),
+
+            // ── Offers List ────────────────────────────────────
             Expanded(
               child: BlocConsumer<CustomerBiddingCubit, CustomerBiddingState>(
                 listener: (context, state) {
@@ -299,7 +272,9 @@ class _DetailesScreenState extends State<DetailesScreen> {
                             child: BidItem(
                               offerId: offer.id,
                               tailor: offer.tailor.name,
+                              tailorId: offer.tailor.id,
                               duration: offer.timeInDays,
+                              email: offer.tailor.email,
                               price: offer.price,
                               num_work: 0,
                               comment: offer.message,

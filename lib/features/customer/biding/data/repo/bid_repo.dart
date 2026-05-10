@@ -73,10 +73,8 @@ class BiddingCustomerRepo {
     String? time,
   }) async {
     try {
-      // ✅ Convert file path to MultipartFile
       final file = File(imagePath);
 
-      // ✅ Check if file exists
       if (!await file.exists()) {
         throw Exception("Image file not found");
       }
@@ -87,7 +85,6 @@ class BiddingCustomerRepo {
         file.path,
         filename: fileName,
       );
-      // ✅ Call API with Bearer token
       final response = await apiService.createBidMultipart(
         token:  "Bearer $token",
         description: description,

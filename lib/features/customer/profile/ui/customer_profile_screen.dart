@@ -18,9 +18,7 @@ class CustomerProfileScreen extends StatelessWidget {
         body: const ProfileScreen(),
         bottomNavigationBar: FloatingNavBar(
           userRole: 'customer',
-          selectedIndex: 3,
-          focused: AppColors.primery,
-          notSelected: AppColors.darkprimery,
+          selectedIndex: 4,
         ),
       ),
     );

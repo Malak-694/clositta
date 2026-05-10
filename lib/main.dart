@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:app_links/app_links.dart';
+import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/di/dependency_injection.dart';
 import 'package:chicora/core/helper/shared_key.dart';
 import 'package:chicora/core/helper/shared_pref_helper.dart';
@@ -16,18 +17,14 @@ String getInitialRoute(String? token, String? role) {
   if (token == null || token.isEmpty) {
     return RouteNames.login;
   }
-
   switch (role) {
     case 'customer':
       return RouteNames.posts_customer;
-
     case 'tailor':
-      return RouteNames.login;
-
+      return RouteNames.view_bidding_tailor;
     case 'clothes_seller':
     case 'material_seller':
-      return RouteNames.login;
-
+      return RouteNames.seller_products_screen;
     default:
       return RouteNames.login;
   }
@@ -38,8 +35,6 @@ void main() async {
 
   await setupGetIt();
 
-  //   await initializeDateFormatting('ar', null);
-
   final prefs = getIt<SharedPrefHelper>();
   final token = await prefs.getSecureData(SharedPrefKey.token);
   final role = await prefs.getSecureData(SharedPrefKey.role);
@@ -47,6 +42,7 @@ void main() async {
 
   print(role);
   print(initialRoute);
+
   runApp(ChicoraApp(initialRoute: initialRoute));
 }
 
@@ -61,6 +57,10 @@ class ChicoraApp extends StatefulWidget {
   final String initialRoute;
   const ChicoraApp({super.key, required this.initialRoute});
 
+  // ← Any widget calls ChicoraApp.of(context).toggleTheme()
+  static _ChicoraAppState of(BuildContext context) =>
+      context.findAncestorStateOfType<_ChicoraAppState>()!;
+
   @override
   State<ChicoraApp> createState() => _ChicoraAppState();
 }
@@ -68,6 +68,17 @@ class ChicoraApp extends StatefulWidget {
 class _ChicoraAppState extends State<ChicoraApp> {
   final AppLinks _appLinks = AppLinks();
   StreamSubscription<Uri>? _linkSubscription;
+
+  ThemeMode _themeMode = ThemeMode.light;
+
+  void toggleTheme() {
+    setState(() {
+      _themeMode =
+      _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    });
+  }
+
+  bool get isDarkMode => _themeMode == ThemeMode.dark;
 
   @override
   void initState() {
@@ -108,7 +119,7 @@ class _ChicoraAppState extends State<ChicoraApp> {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: const Size(412, 917), // iPhone X size (adjust as needed)
+      designSize: const Size(412, 917),
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
@@ -118,7 +129,47 @@ class _ChicoraAppState extends State<ChicoraApp> {
           initialRoute: widget.initialRoute,
           onGenerateRoute: AppRouter.generateRoute,
           debugShowCheckedModeBanner: false,
+          themeMode: _themeMode,
+
+          // ── Light theme (your existing)
           theme: AppTheme.lightTheme,
+
+          // ── Dark theme using your AppColors
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+            scaffoldBackgroundColor: const Color(0xFF1A1A2E),
+            primaryColor: AppColors.primery,
+            colorScheme: const ColorScheme.dark(
+              primary: AppColors.primery,
+              secondary: AppColors.darksecondary,
+              surface: Color(0xFF1A1A2E),
+              error: AppColors.ternary,
+            ),
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Color(0xFF1A1A2E),
+              elevation: 0,
+              iconTheme: IconThemeData(color: Colors.white),
+              titleTextStyle: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            cardColor: const Color(0xFF252540),
+            iconTheme: const IconThemeData(color: Colors.white),
+            textTheme: const TextTheme(
+              bodyLarge: TextStyle(color: Colors.white),
+              bodyMedium: TextStyle(color: Colors.white70),
+              bodySmall: TextStyle(color: Colors.white60),
+            ),
+            listTileTheme: const ListTileThemeData(
+              tileColor: Color(0xFF252540),
+              textColor: Colors.white,
+              iconColor: Colors.white70,
+            ),
+            dividerColor: Colors.white12,
+            dialogBackgroundColor: const Color(0xFF252540),
+          ),
         );
       },
     );

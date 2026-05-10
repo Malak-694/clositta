@@ -9,6 +9,7 @@ class FloatingNavBar extends StatelessWidget {
   final int selectedIndex;
   final Color focused;
   final Color notSelected;
+
   const FloatingNavBar({
     super.key,
     required this.userRole,
@@ -17,6 +18,16 @@ class FloatingNavBar extends StatelessWidget {
     this.notSelected = AppColors.darkprimery,
   });
 
+  String get _normalizedRole {
+    switch (userRole.toLowerCase()) {
+      case 'clothes_seller':
+      case 'material_seller':
+        return 'seller';
+      default:
+        return userRole.toLowerCase();
+    }
+  }
+
   Map<String, List<Map<String, dynamic>>> get roleNavItems => {
     "customer": [
       {
@@ -24,18 +35,21 @@ class FloatingNavBar extends StatelessWidget {
         "name": "Home",
         "route": RouteNames.customer_products_screen,
       },
-      {"icon": Icons.star, "name": "AI", "route": RouteNames.posts_customer},
+      {
+        "icon": Icons.star,
+        "name": "AI",
+        "route": RouteNames.posts_customer,
+      },
       {
         "icon": Icons.checkroom,
-        "name": "closet",
+        "name": "Closet",
         "route": RouteNames.closet_items_screen,
       },
       {
-        "icon": Icons.request_page,
+        "icon": Icons.local_offer_outlined,
         "name": "Biddings",
         "route": RouteNames.posts_customer,
       },
-
       {
         "icon": Icons.person,
         "name": "Profile",
@@ -53,16 +67,15 @@ class FloatingNavBar extends StatelessWidget {
         "name": "Portfolio",
         "route": RouteNames.portfolio_tailor_screen,
       },
-
-      {
-        "icon": Icons.person,
-        "name": "Profile",
-        "route": RouteNames.profile_tailor_screen,
-      },
       {
         "icon": Icons.shopping_bag,
         "name": "Shop",
         "route": RouteNames.tailor_products_screen,
+      },
+      {
+        "icon": Icons.person,
+        "name": "Profile",
+        "route": RouteNames.profile_tailor_screen,
       },
     ],
     "seller": [
@@ -76,23 +89,23 @@ class FloatingNavBar extends StatelessWidget {
         "name": "Orders",
         "route": RouteNames.seller_orders_screen,
       },
-
-      {
-        "icon": Icons.person,
-        "name": "Profile",
-        "route": RouteNames.profile_seller_screen,
-      },
       {
         "icon": Icons.analytics,
         "name": "Analysis",
         "route": RouteNames.analysis_seller_screen,
+      },
+      {
+        "icon": Icons.person,
+        "name": "Profile",
+        "route": RouteNames.profile_seller_screen,
       },
     ],
   };
 
   @override
   Widget build(BuildContext context) {
-    final navItems = roleNavItems[userRole] ?? roleNavItems["customer"]!;
+    final navItems =
+        roleNavItems[_normalizedRole] ?? roleNavItems["customer"]!;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 12),
@@ -105,7 +118,7 @@ class FloatingNavBar extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
               blurRadius: 10,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -124,7 +137,10 @@ class FloatingNavBar extends StatelessWidget {
                   onTap: () {
                     if (ModalRoute.of(context)?.settings.name !=
                         item["route"]) {
-                      Navigator.pushNamed(context, item["route"]);
+                      Navigator.pushReplacementNamed(  // ← fixed: was pushNamed
+                        context,
+                        item["route"],
+                      );
                     }
                   },
                   child: TweenAnimationBuilder<double>(

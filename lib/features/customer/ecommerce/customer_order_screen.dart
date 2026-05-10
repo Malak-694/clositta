@@ -29,8 +29,7 @@ class CustomerOrderScreen extends StatelessWidget {
       bottomNavigationBar: FloatingNavBar(
         userRole: 'customer',
         selectedIndex: 0,
-        focused: AppColors.primery,
-        notSelected: AppColors.darkprimery,
+
       ),
     );
   }

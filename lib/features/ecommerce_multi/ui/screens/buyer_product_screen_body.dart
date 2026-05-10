@@ -42,28 +42,11 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
   String? _token;
   String _selectedCategory = 'All'; // Track selected category
   // role-aware primary color (defaults to app default)
-  Color _rolePrimary = AppColors.primery;
-  Color _roleDark = AppColors.darkprimery;
 
   final TextEditingController searchController = TextEditingController();
   @override
   void initState() {
     super.initState();
-    // load role based primary color
-    AppColors.primaryForCurrentUser().then((color) {
-      if (!mounted) return;
-      setState(() {
-        _rolePrimary = color;
-      });
-    });
-
-    AppColors.darkForCurrentUser().then((color) {
-      if (!mounted) return;
-      setState(() {
-        _roleDark = color;
-      });
-    });
-
     _initAndLoad();
   }
 
@@ -96,6 +79,7 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
+          SizedBox(height: 20,),
           CustomSearchBar(
             searchController: searchController,
             onSearch: (value) {
@@ -112,8 +96,8 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
           CustomCategorySelector(
             categories: _categories,
             selectedCategory: _selectedCategory,
-            selectedColor: _roleDark,
-            unselectedColor: _rolePrimary,
+            selectedColor: AppColors.darkprimery,
+            unselectedColor: AppColors.primery,
             onCategorySelected: (category) {
               setState(() {
                 _selectedCategory = category;
@@ -137,7 +121,7 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
                 return state.when(
                   initial: () => const SizedBox(),
                   loading: () => Center(
-                    child: CircularProgressIndicator(color: _roleDark),
+                    child: CircularProgressIndicator(color: AppColors.darkprimery),
                   ),
                   success: (products) => products.isEmpty
                       ? Center(

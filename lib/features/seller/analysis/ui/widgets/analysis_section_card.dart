@@ -21,12 +21,12 @@ class AnalysisSectionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.light.withValues(alpha: 0.25)),
+        // border: Border.all(color: AppColors.primery.withValues(alpha: 0.25)),
         boxShadow: const [
           BoxShadow(
-            color: Color.fromRGBO(0, 0, 0, 0.05),
-            blurRadius: 8,
-            offset: Offset(0, 2),
+            color: Colors.black26,
+            blurRadius: 6,
+            offset: Offset(0, 1),
           ),
         ],
       ),

@@ -60,8 +60,8 @@ class _ClosetItemsScreenBodyState extends State<ClosetItemsScreenBody> {
           Row(
             children: [
               CustomDropdown(
-                vPadding: 3.h,
-                style: AppStyle.medPrimery.copyWith(fontSize: 12.sp),
+                vPadding: 8.h,
+                style: AppStyle.medPrimery,
                 items: _categories,
                 value: 'All',
                 hintText: 'Category',
@@ -75,8 +75,8 @@ class _ClosetItemsScreenBodyState extends State<ClosetItemsScreenBody> {
               ),
               const Spacer(),
               CustomDropdown(
-                vPadding: 3.h,
-                style: AppStyle.medPrimery.copyWith(fontSize: 12.sp),
+                vPadding: 8.h,
+                style: AppStyle.medPrimery,
                 items: _seasons,
                 value: 'All',
                 hintText: 'Season',
@@ -97,11 +97,11 @@ class _ClosetItemsScreenBodyState extends State<ClosetItemsScreenBody> {
                 },
                 height: 35,
                 width: 80,
-                style: AppStyle.medBackground.copyWith(fontSize: 13.sp),
+                style: AppStyle.medBackground.copyWith(fontSize: 15.sp),
               ),
             ],
           ),
-          SizedBox(height: 20.h),
+
 
           SizedBox(height: 20.h),
           Expanded(

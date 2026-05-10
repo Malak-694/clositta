@@ -17,6 +17,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.onCartTap,
     this.extraActions = const [], // ✅ new
     this.onLeadingPressed,
+    this.showChatIcon = false,
+    this.unreadChatCount = 0,
+    this.onChatTap,
   });
 
   final String title;
@@ -28,6 +31,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onCartTap;
   final List<Widget> extraActions; // ✅ new
   final VoidCallback? onLeadingPressed;
+ final bool showChatIcon;
+  final int unreadChatCount;
+  final VoidCallback? onChatTap;
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -36,14 +42,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       scrolledUnderElevation: 0,
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.primery,
       automaticallyImplyLeading: false,
       title: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           if (leading)
             IconButton(
-              icon: Icon(leadingIcon, color: AppColors.dark),
+              icon: Icon(leadingIcon, color: AppColors.background),
               onPressed: onLeadingPressed ?? () => Navigator.pop(context),
             ),
           FutureBuilder<String?>(
@@ -57,9 +63,51 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
       actions: [
-        // ✅ extra actions (delete icon etc.)
         ...extraActions,
 
+        if (showChatIcon)
+          Padding(
+            padding: const EdgeInsets.only(right: 4.0),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                IconButton(
+                  icon: Icon(
+                    Icons.chat_bubble_outline,
+                    color: AppColors.background,
+                  ),
+                  onPressed: onChatTap,
+                ),
+                if (unreadChatCount > 0)
+                  Positioned(
+                    top: 6,
+                    right: 6,
+                    child: Container(
+                      padding: const EdgeInsets.all(3),
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 16,
+                        minHeight: 16,
+                      ),
+                      child: Text(
+                        unreadChatCount > 99 ? '99+' : '$unreadChatCount',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+
+        // Cart icon
         if (showCartIcon)
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
@@ -69,7 +117,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 IconButton(
                   icon: Icon(
                     Icons.shopping_cart_outlined,
-                    color: AppColors.dark,
+                    color: AppColors.background,
                   ),
                   onPressed: onCartTap,
                 ),
@@ -109,16 +157,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 TextStyle _styleForRole(String role) {
   switch (role) {
     case 'customer':
-      return AppStyle.medPrimery;
+      return AppStyle.medBackground;
     case 'tailor':
-      return AppStyle.medSecondary;
+      return AppStyle.medBackground;
     case 'clothes_seller':
-      return AppStyle.medTernary;
+      return AppStyle.medBackground;
     case 'material_seller':
-      return AppStyle.medTernary;
+      return AppStyle.medBackground;
     case 'admin':
-      return AppStyle.medPrimery.copyWith(color: Colors.red);
+      return AppStyle.medBackground.copyWith(color: Colors.red);
     default:
-      return AppStyle.medPrimery;
+      return AppStyle.medBackground;
   }
 }

@@ -10,74 +10,11 @@ class AppColors {
   static const lightprimery = Color(0xFFEDEDFF);
   static const primery = Color(0xFF5E50B6);
   static const darkprimery = Color.fromRGBO(39, 32, 83, 1);
-  static const secondary = Color(0xFFAF5A8D );
-  static const darksecondary = Color(0xFF6F3A6A);
-  static const lightsecondary = Color.fromARGB(255, 195, 155, 179);
+  static const secondary = Color(0xFF66BB6A);        // Emerald green
+  static const darksecondary = Color(0xFF276529);    // Forest green
+  static const lightsecondary = Color(0xFFC8E6C9);   // Mint
 
   static const ternary = Color(0xFFFF6464);
-
   static const darkternary = Color(0xFFDD2C00);
   static const lightternary = Color(0xFFF18C88);
-
-  /// Returns a primary color based on a user role string.
-  ///
-  /// Known roles: 'customer', 'tailor', 'admin', 'clothes_seller', 'material_seller'.
-  /// If [role] is null or unrecognized, returns the default `primery` color.
-  static Color primaryForRole(String? role) {
-    if (role == null) return primery;
-    switch (role.toLowerCase()) {
-      case 'customer':
-        return primery; // purple (default)
-      case 'tailor':
-        return secondary; // blue
-      case 'admin':
-        return Color(0xFFDD2C00); // red/orange
-      case 'clothes_seller':
-        return ternary; // green
-      case 'material_seller':
-        return ternary; // amber
-      default:
-        return primery;
-    }
-  }
-
-  static Color darkForRole(String? role) {
-    if (role == null) return primery;
-    switch (role.toLowerCase()) {
-      case 'customer':
-        return darkprimery; // purple (default)
-      case 'tailor':
-        return darksecondary; // blue
-      case 'admin':
-        return darkternary; // red/orange
-      case 'clothes_seller':
-        return darkternary; // green
-      case 'material_seller':
-        return darkternary; // amber
-      default:
-        return primery;
-    }
-  }
-
-  /// Asynchronously reads the stored role (if any) and returns the mapped primary color.
-  /// Uses the `SharedPrefHelper` from the service locator.
-  static Future<Color> primaryForCurrentUser() async {
-    try {
-      final prefs = getIt<SharedPrefHelper>();
-      final role = await prefs.getSecureData(SharedPrefKey.role);
-      return primaryForRole(role);
-    } catch (_) {
-      return primery;
-    }
-  }
-
-  static Future<Color> darkForCurrentUser() async {
-    try {
-      final prefs = getIt<SharedPrefHelper>();
-      final role = await prefs.getSecureData(SharedPrefKey.role);
-      return darkForRole(role);
-    } catch (_) {
-      return darkprimery;
-    }
-  }
 }

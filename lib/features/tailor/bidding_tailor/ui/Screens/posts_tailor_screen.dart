@@ -1,7 +1,6 @@
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/constants.dart';
 import 'package:chicora/core/di/dependency_injection.dart';
-import 'package:chicora/core/helper/shared_key.dart';
 import 'package:chicora/core/helper/shared_pref_helper.dart';
 import 'package:chicora/core/widgets/custom_elevated_button.dart';
 import 'package:chicora/core/widgets/custom_nav_bar.dart';
@@ -17,6 +16,7 @@ import '../../../../../assets.dart';
 import '../../../../../core/router/route_names.dart';
 import '../../../../../core/widgets/circle_indicator.dart';
 import '../../../../../core/widgets/custom_app_bar.dart';
+import '../../../../chat/ui/screens/conversations_screen.dart';
 
 class PostScreenTailor extends StatelessWidget {
   PostScreenTailor({super.key});
@@ -30,6 +30,20 @@ class PostScreenTailor extends StatelessWidget {
         showCartIcon: true,
         onCartTap: () =>
             Navigator.pushNamed(context, RouteNames.tailor_cart_screen),
+        showChatIcon: true,
+        unreadChatCount: 5,   // pass 0 if no unread
+        onChatTap: () async {
+          final userId = await prefs.getSecureData('id') ?? '';
+          if (context.mounted) {
+            Navigator.pushNamed(
+              context,
+              RouteNames.conversations_screen,
+              arguments: {
+                'currentUserId': userId,
+              },
+            );
+          }
+        },
       ),
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -86,20 +100,20 @@ class PostScreenTailor extends StatelessWidget {
                                   return GestureDetector(
                                     onTap: () => post.status != "closed"
                                         ? Navigator.pushNamed(
-                                            context,
-                                            RouteNames.view_offers_tailor,
-                                            arguments: {
-                                              'urlImage':
-                                                  post.imageUrl ??
-                                                  Assets.clothes1,
+                                      context,
+                                      RouteNames.view_offers_tailor,
+                                      arguments: {
+                                        'urlImage':
+                                        post.imageUrl ??
+                                            Assets.clothes1,
 
-                                              'description':
-                                                  post.requestDescription ?? '',
-                                              'price': post.price.toString(),
-                                              'period': post.time ?? '',
-                                              'postId': post.id ?? '',
-                                            },
-                                          )
+                                        'description':
+                                        post.requestDescription ?? '',
+                                        'price': post.price.toString(),
+                                        'period': post.time ?? '',
+                                        'postId': post.id ?? '',
+                                      },
+                                    )
                                         : null,
                                     child: PostItemTailor(
                                       title: post.requestDescription ?? '',
@@ -110,7 +124,7 @@ class PostScreenTailor extends StatelessWidget {
                                           : '',
                                       period: post.time ?? '',
                                       Image_url:
-                                          post.imageUrl ?? Assets.clothes1,
+                                      post.imageUrl ?? Assets.clothes1,
                                       status: post.status ?? 'selected',
                                       id: post.id ?? '',
                                     ),
@@ -134,8 +148,6 @@ class PostScreenTailor extends StatelessWidget {
       bottomNavigationBar: FloatingNavBar(
         userRole: 'tailor',
         selectedIndex: 0,
-        focused: AppColors.secondary,
-        notSelected: AppColors.darksecondary,
       ),
     );
   }

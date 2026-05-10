@@ -43,15 +43,18 @@ class SellerOrderCardWidget extends StatelessWidget {
   });
 
   final OrderSellerResponseModel order;
-  final Future<void> Function({
-    String? orderStatus,
-    String? paymentStatus,
-  }) onUpdateStatus;
+  final Future<void> Function({String? orderStatus}) onUpdateStatus;
 
   @override
   Widget build(BuildContext context) {
     final orderStatus = order.resolvedOrderStatus ?? '';
     final paymentStatus = order.paymentStatus ?? '';
+    final paymentMethod = order.paymentMethod ?? '';
+    final paymentSummary = [
+      if (paymentMethod.isNotEmpty) sellerOrderStatusLabel(paymentMethod),
+      if (paymentStatus.isNotEmpty)
+        'Pay: ${sellerOrderStatusLabel(paymentStatus)}',
+    ].join(' · ');
     final statusColor = _orderStatusColor(order.resolvedOrderStatus);
 
     return Container(
@@ -115,13 +118,18 @@ class SellerOrderCardWidget extends StatelessWidget {
                     color: AppColors.ternary,
                   ),
                 ),
-                SizedBox(width: 12.w),
-                Text(
-                  paymentStatus.isEmpty
-                      ? ''
-                      : 'Pay: ${sellerOrderStatusLabel(paymentStatus)}',
-                  style: AppStyle.body6.copyWith(fontSize: 12.sp),
-                ),
+                if (paymentSummary.isNotEmpty) ...[
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Text(
+                      paymentSummary,
+                      style: AppStyle.body6.copyWith(fontSize: 12.sp),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.end,
+                    ),
+                  ),
+                ],
               ],
             ),
           ],

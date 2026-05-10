@@ -14,13 +14,36 @@ class OrderMangementCubit extends Cubit<OrderMangementState> {
   final prefs = getIt<SharedPrefHelper>();
 
   String? _lastStatusFilter;
+  List<OrderSellerResponseModel>? _cachedAllOrders;
 
   OrderMangementCubit({required this.repo}) : super(OrderMangementState.initial());
 
-  Future<void> getAllOrdersSeller({String? status}) async {
+  /// Loads every seller order from the API (no server-side status filter), caches
+  /// the full list, then emits [success] with orders matching [status].
+  ///
+  /// When [forceRefresh] is false and a cache exists (for example after changing
+  /// the filter chip), only local filtering runs—no network round trip.
+  Future<void> getAllOrdersSeller({String? status, bool forceRefresh = false}) async {
     _lastStatusFilter = status;
+    final cached = _cachedAllOrders;
+    if (!forceRefresh && cached != null) {
+      emit(OrderMangementState.success(_filterOrdersByStatus(cached, _lastStatusFilter)));
+      return;
+    }
+
     emit(const OrderMangementState.loading());
     await _fetchOrders();
+  }
+
+  List<OrderSellerResponseModel> _filterOrdersByStatus(
+    List<OrderSellerResponseModel> orders,
+    String? status,
+  ) {
+    if (status == null || status.isEmpty) return List<OrderSellerResponseModel>.from(orders);
+    final needle = status.toLowerCase();
+    return orders
+        .where((o) => (o.resolvedOrderStatus ?? '').toLowerCase() == needle)
+        .toList();
   }
 
   Future<void> _fetchOrders() async {
@@ -32,10 +55,17 @@ class OrderMangementCubit extends Cubit<OrderMangementState> {
       }
 
       final ApiResult<List<OrderSellerResponseModel>> result =
-          await repo.getAllOrdersSeller(token, status: _lastStatusFilter);
+          await repo.getAllOrdersSeller(token);
 
       result.when(
-        success: (orders) => emit(OrderMangementState.success(orders)),
+        success: (orders) {
+          _cachedAllOrders = orders;
+          emit(
+            OrderMangementState.success(
+              _filterOrdersByStatus(orders, _lastStatusFilter),
+            ),
+          );
+        },
         failure: (error) => emit(OrderMangementState.fail(error)),
       );
     } catch (e) {
@@ -47,7 +77,6 @@ class OrderMangementCubit extends Cubit<OrderMangementState> {
     required String orderId,
     required String suborderId,
     String? orderStatus,
-    String? paymentStatus,
   }) async {
     emit(const OrderMangementState.loading());
     try {

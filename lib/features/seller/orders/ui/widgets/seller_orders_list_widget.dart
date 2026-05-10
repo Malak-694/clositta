@@ -17,7 +17,6 @@ class SellerOrdersListWidget extends StatelessWidget {
   final Future<void> Function(
     OrderSellerResponseModel order, {
     String? orderStatus,
-    String? paymentStatus,
   }) onUpdateStatus;
 
   @override
@@ -49,14 +48,9 @@ class SellerOrdersListWidget extends StatelessWidget {
           final order = orders[index];
           return SellerOrderCardWidget(
             order: order,
-            onUpdateStatus: ({
-              String? orderStatus,
-              String? paymentStatus,
-            }) =>
-                onUpdateStatus(
+            onUpdateStatus: ({String? orderStatus}) => onUpdateStatus(
                   order,
                   orderStatus: orderStatus,
-                  paymentStatus: paymentStatus,
                 ),
           );
         },

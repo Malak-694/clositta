@@ -8,10 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 Future<void> showSellerOrderUpdateBottomSheet({
   required BuildContext context,
   required OrderSellerResponseModel order,
-  required Future<void> Function({
-    String? orderStatus,
-    String? paymentStatus,
-  }) onSubmit,
+  required Future<void> Function({String? orderStatus}) onSubmit,
 }) {
   return showModalBottomSheet<void>(
     context: context,
@@ -36,10 +33,7 @@ class _SellerOrderUpdateSheet extends StatefulWidget {
   });
 
   final OrderSellerResponseModel order;
-  final Future<void> Function({
-    String? orderStatus,
-    String? paymentStatus,
-  }) onSubmit;
+  final Future<void> Function({String? orderStatus}) onSubmit;
 
   @override
   State<_SellerOrderUpdateSheet> createState() =>
@@ -48,12 +42,17 @@ class _SellerOrderUpdateSheet extends StatefulWidget {
 
 class _SellerOrderUpdateSheetState extends State<_SellerOrderUpdateSheet> {
   String? _orderStatus;
-  String? _paymentStatus;
   bool _submitting = false;
 
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.paddingOf(context).bottom;
+    final payStatus = widget.order.paymentStatus ?? '';
+    final payMethod = widget.order.paymentMethod ?? '';
+    final paymentStatusText =
+        payStatus.isEmpty ? '—' : sellerOrderStatusLabel(payStatus);
+    final paymentMethodText =
+        payMethod.isEmpty ? '—' : sellerOrderStatusLabel(payMethod);
 
     return Padding(
       padding: EdgeInsets.only(
@@ -122,36 +121,31 @@ class _SellerOrderUpdateSheetState extends State<_SellerOrderUpdateSheet> {
           ),
           SizedBox(height: 16.h),
           Text(
-            'Payment status',
+            'Payment (read-only)',
             style: AppStyle.medPrimery.copyWith(fontSize: 14.sp),
           ),
           SizedBox(height: 8.h),
-          DropdownButtonFormField<String>(
-            value: _paymentStatus,
-            hint: Text(
-              'No change',
-              style: AppStyle.body6.copyWith(fontSize: 14.sp),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(color: Colors.grey.shade300),
             ),
-            items: kSellerPaymentStatusValues
-                .map(
-                  (v) => DropdownMenuItem(
-                    value: v,
-                    child: Text(sellerOrderStatusLabel(v)),
-                  ),
-                )
-                .toList(),
-            onChanged: (v) => setState(() => _paymentStatus = v),
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
-                borderSide: BorderSide(color: Colors.grey.shade300),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
-                borderSide: BorderSide(color: Colors.grey.shade300),
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Status: $paymentStatusText',
+                  style: AppStyle.body6.copyWith(fontSize: 14.sp),
+                ),
+                SizedBox(height: 6.h),
+                Text(
+                  'Method: $paymentMethodText',
+                  style: AppStyle.body6.copyWith(fontSize: 14.sp),
+                ),
+              ],
             ),
           ),
           SizedBox(height: 24.h),
@@ -161,20 +155,17 @@ class _SellerOrderUpdateSheetState extends State<_SellerOrderUpdateSheet> {
             child: ElevatedButton(
               onPressed: () async {
                 if (_submitting) return;
-                if (_orderStatus == null && _paymentStatus == null) {
+                if (_orderStatus == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Select at least one field to update'),
+                      content: Text('Select an order status to update'),
                     ),
                   );
                   return;
                 }
                 setState(() => _submitting = true);
                 try {
-                  await widget.onSubmit(
-                    orderStatus: _orderStatus,
-                    paymentStatus: _paymentStatus,
-                  );
+                  await widget.onSubmit(orderStatus: _orderStatus);
                   if (context.mounted) Navigator.pop(context);
                 } finally {
                   if (mounted) setState(() => _submitting = false);

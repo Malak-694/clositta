@@ -140,10 +140,10 @@ class _OrderMangementBodyState extends State<_OrderMangementBody> {
                   onRefresh: () async {
                     await context.read<OrderMangementCubit>().getAllOrdersSeller(
                           status: _statusFilter,
+                          forceRefresh: true,
                         );
                   },
-                  onUpdateStatus: (order,
-                      {orderStatus, paymentStatus}) async {
+                  onUpdateStatus: (order, {orderStatus}) async {
                     final id = order.resolvedOrderId;
                     final subOrderId = order.resolvedSubOrderId;
                     if (id == null || subOrderId == null) return;
@@ -151,7 +151,6 @@ class _OrderMangementBodyState extends State<_OrderMangementBody> {
                           orderId: id,
                           suborderId: subOrderId,
                           orderStatus: orderStatus,
-                          paymentStatus: paymentStatus,
                         );
                   },
                 ),

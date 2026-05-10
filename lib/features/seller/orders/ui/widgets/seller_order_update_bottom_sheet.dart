@@ -18,19 +18,13 @@ Future<void> showSellerOrderUpdateBottomSheet({
       borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
     ),
     builder: (sheetContext) {
-      return _SellerOrderUpdateSheet(
-        order: order,
-        onSubmit: onSubmit,
-      );
+      return _SellerOrderUpdateSheet(order: order, onSubmit: onSubmit);
     },
   );
 }
 
 class _SellerOrderUpdateSheet extends StatefulWidget {
-  const _SellerOrderUpdateSheet({
-    required this.order,
-    required this.onSubmit,
-  });
+  const _SellerOrderUpdateSheet({required this.order, required this.onSubmit});
 
   final OrderSellerResponseModel order;
   final Future<void> Function({String? orderStatus}) onSubmit;
@@ -49,10 +43,12 @@ class _SellerOrderUpdateSheetState extends State<_SellerOrderUpdateSheet> {
     final bottomInset = MediaQuery.paddingOf(context).bottom;
     final payStatus = widget.order.paymentStatus ?? '';
     final payMethod = widget.order.paymentMethod ?? '';
-    final paymentStatusText =
-        payStatus.isEmpty ? '—' : sellerOrderStatusLabel(payStatus);
-    final paymentMethodText =
-        payMethod.isEmpty ? '—' : sellerOrderStatusLabel(payMethod);
+    final paymentStatusText = payStatus.isEmpty
+        ? '—'
+        : sellerOrderStatusLabel(payStatus);
+    final paymentMethodText = payMethod.isEmpty
+        ? '—'
+        : sellerOrderStatusLabel(payMethod);
 
     return Padding(
       padding: EdgeInsets.only(
@@ -89,13 +85,16 @@ class _SellerOrderUpdateSheetState extends State<_SellerOrderUpdateSheet> {
             ),
           ),
           SizedBox(height: 16.h),
-          Text('Order status', style: AppStyle.medPrimery.copyWith(fontSize: 14.sp)),
+          Text(
+            'Order status',
+            style: AppStyle.medPrimery.copyWith(fontSize: 14.sp),
+          ),
           SizedBox(height: 8.h),
           DropdownButtonFormField<String>(
             value: _orderStatus,
             hint: Text(
               'No change',
-              style: AppStyle.body6.copyWith(fontSize: 14.sp),
+              style: AppStyle.smallBlack.copyWith(fontSize: 14.sp),
             ),
             items: kSellerOrderStatusValues
                 .map(
@@ -138,12 +137,12 @@ class _SellerOrderUpdateSheetState extends State<_SellerOrderUpdateSheet> {
               children: [
                 Text(
                   'Status: $paymentStatusText',
-                  style: AppStyle.body6.copyWith(fontSize: 14.sp),
+                  style: AppStyle.smallBlack.copyWith(fontSize: 14.sp),
                 ),
                 SizedBox(height: 6.h),
                 Text(
                   'Method: $paymentMethodText',
-                  style: AppStyle.body6.copyWith(fontSize: 14.sp),
+                  style: AppStyle.smallBlack.copyWith(fontSize: 14.sp),
                 ),
               ],
             ),

@@ -49,9 +49,11 @@ class SellerOrderCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final orderStatus = order.resolvedOrderStatus ?? '';
     final paymentStatus = order.paymentStatus ?? '';
-    final paymentMethod = order.paymentMethod ?? '';
+    final paymentMethod = order.paymentMethod == 'Cash_on_delivery'
+        ? 'Cash on delivery'
+        : order.paymentMethod;
     final paymentSummary = [
-      if (paymentMethod.isNotEmpty) sellerOrderStatusLabel(paymentMethod),
+      if (paymentMethod != null) sellerOrderStatusLabel(paymentMethod),
       if (paymentStatus.isNotEmpty)
         'Pay: ${sellerOrderStatusLabel(paymentStatus)}',
     ].join(' · ');
@@ -81,7 +83,10 @@ class SellerOrderCardWidget extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 4.h,
+                  ),
                   decoration: BoxDecoration(
                     color: statusColor.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(12.r),
@@ -123,7 +128,7 @@ class SellerOrderCardWidget extends StatelessWidget {
                   Expanded(
                     child: Text(
                       paymentSummary,
-                      style: AppStyle.body6.copyWith(fontSize: 12.sp),
+                      style: AppStyle.smallBlack,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.end,
@@ -202,7 +207,7 @@ class SellerOrderCardWidget extends StatelessWidget {
                         ),
                         Text(
                           'Qty $qty · ${_formatMoney(line)}',
-                          style: AppStyle.body6.copyWith(fontSize: 11.sp),
+                          style: AppStyle.smallBlack,
                         ),
                       ],
                     ),
@@ -222,7 +227,11 @@ class SellerOrderCardWidget extends StatelessWidget {
                   onSubmit: onUpdateStatus,
                 );
               },
-              icon: Icon(Icons.edit_outlined, size: 18.sp, color: AppColors.ternary),
+              icon: Icon(
+                Icons.edit_outlined,
+                size: 18.sp,
+                color: AppColors.ternary,
+              ),
               label: Text(
                 'Update status',
                 style: AppStyle.medTernary.copyWith(fontSize: 14.sp),

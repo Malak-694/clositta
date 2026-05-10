@@ -49,7 +49,7 @@ class SellerOrderCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final orderStatus = order.resolvedOrderStatus ?? '';
     final paymentStatus = order.paymentStatus ?? '';
-    final paymentMethod = order.paymentMethod == 'Cash_on_delivery'
+    final paymentMethod = order.paymentMethod == 'cash_on_delivery'
         ? 'Cash on delivery'
         : order.paymentMethod;
     final paymentSummary = [

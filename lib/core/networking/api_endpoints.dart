@@ -1,6 +1,6 @@
 class ApiEndpoints {
   static const String baseUrl =
-      'https://graduationproject-production-b435.up.railway.app';
+      'https://graduationproject-production-f0f3.up.railway.app';
 
   static const String login = '/api/auth/login';
   static const String signUp = '/api/auth/register';

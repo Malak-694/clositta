@@ -6,6 +6,8 @@ import 'package:chicora/features/auth/logic/cubit/authentication_cubit.dart';
 import 'package:chicora/features/customer/biding/logic/cubit/custom_bidding_cubit/customer_bidding_cubit.dart';
 import 'package:chicora/features/customer/closet/data/repo/closet_repo.dart';
 import 'package:chicora/features/customer/closet/logic/cubit/closet_cubit.dart';
+import 'package:chicora/features/customer/measurements/data/measurements_repo.dart';
+import 'package:chicora/features/customer/measurements/logic/cubit/measurements_cubit.dart';
 import 'package:chicora/features/ecommerce_multi/data/repo/cart_repo.dart';
 import 'package:chicora/features/ecommerce_multi/data/repo/order_repo.dart';
 import 'package:chicora/features/ecommerce_multi/data/repo/rate_products_repo.dart';
@@ -94,6 +96,11 @@ Future<void> setupGetIt() async {
   );
   getIt.registerFactory<ClosetCubit>(
         () => ClosetCubit(closetRepo: getIt()),
+  );
+  //Measurements (mock)
+  getIt.registerLazySingleton<MeasurementsRepo>(() => MeasurementsRepo());
+  getIt.registerFactory<MeasurementsCubit>(
+    () => MeasurementsCubit(repo: getIt()),
   );
   //PortfolioTailor
   getIt.registerLazySingleton<PortfolioTailorRepo>(

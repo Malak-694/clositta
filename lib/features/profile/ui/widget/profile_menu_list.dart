@@ -3,6 +3,7 @@ import 'package:chicora/core/constants/style.dart';
 import 'package:chicora/core/di/dependency_injection.dart';
 import 'package:chicora/core/helper/shared_pref_helper.dart';
 import 'package:chicora/core/router/route_names.dart';
+import 'package:chicora/features/customer/measurements/ui/widgets/measurements_profile_tile.dart';
 import 'package:chicora/features/profile/data/model/profile_model.dart';
 import 'package:chicora/features/profile/logic/profile_cubit.dart';
 import 'package:chicora/features/profile/ui/screens/edit_profile_screen.dart';
@@ -23,6 +24,8 @@ class ProfileMenuList extends StatelessWidget {
     required this.primaryColor,
     required this.lightColor,
   });
+
+  bool get _isCustomer => role?.toLowerCase() == 'customer';
 
   List<Map<String, dynamic>> get _menuItems {
     switch (role?.toLowerCase()) {
@@ -77,16 +80,24 @@ class ProfileMenuList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = _menuItems;
+    final customerExtraItems = _isCustomer ? 1 : 0;
 
     return ListView.separated(
       shrinkWrap: false,
       physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-      itemCount: items.length + 2,
+      itemCount: items.length + 2 + customerExtraItems,
       separatorBuilder: (_, __) => SizedBox(height: 12.h),
       itemBuilder: (context, index) {
+        if (_isCustomer && index == items.length) {
+          return MeasurementsProfileTile(
+            primaryColor: primaryColor,
+            lightColor: lightColor,
+          );
+        }
+
         // Edit Profile tile
-        if (index == items.length) {
+        if (index == items.length + customerExtraItems) {
           return _buildMenuCard(
             icon: Icons.edit_outlined,
             title: 'Edit Profile',
@@ -120,7 +131,7 @@ class ProfileMenuList extends StatelessWidget {
         }
 
         // Logout tile
-        if (index == items.length + 1) {
+        if (index == items.length + customerExtraItems + 1) {
           return _buildLogoutCard(context);
         }
 

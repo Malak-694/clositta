@@ -1,4 +1,3 @@
-
 import 'package:chicora/core/constants/style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,6 +12,9 @@ class LabeledTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final String? Function(String?)? validator;
   final void Function(String)? onChanged;
+  final void Function(String)? onFieldSubmitted;
+  final TextInputAction? textInputAction;
+  final FocusNode? focusNode;
 
   // Label properties (optional)
   final String? label;
@@ -45,6 +47,9 @@ class LabeledTextField extends StatelessWidget {
     this.suffixIcon,
     this.validator,
     this.onChanged,
+    this.onFieldSubmitted,
+    this.textInputAction,
+    this.focusNode,
     this.label,
     this.labelStyle,
     this.required = false,
@@ -105,11 +110,14 @@ class LabeledTextField extends StatelessWidget {
 
     final textField = TextFormField(
       controller: controller,
+      focusNode: focusNode,
       enabled: enabled,
       maxLines: maxLines,
       keyboardType: keyboardType,
+      textInputAction: textInputAction,
       validator: validator ?? (required ? _defaultValidator : null),
       onChanged: onChanged,
+      onFieldSubmitted: onFieldSubmitted,
       style: textStyle ?? AppStyle.body6,
       decoration: InputDecoration(
         hintText: hintText,
@@ -117,24 +125,19 @@ class LabeledTextField extends StatelessWidget {
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
         contentPadding:
-            contentPadding ?? EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+            contentPadding ??
+            EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
         filled: filled,
         fillColor: fillColor,
 
         // Border styling
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(effectiveBorderRadius),
-          borderSide: BorderSide(
-            color: effectiveBorderColor,
-            width: 1,
-          ),
+          borderSide: BorderSide(color: effectiveBorderColor, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(effectiveBorderRadius),
-          borderSide: BorderSide(
-            color: effectiveFocusedBorderColor,
-            width: 2,
-          ),
+          borderSide: BorderSide(color: effectiveFocusedBorderColor, width: 2),
         ),
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(effectiveBorderRadius),
@@ -145,28 +148,18 @@ class LabeledTextField extends StatelessWidget {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(effectiveBorderRadius),
-          borderSide: BorderSide(
-            color: Colors.red[400]!,
-            width: 1,
-          ),
+          borderSide: BorderSide(color: Colors.red[400]!, width: 1),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(effectiveBorderRadius),
-          borderSide: BorderSide(
-            color: Colors.red[600]!,
-            width: 2,
-          ),
+          borderSide: BorderSide(color: Colors.red[600]!, width: 2),
         ),
       ),
     );
 
     // If size constraints are provided, wrap the text field
-    if (height != null || width != null ) {
-      return SizedBox(
-        height: height,
-        width: width,
-        child: textField,
-      );
+    if (height != null || width != null) {
+      return SizedBox(height: height, width: width, child: textField);
     }
 
     return textField;

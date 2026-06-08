@@ -6,11 +6,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 // ── Entry point ──────────────────────────────────────────
 Widget buildPinterestCard(
-    PinterestCardConfig config,
-    VoidCallback onTap, {
-      Color mainColor = AppColors.primery,
-      Color darkColor = AppColors.darkprimery,
-    }) {
+  PinterestCardConfig config,
+  VoidCallback onTap, {
+  Color mainColor = AppColors.primery,
+  Color darkColor = AppColors.darkprimery,
+}) {
   if (config.showStatus) {
     return _buildPostCard(config, onTap, mainColor: mainColor);
   }
@@ -79,7 +79,7 @@ Widget _buildPostCard(
                     Expanded(
                       child: Text(
                         config.name ?? '',
-                        style: AppStyle.body6,
+                        style: AppStyle.smallBlack,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -139,24 +139,19 @@ Widget _buildStarRating(double rating) {
   return Row(
     children: [
       const Icon(Icons.star, color: Colors.amber, size: 16),
-      Text(
-        '$rating',
-        style: AppStyle.body6.copyWith(
-          fontSize: 12.sp,
-          color: AppColors.primery,
-        ),
-      ),
+      Text('$rating', style: AppStyle.medGray.copyWith(fontSize: 14.sp)),
     ],
   );
 }
 
 Widget _buildProductCard(
-    PinterestCardConfig config,
-    VoidCallback onTap, {
-      Color mainColor = AppColors.primery,
-      Color darkColor = AppColors.darkprimery,
-    }) {
-  final bool hasBottomRow = config.showPrice ||
+  PinterestCardConfig config,
+  VoidCallback onTap, {
+  Color mainColor = AppColors.primery,
+  Color darkColor = AppColors.darkprimery,
+}) {
+  final bool hasBottomRow =
+      config.showPrice ||
       config.showCart ||
       (config.showEdit && config.onEdit != null);
 
@@ -176,24 +171,27 @@ Widget _buildProductCard(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             child: config.imageUrl != null
                 ? Image.network(
-              config.imageUrl!,
-              fit: BoxFit.cover,
-              width: double.infinity,
-              errorBuilder: (_, __, ___) => Container(
-                height: 120,
-                color: Colors.grey.shade100,
-                child: const Center(
-                  child: Icon(Icons.image_not_supported,
-                      color: Colors.grey),
-                ),
-              ),
-            )
+                    config.imageUrl!,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    errorBuilder: (_, __, ___) => Container(
+                      height: 120,
+                      color: Colors.grey.shade100,
+                      child: const Center(
+                        child: Icon(
+                          Icons.image_not_supported,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  )
                 : Container(
-              height: 120,
-              color: Colors.grey.shade100,
-              child: const Center(
-                  child: Icon(Icons.image, color: Colors.grey)),
-            ),
+                    height: 120,
+                    color: Colors.grey.shade100,
+                    child: const Center(
+                      child: Icon(Icons.image, color: Colors.grey),
+                    ),
+                  ),
           ),
 
           Padding(
@@ -205,7 +203,7 @@ Widget _buildProductCard(
                 if (config.name != null)
                   Text(
                     config.name!,
-                    style: AppStyle.body6,
+                    style: AppStyle.medBlack.copyWith(fontSize: 18.sp),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -225,12 +223,8 @@ Widget _buildProductCard(
                       if (config.showPrice && config.price != null)
                         Text(
                           '\$${config.price!.toStringAsFixed(2)}/eg',
-                          style: AppStyle.body6.copyWith(
-                            fontSize: 12.sp,
-                            foreground: Paint()
-                              ..style = PaintingStyle.stroke
-                              ..strokeWidth = .4
-                              ..color = mainColor,
+                          style: AppStyle.smallPrimery.copyWith(
+                            fontSize: 15.sp,
                           ),
                         ),
                       const Spacer(),

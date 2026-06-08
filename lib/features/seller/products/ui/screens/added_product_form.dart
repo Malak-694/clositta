@@ -34,7 +34,7 @@ class _AddedProductFormState extends State<AddedProductForm> {
   final List<String> categories = [
     'Tops',
     'Bottoms',
-    'Dresses',
+    'Dress',
     'Shoes',
     'Outwear',
     'Accessories',

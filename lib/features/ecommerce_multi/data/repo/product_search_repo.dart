@@ -10,7 +10,7 @@ class ProductSearchRepo {
   static const List<String> _categories = [
     'Tops',
     'Bottoms',
-    'Dresses',
+    'Dress',
     'Shoes',
     'Outwear',
     'Accessories',

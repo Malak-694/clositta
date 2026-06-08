@@ -19,7 +19,7 @@ import '../../logic/view_product_logic/view_products_cubit.dart';
 import '../../logic/view_product_logic/view_products_state.dart';
 
 enum _PriceSortOrder {
-  none(' '),
+  none('Default'),
   lowToHigh('Price: Low to High'),
   highToLow('Price: High to Low');
 
@@ -39,7 +39,7 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
     'All',
     'Tops',
     'Bottoms',
-    'Dresses',
+    'Dress',
     'Shoes',
     'Outwear',
     'Accessories',
@@ -171,7 +171,10 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
           SizedBox(height: 12.h),
           Align(
             alignment: Alignment.centerRight,
+
             child: DropdownButton<_PriceSortOrder>(
+              isDense: true,
+
               value: _priceSort,
               underline: const SizedBox.shrink(),
               icon: Icon(Icons.sort, color: AppColors.primery, size: 22.sp),
@@ -180,10 +183,25 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
                   .map(
                     (order) => DropdownMenuItem(
                       value: order,
-                      child: Text(order.label),
+                      child: Text(order.label, style: AppStyle.smallBlack),
                     ),
                   )
                   .toList(),
+              selectedItemBuilder: (context) {
+                return _PriceSortOrder.values.map((order) {
+                  if (order == _PriceSortOrder.none) {
+                    return const SizedBox.shrink();
+                  }
+
+                  return Row(
+                    children: [
+                      Text(order.label, style: AppStyle.smallBlack),
+                      SizedBox(width: 4.w),
+                    ],
+                  );
+                }).toList();
+              },
+
               onChanged: (order) {
                 if (order == null) return;
                 setState(() => _priceSort = order);

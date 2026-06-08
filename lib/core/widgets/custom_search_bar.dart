@@ -1,6 +1,7 @@
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomSearchBar extends StatelessWidget {
   const CustomSearchBar({
@@ -8,11 +9,13 @@ class CustomSearchBar extends StatelessWidget {
     required this.searchController,
     required this.onSearch,
     this.onChanged,
+    this.onImageSearch,
     this.width = 380,
   });
 
   final ValueChanged<String> onSearch;
   final ValueChanged<String>? onChanged;
+  final VoidCallback? onImageSearch;
   final TextEditingController searchController;
   final double width;
 
@@ -22,7 +25,7 @@ class CustomSearchBar extends StatelessWidget {
       width: width,
       child: TextField(
         controller: searchController,
-        style: AppStyle.body6,
+        style: AppStyle.medBlack.copyWith(fontSize: 14.sp),
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.symmetric(
             vertical: 10, // 👈 controls height
@@ -36,6 +39,16 @@ class CustomSearchBar extends StatelessWidget {
             icon: Icon(Icons.search, color: AppColors.primery, size: 26),
             onPressed: () => onSearch(searchController.text.trim()),
           ),
+          suffixIcon: onImageSearch != null
+              ? IconButton(
+                  icon: Icon(
+                    Icons.image_search_outlined,
+                    color: AppColors.primery,
+                    size: 26,
+                  ),
+                  onPressed: onImageSearch,
+                )
+              : null,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
@@ -68,6 +81,7 @@ class CustomSearchBar extends StatelessWidget {
         ),
 
         onChanged: onChanged,
+        onSubmitted: onSearch,
       ),
     );
   }

@@ -11,6 +11,7 @@ import 'package:chicora/features/customer/measurements/logic/cubit/measurements_
 import 'package:chicora/features/ecommerce_multi/data/repo/cart_repo.dart';
 import 'package:chicora/features/ecommerce_multi/data/repo/order_repo.dart';
 import 'package:chicora/features/ecommerce_multi/data/repo/rate_products_repo.dart';
+import 'package:chicora/features/ecommerce_multi/data/repo/product_search_repo.dart';
 import 'package:chicora/features/ecommerce_multi/data/repo/view_products_repo.dart';
 import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
 import 'package:chicora/features/ecommerce_multi/logic/order_cubit/order_cubit.dart';
@@ -80,8 +81,13 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton<ViewProductsRepo>(
         () => ViewProductsRepo(apiService: getIt()),
   );
+  //Product search (mock)
+  getIt.registerLazySingleton<ProductSearchRepo>(() => ProductSearchRepo());
   getIt.registerFactory<ViewProductsCubit>(
-        () => ViewProductsCubit(viewProductsRepo: getIt()),
+        () => ViewProductsCubit(
+          viewProductsRepo: getIt(),
+          productSearchRepo: getIt(),
+        ),
   );
   //RateProducts
   getIt.registerLazySingleton<RateProductsRepo>(

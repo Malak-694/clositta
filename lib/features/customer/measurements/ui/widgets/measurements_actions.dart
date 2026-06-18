@@ -50,9 +50,9 @@ class MeasurementsActions extends StatelessWidget {
 }
 
 class MeasurementsSummaryCard extends StatelessWidget {
-  final double chest;
-  final double waist;
-  final double hips;
+  final int chest;
+  final int waist;
+  final int hips;
   final String unit;
 
   const MeasurementsSummaryCard({
@@ -101,7 +101,7 @@ class MeasurementsSummaryCard extends StatelessWidget {
     );
   }
 
-  Widget _summaryItem(String label, double value) {
+  Widget _summaryItem(String label, int value) {
     return Column(
       children: [
         Text(label, style: AppStyle.smallBlack.copyWith(fontSize: 12.sp)),

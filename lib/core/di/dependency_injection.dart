@@ -104,7 +104,7 @@ Future<void> setupGetIt() async {
         () => ClosetCubit(closetRepo: getIt()),
   );
   //Measurements (mock)
-  getIt.registerLazySingleton<MeasurementsRepo>(() => MeasurementsRepo());
+  getIt.registerLazySingleton<MeasurementsRepo>(() => MeasurementsRepo(apiService: getIt()));
   getIt.registerFactory<MeasurementsCubit>(
     () => MeasurementsCubit(repo: getIt()),
   );

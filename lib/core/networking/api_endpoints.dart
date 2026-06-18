@@ -62,4 +62,7 @@ class ApiEndpoints {
   static const String conversations = '/api/chat/conversations';
   static const String chatHistory   = '/api/chat/{userId}';      // GET /api/chat/:userId
   static const String unreadCount   = '/api/chat/unread';        // GET /api/chat/unread
+  // ── Measurements ──────────────────────────────────────────
+static const String measurements = '/api/auth/measurements';
+
 }

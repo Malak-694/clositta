@@ -47,6 +47,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/email.png
   AssetGenImage get email => const AssetGenImage('assets/images/email.png');
 
+  /// File path: assets/images/guide.png
+  AssetGenImage get guide => const AssetGenImage('assets/images/guide.png');
+
   /// File path: assets/images/home.svg
   String get home => 'assets/images/home.svg';
 
@@ -83,6 +86,7 @@ class $AssetsImagesGen {
     clothes2,
     dress,
     email,
+    guide,
     home,
     lock,
     login,

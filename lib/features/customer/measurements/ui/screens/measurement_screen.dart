@@ -1,7 +1,8 @@
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
 import 'package:chicora/core/widgets/custom_app_bar.dart';
-import 'package:chicora/features/customer/measurements/data/model/measurements_model.dart';
+import 'package:chicora/features/customer/measurements/data/model/measurements_request_model.dart';
+import 'package:chicora/features/customer/measurements/data/model/measurements_response_model.dart';
 import 'package:chicora/features/customer/measurements/logic/cubit/measurements_cubit.dart';
 import 'package:chicora/features/customer/measurements/logic/cubit/measurements_state.dart';
 import 'package:chicora/features/customer/measurements/ui/widgets/measurements_actions.dart';
@@ -29,7 +30,7 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
   final _inseamController = TextEditingController();
   final _heightController = TextEditingController();
 
-  String _unit = 'cm';
+  String _unit = 'CM';
   bool _formPopulated = false;
 
   @override
@@ -45,18 +46,20 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
   }
 
   void _populateForm(MeasurementsModel data) {
-    _chestController.text = _formatValue(data.chest);
-    _waistController.text = _formatValue(data.waist);
-    _hipsController.text = _formatValue(data.hips);
-    _shouldersController.text = _formatValue(data.shoulders);
-    _armLengthController.text = _formatValue(data.armLength);
-    _inseamController.text = _formatValue(data.inseam);
-    _heightController.text = _formatValue(data.height);
-    _unit = data.unit;
+    _chestController.text = data.chest?.toString() ?? '';
+    _waistController.text = data.waist?.toString() ?? '';
+    _hipsController.text = data.hips?.toString() ?? '';
+    _shouldersController.text = data.shoulders?.toString() ?? '';
+    _armLengthController.text = data.armLength?.toString() ?? '';
+    _inseamController.text = data.inseam?.toString() ?? '';
+    _heightController.text = data.height?.toString() ?? '';
+
+    _unit = data.unit ?? 'CM';
+
     _formPopulated = true;
   }
 
-  String _formatValue(double value) {
+  String _formatValue(int value) {
     return value == value.roundToDouble()
         ? value.toInt().toString()
         : value.toString();
@@ -70,19 +73,19 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
     _armLengthController.clear();
     _inseamController.clear();
     _heightController.clear();
-    _unit = 'cm';
+    _unit = 'CM';
     _formPopulated = false;
   }
 
-  MeasurementsRequest _buildRequest() {
-    return MeasurementsRequest(
-      chest: double.parse(_chestController.text.trim()),
-      waist: double.parse(_waistController.text.trim()),
-      hips: double.parse(_hipsController.text.trim()),
-      shoulders: double.parse(_shouldersController.text.trim()),
-      armLength: double.parse(_armLengthController.text.trim()),
-      inseam: double.parse(_inseamController.text.trim()),
-      height: double.parse(_heightController.text.trim()),
+  MeasurementsModel _buildRequest() {
+    return MeasurementsModel(
+      chest: int.parse(_chestController.text.trim()),
+      waist: int.parse(_waistController.text.trim()),
+      hips: int.parse(_hipsController.text.trim()),
+      shoulders: int.parse(_shouldersController.text.trim()),
+      armLength: int.parse(_armLengthController.text.trim()),
+      inseam: int.parse(_inseamController.text.trim()),
+      height: int.parse(_heightController.text.trim()),
       unit: _unit,
     );
   }
@@ -119,34 +122,24 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
       listener: (context, state) {
         state.whenOrNull(
           success: (data) {
-            if (data is GetMeasurementsResponse && data.measurements != null) {
+            if (data is MeasurementsResponseModel &&
+                data.measurements != null) {
               if (!_formPopulated) {
                 setState(() => _populateForm(data.measurements!));
               }
-            } else if (data is SaveMeasurementsResponse) {
-              setState(() => _populateForm(data.measurements));
-              _showSnackBar(data.message);
-            } else if (data is DeleteMeasurementsResponse) {
-              setState(_clearForm);
-              _showSnackBar(data.message);
             }
           },
-          fail: (message) {
-            if (message.contains('No measurements found')) {
-              setState(_clearForm);
-            } else {
-              _showSnackBar(message);
-            }
-          },
+          fail: (message) => _showSnackBar(message),
         );
       },
       builder: (context, state) {
+        debugPrint("MeasurementScreen rebuilt");
         final isLoading = state.maybeWhen(
           loading: () => true,
           orElse: () => false,
         );
         final cubit = context.read<MeasurementsCubit>();
-        final hasExisting = cubit.currentMeasurements != null;
+        final hasExisting = cubit.currentMeasurements?.hasMeasurements ?? false;
 
         return Scaffold(
           backgroundColor: AppColors.background,
@@ -161,12 +154,12 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                if (hasExisting && cubit.currentMeasurements != null)
+                if (hasExisting)
                   MeasurementsSummaryCard(
-                    chest: cubit.currentMeasurements!.chest,
-                    waist: cubit.currentMeasurements!.waist,
-                    hips: cubit.currentMeasurements!.hips,
-                    unit: cubit.currentMeasurements!.unit,
+                    chest: cubit.currentMeasurements!.chest ?? 0,
+                    waist: cubit.currentMeasurements!.waist ?? 0,
+                    hips: cubit.currentMeasurements!.hips ?? 0,
+                    unit: cubit.currentMeasurements!.unit!,
                   ),
 
                 SizedBox(height: 20.h),
@@ -192,7 +185,7 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
                   isLoading: isLoading,
                   onSave: () {
                     if (!_formKey.currentState!.validate()) return;
-                    cubit.saveMeasurements(_buildRequest());
+                    cubit.updateMeasurements(_buildRequest());
                   },
                   onDelete: _confirmDelete,
                 ),

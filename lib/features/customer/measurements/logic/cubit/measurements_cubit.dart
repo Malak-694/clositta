@@ -4,7 +4,8 @@ import 'package:chicora/core/helper/shared_key.dart';
 import 'package:chicora/core/helper/shared_pref_helper.dart';
 import 'package:chicora/core/networking/api_result.dart';
 import 'package:chicora/features/customer/measurements/data/measurements_repo.dart';
-import 'package:chicora/features/customer/measurements/data/model/measurements_model.dart';
+import 'package:chicora/features/customer/measurements/data/model/measurements_request_model.dart';
+import 'package:chicora/features/customer/measurements/data/model/measurements_response_model.dart';
 import 'package:chicora/features/customer/measurements/logic/cubit/measurements_state.dart';
 
 class MeasurementsCubit extends Cubit<MeasurementsState> {
@@ -12,24 +13,25 @@ class MeasurementsCubit extends Cubit<MeasurementsState> {
   final SharedPrefHelper _prefs = getIt<SharedPrefHelper>();
 
   MeasurementsModel? currentMeasurements;
+  bool? hasExistingMeasurements;
 
   MeasurementsCubit({required MeasurementsRepo repo})
-      : _repo = repo,
-        super(const MeasurementsState.initial());
+    : _repo = repo,
+      super(const MeasurementsState.initial());
 
-  Future<String?> _getUserId() async {
-    return _prefs.getSecureData(SharedPrefKey.id);
+  Future<String?> _getUserToken() async {
+    return _prefs.getSecureData(SharedPrefKey.token);
   }
 
   Future<void> getMeasurements() async {
     emit(const MeasurementsState.loading());
-    final userId = await _getUserId();
-    if (userId == null || userId.isEmpty) {
+    final token = await _getUserToken();
+    if (token == null || token.isEmpty) {
       emit(const MeasurementsState.fail('User not found. Please login again.'));
       return;
     }
 
-    final result = await _repo.getMeasurements(userId: userId);
+    final result = await _repo.getMeasurements(token: token);
     result.when(
       success: (data) {
         currentMeasurements = data.measurements;
@@ -42,46 +44,36 @@ class MeasurementsCubit extends Cubit<MeasurementsState> {
     );
   }
 
-  Future<void> saveMeasurements(MeasurementsRequest request) async {
+  Future<void> updateMeasurements(MeasurementsModel request) async {
     emit(const MeasurementsState.loading());
-    final userId = await _getUserId();
-    if (userId == null || userId.isEmpty) {
+    final token = await _getUserToken();
+    if (token == null || token.isEmpty) {
       emit(const MeasurementsState.fail('User not found. Please login again.'));
       return;
     }
 
-    ApiResult<SaveMeasurementsResponse> result;
-    if (currentMeasurements != null) {
-      result = await _repo.updateMeasurements(userId: userId, body: request);
-    } else {
-      result = await _repo.createMeasurements(userId: userId, body: request);
-      final conflict = result.maybeWhen(
-        failure: (message) => message.contains('already exist'),
-        orElse: () => false,
-      );
-      if (conflict) {
-        result = await _repo.updateMeasurements(userId: userId, body: request);
-      }
-    }
-
+    final result = await _repo.updateMeasurements(token: token, body: request);
     result.when(
       success: (data) {
         currentMeasurements = data.measurements;
         emit(MeasurementsState.success(data));
       },
-      failure: (message) => emit(MeasurementsState.fail(message)),
+      failure: (message) {
+        currentMeasurements = null;
+        emit(MeasurementsState.fail(message));
+      },
     );
   }
 
   Future<void> deleteMeasurements() async {
     emit(const MeasurementsState.loading());
-    final userId = await _getUserId();
-    if (userId == null || userId.isEmpty) {
+    final token = await _getUserToken();
+    if (token == null || token.isEmpty) {
       emit(const MeasurementsState.fail('User not found. Please login again.'));
       return;
     }
 
-    final result = await _repo.deleteMeasurements(userId: userId);
+    final result = await _repo.deleteMeasurements(token: token);
     result.when(
       success: (data) {
         currentMeasurements = null;

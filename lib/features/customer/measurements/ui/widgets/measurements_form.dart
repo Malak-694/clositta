@@ -103,9 +103,9 @@ class MeasurementsForm extends StatelessWidget {
         SizedBox(height: 8.h),
         Row(
           children: [
-            _unitChip('cm'),
+            _unitChip('CM'),
             SizedBox(width: 12.w),
-            _unitChip('in'),
+            _unitChip('IN'),
           ],
         ),
       ],

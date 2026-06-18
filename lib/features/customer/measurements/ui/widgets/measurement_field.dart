@@ -47,7 +47,7 @@ class MeasurementField extends StatelessWidget {
         if (value == null || value.trim().isEmpty) {
           return 'Required';
         }
-        final parsed = double.tryParse(value.trim());
+        final parsed = int.tryParse(value.trim());
         if (parsed == null || parsed <= 0) {
           return 'Enter a valid number';
         }

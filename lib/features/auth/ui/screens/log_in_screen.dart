@@ -1,6 +1,7 @@
 import 'package:chicora/core/constants/style.dart';
 import 'package:chicora/core/router/route_names.dart';
 import 'package:chicora/core/utils/validator.dart';
+import 'package:chicora/features/auth/data/model/google_auth_model.dart';
 import 'package:chicora/features/auth/logic/cubit/authentication_cubit.dart';
 import 'package:chicora/features/auth/logic/cubit/authentication_state.dart';
 import 'package:chicora/features/auth/ui/widgets/custom_medium_button.dart';
@@ -41,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
           initial: () {},
           loading: () {},
           success: (data) {
-            if (data is LoginResponse) {
+            if (data is LoginResponse || data is GoogleAuthResponseModel) {
               if (data.role == 'customer') {
                 Navigator.pushReplacementNamed(
                   context,
@@ -64,9 +65,9 @@ class _LoginScreenState extends State<LoginScreen> {
             }
           },
           fail: (error) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(AppStyle.userMessage(error))));
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(AppStyle.userMessage(error))),
+            );
           },
         );
       },
@@ -150,7 +151,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                         child: Text(
                           "Forget your password ",
-                          style: AppStyle.medBlack.copyWith(fontSize: 18.sp),
+                          style: AppStyle.smallPrimery.copyWith(
+                            fontSize: 18.sp,
+                          ),
                           textAlign: TextAlign.start,
                         ),
                       ),
@@ -159,14 +162,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SizedBox(height: 20.h),
 
-                  // CustomMediumButton(
-                  //   value: "Next",
-                  //   onPressed: () {
-                  //     // Navigate to next screen
-                  //   },
-                  //   color: AppColors.primery,
-                  //   width: MediaQuery.of(context).size.width - 60.w,
-                  // ),
+                  TextButton(
+                    child: Text(
+                      "- Sign in with google -",
+                      style: AppStyle.smallBlack,
+                    ),
+                    onPressed: state is Loading
+                        ? null
+                        : () {
+                            context.read<AuthCubit>().googleAuth();
+                          },
+                  ),
                   SizedBox(height: 16.h),
                   TextButton(
                     onPressed: () {
@@ -174,7 +180,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: Text(
                       "First time to see us?",
-                      style: AppStyle.medBlack,
+                      style: AppStyle.smallBlack,
                     ),
                   ),
                 ],

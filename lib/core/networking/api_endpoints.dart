@@ -4,7 +4,7 @@ class ApiEndpoints {
 
   static const String login = '/api/auth/login';
   static const String signUp = '/api/auth/register';
-
+static const String google= '/api/auth/google';
   static const String profile = "/api/auth/profile";
   static const String delete_profile_image = "/api/auth/profile/image";
   static const String forget_password = "/api/auth/forgot-password";

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "972503944615",
+    "project_id": "clositta",
+    "storage_bucket": "clositta.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:972503944615:android:047abf1c53add84ade3a82",
+        "android_client_info": {
+          "package_name": "com.example.chicora"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "972503944615-ks98hr9b6vo82stucp3g2693fq7jt30d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8XB-Bn4MCQsizjVa-6TW_7GM-1XcgE1U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "972503944615-ks98hr9b6vo82stucp3g2693fq7jt30d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

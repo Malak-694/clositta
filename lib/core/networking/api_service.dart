@@ -1,6 +1,7 @@
 import 'package:chicora/core/models/message_model.dart';
 import 'package:chicora/core/networking/api_endpoints.dart';
 import 'package:chicora/features/auth/data/model/forgot_password_model.dart';
+import 'package:chicora/features/auth/data/model/google_auth_model.dart';
 import 'package:chicora/features/auth/data/model/login_model.dart';
 import 'package:chicora/features/auth/data/model/sign_up_model.dart';
 import 'package:chicora/features/chat/data/models/chat_message_model.dart';
@@ -59,12 +60,20 @@ abstract class ApiService {
     @Part(name: 'image') MultipartFile? image,
   });
 
-  @POST(ApiEndpoints.login)
+    @POST(ApiEndpoints.login)
   Future<LoginResponse> logIn(@Body() LoginRequest body);
+
+
+    @POST(ApiEndpoints.google)
+  Future<GoogleAuthResponseModel> googleAuth(@Body() GoogleAuthRequestModel body);
+
+
+
   @GET(ApiEndpoints.viewBiddingTailor)
   Future<List<PostTailorResponse>> viewBiddingTailor(
     @Header("Authorization") String token,
   );
+
 
   @GET(ApiEndpoints.profile)
   Future<ProfileResponse> getProfile(@Header("Authorization") String token);

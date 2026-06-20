@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'core/router/app_router.dart';
 import 'core/router/route_names.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 final GlobalKey<NavigatorState> appNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -35,6 +37,7 @@ void main() async {
 
   await setupGetIt();
 
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   final prefs = getIt<SharedPrefHelper>();
   final token = await prefs.getSecureData(SharedPrefKey.token);
   final role = await prefs.getSecureData(SharedPrefKey.role);
@@ -73,8 +76,9 @@ class _ChicoraAppState extends State<ChicoraApp> {
 
   void toggleTheme() {
     setState(() {
-      _themeMode =
-      _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+      _themeMode = _themeMode == ThemeMode.light
+          ? ThemeMode.dark
+          : ThemeMode.light;
     });
   }
 

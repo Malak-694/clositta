@@ -110,6 +110,36 @@ class _ApiService implements ApiService {
   }
 
   @override
+  Future<GoogleAuthResponseModel> googleAuth(
+    GoogleAuthRequestModel body,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
+    final _options = _setStreamType<GoogleAuthResponseModel>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/auth/google',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late GoogleAuthResponseModel _value;
+    try {
+      _value = GoogleAuthResponseModel.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<List<PostTailorResponse>> viewBiddingTailor(String token) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};

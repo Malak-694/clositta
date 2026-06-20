@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:chicora/core/networking/api_result.dart';
 import 'package:chicora/core/networking/api_service.dart';
 import 'package:chicora/features/auth/data/model/forgot_password_model.dart';
+import 'package:chicora/features/auth/data/model/google_auth_model.dart';
 import 'package:chicora/features/auth/data/model/login_model.dart';
 import 'package:chicora/features/auth/data/model/sign_up_model.dart';
 import 'package:dio/dio.dart';
@@ -62,29 +63,46 @@ class AuthRepo {
     }
   }
 
-  Future<ApiResult<MessageModel>> forgotPassword(ForgotPasswordRequest body) async{
-    try{
+  // In auth_repo.dart
+
+  Future<ApiResult<GoogleAuthResponseModel>> googleAuth(GoogleAuthRequestModel body) async {
+    try {
+      final response = await apiService.googleAuth(body);
+      return ApiResult.success(response);
+    } catch (e) {
+      return ApiResult.failure(mapErrorToUserMessage(e));
+    }
+  }
+
+  Future<ApiResult<MessageModel>> forgotPassword(
+    ForgotPasswordRequest body,
+  ) async {
+    try {
       final response = await apiService.forgotPassword(body);
       return ApiResult.success(response);
-    }catch(e){
+    } catch (e) {
       return ApiResult.failure(e.toString());
     }
   }
 
-  Future<ApiResult<MessageModel>> verifyResetCode(VerifyCodeRequest body) async{
-    try{
+  Future<ApiResult<MessageModel>> verifyResetCode(
+    VerifyCodeRequest body,
+  ) async {
+    try {
       final response = await apiService.verfiyResetCode(body);
       return ApiResult.success(response);
-    }catch(e){
+    } catch (e) {
       return ApiResult.failure(e.toString());
     }
   }
 
-  Future<ApiResult<MessageModel>> resetPassword(ResetPasswordRequest body) async {
-    try{
+  Future<ApiResult<MessageModel>> resetPassword(
+    ResetPasswordRequest body,
+  ) async {
+    try {
       final response = await apiService.resetPassword(body);
       return ApiResult.success(response);
-    }catch(e){
+    } catch (e) {
       return ApiResult.failure(e.toString());
     }
   }

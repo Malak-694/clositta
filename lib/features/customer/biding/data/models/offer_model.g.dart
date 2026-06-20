@@ -7,10 +7,10 @@ part of 'offer_model.dart';
 // **************************************************************************
 
 Tailor _$TailorFromJson(Map<String, dynamic> json) => Tailor(
-  id: json['_id'] as String,
-  name: json['name'] as String,
-  email: json['email'] as String,
-  phone: json['phone'] as String,
+  id: json['_id'] as String?,
+  name: json['name'] as String?,
+  email: json['email'] as String?,
+  phone: json['phone'] as String?,
 );
 
 Map<String, dynamic> _$TailorToJson(Tailor instance) => <String, dynamic>{
@@ -22,16 +22,23 @@ Map<String, dynamic> _$TailorToJson(Tailor instance) => <String, dynamic>{
 
 OfferResponse _$OfferResponseFromJson(Map<String, dynamic> json) =>
     OfferResponse(
-      id: json['_id'] as String,
-      bid: json['bid'] as String,
-      tailor: Tailor.fromJson(json['tailor'] as Map<String, dynamic>),
-      price: (json['price'] as num).toInt(),
-      timeInDays: (json['timeInDays'] as num).toInt(),
-      message: json['message'] as String,
-      status: json['status'] as String? ?? 'pending',
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
-      version: (json['__v'] as num).toInt(),
+      id: json['_id'] as String?,
+      bid: json['bid'] as String?,
+      tailor: json['tailor'] == null
+          ? null
+          : Tailor.fromJson(json['tailor'] as Map<String, dynamic>),
+      price: (json['price'] as num?)?.toInt(),
+      timeInDays: (json['timeInDays'] as num?)?.toInt(),
+      message: json['message'] as String?,
+      status: json['status'] as String?,
+      workStatus: json['workStatus'] as String?,
+      createdAt: json['createdAt'] == null
+          ? null
+          : DateTime.parse(json['createdAt'] as String),
+      updatedAt: json['updatedAt'] == null
+          ? null
+          : DateTime.parse(json['updatedAt'] as String),
+      version: (json['__v'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$OfferResponseToJson(OfferResponse instance) =>
@@ -43,7 +50,8 @@ Map<String, dynamic> _$OfferResponseToJson(OfferResponse instance) =>
       'timeInDays': instance.timeInDays,
       'message': instance.message,
       'status': instance.status,
-      'createdAt': instance.createdAt.toIso8601String(),
-      'updatedAt': instance.updatedAt.toIso8601String(),
+      'workStatus': instance.workStatus,
+      'createdAt': instance.createdAt?.toIso8601String(),
+      'updatedAt': instance.updatedAt?.toIso8601String(),
       '__v': instance.version,
     };

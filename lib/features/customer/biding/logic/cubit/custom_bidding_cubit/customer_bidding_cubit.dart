@@ -19,6 +19,8 @@ class CustomerBiddingCubit extends Cubit<CustomerBiddingState> {
   bool _loadedBids = false;
   bool _loadedBestOffers = false;
   bool _loadedOffers =false ;
+  final Map<String, OfferResponse> _acceptedOffers = {};
+  Map<String, OfferResponse?> get acceptedOffers => _acceptedOffers;
 
   // Get token from shared preferences
   Future<String?> _getToken() async {
@@ -251,5 +253,30 @@ class CustomerBiddingCubit extends Cubit<CustomerBiddingState> {
         ),
       );
     }
+  }
+
+  Future<void> loadAcceptedOffers(List<BidResponse> closedBids) async {
+    final token = await _getToken();
+    if (token == null || token.isEmpty) return;
+
+    for (final bid in closedBids) {
+      if (bid.id == null) continue;
+      if (_acceptedOffers.containsKey(bid.id)) continue;
+
+      try {
+        final offers = await _repository.getOffers(token, bid.id!);
+        final accepted = offers.where(
+              (o) => o.status?.toLowerCase() == 'accepted',
+        ).firstOrNull ?? (offers.isNotEmpty ? offers.first : null);
+
+        if (accepted != null) {
+          _acceptedOffers[bid.id!] = accepted;
+        }
+      } catch (_) {}
+    }
+
+    emit(CustomerBiddingState.success(
+      state.maybeWhen(success: (d) => d, orElse: () => <BidResponse>[]),
+    ));
   }
 }

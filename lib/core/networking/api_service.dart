@@ -38,6 +38,7 @@ import '../../features/ecommerce_multi/data/models/rating models/rating_response
 import '../../features/profile/data/model/profile_model.dart';
 import '../../features/profile/data/model/update_profile_model.dart';
 import '../../features/seller/analysis/data/models/analysis_response_model.dart';
+import '../../features/tailor/bidding_tailor/data/models/accepted_offer_model.dart';
 import '../../features/tailor/portfolio/data/models/tailor_portfolio_bundle_model.dart';
 
 part 'api_service.g.dart';
@@ -152,6 +153,19 @@ abstract class ApiService {
     @Header("Authorization") String token,
     @Path("offerId") String offerId,
   );
+
+  @GET(ApiEndpoints.myOrder)
+  Future<List<AcceptedOfferResponse>> getMyAcceptedOffers(
+      @Header('Authorization') String token,
+      );
+
+
+  @PATCH(ApiEndpoints.updateState)
+  Future<void> updateWorkStatus(
+      @Header('Authorization') String token,
+      @Path('offerId') String offerId,
+      @Body() Map<String, String> body,
+      );
 
   @DELETE(ApiEndpoints.editeOffer)
   Future<void> deleteOffer(

@@ -99,9 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           Text(
                             "Good to see you back",
                             textAlign: TextAlign.start,
-                            style: AppStyle.medBlack.copyWith(
-                              fontWeight: FontWeight.w900,
-                            ),
+                            style: AppStyle.medBlack
                           ),
                         ],
                       ),

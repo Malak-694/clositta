@@ -91,13 +91,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
 
                   SizedBox(height: 30.h),
-
-                  // ── Menu list with Edit Profile + Logout
                   Expanded(
                     child: Center(
                       child: ProfileMenuList(
                         role: _role,
-                        profile: profile,        // ← passed down here
+                        profile: profile,
                         primaryColor: AppColors.primery,
                         lightColor: AppColors.lightprimery,
                       ),

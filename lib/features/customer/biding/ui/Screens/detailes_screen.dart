@@ -270,18 +270,17 @@ class _DetailesScreenState extends State<DetailesScreen> {
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 10.0),
                             child: BidItem(
-                              offerId: offer.id,
-                              tailor: offer.tailor.name,
-                              tailorId: offer.tailor.id,
-                              duration: offer.timeInDays,
-                              email: offer.tailor.email,
-                              price: offer.price,
-                              num_work: 0,
-                              comment: offer.message,
-                              showSelectButton: isBidOpen,
-                              onAccept: () =>
-                                  _handleAcceptOffer(context, offer.id),
-                            ),
+                          offerId: offer.id ?? '',
+                            tailor: offer.tailor?.name ?? '',
+                            tailorId: offer.tailor?.id ?? '',
+                            duration: offer.timeInDays ?? 0,
+                            email: offer.tailor?.email ?? '',
+                            price: offer.price ?? 0,
+                            num_work: 0,
+                            comment: offer.message ?? '',
+                            showSelectButton: isBidOpen,
+                            onAccept: () => _handleAcceptOffer(context, offer.id ?? ''),
+                          ),
                           );
                         },
                       );

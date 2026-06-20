@@ -63,6 +63,11 @@ class FloatingNavBar extends StatelessWidget {
         "route": RouteNames.view_bidding_tailor,
       },
       {
+        "icon": Icons.assignment_outlined,
+        "name": "orders",
+        "route": RouteNames.active_order,
+      },
+      {
         "icon": Icons.cut,
         "name": "Portfolio",
         "route": RouteNames.portfolio_tailor_screen,
@@ -72,6 +77,7 @@ class FloatingNavBar extends StatelessWidget {
         "name": "Shop",
         "route": RouteNames.tailor_products_screen,
       },
+
       {
         "icon": Icons.person,
         "name": "Profile",

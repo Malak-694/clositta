@@ -10,9 +10,9 @@ class AppColors {
   static const lightprimery = Color(0xFFEDEDFF);
   static const primery = Color(0xFF5E50B6);
   static const darkprimery = Color.fromRGBO(39, 32, 83, 1);
-  static const secondary = Color(0xFF66BB6A);        // Emerald green
-  static const darksecondary = Color(0xFF276529);    // Forest green
-  static const lightsecondary = Color(0xFFC8E6C9);   // Mint
+  static const secondary = Color(0xFF99751F);        // Emerald green
+  static const darksecondary = Color(0xFFFFC333);    // Forest green
+  static const lightsecondary = Color(0xFFFFE7AD);   // Mint
 
   static const ternary = Color(0xFFFF6464);
   static const darkternary = Color(0xFFDD2C00);

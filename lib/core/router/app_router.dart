@@ -51,6 +51,7 @@ import '../../features/seller/analysis/ui/screens/analysis_seller_screen.dart';
 import '../../features/seller/orders/ui/screens/order_mangement_screen.dart';
 import '../../features/seller/products/ui/screens/seller_products_screen.dart';
 import '../../features/seller/profile/ui/seller_profile_screen.dart' hide TailorProfileScreen;
+import '../../features/tailor/bidding_tailor/ui/Screens/active_order_screen.dart';
 import '../../features/tailor/bidding_tailor/ui/Screens/posts_tailor_screen.dart';
 import '../../features/tailor/ecommerce/tailor_cart_screen.dart';
 import '../../features/tailor/ecommerce/tailor_products_screen.dart';
@@ -246,6 +247,13 @@ class AppRouter {
     //       ),
     //     ),
     //   );
+      case RouteNames.active_order:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<BiddingTailorCubit>()..getMyAcceptedOffers(),
+            child: const ActiveOrderScreen(),
+          ),
+        );
       case RouteNames.tailor_info_screen:
         final args = settings.arguments as Map<String, dynamic>? ?? {};
         return MaterialPageRoute(

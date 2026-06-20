@@ -31,7 +31,7 @@ class PostScreenTailor extends StatelessWidget {
         onCartTap: () =>
             Navigator.pushNamed(context, RouteNames.tailor_cart_screen),
         showChatIcon: true,
-        unreadChatCount: 5,   // pass 0 if no unread
+        unreadChatCount: 5,
         onChatTap: () async {
           final userId = await prefs.getSecureData('id') ?? '';
           if (context.mounted) {
@@ -49,14 +49,15 @@ class PostScreenTailor extends StatelessWidget {
       body: SafeArea(
         child: Container(
           height: double.infinity,
-          width: double.infinity,
           padding: EdgeInsets.symmetric(horizontal: kHorizontalPadding),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Expanded(
                 child: Builder(
                   builder: (context) {
-                    // Trigger load once when the screen is built
+
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       context.read<BiddingTailorCubit>().getBiddingTailors();
                     });
@@ -115,18 +116,20 @@ class PostScreenTailor extends StatelessWidget {
                                       },
                                     )
                                         : null,
-                                    child: PostItemTailor(
-                                      title: post.requestDescription ?? '',
-                                      bidCount: 0,
-                                      date: post.createdAt ?? '',
-                                      price: post.price != null
-                                          ? '\$${post.price}'
-                                          : '',
-                                      period: post.time ?? '',
-                                      Image_url:
-                                      post.imageUrl ?? Assets.clothes1,
-                                      status: post.status ?? 'selected',
-                                      id: post.id ?? '',
+                                    child: Center(
+                                      child: PostItemTailor(
+                                        title: post.requestDescription ?? '',
+                                        bidCount: 0 ,
+                                        date: post.createdAt ?? '',
+                                        price: post.price != null
+                                            ? '\$${post.price}'
+                                            : '',
+                                        period: post.time ?? 'Flexible',
+                                        Image_url:
+                                        post.imageUrl ?? Assets.clothes1,
+                                        status: post.status ?? 'selected',
+                                        id: post.id ?? '',
+                                      ),
                                     ),
                                   );
                                 },

@@ -12,13 +12,13 @@ class TailorProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<ProfileCubit>()..getProfile(), // 👈
+      create: (_) => getIt<ProfileCubit>()..getProfile(),
       child: Scaffold(
         backgroundColor: AppColors.background,
         body: const ProfileScreen(),
         bottomNavigationBar: FloatingNavBar(
           userRole: 'tailor',
-          selectedIndex: 2,
+          selectedIndex: 5,
         ),
       ),
     );

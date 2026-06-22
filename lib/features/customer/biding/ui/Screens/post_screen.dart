@@ -268,14 +268,13 @@ class _PostScreenState extends State<PostScreen>
   final prefs = getIt<SharedPrefHelper>();
   String? _currentUserId;
   late TabController _tabController;
-  List<BidResponse> _allBids = [];  // 👈 shared between tabs
+  List<BidResponse> _allBids = [];
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _loadUserId();
-    context.read<ConversationsCubit>().loadUnreadCount();
   }
 
   @override

@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'package:flutter/foundation.dart';
 
 class PinterestCardConfig<T> {
   final String? imageUrl;
@@ -9,8 +9,10 @@ class PinterestCardConfig<T> {
   final bool showRating;
   final bool showPrice;
   final bool showEdit;
+  final bool showDelete;
   final VoidCallback onTap;
   final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
   final String? date;
   final String? status;
   final bool showStatus;
@@ -27,8 +29,10 @@ class PinterestCardConfig<T> {
     this.showRating = true,
     this.showPrice = true,
     this.showEdit = false,
+    this.showDelete = false,
     this.onTap = _emptyOnTap,
     this.onEdit,
+    this.onDelete,
     this.date,
     this.status,
     this.showStatus = false,

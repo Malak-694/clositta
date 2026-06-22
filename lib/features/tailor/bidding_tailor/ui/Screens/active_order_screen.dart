@@ -7,10 +7,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/style.dart';
 import '../../../../../core/di/dependency_injection.dart';
+import '../../../../../core/helper/shared_pref_helper.dart';
 import '../../../../../core/router/route_names.dart';
 import '../../../../../core/widgets/custom_app_bar.dart';
 import '../../../../../core/widgets/custom_dropdown_list.dart';
 import '../../../../../core/widgets/custom_nav_bar.dart';
+import '../../../../chat/data/models/conversation_model.dart';
+import '../../../../chat/logic/conversations_cubit/conversations_cubit.dart';
+import '../../../../chat/logic/conversations_cubit/conversations_state.dart';
+import '../../../../ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
+import '../../../../ecommerce_multi/logic/cart_cubit/cart_state.dart';
+import '../../../../ecommerce_multi/logic/cart_cubit/cart_total_quantity.dart';
 import '../../data/models/accepted_offer_model.dart';
 
 class ActiveOrderScreen extends StatelessWidget {
@@ -35,8 +42,9 @@ class _ActiveOrderView extends StatefulWidget {
 class _ActiveOrderViewState extends State<_ActiveOrderView> {
   List<AcceptedOfferResponse> _orders = [];
   bool _isLoadingDialogOpen = false;
-  String _selectedFilter = 'all'; // 👈 filter state
+  String _selectedFilter = 'all';
   List<String> states = ['all', 'accepted', 'in_progress', 'completed'] ;
+  final prefs = getIt<SharedPrefHelper>();
   String _statusLabel(String? s) {
     switch (s) {
       case 'in_progress':
@@ -92,10 +100,40 @@ class _ActiveOrderViewState extends State<_ActiveOrderView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Active Orders',
-        showCartIcon: true,
-        onCartTap: () {},
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: BlocBuilder<CartCubit, CartState<dynamic>>(
+          builder: (context, cartState) {
+            return BlocBuilder<ConversationsCubit,
+                ConversationsState<List<ConversationModel>>>(
+              builder: (context, convState) {
+                final unreadCount =
+                    context.read<ConversationsCubit>().unreadCount;
+                return CustomAppBar(
+                  title: "Active Orders",
+                  showCartIcon: true,
+                  cartItemCount: cartTotalItemQuantity(cartState),
+                  onCartTap: () => Navigator.pushNamed(
+                    context,
+                    RouteNames.tailor_cart_screen,
+                  ),
+                  showChatIcon: true,
+                  unreadChatCount: unreadCount,
+                  onChatTap: () async {
+                    final userId = await prefs.getSecureData('id') ?? '';
+                    if (context.mounted) {
+                      Navigator.pushNamed(
+                        context,
+                        RouteNames.conversations_screen,
+                        arguments: {'currentUserId': userId},
+                      );
+                    }
+                  },
+                );
+              },
+            );
+          },
+        ),
       ),
       backgroundColor: AppColors.background,
       body: BlocListener<BiddingTailorCubit, BiddingTailorState>(

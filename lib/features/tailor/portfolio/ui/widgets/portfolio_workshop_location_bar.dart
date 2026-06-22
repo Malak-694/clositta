@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../../core/router/route_names.dart';
+
 /// Tailor workshop address and Maps link, shown at the top of the portfolio screen.
 class PortfolioWorkshopLocationBar extends StatelessWidget {
   const PortfolioWorkshopLocationBar({
@@ -62,9 +64,17 @@ class PortfolioWorkshopLocationBar extends StatelessWidget {
               style: AppStyle.medSecondary.copyWith(fontSize: 12.sp),
             ),
             SizedBox(height: 8.h),
-            Text(
-              'No address yet — add workshop details in Profile (Edit profile).',
-              style: AppStyle.medLight.copyWith(fontSize: 12.sp),
+            GestureDetector(
+              onTap: () => Navigator.pushNamed(
+                context,
+                RouteNames.profile_tailor_screen,
+              ),
+              child: Text(
+                'No address yet — tap here to add workshop details from edit profile.',
+                style: AppStyle.smallPrimery.copyWith(
+                  decoration: TextDecoration.underline,
+                ),
+              ),
             ),
           ],
         ),

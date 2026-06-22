@@ -121,6 +121,7 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
                           showRating: false,
                           showPrice: false,
                           showEdit: true,
+                          showDelete: true,
                           onEdit: () {
                             final cubit =
                                 context.read<PortfolioTailorCubit>();
@@ -132,9 +133,8 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
                               cubit.viewPortfolioTailor(null);
                             });
                           },
-                          onTap: () {
-                            _showDeleteConfirmation(context, item);
-                          },
+                          onDelete: () => _showDeleteConfirmation(context, item), // ✅ new
+                          onTap: () {},
                         ),
                         mainColor: AppColors.secondary,
                         darkColor: AppColors.darksecondary,

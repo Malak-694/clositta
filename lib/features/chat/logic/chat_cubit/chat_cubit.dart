@@ -20,7 +20,6 @@ class ChatCubit extends Cubit<ChatState<List<ChatMessageModel>>> {
     required String token,
     required String receiverId,
   }) async {
-    // Cancel any old subscriptions
     for (final sub in _subscriptions) sub.cancel();
     _subscriptions.clear();
     _messages.clear();
@@ -28,19 +27,14 @@ class ChatCubit extends Cubit<ChatState<List<ChatMessageModel>>> {
     emit(const ChatState.loading());
 
     try {
-      // 1️⃣ Load history from REST first
       final history = await _chatRepo.getChatHistory(token, receiverId);
       _messages.addAll(history);
       emit(ChatState.success(List.from(_messages)));
 
-      // 2️⃣ Init fresh stream controllers
       _socketService.init();
 
-      // 3️⃣ Subscribe to socket streams BEFORE connecting
       _subscriptions.add(
         _socketService.onConnected.listen((_) {
-          // Already showing history — no need to change state here
-          // unless you want to show a "connected" indicator
         }),
       );
 
@@ -86,7 +80,6 @@ class ChatCubit extends Cubit<ChatState<List<ChatMessageModel>>> {
         }),
       );
 
-      // 4️⃣ Connect socket LAST — receiver joins their room server-side
       _socketService.connect(token, receiverId);
 
     } catch (e) {

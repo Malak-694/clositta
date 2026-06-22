@@ -145,17 +145,8 @@ class AppRouter {
           builder: (_) => MultiBlocProvider(
             providers: [
               BlocProvider(create: (_) => getIt<CustomerBiddingCubit>()),
-              BlocProvider(
-                create: (_) {
-                  final cart = getIt<CartCubit>();
-                  cart.getCart();
-                  return cart;
-                },
-              ),
               BlocProvider(create: (_) => getIt<ViewProductsCubit>()),
-              BlocProvider(                                     // ← add this
-                create: (_) => getIt<ConversationsCubit>()..loadUnreadCount(),
-              ),
+
             ],
             child: const PostScreen(),
           ),
@@ -323,20 +314,8 @@ class AppRouter {
         );
       case RouteNames.customer_products_screen:
         return MaterialPageRoute(
-          builder: (_) => MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                create: (_) {
-                  final cart = getIt<CartCubit>();
-                  cart.getCart();
-                  return cart;
-                },
-              ),
-              BlocProvider(create: (_) => getIt<ViewProductsCubit>()),
-              BlocProvider(                                     // ← add this
-                create: (_) => getIt<ConversationsCubit>()..loadConversations(),
-              ),
-            ],
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<ViewProductsCubit>(),
             child: CustomerProductsScreen(),
           ),
         );
@@ -373,7 +352,7 @@ class AppRouter {
             providers: [
               BlocProvider(create: (_) => getIt<RateProductsCubit>()),
               BlocProvider.value(
-                value: cartCubit, // ✅ reuse the existing instance
+                value: cartCubit,
               ),
             ],
             child: ProductDetailScreen(product: product),
@@ -396,16 +375,6 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => MultiBlocProvider(
             providers: [
-              BlocProvider(
-                create: (_) {
-                  final cart = getIt<CartCubit>();
-                  cart.getCart();
-                  return cart;
-                },
-              ),
-              BlocProvider(
-                create: (_) => getIt<ConversationsCubit>()..loadUnreadCount(),
-              ),
               BlocProvider(
                 create: (_) => ClosetCubit(closetRepo: getIt<ClosetRepo>()),
               ),

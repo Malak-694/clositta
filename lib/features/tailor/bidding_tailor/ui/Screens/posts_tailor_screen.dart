@@ -16,7 +16,13 @@ import '../../../../../assets.dart';
 import '../../../../../core/router/route_names.dart';
 import '../../../../../core/widgets/circle_indicator.dart';
 import '../../../../../core/widgets/custom_app_bar.dart';
+import '../../../../chat/data/models/conversation_model.dart';
+import '../../../../chat/logic/conversations_cubit/conversations_cubit.dart';
+import '../../../../chat/logic/conversations_cubit/conversations_state.dart';
 import '../../../../chat/ui/screens/conversations_screen.dart';
+import '../../../../ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
+import '../../../../ecommerce_multi/logic/cart_cubit/cart_state.dart';
+import '../../../../ecommerce_multi/logic/cart_cubit/cart_total_quantity.dart';
 
 class PostScreenTailor extends StatelessWidget {
   PostScreenTailor({super.key});
@@ -25,25 +31,40 @@ class PostScreenTailor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: "My Post",
-        showCartIcon: true,
-        onCartTap: () =>
-            Navigator.pushNamed(context, RouteNames.tailor_cart_screen),
-        showChatIcon: true,
-        unreadChatCount: 5,
-        onChatTap: () async {
-          final userId = await prefs.getSecureData('id') ?? '';
-          if (context.mounted) {
-            Navigator.pushNamed(
-              context,
-              RouteNames.conversations_screen,
-              arguments: {
-                'currentUserId': userId,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: BlocBuilder<CartCubit, CartState<dynamic>>(
+          builder: (context, cartState) {
+            return BlocBuilder<ConversationsCubit,
+                ConversationsState<List<ConversationModel>>>(
+              builder: (context, convState) {
+                final unreadCount =
+                    context.read<ConversationsCubit>().unreadCount;
+                return CustomAppBar(
+                  title: "My Post",
+                  showCartIcon: true,
+                  cartItemCount: cartTotalItemQuantity(cartState),
+                  onCartTap: () => Navigator.pushNamed(
+                    context,
+                    RouteNames.tailor_cart_screen,
+                  ),
+                  showChatIcon: true,
+                  unreadChatCount: unreadCount,
+                  onChatTap: () async {
+                    final userId = await prefs.getSecureData('id') ?? '';
+                    if (context.mounted) {
+                      Navigator.pushNamed(
+                        context,
+                        RouteNames.conversations_screen,
+                        arguments: {'currentUserId': userId},
+                      );
+                    }
+                  },
+                );
               },
             );
-          }
-        },
+          },
+        ),
       ),
       backgroundColor: AppColors.background,
       body: SafeArea(

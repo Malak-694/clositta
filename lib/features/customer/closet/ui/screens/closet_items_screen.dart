@@ -33,7 +33,6 @@ class _ClosetItemsScreenState extends State<ClosetItemsScreen> {
   void initState() {
     super.initState();
     _loadUserId();
-    context.read<ConversationsCubit>().loadUnreadCount();
   }
   Future<void> _loadUserId() async {
     final prefs = getIt<SharedPrefHelper>();

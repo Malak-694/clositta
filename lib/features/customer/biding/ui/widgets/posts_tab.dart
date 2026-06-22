@@ -24,7 +24,7 @@ class PostsTab extends StatefulWidget {
 }
 
 class _PostsTabState extends State<PostsTab> {
-  final List<String> _categories = ["All", "Open", "Updated", "Closed"];
+  final List<String> _categories = ["All", "Open", "Updated"];
   String _selectedCategory = "All";
 
   String _formatDate(dynamic dateValue) {
@@ -38,11 +38,34 @@ class _PostsTabState extends State<PostsTab> {
     }
   }
 
+  void _confirmDelete(BuildContext context, String postId) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete Post'),
+        content: const Text('Are you sure you want to delete this post?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              context.read<CustomerBiddingCubit>().deleteBid(bidId: postId);
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+  }
+
   List<BidResponse> _filterBids(List<BidResponse> bids) {
     if (_selectedCategory == "All") return bids;
     return bids
-        .where((b) =>
-    b.status.toLowerCase() == _selectedCategory.toLowerCase())
+        .where((b) => b.status.toLowerCase() == _selectedCategory.toLowerCase())
         .toList();
   }
 
@@ -52,13 +75,39 @@ class _PostsTabState extends State<PostsTab> {
       padding: EdgeInsets.fromLTRB(10.w, 0, 10.w, 0),
       child: Column(
         children: [
+
           Expanded(
             child: Builder(
               builder: (context) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   context.read<CustomerBiddingCubit>().getMyBids();
                 });
-                return BlocBuilder<CustomerBiddingCubit, CustomerBiddingState>(
+                return BlocConsumer<CustomerBiddingCubit, CustomerBiddingState>(
+                  listener: (context, state) {
+                    state.whenOrNull(
+                      success: (data) {
+                        if (data is String &&
+                            data == "Bid deleted successfully") {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Post deleted successfully'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                          context.read<CustomerBiddingCubit>().clearState();
+                          context.read<CustomerBiddingCubit>().getMyBids();
+                        }
+                      },
+                      fail: (msg) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(msg),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      },
+                    );
+                  },
                   builder: (context, state) {
                     return state.when(
                       initial: () => Center(child: circleIndicator()),
@@ -83,8 +132,13 @@ class _PostsTabState extends State<PostsTab> {
                           WidgetsBinding.instance.addPostFrameCallback((_) {
                             widget.onBidsLoaded(data);
                           });
+                          final nonClosedBids = data
+                              .where((b) =>
+                          b.status.toLowerCase() != 'closed')
+                              .toList();
 
-                          final filteredBids = _filterBids(data);
+                          final filteredBids = _filterBids(nonClosedBids);
+
                           if (filteredBids.isEmpty) {
                             return Center(
                               child: Text(
@@ -95,6 +149,7 @@ class _PostsTabState extends State<PostsTab> {
                               ),
                             );
                           }
+
                           return PinterestGrid<BidResponse>(
                             items: filteredBids,
                             mainColor: AppColors.ternary,
@@ -121,10 +176,11 @@ class _PostsTabState extends State<PostsTab> {
                               showDate: true,
                               showCart: false,
                               showRating: false,
-                              showEdit:
-                              post.status.toLowerCase() != 'closed',
-                              onEdit: post.status.toLowerCase() != 'closed'
-                                  ? () => Navigator.pushNamed(
+                              showDelete: true,
+                              onDelete: () =>
+                                  _confirmDelete(context, post.id),
+                              showEdit: true,
+                              onEdit: () => Navigator.pushNamed(
                                 context,
                                 RouteNames.upload_post,
                                 arguments: {
@@ -134,8 +190,7 @@ class _PostsTabState extends State<PostsTab> {
                                   'initialImageUrl': post.imageUrl,
                                   'initialPrice': post.price,
                                 },
-                              )
-                                  : null,
+                              ),
                             ),
                           );
                         }
@@ -147,6 +202,7 @@ class _PostsTabState extends State<PostsTab> {
               },
             ),
           ),
+
           CustomElevatedButton(
             value: "+ New Post",
             style: AppStyle.medBackground,
@@ -156,7 +212,7 @@ class _PostsTabState extends State<PostsTab> {
                 Navigator.pushNamed(context, RouteNames.upload_post),
           ),
 
-          SizedBox(height: 10.h),
+          SizedBox(height: 15.h),
         ],
       ),
     );

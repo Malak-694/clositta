@@ -138,6 +138,7 @@ class _ClosetItemsScreenBodyState extends State<ClosetItemsScreenBody> {
                           showRating: false,
                           showPrice: false,
                           showEdit: true,
+                          showDelete: true,
                           onEdit: () {
                             Navigator.pushNamed(
                               context,
@@ -147,9 +148,8 @@ class _ClosetItemsScreenBodyState extends State<ClosetItemsScreenBody> {
                               context.read<ClosetCubit>().viewClosetItems();
                             });
                           },
-                          onTap: () {
-                            _showDeleteConfirmation(context, item);
-                          },
+                          onDelete: () => _showDeleteConfirmation(context, item), // ✅ new
+                          onTap: () {},
                         ),
                       );
                     }

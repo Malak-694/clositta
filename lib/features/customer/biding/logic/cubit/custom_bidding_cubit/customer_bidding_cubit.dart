@@ -259,6 +259,7 @@ class CustomerBiddingCubit extends Cubit<CustomerBiddingState> {
     final token = await _getToken();
     if (token == null || token.isEmpty) return;
 
+    var changed = false;
     for (final bid in closedBids) {
       if (bid.id == null) continue;
       if (_acceptedOffers.containsKey(bid.id)) continue;
@@ -271,9 +272,12 @@ class CustomerBiddingCubit extends Cubit<CustomerBiddingState> {
 
         if (accepted != null) {
           _acceptedOffers[bid.id!] = accepted;
+          changed = true;
         }
       } catch (_) {}
     }
+
+    if (!changed) return;
 
     emit(CustomerBiddingState.success(
       state.maybeWhen(success: (d) => d, orElse: () => <BidResponse>[]),

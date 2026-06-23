@@ -24,8 +24,21 @@ class PostsTab extends StatefulWidget {
 }
 
 class _PostsTabState extends State<PostsTab> {
+  CustomerBiddingCubit? _cubit;
+  bool _requestedBids = false;
+
   final List<String> _categories = ["All", "Open", "Updated"];
   String _selectedCategory = "All";
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final cubit = _cubit ??= context.read<CustomerBiddingCubit>();
+    if (!_requestedBids) {
+      _requestedBids = true;
+      cubit.getMyBids();
+    }
+  }
 
   String _formatDate(dynamic dateValue) {
     try {
@@ -52,7 +65,7 @@ class _PostsTabState extends State<PostsTab> {
           TextButton(
             onPressed: () {
               Navigator.pop(dialogContext);
-              context.read<CustomerBiddingCubit>().deleteBid(bidId: postId);
+              _cubit?.deleteBid(bidId: postId);
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('Delete'),
@@ -77,16 +90,13 @@ class _PostsTabState extends State<PostsTab> {
         children: [
 
           Expanded(
-            child: Builder(
-              builder: (context) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  context.read<CustomerBiddingCubit>().getMyBids();
-                });
-                return BlocConsumer<CustomerBiddingCubit, CustomerBiddingState>(
+            child: BlocConsumer<CustomerBiddingCubit, CustomerBiddingState>(
                   listener: (context, state) {
                     state.whenOrNull(
                       success: (data) {
-                        if (data is String &&
+                        if (data is List<BidResponse>) {
+                          widget.onBidsLoaded(data);
+                        } else if (data is String &&
                             data == "Bid deleted successfully") {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
@@ -94,8 +104,9 @@ class _PostsTabState extends State<PostsTab> {
                               backgroundColor: Colors.green,
                             ),
                           );
-                          context.read<CustomerBiddingCubit>().clearState();
-                          context.read<CustomerBiddingCubit>().getMyBids();
+                          _cubit?.clearState();
+                          _requestedBids = false;
+                          _cubit?.getMyBids();
                         }
                       },
                       fail: (msg) {
@@ -129,9 +140,6 @@ class _PostsTabState extends State<PostsTab> {
                       ),
                       success: (data) {
                         if (data is List<BidResponse>) {
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            widget.onBidsLoaded(data);
-                          });
                           final nonClosedBids = data
                               .where((b) =>
                           b.status.toLowerCase() != 'closed')
@@ -198,9 +206,7 @@ class _PostsTabState extends State<PostsTab> {
                       },
                     );
                   },
-                );
-              },
-            ),
+                ),
           ),
 
           CustomElevatedButton(

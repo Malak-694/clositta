@@ -109,10 +109,11 @@ class _ActiveOrdersTabState extends State<ActiveOrdersTab> {
           itemBuilder: (context, index) {
             final bid = _activeOrders[index];
             final offer = acceptedOffers[bid.id];
-            final tailorName = offer?.tailor?.name ??
-                offer?.tailor?.name ??
-                'Unknown Tailor';
+            final tailorName = offer?.tailor?.name ?? 'Unknown Tailor';
             final workStatus = offer?.workStatus ?? 'accepted';
+            final receiverId = offer?.tailor?.id;
+            final canOpenChat =
+                receiverId != null && receiverId.isNotEmpty;
 
             return Container(
               padding: EdgeInsets.symmetric(
@@ -179,26 +180,31 @@ class _ActiveOrdersTabState extends State<ActiveOrdersTab> {
                   ),
                   SizedBox(height: 8.h,),
                   GestureDetector(
-                    onTap: () => Navigator.pushNamed(
-                      context,
-                      RouteNames.chat_screen,
-                      arguments: {
-                        'receiverId': offer?.tailor?.id ?? '',
-                        'receiverName': offer?.tailor?.name ?? '',
-                      },
-                    ),
-                    child: Container(
-                      width: double.infinity,
-                      height: 40.h,
-                      padding: EdgeInsets.all(8.w),
-                      decoration: BoxDecoration(
-                        color: AppColors.lightprimery,
-                        borderRadius: BorderRadius.circular(10.r),
-                      ),
-                      child: Icon(
-                        Icons.chat_bubble_outline_rounded,
-                        color: AppColors.primery,
-                        size: 18.sp,
+                    onTap: canOpenChat
+                        ? () => Navigator.pushNamed(
+                              context,
+                              RouteNames.chat_screen,
+                              arguments: {
+                                'receiverId': receiverId,
+                                'receiverName': offer?.tailor?.name ?? '',
+                              },
+                            )
+                        : null,
+                    child: Opacity(
+                      opacity: canOpenChat ? 1.0 : 0.4,
+                      child: Container(
+                        width: double.infinity,
+                        height: 40.h,
+                        padding: EdgeInsets.all(8.w),
+                        decoration: BoxDecoration(
+                          color: AppColors.lightprimery,
+                          borderRadius: BorderRadius.circular(10.r),
+                        ),
+                        child: Icon(
+                          Icons.chat_bubble_outline_rounded,
+                          color: AppColors.primery,
+                          size: 18.sp,
+                        ),
                       ),
                     ),
                   ),

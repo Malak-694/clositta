@@ -16,6 +16,10 @@ PortfolioTailorUserModel _$PortfolioTailorUserModelFromJson(
   imageUrl: json['imageUrl'] as String?,
   location: json['location'] as String?,
   mapsUrl: json['mapsUrl'] as String?,
+  averageRating: (json['averageRating'] as num?)?.toDouble(),
+  totalRatings: (json['totalRatings'] as num?)?.toInt(),
+  ratingDistribution: (json['ratingDistribution'] as Map<String, dynamic>?)
+      ?.map((k, e) => MapEntry(k, (e as num).toInt())),
 );
 
 Map<String, dynamic> _$PortfolioTailorUserModelToJson(
@@ -28,4 +32,7 @@ Map<String, dynamic> _$PortfolioTailorUserModelToJson(
   'imageUrl': instance.imageUrl,
   'location': instance.location,
   'mapsUrl': instance.mapsUrl,
+  'averageRating': instance.averageRating,
+  'totalRatings': instance.totalRatings,
+  'ratingDistribution': instance.ratingDistribution,
 };

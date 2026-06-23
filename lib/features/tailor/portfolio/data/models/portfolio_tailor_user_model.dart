@@ -13,6 +13,9 @@ class PortfolioTailorUserModel {
   final String? imageUrl;
   final String? location;
   final String? mapsUrl;
+  final double? averageRating;
+  final int? totalRatings;
+  final Map<String, int>? ratingDistribution;
 
   const PortfolioTailorUserModel({
     required this.id,
@@ -22,6 +25,9 @@ class PortfolioTailorUserModel {
     this.imageUrl,
     this.location,
     this.mapsUrl,
+    this.averageRating,
+    this.totalRatings,
+    this.ratingDistribution,
   });
 
   factory PortfolioTailorUserModel.fromJson(Map<String, dynamic> json) =>

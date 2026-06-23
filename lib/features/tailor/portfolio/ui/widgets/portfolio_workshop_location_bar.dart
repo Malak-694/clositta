@@ -7,10 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 /// Tailor workshop address and Maps link, shown at the top of the portfolio screen.
 class PortfolioWorkshopLocationBar extends StatelessWidget {
-  const PortfolioWorkshopLocationBar({
-    super.key,
-    required this.tailor,
-  });
+  const PortfolioWorkshopLocationBar({super.key, required this.tailor});
 
   final PortfolioTailorUserModel? tailor;
 
@@ -18,16 +15,16 @@ class PortfolioWorkshopLocationBar extends StatelessWidget {
     final uri = Uri.tryParse(raw);
     if (uri == null) {
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Invalid maps link')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Invalid maps link')));
       return;
     }
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not open link')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Could not open link')));
     }
   }
 
@@ -56,9 +53,33 @@ class PortfolioWorkshopLocationBar extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Workshop location',
-              style: AppStyle.medSecondary.copyWith(fontSize: 12.sp),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Workshop location',
+                  style: AppStyle.medSecondary.copyWith(fontSize: 12.sp),
+                ),
+                if (hasMap) ...[
+                  if (hasLoc) SizedBox(height: 10.h),
+                  TextButton.icon(
+                    onPressed: () => _openMaps(context, map),
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      foregroundColor: AppColors.secondary,
+                    ),
+                    icon: Icon(Icons.map_outlined, size: 18.sp),
+                    label: Text(
+                      'Open in Maps',
+                      style: AppStyle.medSecondary.copyWith(fontSize: 13.sp),
+                    ),
+                  ),
+                ],
+
+                // Rating summary (average + total ratings)
+              ],
             ),
             SizedBox(height: 8.h),
             if (hasLoc)
@@ -84,22 +105,25 @@ class PortfolioWorkshopLocationBar extends StatelessWidget {
                 'No address yet — add workshop details in Profile (Edit profile).',
                 style: AppStyle.medLight.copyWith(fontSize: 12.sp),
               ),
-            if (hasMap) ...[
-              if (hasLoc) SizedBox(height: 10.h),
-              TextButton.icon(
-                onPressed: () => _openMaps(context, map),
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  foregroundColor: AppColors.secondary,
-                ),
-                icon: Icon(Icons.map_outlined, size: 18.sp),
-                label: Text(
-                  'Open in Maps',
-                  style: AppStyle.medSecondary.copyWith(fontSize: 13.sp),
-                ),
+            SizedBox(height: 10.h),
+            if (t.averageRating != null)
+              Row(
+                children: [
+                  Icon(Icons.star, size: 14.sp, color: AppColors.secondary),
+                  SizedBox(width: 6.w),
+                  Text(
+                    '${t.averageRating!.toStringAsFixed(1)}',
+                    style: AppStyle.medBlack.copyWith(fontSize: 13.sp),
+                  ),
+                  if (t.totalRatings != null) ...[
+                    SizedBox(width: 6.w),
+                    Text(
+                      '(${t.totalRatings})',
+                      style: AppStyle.medLight.copyWith(fontSize: 12.sp),
+                    ),
+                  ],
+                ],
               ),
-            ],
           ],
         ),
       ),

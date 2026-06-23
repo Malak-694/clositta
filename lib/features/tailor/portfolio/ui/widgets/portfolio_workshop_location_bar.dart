@@ -103,7 +103,7 @@ class PortfolioWorkshopLocationBar extends StatelessWidget {
                   ),
                 ],
               ),
-            if (!hasLoc && !hasMap)
+            if (!hasLoc && !hasMap )
               Text(
                 'No address yet — add workshop details in Profile (Edit profile).',
                 style: AppStyle.medLight.copyWith(fontSize: 12.sp),

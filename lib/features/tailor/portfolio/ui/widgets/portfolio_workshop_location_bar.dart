@@ -40,7 +40,6 @@ class PortfolioWorkshopLocationBar extends StatelessWidget {
     final hasLoc = loc != null && loc.isNotEmpty;
     final hasMap = map != null && map.isNotEmpty;
 
-    if (hasLoc || hasMap) return const SizedBox.shrink();
     return Material(
       color: AppColors.lightsecondary.withValues(alpha: 0.25),
       child: Container(
@@ -64,8 +63,7 @@ class PortfolioWorkshopLocationBar extends StatelessWidget {
                   'Workshop location',
                   style: AppStyle.medSecondary.copyWith(fontSize: 12.sp),
                 ),
-                if (hasMap) ...[
-                  if (hasLoc) SizedBox(height: 10.h),
+                if (hasMap)
                   TextButton.icon(
                     onPressed: () => _openMaps(context, map),
                     style: TextButton.styleFrom(
@@ -79,9 +77,6 @@ class PortfolioWorkshopLocationBar extends StatelessWidget {
                       style: AppStyle.medSecondary.copyWith(fontSize: 13.sp),
                     ),
                   ),
-                ],
-
-                // Rating summary (average + total ratings)
               ],
             ),
             SizedBox(height: 8.h),
@@ -103,11 +98,7 @@ class PortfolioWorkshopLocationBar extends StatelessWidget {
                   ),
                 ],
               ),
-            if (!hasLoc && !hasMap )
-              Text(
-                'No address yet — add workshop details in Profile (Edit profile).',
-                style: AppStyle.medLight.copyWith(fontSize: 12.sp),
-              ),
+
             SizedBox(height: 10.h),
             if (t.averageRating != null)
               Row(
@@ -127,18 +118,19 @@ class PortfolioWorkshopLocationBar extends StatelessWidget {
                   ],
                 ],
               ),
-            GestureDetector(
-              onTap: () => Navigator.pushNamed(
-                context,
-                RouteNames.profile_tailor_screen,
-              ),
-              child: Text(
-                'No address yet — tap here to add workshop details from edit profile.',
-                style: AppStyle.smallPrimery.copyWith(
-                  decoration: TextDecoration.underline,
+            if (!hasLoc && !hasMap)
+              GestureDetector(
+                onTap: () => Navigator.pushNamed(
+                  context,
+                  RouteNames.profile_tailor_screen,
+                ),
+                child: Text(
+                  'No address yet — tap here to add workshop details from edit profile.',
+                  style: AppStyle.smallPrimery.copyWith(
+                    decoration: TextDecoration.underline,
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),

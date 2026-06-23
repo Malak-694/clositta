@@ -20,6 +20,9 @@ PortfolioTailorUserModel _$PortfolioTailorUserModelFromJson(
   totalRatings: (json['totalRatings'] as num?)?.toInt(),
   ratingDistribution: (json['ratingDistribution'] as Map<String, dynamic>?)
       ?.map((k, e) => MapEntry(k, (e as num).toInt())),
+  ratings: (json['ratings'] as List<dynamic>?)
+      ?.map((e) => RatingModel.fromJson(e as Map<String, dynamic>))
+      .toList(),
 );
 
 Map<String, dynamic> _$PortfolioTailorUserModelToJson(
@@ -35,4 +38,5 @@ Map<String, dynamic> _$PortfolioTailorUserModelToJson(
   'averageRating': instance.averageRating,
   'totalRatings': instance.totalRatings,
   'ratingDistribution': instance.ratingDistribution,
+  'ratings': instance.ratings?.map((e) => e.toJson()).toList(),
 };

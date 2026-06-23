@@ -12,7 +12,9 @@ RatingModel _$RatingModelFromJson(Map<String, dynamic> json) => RatingModel(
   comment: json['comment'] as String,
   id: json['_id'] as String,
   createdAt: DateTime.parse(json['createdAt'] as String),
-  updatedAt: DateTime.parse(json['updatedAt'] as String),
+  updatedAt: json['updatedAt'] == null
+      ? null
+      : DateTime.parse(json['updatedAt'] as String),
 );
 
 Map<String, dynamic> _$RatingModelToJson(RatingModel instance) =>
@@ -22,7 +24,7 @@ Map<String, dynamic> _$RatingModelToJson(RatingModel instance) =>
       'rating': instance.rating,
       'comment': instance.comment,
       'createdAt': instance.createdAt.toIso8601String(),
-      'updatedAt': instance.updatedAt.toIso8601String(),
+      'updatedAt': instance.updatedAt?.toIso8601String(),
     };
 
 User _$UserFromJson(Map<String, dynamic> json) =>

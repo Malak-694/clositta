@@ -10,7 +10,7 @@ class RatingModel {
   final int rating;
   final String comment;
   final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? updatedAt;
 
   RatingModel({
     required this.user,

@@ -3,7 +3,6 @@ import 'package:chicora/core/constants/constants.dart';
 import 'package:chicora/core/widgets/custom_dropdown_list.dart';
 import 'package:chicora/core/widgets/custom_elevated_button.dart';
 import 'package:chicora/core/widgets/pinterest_grid.dart';
-import 'package:chicora/features/auth/ui/widgets/drop_down_type.dart';
 import 'package:chicora/features/tailor/portfolio/logic/cubit/portfolio_tailor_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,7 +15,9 @@ import '../../data/models/portfolio_tailor_response_model.dart';
 import '../../logic/cubit/portfolio_tailor_state.dart';
 
 class PortfolioTailorBody extends StatefulWidget {
-  const PortfolioTailorBody({super.key});
+  const PortfolioTailorBody({super.key, this.reviewsSection});
+
+  final Widget? reviewsSection;
 
   @override
   State<PortfolioTailorBody> createState() => _PortfolioTailorBodyState();
@@ -61,7 +62,9 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
                   width: 90.w,
                   height: 37.h,
                   vPadding: 3.h,
-                  style: AppStyle.medSecondary.copyWith(color: AppColors.darksecondary),
+                  style: AppStyle.medSecondary.copyWith(
+                    color: AppColors.darksecondary,
+                  ),
                   items: _categories,
                   value: 'All',
                   hintText: 'Category',
@@ -91,75 +94,76 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
             child: BlocBuilder<PortfolioTailorCubit, PortfolioTailorState>(
               builder: (context, state) {
                 return state.when(
-                  initial: () => Center(
-                    child: Text(
-                      'No items',
-                      style: AppStyle.medBlack,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
+                  initial: () => _centeredMessage('No items'),
                   loading: () =>
                       const Center(child: CircularProgressIndicator()),
                   success: (data) {
-                    if (data is List<PortfolioTailorResponseModel>) {
-                      if (data.isEmpty) {
-                        return Center(
-                          child: Text(
-                            'No Portfoliio items found',
-                            style: AppStyle.medBlack,
-                            textAlign: TextAlign.center,
-                          ),
-                        );
-                      }
-                      return PinterestGrid<PortfolioTailorResponseModel>(
-                        items: data,
-                        onTap: (item) {},
-                        configBuilder: (item) => PinterestCardConfig(
-                          imageUrl: item.imageUrl,
-                          name: item.title,
-                          showCart: false,
-                          showRating: false,
-                          showPrice: false,
-                          showEdit: true,
-                          showDelete: true,
-                          onEdit: () {
-                            final cubit =
-                                context.read<PortfolioTailorCubit>();
-                            Navigator.pushNamed(
-                              context,
-                              RouteNames.update_work_screen,
-                              arguments: item,
-                            ).then((_) {
-                              cubit.viewPortfolioTailor(null);
-                            });
-                          },
-                          onDelete: () => _showDeleteConfirmation(context, item), // ✅ new
-                          onTap: () {},
-                        ),
-                        mainColor: AppColors.secondary,
-                        darkColor: AppColors.darksecondary,
-                      );
+                    if (data is! List<PortfolioTailorResponseModel>) {
+                      return _centeredMessage('No portfolio items found');
                     }
-                    return Center(
-                      child: Text(
-                        'No portfolio items found',
-                        style: AppStyle.medBlack,
-                        textAlign: TextAlign.center,
+                    if (data.isEmpty) {
+                      return _centeredMessage('No Portfoliio items found');
+                    }
+                    return SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          PinterestGrid<PortfolioTailorResponseModel>(
+                            shrinkWrap: true,
+                            items: data,
+                            onTap: (item) {},
+                            configBuilder: (item) => PinterestCardConfig(
+                              imageUrl: item.imageUrl,
+                              name: item.title,
+                              showCart: false,
+                              showRating: false,
+                              showPrice: false,
+                              showEdit: true,
+                              showDelete: true,
+                              onEdit: () {
+                                final cubit =
+                                    context.read<PortfolioTailorCubit>();
+                                Navigator.pushNamed(
+                                  context,
+                                  RouteNames.update_work_screen,
+                                  arguments: item,
+                                ).then((_) {
+                                  cubit.viewPortfolioTailor(null);
+                                });
+                              },
+                              onDelete: () =>
+                                  _showDeleteConfirmation(context, item),
+                              onTap: () {},
+                            ),
+                            mainColor: AppColors.secondary,
+                            darkColor: AppColors.darksecondary,
+                          ),
+                          if (widget.reviewsSection != null) ...[
+                            SizedBox(height: 24.h),
+                            widget.reviewsSection!,
+                            SizedBox(height: 16.h),
+                          ],
+                        ],
                       ),
                     );
                   },
-                  fail: (error) => Center(
-                    child: Text(
-                      'Error: please try again later',
-                      style: AppStyle.medBlack,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
+                  fail: (error) =>
+                      _centeredMessage('Error: please try again later'),
                 );
               },
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _centeredMessage(String message) {
+    return Center(
+      child: Text(
+        message,
+        style: AppStyle.medBlack,
+        textAlign: TextAlign.center,
       ),
     );
   }

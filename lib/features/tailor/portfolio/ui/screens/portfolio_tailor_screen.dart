@@ -1,8 +1,8 @@
+import 'package:chicora/features/ecommerce_multi/ui/widgets/comment_section_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/colors.dart';
-import '../../../../../core/constants/style.dart';
 import '../../../../../core/di/dependency_injection.dart';
 import '../../../../../core/helper/shared_pref_helper.dart';
 import '../../../../../core/router/route_names.dart';
@@ -36,11 +36,14 @@ class PortfolioTailorScreen extends StatelessWidget {
           preferredSize: const Size.fromHeight(kToolbarHeight),
           child: BlocBuilder<CartCubit, CartState<dynamic>>(
             builder: (context, cartState) {
-              return BlocBuilder<ConversationsCubit,
-                  ConversationsState<List<ConversationModel>>>(
+              return BlocBuilder<
+                ConversationsCubit,
+                ConversationsState<List<ConversationModel>>
+              >(
                 builder: (context, convState) {
-                  final unreadCount =
-                      context.read<ConversationsCubit>().unreadCount;
+                  final unreadCount = context
+                      .read<ConversationsCubit>()
+                      .unreadCount;
                   return CustomAppBar(
                     title: "My Portfolio",
                     showCartIcon: true,
@@ -67,18 +70,32 @@ class PortfolioTailorScreen extends StatelessWidget {
             },
           ),
         ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            BlocBuilder<PortfolioTailorCubit, PortfolioTailorState>(
-              builder: (context, state) {
-                final tailor =
-                    context.read<PortfolioTailorCubit>().tailorSummary;
-                return PortfolioWorkshopLocationBar(tailor: tailor);
-              },
-            ),
-            Expanded(child: PortfolioTailorBody()),
-          ],
+        body: BlocBuilder<PortfolioTailorCubit, PortfolioTailorState>(
+          builder: (context, state) {
+            final tailor = context.read<PortfolioTailorCubit>().tailorSummary;
+            final ratings = tailor?.ratings;
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                PortfolioWorkshopLocationBar(tailor: tailor),
+                Expanded(
+                  child: PortfolioTailorBody(
+                    reviewsSection: ratings == null
+                        ? null
+                        : CommentSection(
+                            productComments: ratings,
+                            userRating: null,
+                            currentUserId: null,
+                            accent: AppColors.lightsecondary,
+                            accentDark: AppColors.darksecondary,
+                            onDelete: null,
+                          ),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
         bottomNavigationBar: FloatingNavBar(
           userRole: 'tailor',

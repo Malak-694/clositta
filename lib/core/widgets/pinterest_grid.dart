@@ -12,6 +12,8 @@ class PinterestGrid<T> extends StatelessWidget {
   final PinterestCardConfig Function(T item) configBuilder;
   final Color? mainColor;
   final Color? darkColor;
+  final bool shrinkWrap;
+  final ScrollPhysics? physics;
 
   const PinterestGrid({
     super.key,
@@ -20,11 +22,16 @@ class PinterestGrid<T> extends StatelessWidget {
     required this.configBuilder,
     this.mainColor,
     this.darkColor,
+    this.shrinkWrap = false,
+    this.physics,
   });
 
   @override
   Widget build(BuildContext context) {
     return MasonryGridView.count(
+      shrinkWrap: shrinkWrap,
+      physics: physics ??
+          (shrinkWrap ? const NeverScrollableScrollPhysics() : null),
       crossAxisCount: 2,
       mainAxisSpacing: 12,
       crossAxisSpacing: 12,

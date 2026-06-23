@@ -1,3 +1,4 @@
+import 'package:chicora/features/seller/products/data/models/rating_model_response.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'portfolio_tailor_user_model.g.dart';
@@ -16,6 +17,7 @@ class PortfolioTailorUserModel {
   final double? averageRating;
   final int? totalRatings;
   final Map<String, int>? ratingDistribution;
+  final List<RatingModel>? ratings;
 
   const PortfolioTailorUserModel({
     required this.id,
@@ -28,6 +30,7 @@ class PortfolioTailorUserModel {
     this.averageRating,
     this.totalRatings,
     this.ratingDistribution,
+    this.ratings
   });
 
   factory PortfolioTailorUserModel.fromJson(Map<String, dynamic> json) =>

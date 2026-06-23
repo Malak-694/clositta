@@ -26,16 +26,14 @@ class CommentSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("iam here");
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(
-              Icons.forum_outlined,
-              size: 22.sp,
-              color: accentDark,
-            ),
+            Icon(Icons.forum_outlined, size: 22.sp, color: accentDark),
             SizedBox(width: 8.w),
             Text(
               'Customer reviews',
@@ -64,9 +62,7 @@ class CommentSection extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppColors.lightprimery,
                   borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(
-                    color: accent.withValues(alpha: 0.1),
-                  ),
+                  border: Border.all(color: accent.withValues(alpha: 0.1)),
                 ),
                 child: Column(
                   children: [
@@ -101,8 +97,8 @@ class CommentSection extends StatelessWidget {
                 return CommentCard(
                   comment: comment,
                   accent: accent,
-                  isOwn: currentUserId != null &&
-                      comment.user.id == currentUserId,
+                  isOwn:
+                      currentUserId != null && comment.user.id == currentUserId,
                   onDelete: onDelete,
                 );
               },

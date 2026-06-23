@@ -18,7 +18,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../../core/router/route_names.dart';
 
 class AddedItemScreen extends StatefulWidget {
-  final PortfolioTailorResponseModel? item; // ✅ null = add, not null = update
+  final PortfolioTailorResponseModel? item;
 
   const AddedItemScreen({super.key, this.item});
 

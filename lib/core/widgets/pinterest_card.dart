@@ -4,13 +4,12 @@ import 'package:chicora/core/widgets/pinterest_grid_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-// ── Entry point ──────────────────────────────────────────
 Widget buildPinterestCard(
-  PinterestCardConfig config,
-  VoidCallback onTap, {
-  Color mainColor = AppColors.primery,
-  Color darkColor = AppColors.darkprimery,
-}) {
+    PinterestCardConfig config,
+    VoidCallback onTap, {
+      Color mainColor = AppColors.primery,
+      Color darkColor = AppColors.darkprimery,
+    }) {
   if (config.showStatus) {
     return _buildPostCard(config, onTap, mainColor: mainColor);
   }
@@ -24,10 +23,10 @@ Widget buildPinterestCard(
 
 // ── POST CARD ────────────────────────────────────────────
 Widget _buildPostCard(
-  PinterestCardConfig config,
-  VoidCallback onTap, {
-  Color mainColor = AppColors.primery,
-}) {
+    PinterestCardConfig config,
+    VoidCallback onTap, {
+      Color mainColor = AppColors.primery,
+    }) {
   return InkWell(
     onTap: onTap,
     borderRadius: BorderRadius.circular(20),
@@ -40,40 +39,34 @@ Widget _buildPostCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Image ────────────────────────────────────────
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             child: config.imageUrl != null
                 ? Image.network(
-                    config.imageUrl!,
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    errorBuilder: (_, __, ___) => Container(
-                      height: 120,
-                      color: Colors.grey.shade100,
-                      child: const Center(
-                        child: Icon(
-                          Icons.image_not_supported,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                  )
+              config.imageUrl!,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              errorBuilder: (_, __, ___) => Container(
+                height: 120,
+                color: Colors.grey.shade100,
+                child: const Center(
+                  child: Icon(Icons.image_not_supported, color: Colors.grey),
+                ),
+              ),
+            )
                 : Container(
-                    height: 120,
-                    color: Colors.grey.shade100,
-                    child: const Center(
-                      child: Icon(Icons.image, color: Colors.grey),
-                    ),
-                  ),
+              height: 120,
+              color: Colors.grey.shade100,
+              child: const Center(
+                child: Icon(Icons.image, color: Colors.grey),
+              ),
+            ),
           ),
-
           Padding(
             padding: const EdgeInsets.all(10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ── Name + Status badge ───────────────────
                 Row(
                   children: [
                     Expanded(
@@ -105,8 +98,6 @@ Widget _buildPostCard(
                     ],
                   ],
                 ),
-
-                // ── Price + Edit ──────────────────────────
                 Row(
                   children: [
                     if (config.showPrice && config.price != null)
@@ -119,6 +110,14 @@ Widget _buildPostCard(
                       IconButton(
                         onPressed: config.onEdit,
                         icon: Icon(Icons.edit, color: mainColor),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        iconSize: 25,
+                      ),
+                    if (config.showDelete && config.onDelete != null)
+                      IconButton(
+                        onPressed: config.onDelete,
+                        icon: const Icon(Icons.delete_outline, color: AppColors.ternary),
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                         iconSize: 25,
@@ -145,15 +144,16 @@ Widget _buildStarRating(double rating) {
 }
 
 Widget _buildProductCard(
-  PinterestCardConfig config,
-  VoidCallback onTap, {
-  Color mainColor = AppColors.primery,
-  Color darkColor = AppColors.darkprimery,
-}) {
+    PinterestCardConfig config,
+    VoidCallback onTap, {
+      Color mainColor = AppColors.primery,
+      Color darkColor = AppColors.darkprimery,
+    }) {
   final bool hasBottomRow =
       config.showPrice ||
-      config.showCart ||
-      (config.showEdit && config.onEdit != null);
+          config.showCart ||
+          (config.showEdit && config.onEdit != null) ||
+          (config.showDelete && config.onDelete != null);
 
   return InkWell(
     onTap: onTap,
@@ -166,40 +166,34 @@ Widget _buildProductCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Image ────────────────────────────────────────
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             child: config.imageUrl != null
                 ? Image.network(
-                    config.imageUrl!,
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    errorBuilder: (_, __, ___) => Container(
-                      height: 120,
-                      color: Colors.grey.shade100,
-                      child: const Center(
-                        child: Icon(
-                          Icons.image_not_supported,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                  )
+              config.imageUrl!,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              errorBuilder: (_, __, ___) => Container(
+                height: 120,
+                color: Colors.grey.shade100,
+                child: const Center(
+                  child: Icon(Icons.image_not_supported, color: Colors.grey),
+                ),
+              ),
+            )
                 : Container(
-                    height: 120,
-                    color: Colors.grey.shade100,
-                    child: const Center(
-                      child: Icon(Icons.image, color: Colors.grey),
-                    ),
-                  ),
+              height: 120,
+              color: Colors.grey.shade100,
+              child: const Center(
+                child: Icon(Icons.image, color: Colors.grey),
+              ),
+            ),
           ),
-
           Padding(
             padding: const EdgeInsets.all(10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ── Name ─────────────────────────────────
                 if (config.name != null)
                   Text(
                     config.name!,
@@ -207,25 +201,19 @@ Widget _buildProductCard(
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-
-                // ── Rating ───────────────────────────────
                 if (config.showRating && config.rating != null) ...[
                   SizedBox(height: 4.h),
                   _buildStarRating(config.rating!),
                 ],
-
-                // ── Price + Edit + Cart ───────────────────
                 if (hasBottomRow) ...[
                   SizedBox(height: 4.h),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       if (config.showPrice && config.price != null)
                         Text(
                           '\$${config.price!.toStringAsFixed(2)}/eg',
-                          style: AppStyle.smallPrimery.copyWith(
-                            fontSize: 15.sp,
-                          ),
+                          style: AppStyle.smallPrimery.copyWith(fontSize: 15.sp),
                         ),
                       const Spacer(),
                       if (config.showEdit && config.onEdit != null) ...[
@@ -233,13 +221,17 @@ Widget _buildProductCard(
                           onPressed: config.onEdit,
                           icon: Icon(Icons.edit, color: mainColor),
                           padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                          iconSize: 20,
+                          iconSize: 22,
                         ),
-                        const SizedBox(width: 4),
                       ],
-
-                      // ✅ Cart button only when showCart is true
+                      if (config.showDelete && config.onDelete != null) ...[
+                        IconButton(
+                          onPressed: config.onDelete,
+                          icon: const Icon(Icons.delete_outline, color: AppColors.ternary),
+                          padding: EdgeInsets.zero,
+                          iconSize: 22,
+                        ),
+                      ],
                       if (config.showCart)
                         GestureDetector(
                           onTap: config.onTap,
@@ -271,7 +263,6 @@ Widget _buildProductCard(
   );
 }
 
-// ── Status color helper ──────────────────────────────────
 Color _statusColor(String status) {
   switch (status.toLowerCase()) {
     case 'open':

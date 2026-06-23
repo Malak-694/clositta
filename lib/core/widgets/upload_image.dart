@@ -6,8 +6,8 @@ import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
 
 class ImageUploadWidget extends StatelessWidget {
-  final String? imagePath;  // local file path (new image picked)
-  final String? imageUrl;   // ✅ network url (existing image from API)
+  final String? imagePath;
+  final String? imageUrl;
   final VoidCallback onTap;
   final VoidCallback? onRemove;
   final bool enabled;

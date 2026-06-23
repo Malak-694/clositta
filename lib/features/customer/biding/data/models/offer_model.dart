@@ -1,22 +1,20 @@
 import 'package:json_annotation/json_annotation.dart';
 
-
 part 'offer_model.g.dart';
-
 
 @JsonSerializable()
 class Tailor {
   @JsonKey(name: '_id')
-  final String id;
-  final String name;
-  final String email;
-  final String phone;
+  final String? id;
+  final String? name;
+  final String? email;
+  final String? phone;
 
   Tailor({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.phone,
+    this.id,
+    this.name,
+    this.email,
+    this.phone,
   });
 
   factory Tailor.fromJson(Map<String, dynamic> json) =>
@@ -24,33 +22,36 @@ class Tailor {
 
   Map<String, dynamic> toJson() => _$TailorToJson(this);
 }
+
 @JsonSerializable()
 class OfferResponse {
   @JsonKey(name: '_id')
-  final String id;
-  final String bid;
-  final Tailor tailor;
-  final int price;
-  final int timeInDays;
-  final String message;
-  final String status; // 👈 "pending", "updated", "accepted", "rejected"
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String? id;
+  final String? bid;
+  final Tailor? tailor;
+  final int? price;
+  final int? timeInDays;
+  final String? message;
+  final String? status;
+  final String? workStatus;   // 👈 in_progress / completed / accepted
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   @JsonKey(name: '__v')
-  final int version;
+  final int? version;
 
   OfferResponse({
-    required this.id,
-    required this.bid,
-    required this.tailor,
-    required this.price,
-    required this.timeInDays,
-    required this.message,
-    this.status = 'pending', // 👈
-    required this.createdAt,
-    required this.updatedAt,
-    required this.version,
+    this.id,
+    this.bid,
+    this.tailor,
+    this.price,
+    this.timeInDays,
+    this.message,
+    this.status,
+    this.workStatus,
+    this.createdAt,
+    this.updatedAt,
+    this.version,
   });
 
   bool get isAccepted => status == "accepted";

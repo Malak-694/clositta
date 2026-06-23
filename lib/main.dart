@@ -7,10 +7,13 @@ import 'package:chicora/core/helper/shared_key.dart';
 import 'package:chicora/core/helper/shared_pref_helper.dart';
 import 'package:chicora/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'core/router/app_router.dart';
 import 'core/router/route_names.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'features/chat/logic/conversations_cubit/conversations_cubit.dart';
+import 'features/ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
 import 'firebase_options.dart';
 
 final GlobalKey<NavigatorState> appNavigatorKey = GlobalKey<NavigatorState>();
@@ -34,19 +37,33 @@ String getInitialRoute(String? token, String? role) {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await setupGetIt();
-
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   final prefs = getIt<SharedPrefHelper>();
   final token = await prefs.getSecureData(SharedPrefKey.token);
   final role = await prefs.getSecureData(SharedPrefKey.role);
   final initialRoute = getInitialRoute(token, role);
 
-  print(role);
-  print(initialRoute);
+  // Decide which cubits to provide based on role
+  final bool needsCartAndChat =
+      role == 'customer' || role == 'tailor';
 
-  runApp(ChicoraApp(initialRoute: initialRoute));
+  runApp(
+    needsCartAndChat
+        ? MultiBlocProvider(
+      providers: [
+        BlocProvider<CartCubit>(
+          create: (_) => getIt<CartCubit>()..getCart(),
+        ),
+        BlocProvider<ConversationsCubit>(
+          create: (_) => getIt<ConversationsCubit>()..loadUnreadCount(),
+        ),
+      ],
+      child: ChicoraApp(initialRoute: initialRoute),
+    )
+        : ChicoraApp(initialRoute: initialRoute), // seller gets nothing extra
+  );
 }
 
 /// Matches Paymob HTML callback: `app://clositta.com/orders/?...`

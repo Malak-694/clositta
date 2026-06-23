@@ -5,6 +5,8 @@ import 'package:chicora/features/tailor/bidding_tailor/data/models/join_bidding_
 import 'package:chicora/features/tailor/bidding_tailor/data/models/post_tailor_model.dart';
 import 'package:dio/dio.dart';
 
+import '../models/accepted_offer_model.dart';
+
 class BiddingTailorRepo {
   ApiService apiService;
   BiddingTailorRepo({required this.apiService});
@@ -80,6 +82,34 @@ class BiddingTailorRepo {
           : "Network error: ${e.message}");
     } catch (e) {
       throw Exception("Failed to update offer: $e");
+    }
+  }
+
+  Future<List<AcceptedOfferResponse>> getMyAcceptedOffers(String token) async {
+    try {
+      return await apiService.getMyAcceptedOffers("Bearer $token");
+    } catch (e) {
+      throw Exception("Failed to fetch accepted orders: $e");
+    }
+  }
+
+  Future<void> updateWorkStatus({
+    required String token,
+    required String offerId,
+    required String workStatus,
+  }) async {
+    try {
+      await apiService.updateWorkStatus(
+        "Bearer $token",
+        offerId,
+        {"workStatus": workStatus},
+      );
+    } on DioException catch (e) {
+      throw Exception(e.response != null
+          ? "Server error: ${e.response?.statusCode} - ${e.response?.data}"
+          : "Network error: ${e.message}");
+    } catch (e) {
+      throw Exception("Failed to update work status: $e");
     }
   }
 }

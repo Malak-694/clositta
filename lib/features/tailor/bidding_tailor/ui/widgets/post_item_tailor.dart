@@ -1,10 +1,7 @@
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
-import 'package:chicora/core/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import '../../../../../core/router/route_names.dart';
 
 class PostItemTailor extends StatelessWidget {
   final String title;
@@ -15,6 +12,7 @@ class PostItemTailor extends StatelessWidget {
   final String period;
   final String status;
   final String id;
+
   const PostItemTailor({
     super.key,
     required this.title,
@@ -27,128 +25,131 @@ class PostItemTailor extends StatelessWidget {
     required this.id,
   });
 
+  Color get _statusColor {
+    switch (status) {
+      case 'closed':
+        return Colors.red.shade100;
+      case 'open':
+        return Colors.green.shade100;
+      default:
+        return AppColors.lightprimery;
+    }
+  }
+
+  Color get _statusTextColor {
+    switch (status) {
+      case 'closed':
+        return Colors.red.shade700;
+      case 'open':
+        return Colors.green.shade700;
+      default:
+        return AppColors.primery;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 400.w,
-      padding: EdgeInsets.symmetric(horizontal: 10),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black12),
-        borderRadius: BorderRadius.circular(15),
-        color: AppColors.background
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            height: 270.h,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(Image_url),
-                fit: BoxFit.fill,
-              ),
+    return Center(
+      child: Container(
+        width: 360.w,
+        decoration: BoxDecoration(
+          border: Border.all(color: AppColors.lightprimery),
+          borderRadius: BorderRadius.circular(16.r),
+          color: AppColors.background,
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.lightprimery,
+              blurRadius: 5,
+              offset: const Offset(2, 5),
             ),
-          ),
-          SizedBox(height: 8.h),
-
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  title,
-                  softWrap: true,
-                  style: AppStyle.medBlack.copyWith(
-                    foreground: Paint()
-                      ..style = PaintingStyle.stroke
-                      ..strokeWidth = .5
-                      ..color = AppColors.dark,
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(16.r),
                   ),
-                  overflow: null,
-                ),
-              ),
-              SizedBox(width: 10.w),
-              if (price.isNotEmpty || period.isNotEmpty)
-                SizedBox(
-                  width: 65,
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        width: 51,
-
-                        child: Text(
-                          price,
-                          textAlign: TextAlign.center,
-                          style: AppStyle.medPrimery.copyWith(
-                            fontSize: 20.sp,
-                            foreground: Paint()
-                              ..style = PaintingStyle.stroke
-                              ..strokeWidth = 1
-                              ..color = AppColors.primery,
-                          ),
+                  child: Container(
+                    height: 220.h,
+                    width: double.infinity,
+                    color: Colors.grey.shade50,
+                    child: Image.network(
+                      Image_url,
+                      height: 220.h,
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, __, ___) => Container(
+                        height: 220.h,
+                        color: Colors.grey.shade100,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.checkroom, color: Colors.grey.shade400, size: 40),
+                            SizedBox(height: 8.h),
+                            Text('No image', style: TextStyle(color: Colors.grey.shade400, fontSize: 12.sp)),
+                          ],
                         ),
                       ),
-
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.alarm,
-                            color: const Color(0xFF95989A),
-                            size: 12,
-                          ),
-                          SizedBox(width: 2.w),
-                          Text(
-                            period,
-                            style: AppStyle.body6.copyWith(
-                              fontSize: 12.sp,
-                              foreground: Paint()
-                                ..style = PaintingStyle.stroke
-                                ..strokeWidth = 1
-                                ..color = const Color(0xFF95989A),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-            ],
-          ),
 
-          SizedBox(height: 5.h),
+            Padding(
+              padding: EdgeInsets.all(12.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title
+                  Text(
+                    title,
+                    style: AppStyle.medBlack,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 10.h),
 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Bids count
-              Text(
-                '$bidCount bid${bidCount == 1 ? '' : 's'}',
-                style: AppStyle.medLight,
+                  Row(
+                    children: [
+                      if (price.isNotEmpty) ...[
+                        Icon(Icons.attach_money,
+                            size: 16.sp, color: AppColors.primery),
+                        SizedBox(width: 2.w),
+                        Text(price, style: AppStyle.medPrimery),
+                        SizedBox(width: 12.w),
+                      ],
+
+                      Spacer(),
+                      if (period.isNotEmpty) ...[
+                        Icon(Icons.alarm,
+                            size: 16.sp,
+                            color: const Color(0xFF95989A)),
+                        SizedBox(width: 4.w),
+                        Text(period, style: AppStyle.body5),
+                        SizedBox(width: 12.w),
+                      ],
+
+                      // const Spacer(),
+                      //
+                      // // Bids count
+                      // if (bidCount > 0) ...[
+                      //   Icon(Icons.gavel,
+                      //       size: 14.sp,
+                      //       color: const Color(0xFF95989A)),
+                      //   SizedBox(width: 4.w),
+                      //   Text(
+                      //     '$bidCount bid${bidCount == 1 ? '' : 's'}',
+                      //     style: AppStyle.medLight,
+                      //   ),
+                      // ],
+                    ],
+                  ),
+                ],
               ),
-            ],
-          ),
-          SizedBox(height: 8.h),
-          // status == "closed"
-          //     ? Container()
-          //     : CustomElevatedButton(
-          //         value: 'join Bidding',
-          //         onPressed: () {
-          //           Navigator.pushNamed(
-          //             context,
-          //             RouteNames.join_bidding,
-          //             arguments: {
-          //               'urlImage': Image_url,
-          //               'price': price,
-          //               'period': period,
-          //               'title': title,
-          //               'postId': id,
-          //             },
-          //           );
-          //         },
-          //         height: 39,
-          //         width: 260,
-          //       ),
-          SizedBox(height: 10.h),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

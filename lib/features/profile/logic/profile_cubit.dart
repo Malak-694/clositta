@@ -15,7 +15,6 @@ class ProfileCubit extends Cubit<ProfileState> {
     return await _prefs.getSecureData(SharedPrefKey.token);
   }
 
-  // Get Profile
   Future<void> getProfile() async {
     emit(const ProfileState.loading());
     try {

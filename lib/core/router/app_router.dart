@@ -51,6 +51,7 @@ import '../../features/seller/analysis/ui/screens/analysis_seller_screen.dart';
 import '../../features/seller/orders/ui/screens/order_mangement_screen.dart';
 import '../../features/seller/products/ui/screens/seller_products_screen.dart';
 import '../../features/seller/profile/ui/seller_profile_screen.dart' hide TailorProfileScreen;
+import '../../features/tailor/bidding_tailor/ui/Screens/active_order_screen.dart';
 import '../../features/tailor/bidding_tailor/ui/Screens/posts_tailor_screen.dart';
 import '../../features/tailor/ecommerce/tailor_cart_screen.dart';
 import '../../features/tailor/ecommerce/tailor_products_screen.dart';
@@ -144,17 +145,8 @@ class AppRouter {
           builder: (_) => MultiBlocProvider(
             providers: [
               BlocProvider(create: (_) => getIt<CustomerBiddingCubit>()),
-              BlocProvider(
-                create: (_) {
-                  final cart = getIt<CartCubit>();
-                  cart.getCart();
-                  return cart;
-                },
-              ),
               BlocProvider(create: (_) => getIt<ViewProductsCubit>()),
-              BlocProvider(                                     // ← add this
-                create: (_) => getIt<ConversationsCubit>()..loadUnreadCount(),
-              ),
+
             ],
             child: const PostScreen(),
           ),
@@ -246,6 +238,13 @@ class AppRouter {
     //       ),
     //     ),
     //   );
+      case RouteNames.active_order:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<BiddingTailorCubit>()..getMyAcceptedOffers(),
+            child: const ActiveOrderScreen(),
+          ),
+        );
       case RouteNames.tailor_info_screen:
         final args = settings.arguments as Map<String, dynamic>? ?? {};
         return MaterialPageRoute(
@@ -315,20 +314,8 @@ class AppRouter {
         );
       case RouteNames.customer_products_screen:
         return MaterialPageRoute(
-          builder: (_) => MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                create: (_) {
-                  final cart = getIt<CartCubit>();
-                  cart.getCart();
-                  return cart;
-                },
-              ),
-              BlocProvider(create: (_) => getIt<ViewProductsCubit>()),
-              BlocProvider(                                     // ← add this
-                create: (_) => getIt<ConversationsCubit>()..loadConversations(),
-              ),
-            ],
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<ViewProductsCubit>(),
             child: CustomerProductsScreen(),
           ),
         );
@@ -365,7 +352,7 @@ class AppRouter {
             providers: [
               BlocProvider(create: (_) => getIt<RateProductsCubit>()),
               BlocProvider.value(
-                value: cartCubit, // ✅ reuse the existing instance
+                value: cartCubit,
               ),
             ],
             child: ProductDetailScreen(product: product),
@@ -388,16 +375,6 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => MultiBlocProvider(
             providers: [
-              BlocProvider(
-                create: (_) {
-                  final cart = getIt<CartCubit>();
-                  cart.getCart();
-                  return cart;
-                },
-              ),
-              BlocProvider(
-                create: (_) => getIt<ConversationsCubit>()..loadUnreadCount(),
-              ),
               BlocProvider(
                 create: (_) => ClosetCubit(closetRepo: getIt<ClosetRepo>()),
               ),

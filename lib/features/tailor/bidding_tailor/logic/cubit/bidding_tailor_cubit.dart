@@ -4,6 +4,7 @@ import 'package:chicora/core/helper/shared_pref_helper.dart';
 import 'package:chicora/features/tailor/bidding_tailor/logic/cubit/bidding_tailor_state.dart';
 
 import '../../../../../core/di/dependency_injection.dart';
+import '../../data/models/accepted_offer_model.dart';
 import '../../data/models/bid_model.dart';
 import '../../data/models/join_bidding_model.dart';
 import '../../data/models/post_tailor_model.dart';
@@ -15,6 +16,7 @@ class BiddingTailorCubit extends Cubit<BiddingTailorState> {
   BiddingTailorCubit(this._repository) : super(BiddingTailorState.initial());
   bool _loadedPosts = false;
   bool _loadedoOffers = false;
+  bool _loadedAcceptedOffers = false;
 
   Future<String?> _getToken() async {
     return await _prefs.getSecureData(SharedPrefKey.token);
@@ -65,7 +67,6 @@ class BiddingTailorCubit extends Cubit<BiddingTailorState> {
     }
   }
 
-  // ✅ Always reloads — bypasses the _loadedoOffers flag
   Future<void> refreshOffers(String postId) async {
     _loadedoOffers = false;
     await getOffers(postId);
@@ -125,7 +126,6 @@ class BiddingTailorCubit extends Cubit<BiddingTailorState> {
         message: message,
       );
 
-      // ✅ Reset flag so .then() in DetailesScreen can reload fresh data
       _loadedoOffers = false;
       if (!isClosed) {
         emit(const BiddingTailorState.success("Offer updated successfully"));
@@ -155,7 +155,6 @@ class BiddingTailorCubit extends Cubit<BiddingTailorState> {
 
       await _repository.deleteOffer(token: token, offerId: offerId);
 
-      // ✅ Reset flag then reload — delete stays on same screen
       _loadedoOffers = false;
       if (!isClosed) {
         emit(const BiddingTailorState.success("Offer deleted successfully"));
@@ -170,5 +169,58 @@ class BiddingTailorCubit extends Cubit<BiddingTailorState> {
         ));
       }
     }
+  }
+
+
+
+  Future<void> getMyAcceptedOffers() async {
+    if (_loadedAcceptedOffers) return;
+    emit(const BiddingTailorState.loading());
+    try {
+      final token = await _getToken();
+      if (token == null || token.isEmpty) {
+        emit(const BiddingTailorState.fail("Authentication token not found"));
+        return;
+      }
+      final List<AcceptedOfferResponse> response =
+      await _repository.getMyAcceptedOffers(token);
+      emit(BiddingTailorState.success(response));
+      _loadedAcceptedOffers = true;
+    } catch (e) {
+      emit(BiddingTailorState.fail(
+        e.toString().contains("Exception:")
+            ? e.toString().split("Exception: ")[1]
+            : "Failed to load accepted orders. Please try again.",
+      ));
+    }
+  }
+
+  Future<void> updateWorkStatus(String offerId, String newStatus) async {
+    emit(const BiddingTailorState.loading());
+    try {
+      final token = await _getToken();
+      if (token == null || token.isEmpty) {
+        emit(const BiddingTailorState.fail("Authentication token not found"));
+        return;
+      }
+      await _repository.updateWorkStatus(
+        token: token,
+        offerId: offerId,
+        workStatus: newStatus,
+      );
+      _loadedAcceptedOffers = false;
+      await getMyAcceptedOffers();
+    } catch (e) {
+      emit(BiddingTailorState.fail(
+        e.toString().contains("Exception:")
+            ? e.toString().split("Exception: ")[1]
+            : "Failed to update work status. Please try again.",
+      ));
+    }
+  }
+
+  Future<void> refreshAcceptedOffers() async {
+    _loadedAcceptedOffers = false;
+    await getMyAcceptedOffers();
   }
 }

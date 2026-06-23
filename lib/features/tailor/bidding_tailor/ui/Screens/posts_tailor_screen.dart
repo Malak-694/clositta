@@ -16,7 +16,13 @@ import '../../../../../assets.dart';
 import '../../../../../core/router/route_names.dart';
 import '../../../../../core/widgets/circle_indicator.dart';
 import '../../../../../core/widgets/custom_app_bar.dart';
+import '../../../../chat/data/models/conversation_model.dart';
+import '../../../../chat/logic/conversations_cubit/conversations_cubit.dart';
+import '../../../../chat/logic/conversations_cubit/conversations_state.dart';
 import '../../../../chat/ui/screens/conversations_screen.dart';
+import '../../../../ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
+import '../../../../ecommerce_multi/logic/cart_cubit/cart_state.dart';
+import '../../../../ecommerce_multi/logic/cart_cubit/cart_total_quantity.dart';
 
 class PostScreenTailor extends StatelessWidget {
   PostScreenTailor({super.key});
@@ -25,38 +31,54 @@ class PostScreenTailor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: "My Post",
-        showCartIcon: true,
-        onCartTap: () =>
-            Navigator.pushNamed(context, RouteNames.tailor_cart_screen),
-        showChatIcon: true,
-        unreadChatCount: 5,   // pass 0 if no unread
-        onChatTap: () async {
-          final userId = await prefs.getSecureData('id') ?? '';
-          if (context.mounted) {
-            Navigator.pushNamed(
-              context,
-              RouteNames.conversations_screen,
-              arguments: {
-                'currentUserId': userId,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: BlocBuilder<CartCubit, CartState<dynamic>>(
+          builder: (context, cartState) {
+            return BlocBuilder<ConversationsCubit,
+                ConversationsState<List<ConversationModel>>>(
+              builder: (context, convState) {
+                final unreadCount =
+                    context.read<ConversationsCubit>().unreadCount;
+                return CustomAppBar(
+                  title: "My Post",
+                  showCartIcon: true,
+                  cartItemCount: cartTotalItemQuantity(cartState),
+                  onCartTap: () => Navigator.pushNamed(
+                    context,
+                    RouteNames.tailor_cart_screen,
+                  ),
+                  showChatIcon: true,
+                  unreadChatCount: unreadCount,
+                  onChatTap: () async {
+                    final userId = await prefs.getSecureData('id') ?? '';
+                    if (context.mounted) {
+                      Navigator.pushNamed(
+                        context,
+                        RouteNames.conversations_screen,
+                        arguments: {'currentUserId': userId},
+                      );
+                    }
+                  },
+                );
               },
             );
-          }
-        },
+          },
+        ),
       ),
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Container(
           height: double.infinity,
-          width: double.infinity,
           padding: EdgeInsets.symmetric(horizontal: kHorizontalPadding),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Expanded(
                 child: Builder(
                   builder: (context) {
-                    // Trigger load once when the screen is built
+
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       context.read<BiddingTailorCubit>().getBiddingTailors();
                     });
@@ -115,18 +137,20 @@ class PostScreenTailor extends StatelessWidget {
                                       },
                                     )
                                         : null,
-                                    child: PostItemTailor(
-                                      title: post.requestDescription ?? '',
-                                      bidCount: 0,
-                                      date: post.createdAt ?? '',
-                                      price: post.price != null
-                                          ? '\$${post.price}'
-                                          : '',
-                                      period: post.time ?? '',
-                                      Image_url:
-                                      post.imageUrl ?? Assets.clothes1,
-                                      status: post.status ?? 'selected',
-                                      id: post.id ?? '',
+                                    child: Center(
+                                      child: PostItemTailor(
+                                        title: post.requestDescription ?? '',
+                                        bidCount: 0 ,
+                                        date: post.createdAt ?? '',
+                                        price: post.price != null
+                                            ? '\$${post.price}'
+                                            : '',
+                                        period: post.time ?? 'Flexible',
+                                        Image_url:
+                                        post.imageUrl ?? Assets.clothes1,
+                                        status: post.status ?? 'selected',
+                                        id: post.id ?? '',
+                                      ),
                                     ),
                                   );
                                 },

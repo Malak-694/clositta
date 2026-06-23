@@ -69,15 +69,11 @@ class ClosetCubit extends Cubit<ClosetState> {
 
   void _applyFilters() {
     List<ClosetItemResponseModel> filtered = allItems;
-
-    // Filter by category
     if (selectedCategory != 'All') {
       filtered = filtered
           .where((item) => item.category == selectedCategory)
           .toList();
     }
-
-    // Filter by season
     if (selectedSeason != 'All') {
       filtered = filtered
           .where((item) => item.season == selectedSeason)

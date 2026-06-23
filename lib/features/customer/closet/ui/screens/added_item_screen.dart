@@ -209,7 +209,6 @@ class _AddedClosetItemScreenState extends State<AddedClosetItemScreen> {
       _showSnackBar('Please enter a color');
       return;
     }
-    // ✅ image required only for add
     if (!_isUpdate && _selectedImagePath == null) {
       _showSnackBar('Please select an image');
       return;
@@ -222,7 +221,7 @@ class _AddedClosetItemScreenState extends State<AddedClosetItemScreen> {
         category: _selectedCategory ?? categories.first,
         season: _selectedSeason ?? seasons.first,
         color: _colorController.text.trim(),
-        imagePath: _selectedImagePath, // ✅ null if not changed
+        imagePath: _selectedImagePath,
       );
     } else {
       context.read<ClosetCubit>().addClosetItem(

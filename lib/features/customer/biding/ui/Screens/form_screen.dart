@@ -62,7 +62,6 @@ class _FormScreenState extends State<FormScreen> {
     super.dispose();
   }
 
-  // ── Delete confirmation dialog ───────────────────────────
   void _confirmDelete(BuildContext context) {
     showDialog(
       context: context,
@@ -137,7 +136,6 @@ class _FormScreenState extends State<FormScreen> {
             leading: true,
             showCartIcon: false,
             onCartTap: () {},
-            // ✅ Delete icon in appbar — only in edit mode
             extraActions: widget.isEditMode
                 ? [
               Padding(
@@ -156,7 +154,6 @@ class _FormScreenState extends State<FormScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ── Image ────────────────────────────────────────
                 Text('Upload Design Photo', style: AppStyle.body6),
                 SizedBox(height: 10.h),
 
@@ -181,7 +178,6 @@ class _FormScreenState extends State<FormScreen> {
                             ),
                           ),
                         ),
-                        // ✅ Dark overlay with camera icon to hint it's tappable
                         Positioned.fill(
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),

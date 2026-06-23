@@ -1,5 +1,6 @@
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/constants.dart';
+import 'package:chicora/core/widgets/custom_dropdown_list.dart';
 import 'package:chicora/core/widgets/custom_elevated_button.dart';
 import 'package:chicora/core/widgets/pinterest_grid.dart';
 import 'package:chicora/features/auth/ui/widgets/drop_down_type.dart';
@@ -54,22 +55,23 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
         children: [
           Row(
             children: [
-              CustomDropdown(
-                color: AppColors.lightsecondary,
-                vPadding: 3.h,
-                style: AppStyle.medSecondary.copyWith(color: AppColors.darksecondary),
-                items: _categories,
-                value: 'All',
-                hintText: 'Category',
-                width: 130.w,
-                onChanged: (category) {
-                  context.read<PortfolioTailorCubit>().filterByCategory(
-                    category ?? 'All',
-                  );
-                },
+              Expanded(
+                child: CustomDropdownList(
+                  fillColor: AppColors.lightsecondary,
+                  width: 90.w,
+                  height: 37.h,
+                  vPadding: 3.h,
+                  style: AppStyle.medSecondary.copyWith(color: AppColors.darksecondary),
+                  items: _categories,
+                  value: 'All',
+                  hintText: 'Category',
+                  onChanged: (category) {
+                    context.read<PortfolioTailorCubit>().filterByCategory(
+                      category ?? 'All',
+                    );
+                  },
+                ),
               ),
-              const Spacer(),
-
               const Spacer(),
               SizedBox(width: 10.w),
               CustomElevatedButton(
@@ -84,8 +86,6 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
               ),
             ],
           ),
-          SizedBox(height: 20.h),
-
           SizedBox(height: 20.h),
           Expanded(
             child: BlocBuilder<PortfolioTailorCubit, PortfolioTailorState>(
@@ -121,6 +121,7 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
                           showRating: false,
                           showPrice: false,
                           showEdit: true,
+                          showDelete: true,
                           onEdit: () {
                             final cubit =
                                 context.read<PortfolioTailorCubit>();
@@ -132,9 +133,8 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
                               cubit.viewPortfolioTailor(null);
                             });
                           },
-                          onTap: () {
-                            _showDeleteConfirmation(context, item);
-                          },
+                          onDelete: () => _showDeleteConfirmation(context, item), // ✅ new
+                          onTap: () {},
                         ),
                         mainColor: AppColors.secondary,
                         darkColor: AppColors.darksecondary,

@@ -21,7 +21,6 @@ class JoinBiddingScreen extends StatefulWidget {
   final String title;
   final String postId;
 
-  // ✅ Edit mode args
   final String? offerId;
   final String? initialPrice;
   final String? initialDays;

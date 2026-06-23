@@ -15,6 +15,8 @@ static const String google= '/api/auth/google';
   static const String offers = '/api/offers/{id}';
   static const String acceptOffer = "/api/offers/{offerId}/accept";
   static const String editeOffer = '/api/offers/{offerId}';
+  static const String myOrder = "/api/offers/my/accepted";
+  static const String updateState = "/api/offers/{offerId}/work-status";
   // Tailor-portfolio
   static const String viewPortfolioTailor = '/api/portfolio/my';
   static const String deletePortfolioTailor = '/api/portfolio/{itemId}';

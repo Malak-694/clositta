@@ -28,6 +28,7 @@ static const String google= '/api/auth/google';
   static const String createBid = '/api/bids';
   static const String updateBid = "/api/bids/{bidId}";
   static const String bestOffers = '/api/offers/{bidId}/best';
+  static const String rateOffer = '/api/offers/{offerId}/rate';
   // Customer-closet
   static const String viewClosetItems = '/api/closet';
   static const String deleteClosetItem = '/api/closet/{itemId}';
@@ -57,8 +58,7 @@ static const String google= '/api/auth/google';
   static const String getAllOrdersSeller = '/api/orders/seller';
   static const String updateOrderStatusSeller = '/api/orders/{orderId}/suborders/{suborderId}/status';
 
-  static const String socketUrl =
-      'https://graduationproject-production-b435.up.railway.app';
+  static const String socketUrl = baseUrl;
 
   // ── Chat ──────────────────────────────────────────
   static const String conversations = '/api/chat/conversations';

@@ -10,6 +10,8 @@ import 'package:chicora/features/customer/biding/data/models/send_bidding_model.
 import 'package:chicora/features/customer/biding/data/repo/bid_repo.dart';
 import 'package:chicora/features/customer/biding/logic/cubit/custom_bidding_cubit/customer_bidding_state.dart';
 
+import '../../../data/models/rate_offer_request_model.dart';
+
 class CustomerBiddingCubit extends Cubit<CustomerBiddingState> {
   final BiddingCustomerRepo _repository;
   final SharedPrefHelper _prefs = getIt<SharedPrefHelper>();
@@ -117,13 +119,11 @@ class CustomerBiddingCubit extends Cubit<CustomerBiddingState> {
         return;
       }
 
-      // ✅ Validate image path exists
       if (request.imageUrl.isEmpty) {
         emit(const CustomerBiddingState.fail("Please select an image"));
         return;
       }
 
-      // ✅ Call repository with file path
       final BidResponse response = await _repository.createBidWithFile(
         token: token,
         description: request.description,
@@ -178,6 +178,31 @@ class CustomerBiddingCubit extends Cubit<CustomerBiddingState> {
               ? e.toString().split("Exception: ")[1]
               : "Failed to accept offer. Please try again.",
         ),
+      );
+    }
+  }
+
+  Future<void> rateOffer({
+    required String offerId,
+    required int rating,
+    String? comment,
+  }) async {
+    try {
+      final token = await _getToken();
+      if (token == null || token.isEmpty) {
+        throw Exception("Authentication token not found");
+      }
+
+      await _repository.rateOffer(
+        token: token,
+        offerId: offerId,
+        body: RateOfferRequestModel(rating: rating, comment: comment),
+      );
+    } catch (e) {
+      throw Exception(
+        e.toString().contains("Exception:")
+            ? e.toString().split("Exception: ")[1]
+            : "Failed to submit rating. Please try again.",
       );
     }
   }
@@ -259,25 +284,20 @@ class CustomerBiddingCubit extends Cubit<CustomerBiddingState> {
     final token = await _getToken();
     if (token == null || token.isEmpty) return;
 
-    var changed = false;
-    for (final bid in closedBids) {
-      if (bid.id == null) continue;
-      if (_acceptedOffers.containsKey(bid.id)) continue;
-
-      try {
-        final offers = await _repository.getOffers(token, bid.id!);
-        final accepted = offers.where(
-              (o) => o.status?.toLowerCase() == 'accepted',
-        ).firstOrNull ?? (offers.isNotEmpty ? offers.first : null);
-
-        if (accepted != null) {
+    await Future.wait(
+      closedBids
+          .where((bid) => bid.id != null && !_acceptedOffers.containsKey(bid.id))
+          .map((bid) async {
+        try {
+          final offers = await _repository.getOffers(token, bid.id!);
+          final accepted = offers.firstWhere(
+                (o) => o.status?.toLowerCase() == 'accepted',
+            orElse: () => offers.first,
+          );
           _acceptedOffers[bid.id!] = accepted;
-          changed = true;
-        }
-      } catch (_) {}
-    }
-
-    if (!changed) return;
+        } catch (_) {}
+      }),
+    );
 
     emit(CustomerBiddingState.success(
       state.maybeWhen(success: (d) => d, orElse: () => <BidResponse>[]),

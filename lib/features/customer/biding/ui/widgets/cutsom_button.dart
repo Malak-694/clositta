@@ -36,7 +36,7 @@ class CustomButton extends StatelessWidget {
         icon: Icon(icon, size: 20),
         label: Text(
           text,
-          style: AppStyle.medLight.copyWith(
+          style: AppStyle.boldPrimery.copyWith(
             foreground: Paint()
               ..color = foregroundColor,
           ),

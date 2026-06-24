@@ -31,6 +31,7 @@ import '../../features/customer/biding/data/models/bid_customer_model.dart';
 import '../../features/customer/biding/data/models/offer_model.dart';
 
 import '../../features/customer/biding/data/models/portfolio_item_model.dart';
+import '../../features/customer/biding/data/models/rate_offer_request_model.dart';
 import '../../features/ecommerce_multi/data/models/cart_models/cart_request_model.dart';
 import '../../features/ecommerce_multi/data/models/cart_models/cart_response_model.dart';
 import '../../features/ecommerce_multi/data/models/order_models/cancel_order_request_model.dart';
@@ -114,6 +115,11 @@ abstract class ApiService {
     @Path("id") String id,
     @Body() JoinBiddingRequest body,
   );
+  @PATCH(ApiEndpoints.rateOffer)
+  Future<MessageModel> rateOffer(
+      @Header("Authorization") String token,
+      @Path("offerId") String offerId,
+      @Body() RateOfferRequestModel body,);
   //customer-bids
   @GET(ApiEndpoints.myBids)
   Future<List<BidResponse>> getMyBids(@Header("Authorization") String token);

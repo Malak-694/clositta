@@ -33,7 +33,8 @@ class OfferResponse {
   final int? timeInDays;
   final String? message;
   final String? status;
-  final String? workStatus;   // 👈 in_progress / completed / accepted
+  final String? workStatus;
+  final DateTime? deadline; // ← add this
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -49,6 +50,7 @@ class OfferResponse {
     this.message,
     this.status,
     this.workStatus,
+    this.deadline,
     this.createdAt,
     this.updatedAt,
     this.version,

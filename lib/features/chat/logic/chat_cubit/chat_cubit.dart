@@ -9,20 +9,21 @@ class ChatCubit extends Cubit<ChatState<List<ChatMessageModel>>> {
   final SocketService _socketService;
   final ChatRepo      _chatRepo;
 
-  final List<ChatMessageModel>      _messages      = [];
+  final List<ChatMessageModel>   _messages      = [];
   final List<StreamSubscription> _subscriptions = [];
 
   ChatCubit(this._socketService, this._chatRepo)
       : super(const ChatState.initial());
 
-  // ── Main entry point ──────────────────────────────
   Future<void> connectToChat({
     required String token,
     required String receiverId,
   }) async {
+    // ✅ Cancel subscriptions AND disconnect old socket before reinitializing
     for (final sub in _subscriptions) sub.cancel();
     _subscriptions.clear();
     _messages.clear();
+    _socketService.disconnect(); // ← key fix: kills old socket before init()
 
     emit(const ChatState.loading());
 
@@ -31,10 +32,12 @@ class ChatCubit extends Cubit<ChatState<List<ChatMessageModel>>> {
       _messages.addAll(history);
       emit(ChatState.success(List.from(_messages)));
 
+      // ✅ Fresh stream controllers AFTER disconnect
       _socketService.init();
 
       _subscriptions.add(
         _socketService.onConnected.listen((_) {
+          // socket is ready — nothing needed here
         }),
       );
 
@@ -79,9 +82,7 @@ class ChatCubit extends Cubit<ChatState<List<ChatMessageModel>>> {
           }
         }),
       );
-
       _socketService.connect(token, receiverId);
-
     } catch (e) {
       emit(ChatState.fail(e.toString()));
     }
@@ -91,14 +92,21 @@ class ChatCubit extends Cubit<ChatState<List<ChatMessageModel>>> {
 
   void sendMessage({required String receiverId, required String content}) {
     if (content.trim().isEmpty) return;
+    if (!_socketService.isConnected) {
+      emit(ChatState.fail('Not connected. Please wait or retry.'));
+      return;
+    }
+
     _socketService.sendMessage(receiverId: receiverId, content: content);
   }
 
   void editMessage({required String messageId, required String newContent}) {
+    if (!_socketService.isConnected) return;
     _socketService.editMessage(messageId: messageId, newContent: newContent);
   }
 
   void deleteMessage(String messageId) {
+    if (!_socketService.isConnected) return;
     _socketService.deleteMessage(messageId);
   }
 
@@ -116,6 +124,7 @@ class ChatCubit extends Cubit<ChatState<List<ChatMessageModel>>> {
   @override
   Future<void> close() {
     for (final sub in _subscriptions) sub.cancel();
+    _socketService.disconnect();
     return super.close();
   }
 }

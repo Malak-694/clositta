@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:chicora/core/networking/api_service.dart';
 import '../models/bid_customer_model.dart';
 import '../models/offer_model.dart';
+import '../models/rate_offer_request_model.dart';
 
 class BiddingCustomerRepo {
   final ApiService apiService;
@@ -115,8 +116,13 @@ class BiddingCustomerRepo {
     }
   }
 
-  //update bid
-
+  Future<void> rateOffer({
+    required String token,
+    required String offerId,
+    required RateOfferRequestModel body,
+  }) async {
+    await apiService.rateOffer("Bearer $token", offerId, body);
+  }
   Future<BidResponse> updateBid({
     required String token,
     required String bidId,

@@ -32,6 +32,9 @@ OfferResponse _$OfferResponseFromJson(Map<String, dynamic> json) =>
       message: json['message'] as String?,
       status: json['status'] as String?,
       workStatus: json['workStatus'] as String?,
+      deadline: json['deadline'] == null
+          ? null
+          : DateTime.parse(json['deadline'] as String),
       createdAt: json['createdAt'] == null
           ? null
           : DateTime.parse(json['createdAt'] as String),
@@ -51,6 +54,7 @@ Map<String, dynamic> _$OfferResponseToJson(OfferResponse instance) =>
       'message': instance.message,
       'status': instance.status,
       'workStatus': instance.workStatus,
+      'deadline': instance.deadline?.toIso8601String(),
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),
       '__v': instance.version,

@@ -172,7 +172,6 @@ Widget buildProductCard(BuildContext context, ProductModel product) {
                     },
                     icon: Icon(Icons.delete, color: AppColors.primery),
                     padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
                     iconSize: 22,
                   ),
                   IconButton(
@@ -187,7 +186,6 @@ Widget buildProductCard(BuildContext context, ProductModel product) {
                     },
                     icon: Icon(Icons.edit, color: AppColors.primery),
                     padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
                     iconSize: 22,
                   ),
                 ],

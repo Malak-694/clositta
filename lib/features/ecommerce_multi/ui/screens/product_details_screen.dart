@@ -90,7 +90,17 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             boundaryMargin: const EdgeInsets.all(20),
             minScale: 0.5,
             maxScale: 4,
-            child: Image.network(imageUrl, fit: BoxFit.contain),
+            child: Image.network(
+              imageUrl,
+              fit: BoxFit.contain,
+              errorBuilder: (_, __, ___) => Container(
+                height: 120,
+                color: Colors.grey.shade100,
+                child: const Center(
+                  child: Icon(Icons.image_not_supported, color: Colors.grey),
+                ),
+              ),
+            ),
           ),
         ),
       ),

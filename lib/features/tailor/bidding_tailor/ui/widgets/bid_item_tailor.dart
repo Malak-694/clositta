@@ -4,7 +4,6 @@ import 'package:chicora/features/tailor/bidding_tailor/ui/widgets/custom_tailor_
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import '../../../../../lib/features/tailor/bidding_tailor/ui/widgets/cutsom_button.dart';
 
 class BidItemTailor extends StatelessWidget {
   final String tailorName;

@@ -53,6 +53,7 @@ dependencies:
   lucide_icons_flutter: ^3.1.7
   mason_logger: ^0.3.3
   mocktail: ^1.0.5
+  network_image_mock: ^2.1.1
   pinput: ^6.0.2
   pretty_dio_logger: ^1.4.0
   retrofit: ^4.9.1

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
 import 'package:flutter/material.dart';
@@ -10,12 +12,16 @@ class CustomSearchBar extends StatelessWidget {
     required this.onSearch,
     this.onChanged,
     this.onImageSearch,
+    this.searchImagePath,
+    this.onClearSearchImage,
     this.width = 380,
   });
 
   final ValueChanged<String> onSearch;
   final ValueChanged<String>? onChanged;
   final VoidCallback? onImageSearch;
+  final VoidCallback? onClearSearchImage;
+  final String? searchImagePath;
   final TextEditingController searchController;
   final double width;
 
@@ -35,9 +41,30 @@ class CustomSearchBar extends StatelessWidget {
           hintStyle: AppStyle.smallBlack,
           filled: true,
           fillColor: const Color.fromARGB(255, 242, 242, 254),
-          prefixIcon: IconButton(
-            icon: Icon(Icons.search, color: AppColors.primery, size: 26),
-            onPressed: () => onSearch(searchController.text.trim()),
+          prefixIcon: SizedBox(
+            width: searchImagePath != null ? 72.w : 48.w,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.search, color: AppColors.primery, size: 26),
+                  onPressed: () => onSearch(searchController.text.trim()),
+                ),
+                if (searchImagePath != null)
+                  GestureDetector(
+                    onTap: onClearSearchImage,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(3.r),
+                      child: Image.file(
+                        File(searchImagePath!),
+                        width: 23.w,
+                        height: 23.w,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
           suffixIcon: onImageSearch != null
               ? IconButton(

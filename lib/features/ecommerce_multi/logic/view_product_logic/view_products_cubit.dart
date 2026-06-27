@@ -10,6 +10,7 @@ import 'package:chicora/features/ecommerce_multi/logic/view_product_logic/view_p
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/helper/shared_key.dart';
 import '../../data/models/product_models/product_response_model.dart';
+import '../../data/models/product_models/product_search_response_model.dart';
 
 class ViewProductsCubit extends Cubit<ViewProductsState> {
   final SharedPrefHelper _prefs = getIt<SharedPrefHelper>();
@@ -70,12 +71,14 @@ class ViewProductsCubit extends Cubit<ViewProductsState> {
     }
     try {
       emit(ViewProductsState.loading());
-
-      final response = await productSearchRepo.searchByText(
-        query: trimmedQuery,
-      );
+      final Map<String, dynamic> body = {};
+      body['query'] = trimmedQuery;
+      final ApiResult<List<ProductSearchResponseModel>> response =
+          await productSearchRepo.searchByText(body: body);
       response.when(
-        success: (List<ProductModelBuyer> products) {
+        success: (List<ProductSearchResponseModel> searchResults) {
+          final products =
+              searchResults.map((result) => result.product).toList();
           emit(ViewProductsState.success(products));
         },
         failure: (String error) {
@@ -99,7 +102,9 @@ class ViewProductsCubit extends Cubit<ViewProductsState> {
         imagePath: imagePath,
       );
       response.when(
-        success: (List<ProductModelBuyer> products) {
+        success: (List<ProductSearchResponseModel> searchResults) {
+          final products =
+              searchResults.map((result) => result.product).toList();
           emit(ViewProductsState.success(products));
         },
         failure: (String error) {

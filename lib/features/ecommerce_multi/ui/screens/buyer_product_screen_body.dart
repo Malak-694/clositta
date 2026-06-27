@@ -55,6 +55,7 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
 
   final TextEditingController searchController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
+  String? _searchImagePath;
 
   @override
   void initState() {
@@ -79,9 +80,22 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
     super.dispose();
   }
 
+  void _clearSearchImage() {
+    setState(() => _searchImagePath = null);
+    if (_token == null) return;
+    context.read<ViewProductsCubit>().getProductsBuyer(
+      token: _token!,
+      category: _selectedCategory == 'All' ? null : _selectedCategory,
+    );
+  }
+
   void _onTextSearch(String value) {
     final q = value.trim();
     if (_token == null) return;
+
+    if (_searchImagePath != null) {
+      setState(() => _searchImagePath = null);
+    }
 
     if (q.isEmpty) {
       context.read<ViewProductsCubit>().getProductsBuyer(
@@ -120,6 +134,7 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
       if (picked == null || !mounted) return;
 
       searchController.clear();
+      setState(() => _searchImagePath = picked.path);
       context.read<ViewProductsCubit>().searchByImage(imagePath: picked.path);
     } catch (e) {
       if (!mounted) return;
@@ -146,6 +161,8 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
             searchController: searchController,
             onSearch: _onTextSearch,
             onImageSearch: _onImageSearch,
+            searchImagePath: _searchImagePath,
+            onClearSearchImage: _clearSearchImage,
           ),
           SizedBox(height: 20.h),
           CustomCategorySelector(
@@ -157,6 +174,7 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
               setState(() {
                 _selectedCategory = category;
                 searchController.clear();
+                _searchImagePath = null;
               });
 
               if (_token != null) {

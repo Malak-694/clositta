@@ -35,6 +35,8 @@ import '../../features/customer/biding/data/models/rate_offer_request_model.dart
 import '../../features/ecommerce_multi/data/models/cart_models/cart_request_model.dart';
 import '../../features/ecommerce_multi/data/models/cart_models/cart_response_model.dart';
 import '../../features/ecommerce_multi/data/models/order_models/cancel_order_request_model.dart';
+import '../../features/ecommerce_multi/data/models/product_models/product_search_response_model.dart'
+    show ProductSearchResponseModel;
 import '../../features/ecommerce_multi/data/models/rating models/rating_response_model.dart';
 import '../../features/profile/data/model/profile_model.dart';
 import '../../features/profile/data/model/update_profile_model.dart';
@@ -62,20 +64,18 @@ abstract class ApiService {
     @Part(name: 'image') MultipartFile? image,
   });
 
-    @POST(ApiEndpoints.login)
+  @POST(ApiEndpoints.login)
   Future<LoginResponse> logIn(@Body() LoginRequest body);
 
-
-    @POST(ApiEndpoints.google)
-  Future<GoogleAuthResponseModel> googleAuth(@Body() GoogleAuthRequestModel body);
-
-
+  @POST(ApiEndpoints.google)
+  Future<GoogleAuthResponseModel> googleAuth(
+    @Body() GoogleAuthRequestModel body,
+  );
 
   @GET(ApiEndpoints.viewBiddingTailor)
   Future<List<PostTailorResponse>> viewBiddingTailor(
     @Header("Authorization") String token,
   );
-
 
   @GET(ApiEndpoints.profile)
   Future<ProfileResponse> getProfile(@Header("Authorization") String token);
@@ -117,9 +117,10 @@ abstract class ApiService {
   );
   @PATCH(ApiEndpoints.rateOffer)
   Future<MessageModel> rateOffer(
-      @Header("Authorization") String token,
-      @Path("offerId") String offerId,
-      @Body() RateOfferRequestModel body,);
+    @Header("Authorization") String token,
+    @Path("offerId") String offerId,
+    @Body() RateOfferRequestModel body,
+  );
   //customer-bids
   @GET(ApiEndpoints.myBids)
   Future<List<BidResponse>> getMyBids(@Header("Authorization") String token);
@@ -162,16 +163,15 @@ abstract class ApiService {
 
   @GET(ApiEndpoints.myOrder)
   Future<List<AcceptedOfferResponse>> getMyAcceptedOffers(
-      @Header('Authorization') String token,
-      );
-
+    @Header('Authorization') String token,
+  );
 
   @PATCH(ApiEndpoints.updateState)
   Future<void> updateWorkStatus(
-      @Header('Authorization') String token,
-      @Path('offerId') String offerId,
-      @Body() Map<String, String> body,
-      );
+    @Header('Authorization') String token,
+    @Path('offerId') String offerId,
+    @Body() Map<String, String> body,
+  );
 
   @DELETE(ApiEndpoints.editeOffer)
   Future<void> deleteOffer(
@@ -435,5 +435,17 @@ abstract class ApiService {
   @DELETE(ApiEndpoints.measurements)
   Future<MessageModel> deleteMeasurements(
     @Header("Authorization") String token,
+  );
+
+  //______ai_______________
+  @POST(ApiEndpoints.searchByImage)
+  @MultiPart()
+  Future<List<ProductSearchResponseModel>> searchByImage(
+    @Part(name: "file") MultipartFile? image,
+  );
+
+  @POST(ApiEndpoints.searchByText)
+  Future<List<ProductSearchResponseModel>> searchByText(
+    @Body() Map<String, dynamic> body,
   );
 }

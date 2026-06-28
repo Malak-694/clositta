@@ -4,6 +4,7 @@ import 'package:chicora/features/auth/data/model/forgot_password_model.dart';
 import 'package:chicora/features/auth/data/model/google_auth_model.dart';
 import 'package:chicora/features/auth/data/model/login_model.dart';
 import 'package:chicora/features/auth/data/model/sign_up_model.dart';
+import 'package:chicora/features/chat/data/models/chat_message_model.dart';
 import 'package:chicora/features/customer/closet/data/models/closet_item_response_model.dart';
 import 'package:chicora/features/customer/measurements/data/model/measurements_request_model.dart';
 import 'package:chicora/features/customer/measurements/data/model/measurements_response_model.dart';
@@ -12,6 +13,7 @@ import 'package:chicora/features/ecommerce_multi/data/models/order_models/order_
 import 'package:chicora/features/ecommerce_multi/data/models/order_models/order_response_model.dart';
 import 'package:chicora/features/ecommerce_multi/data/models/order_models/pay_model.dart';
 import 'package:chicora/features/ecommerce_multi/data/models/product_models/product_response_model.dart';
+import 'package:chicora/features/ecommerce_multi/data/models/product_models/product_search_response_model.dart';
 import 'package:chicora/features/ecommerce_multi/data/models/rating%20models/rating_request_model.dart';
 import 'package:chicora/features/seller/orders/data/models/order_seller_response_model.dart';
 import 'package:chicora/features/seller/orders/data/models/order_update_seller_request_model.dart';

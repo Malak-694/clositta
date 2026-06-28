@@ -26,7 +26,6 @@ class ProductModelBuyer {
   String? updatedAt;
   @JsonKey(name: '__v')
   int? iV;
-  
 
   ProductModelBuyer({
     this.ratingDistribution,

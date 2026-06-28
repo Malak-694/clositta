@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/networking/socket_service.dart';
 import '../../data/models/chat_message_model.dart';
@@ -110,6 +111,28 @@ class ChatCubit extends Cubit<ChatState<List<ChatMessageModel>>> {
     _socketService.deleteMessage(messageId);
   }
 
+  Future<void> uploadImage({
+    required String token,
+    required String receiverId,
+    required File imageFile,
+    String? caption,
+  }) async {
+    try {
+      final message = await _chatRepo.uploadImage(
+        token: token,
+        receiverId: receiverId,
+        imageFile: imageFile,
+        caption: caption,
+      );
+      final exists = _messages.any((m) => m.id == message.id);
+      if (!exists) {
+        _messages.add(message);
+        emit(ChatState.success(List.from(_messages)));
+      }
+    } catch (e) {
+      emit(ChatState.fail(e.toString()));
+    }
+  }
   void sendTyping(String receiverId) => _socketService.sendTyping(receiverId);
   void stopTyping(String receiverId)  => _socketService.stopTyping(receiverId);
   void markAsRead(String senderId)    => _socketService.markAsRead(senderId);

@@ -1,7 +1,6 @@
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
 import 'package:chicora/core/widgets/circle_indicator.dart';
-import 'package:chicora/features/customer/biding/data/models/bid_customer_model.dart';
 import 'package:chicora/features/customer/biding/ui/widgets/cutsom_button.dart';
 import 'package:chicora/features/customer/biding/ui/widgets/deadline_badge.dart';
 import 'package:chicora/features/customer/biding/ui/widgets/rate_tailor_bottom_sheet.dart';

@@ -3,12 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
-import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/router/route_names.dart';
 import '../../data/models/conversation_model.dart';
-import '../../logic/chat_cubit/chat_cubit.dart';
 import '../../logic/conversations_cubit/conversations_cubit.dart';
-import '../screens/chat_screen.dart';
 
 class ConversationTile extends StatelessWidget {
   final ConversationModel conversation;

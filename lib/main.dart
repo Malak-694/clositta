@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:app_links/app_links.dart';
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/di/dependency_injection.dart';
+import 'package:chicora/core/helper/notification_helper.dart';
 import 'package:chicora/core/helper/shared_key.dart';
 import 'package:chicora/core/helper/shared_pref_helper.dart';
 import 'package:chicora/core/theme/app_theme.dart';
@@ -40,18 +41,36 @@ void main() async {
   await setupGetIt();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  // Initialize NotificationHelper
+  await NotificationHelper.initialize();
   final prefs = getIt<SharedPrefHelper>();
   final token = await prefs.getSecureData(SharedPrefKey.token);
   final role = await prefs.getSecureData(SharedPrefKey.role);
+
+  // Sync token to backend if logged in
+  if (token != null && token.isNotEmpty) {
+    NotificationHelper.sendTokenToBackend();
+  }
+
   final initialRoute = getInitialRoute(token, role);
 
+  // Decide which cubits to provide based on role
   final bool needsCartAndChat = role == 'customer' || role == 'tailor';
 
   runApp(
-    ChicoraApp(
-      initialRoute: initialRoute,
-      needsCartAndChat: needsCartAndChat,
-    ),
+    needsCartAndChat
+        ? MultiBlocProvider(
+      providers: [
+        BlocProvider<CartCubit>(
+          create: (_) => getIt<CartCubit>()..getCart(),
+        ),
+        BlocProvider<ConversationsCubit>(
+          create: (_) => getIt<ConversationsCubit>()..loadUnreadCount(),
+        ),
+      ],
+      child: ChicoraApp(initialRoute: initialRoute),
+    )
+        : ChicoraApp(initialRoute: initialRoute), // seller gets nothing extra
   );
 }
 
@@ -64,15 +83,9 @@ bool _isOrdersReturnDeepLink(Uri uri) {
 
 class ChicoraApp extends StatefulWidget {
   final String initialRoute;
-  final bool needsCartAndChat;
+  const ChicoraApp({super.key, required this.initialRoute});
 
-  const ChicoraApp({
-    super.key,
-    required this.initialRoute,
-    required this.needsCartAndChat ,
-
-  });
-
+  // ← Any widget calls ChicoraApp.of(context).toggleTheme()
   static _ChicoraAppState of(BuildContext context) =>
       context.findAncestorStateOfType<_ChicoraAppState>()!;
 
@@ -88,8 +101,9 @@ class _ChicoraAppState extends State<ChicoraApp> {
 
   void toggleTheme() {
     setState(() {
-      _themeMode =
-      _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+      _themeMode = _themeMode == ThemeMode.light
+          ? ThemeMode.dark
+          : ThemeMode.light;
     });
   }
 
@@ -118,7 +132,9 @@ class _ChicoraAppState extends State<ChicoraApp> {
     try {
       final initial = await _appLinks.getInitialLink();
       if (initial != null) handle(initial);
-    } catch (_) {}
+    } catch (_) {
+      // ignore: plugin may fail on unsupported platforms during tests
+    }
 
     _linkSubscription = _appLinks.uriLinkStream.listen(handle);
   }
@@ -129,7 +145,8 @@ class _ChicoraAppState extends State<ChicoraApp> {
     super.dispose();
   }
 
-  Widget _buildApp() {
+  @override
+  Widget build(BuildContext context) {
     return ScreenUtilInit(
       designSize: const Size(412, 917),
       minTextAdapt: true,
@@ -143,10 +160,10 @@ class _ChicoraAppState extends State<ChicoraApp> {
           debugShowCheckedModeBanner: false,
           themeMode: _themeMode,
 
-          // ── Light theme
+          // ── Light theme (your existing)
           theme: AppTheme.lightTheme,
 
-          // ── Dark theme
+          // ── Dark theme using your AppColors
           darkTheme: ThemeData(
             brightness: Brightness.dark,
             scaffoldBackgroundColor: const Color(0xFF1A1A2E),
@@ -180,30 +197,12 @@ class _ChicoraAppState extends State<ChicoraApp> {
               iconColor: Colors.white70,
             ),
             dividerColor: Colors.white12,
-            dialogBackgroundColor: const Color(0xFF252540),
+            dialogTheme: DialogThemeData(
+              backgroundColor: const Color(0xFF252540),
+            ),
           ),
         );
       },
     );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (widget.needsCartAndChat) {
-      return MultiBlocProvider(
-        providers: [
-          BlocProvider<CartCubit>(
-            create: (_) => getIt<CartCubit>()..getCart(),
-          ),
-          BlocProvider<ConversationsCubit>(
-            create: (_) => getIt<ConversationsCubit>()..loadUnreadCount(),
-          ),
-        ],
-        child: _buildApp(),
-      );
-    }
-
-    // Sellers get no cart or chat providers
-    return _buildApp();
   }
 }

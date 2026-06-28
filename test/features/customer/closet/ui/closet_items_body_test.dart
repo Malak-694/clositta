@@ -57,7 +57,7 @@ void ignoreOverflowErrors(WidgetTester tester) {
 Widget buildBody(MockClosetCubit cubit) {
   return ScreenUtilInit(
     designSize: const Size(390, 844),
-    builder: (_, __) => MaterialApp(
+    builder: (_, _) => MaterialApp(
       home: Scaffold(
         body: BlocProvider<ClosetCubit>.value(
           value: cubit,

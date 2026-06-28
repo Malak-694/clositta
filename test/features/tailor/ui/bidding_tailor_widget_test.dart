@@ -1,20 +1,13 @@
 // test/features/tailor/bidding_tailor/ui/bidding_tailor_widget_test.dart
 
 import 'package:bloc_test/bloc_test.dart';
-import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/di/dependency_injection.dart';
 import 'package:chicora/core/helper/shared_pref_helper.dart';
-import 'package:chicora/features/customer/biding/data/models/portfolio_item_model.dart';
 import 'package:chicora/features/tailor/bidding_tailor/data/models/accepted_offer_model.dart';
 import 'package:chicora/features/tailor/bidding_tailor/data/models/bid_model.dart';
 import 'package:chicora/features/tailor/bidding_tailor/data/models/post_tailor_model.dart';
 import 'package:chicora/features/tailor/bidding_tailor/logic/cubit/bidding_tailor_cubit.dart';
 import 'package:chicora/features/tailor/bidding_tailor/logic/cubit/bidding_tailor_state.dart';
-import 'package:chicora/features/tailor/bidding_tailor/ui/Screens/active_order_screen.dart';
-import 'package:chicora/features/tailor/bidding_tailor/ui/Screens/join_bidding_screen.dart';
-import 'package:chicora/features/tailor/bidding_tailor/ui/Screens/posts_tailor_screen.dart';
-import 'package:chicora/features/tailor/bidding_tailor/ui/screens/active_order_screen.dart';
-import 'package:chicora/features/tailor/bidding_tailor/ui/screens/detailes_screen_tailor.dart';
 import 'package:chicora/features/tailor/bidding_tailor/ui/widgets/bid_item_tailor.dart';
 import 'package:chicora/features/tailor/bidding_tailor/ui/widgets/post_item_tailor.dart';
 import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_cubit.dart';

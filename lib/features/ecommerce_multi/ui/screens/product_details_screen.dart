@@ -39,8 +39,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   String? _userName;
 
   late List<String> productPhotos;
-  Color _rolePrimary = AppColors.primery;
-  Color _roleDark = AppColors.darkprimery;
+  final Color _rolePrimary = AppColors.primery;
+  final Color _roleDark = AppColors.darkprimery;
 
   @override
   void initState() {
@@ -93,7 +93,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             child: Image.network(
               imageUrl,
               fit: BoxFit.contain,
-              errorBuilder: (_, __, ___) => Container(
+              errorBuilder: (_, _, _) => Container(
                 height: 120,
                 color: Colors.grey.shade100,
                 child: const Center(

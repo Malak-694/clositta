@@ -196,7 +196,7 @@ class ProfileIdentityHeader extends StatelessWidget {
           // Email
           if (!isLoading && p?.email != null)
             Text(
-              p!.email!,
+              p!.email,
               style: AppStyle.medLight.copyWith(
                 fontSize: 13.sp,
                 color: AppColors.light,

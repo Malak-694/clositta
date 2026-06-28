@@ -186,7 +186,7 @@ class SellerOrderCardWidget extends StatelessWidget {
                       width: 48.w,
                       height: 48.h,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(
+                      errorBuilder: (_, _, _) => Container(
                         width: 48.w,
                         height: 48.h,
                         color: Colors.grey.shade200,

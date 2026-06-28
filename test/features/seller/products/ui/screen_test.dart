@@ -381,7 +381,7 @@ void main() {
       designSize: const Size(390, 844),
       minTextAdapt: true,
       splitScreenMode: false,
-      builder: (_, __) => MaterialApp(
+      builder: (_, _) => MaterialApp(
         home: Scaffold(
           body: BlocProvider<SellerProductsCubit>.value(
             value: cubit,

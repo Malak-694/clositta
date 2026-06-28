@@ -25,7 +25,7 @@ class _PostsTabState extends State<PostsTab> {
   CustomerBiddingCubit? _cubit;
 
   final List<String> _categories = ["All", "Open", "Updated"];
-  String _selectedCategory = "All";
+  final String _selectedCategory = "All";
 
   @override
   void didChangeDependencies() {

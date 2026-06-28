@@ -171,7 +171,7 @@ class _DetailesScreenTailorState extends State<DetailesScreenTailor> {
 
                             return ListView.separated(
                               itemCount: data.length,
-                              separatorBuilder: (_, __) =>
+                              separatorBuilder: (_, _) =>
                                   SizedBox(height: 10.h),
                               itemBuilder: (context, index) {
                                 final offer = data[index];
@@ -194,8 +194,8 @@ class _DetailesScreenTailorState extends State<DetailesScreenTailor> {
                                       'title': widget.describtion,
                                       'postId': widget.postId,
                                       'offerId': offer.id,
-                                      'initialPrice': offer.price?.toString(),
-                                      'initialDays': offer.timeInDays?.toString(),
+                                      'initialPrice': offer.price.toString(),
+                                      'initialDays': offer.timeInDays.toString(),
                                       'initialMessage': offer.message ?? '',
                                     },
                                   ).then((_) {

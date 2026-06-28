@@ -27,7 +27,7 @@ class AnalysisProductItem extends StatelessWidget {
               width: 48,
               height: 48,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Container(
+              errorBuilder: (_, _, _) => Container(
                 width: 48,
                 height: 48,
                 color: Colors.white,

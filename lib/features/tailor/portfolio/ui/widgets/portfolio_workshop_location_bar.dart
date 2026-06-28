@@ -106,7 +106,7 @@ class PortfolioWorkshopLocationBar extends StatelessWidget {
                   Icon(Icons.star, size: 14.sp, color: AppColors.secondary),
                   SizedBox(width: 6.w),
                   Text(
-                    '${t.averageRating!.toStringAsFixed(1)}',
+                    t.averageRating!.toStringAsFixed(1),
                     style: AppStyle.medBlack.copyWith(fontSize: 13.sp),
                   ),
                   if (t.totalRatings != null) ...[

@@ -14,8 +14,6 @@ import '../../../../chat/logic/conversations_cubit/conversations_state.dart';
 import '../../../../ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
 import '../../../../ecommerce_multi/logic/cart_cubit/cart_state.dart';
 import '../../../../ecommerce_multi/logic/cart_cubit/cart_total_quantity.dart';
-import '../../data/repo/closet_repo.dart';
-import '../../logic/cubit/closet_cubit.dart';
 import '../widgets/closet_items_body.dart';
 
 class ClosetItemsScreen extends StatefulWidget {

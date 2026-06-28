@@ -46,7 +46,7 @@ Widget _buildPostCard(
               config.imageUrl!,
               fit: BoxFit.cover,
               width: double.infinity,
-              errorBuilder: (_, __, ___) => Container(
+              errorBuilder: (_, _, _) => Container(
                 height: 120,
                 color: Colors.grey.shade100,
                 child: const Center(
@@ -173,7 +173,7 @@ Widget _buildProductCard(
               config.imageUrl!,
               fit: BoxFit.cover,
               width: double.infinity,
-              errorBuilder: (_, __, ___) => Container(
+              errorBuilder: (_, _, _) => Container(
                 height: 120,
                 color: Colors.grey.shade100,
                 child: const Center(

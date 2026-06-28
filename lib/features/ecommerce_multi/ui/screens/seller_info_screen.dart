@@ -99,10 +99,10 @@ class _SellerInfoScreenState extends State<SellerInfoScreen> {
                         );
                       } else if (state is Success) {
                         final products =
-                        (state as Success).data as List<ProductModelBuyer>;
+                        (state).data as List<ProductModelBuyer>;
                         return _buildGrid(products);
                       } else if (state is Fail) {
-                        final message = (state as Fail).message;
+                        final message = (state).message;
                         return Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,

@@ -1,4 +1,5 @@
 import 'package:chicora/core/constants/style.dart';
+import 'package:chicora/core/helper/notification_helper.dart';
 import 'package:chicora/core/router/route_names.dart';
 import 'package:chicora/core/utils/validator.dart';
 import 'package:chicora/features/auth/data/model/google_auth_model.dart';
@@ -42,6 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
           initial: () {},
           loading: () {},
           success: (data) {
+            NotificationHelper.sendTokenToBackend();
             if (data is LoginResponse || data is GoogleAuthResponseModel) {
               if (data.role == 'customer') {
                 Navigator.pushReplacementNamed(
@@ -99,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           Text(
                             "Good to see you back",
                             textAlign: TextAlign.start,
-                            style: AppStyle.medBlack
+                            style: AppStyle.medBlack,
                           ),
                         ],
                       ),
@@ -161,15 +163,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(height: 20.h),
 
                   TextButton(
-                    child: Text(
-                      "- Sign in with google -",
-                      style: AppStyle.smallBlack,
-                    ),
                     onPressed: state is Loading
                         ? null
                         : () {
                             context.read<AuthCubit>().googleAuth();
                           },
+                    child: Text(
+                      "- Sign in with google -",
+                      style: AppStyle.smallBlack,
+                    ),
                   ),
                   SizedBox(height: 16.h),
                   TextButton(

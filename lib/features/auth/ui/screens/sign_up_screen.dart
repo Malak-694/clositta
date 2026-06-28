@@ -1,4 +1,5 @@
 import 'package:chicora/core/constants/style.dart';
+import 'package:chicora/core/helper/notification_helper.dart';
 import 'package:chicora/core/router/route_names.dart';
 import 'package:chicora/core/utils/validator.dart';
 import 'package:chicora/features/auth/logic/cubit/authentication_cubit.dart';
@@ -74,6 +75,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           initial: () {},
           loading: () {},
           success: (message) {
+            NotificationHelper.sendTokenToBackend();
             Navigator.pushNamed(context, RouteNames.login);
           },
           fail: (error) {

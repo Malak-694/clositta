@@ -56,14 +56,17 @@ void main() {
 
   final fakeOffer = OfferResponse(
     id: "offer-123",
-    bid: "bid-123",
+    bid: BidNested(
+      id: "bid-123",
+      requestDescription: "Test Bid",
+      status: "closed",
+    ),
     tailor: Tailor(id: "tailor-123", name: "Tailor Al"),
     price: 130,
     timeInDays: 3,
     message: "I can do this!",
     status: "pending",
   );
-
   group('getMyBids', () {
     blocTest<CustomerBiddingCubit, CustomerBiddingState>(
       'emits [Loading, Success] when token is found and API succeeds',

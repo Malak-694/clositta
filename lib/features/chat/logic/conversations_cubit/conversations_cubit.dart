@@ -9,8 +9,10 @@ class ConversationsCubit
     extends Cubit<ConversationsState<List<ConversationModel>>> {
   final ConversationsRepo _repo;
 
-  ConversationsCubit(this._repo )
+  ConversationsCubit(this._repo)
       : super(const ConversationsState.initial());
+
+  int unreadCount = 0;
 
   Future<void> loadConversations() async {
     emit(const ConversationsState.loading());
@@ -30,8 +32,6 @@ class ConversationsCubit
     }
   }
 
-  int unreadCount = 0;
-
   Future<void> loadUnreadCount() async {
     try {
       final prefs = getIt<SharedPrefHelper>();
@@ -39,7 +39,14 @@ class ConversationsCubit
       if (token == null) return;
 
       unreadCount = await _repo.getUnreadCount(token);
-      emit(state);   // ← re-emit current state to trigger BlocBuilder rebuild
+
+      final current = state;
+      current.maybeWhen(
+        success: (conversations) =>
+            emit(ConversationsState.success(conversations)),
+        orElse: () =>
+            emit(ConversationsState.success([])),
+      );
     } catch (_) {}
   }
 }

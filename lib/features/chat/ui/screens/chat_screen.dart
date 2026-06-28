@@ -90,7 +90,6 @@ class _ChatScreenState extends State<ChatScreen> {
                 focusedBorderColor: AppColors.primery,
                 borderColor: Colors.transparent,
               ),
-
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -126,18 +125,6 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Future<void> _uploadImage(File file) async {
-    final prefs = getIt<SharedPrefHelper>();
-    final token = await prefs.getSecureData('token');
-    if (token == null) return;
-
-    await context.read<ChatCubit>().uploadImage(
-      token: token,
-      receiverId: widget.receiverId,
-      imageFile: file,
-    );
-  }
-
   void _retry() {
     if (_token != null) {
       context.read<ChatCubit>().connectToChat(
@@ -153,18 +140,6 @@ class _ChatScreenState extends State<ChatScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
-  }
-
-  void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
-    });
   }
 
   @override
@@ -208,7 +183,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 state.when(
                   initial: () {},
                   loading: () {},
-                  success: (_) => _scrollToBottom(),
+                  // ✅ No scroll needed — reverse: true handles it
+                  success: (_) {},
                   fail: (msg) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -257,10 +233,10 @@ class _ChatScreenState extends State<ChatScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(Icons.chat_bubble_outline,
-                                size: 64, color: Colors.grey.shade300),
+                                size: 64, color: AppColors.light),
                             const SizedBox(height: 12),
                             Text(
-                              'No messages yet\nSay hello! 👋',
+                              'No messages yet\nSay hello! ',
                               textAlign: TextAlign.center,
                               style: TextStyle(color: AppColors.darksecondary),
                             ),
@@ -272,13 +248,17 @@ class _ChatScreenState extends State<ChatScreen> {
                     return ListView.builder(
                       controller: _scrollController,
                       padding: const EdgeInsets.symmetric(vertical: 12),
+                      // ✅ Always starts at bottom, new messages appear at bottom
+                      reverse: true,
                       itemCount: messages.length,
                       itemBuilder: (context, index) {
-                        final msg = messages[index];
+                        // ✅ Reverse index so newest is at bottom
+                        final reversedIndex = messages.length - 1 - index;
+                        final msg = messages[reversedIndex];
                         final isMine = msg.sender?.id == _currentUserId;
-                        final showDate = index == 0 ||
+                        final showDate = reversedIndex == 0 ||
                             !_isSameDay(
-                              messages[index - 1].createdAt,
+                              messages[reversedIndex - 1].createdAt,
                               msg.createdAt,
                             );
 
@@ -290,7 +270,11 @@ class _ChatScreenState extends State<ChatScreen> {
                               isMine: isMine,
                               onEdit: (m) => _showEditDialog(m),
                               onDelete: (m) {
-                                if (m.id != null) context.read<ChatCubit>().deleteMessage(m.id!);
+                                if (m.id != null) {
+                                  context
+                                      .read<ChatCubit>()
+                                      .deleteMessage(m.id!);
+                                }
                               },
                             ),
                           ],

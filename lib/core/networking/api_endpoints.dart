@@ -29,6 +29,7 @@ static const String google= '/api/auth/google';
   static const String updateBid = "/api/bids/{bidId}";
   static const String bestOffers = '/api/offers/{bidId}/best';
   static const String rateOffer = '/api/offers/{offerId}/rate';
+  static const String customerAcceptedOffers = '/api/offers/my/accepted-offers';
   // Customer-closet
   static const String viewClosetItems = '/api/closet';
   static const String deleteClosetItem = '/api/closet/{itemId}';

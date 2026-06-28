@@ -3,9 +3,7 @@ import 'package:chicora/core/constants/style.dart';
 import 'package:chicora/core/di/dependency_injection.dart';
 import 'package:chicora/core/helper/shared_pref_helper.dart';
 import 'package:chicora/core/widgets/custom_nav_bar.dart';
-import 'package:chicora/features/customer/biding/data/models/bid_customer_model.dart';
 import 'package:chicora/features/customer/biding/logic/cubit/custom_bidding_cubit/customer_bidding_cubit.dart';
-import 'package:chicora/features/customer/biding/logic/cubit/custom_bidding_cubit/customer_bidding_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -41,12 +39,17 @@ class _PostScreenState extends State<PostScreen>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _loadUserId();
-    // ✅ FIX: Load bids eagerly so ActiveOrdersTab doesn't wait on PostsTab
+
+    _tabController.addListener(() {
+      if (_tabController.index == 1) {
+        context.read<CustomerBiddingCubit>().loadAcceptedOffers();
+      }
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CustomerBiddingCubit>().getMyBids();
     });
   }
-
   @override
   void dispose() {
     _tabController.dispose();
@@ -121,8 +124,6 @@ class _PostScreenState extends State<PostScreen>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  // ✅ FIX: PostsTab no longer needs to callback bids up —
-                  // both tabs now read directly from the shared cubit state.
                   const PostsTab(),
                   const ActiveOrdersTab(),
                 ],

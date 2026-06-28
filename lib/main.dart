@@ -45,24 +45,13 @@ void main() async {
   final role = await prefs.getSecureData(SharedPrefKey.role);
   final initialRoute = getInitialRoute(token, role);
 
-  // Decide which cubits to provide based on role
-  final bool needsCartAndChat =
-      role == 'customer' || role == 'tailor';
+  final bool needsCartAndChat = role == 'customer' || role == 'tailor';
 
   runApp(
-    needsCartAndChat
-        ? MultiBlocProvider(
-      providers: [
-        BlocProvider<CartCubit>(
-          create: (_) => getIt<CartCubit>()..getCart(),
-        ),
-        BlocProvider<ConversationsCubit>(
-          create: (_) => getIt<ConversationsCubit>()..loadUnreadCount(),
-        ),
-      ],
-      child: ChicoraApp(initialRoute: initialRoute),
-    )
-        : ChicoraApp(initialRoute: initialRoute), // seller gets nothing extra
+    ChicoraApp(
+      initialRoute: initialRoute,
+      needsCartAndChat: needsCartAndChat,
+    ),
   );
 }
 
@@ -75,9 +64,15 @@ bool _isOrdersReturnDeepLink(Uri uri) {
 
 class ChicoraApp extends StatefulWidget {
   final String initialRoute;
-  const ChicoraApp({super.key, required this.initialRoute});
+  final bool needsCartAndChat;
 
-  // ← Any widget calls ChicoraApp.of(context).toggleTheme()
+  const ChicoraApp({
+    super.key,
+    required this.initialRoute,
+    required this.needsCartAndChat ,
+
+  });
+
   static _ChicoraAppState of(BuildContext context) =>
       context.findAncestorStateOfType<_ChicoraAppState>()!;
 
@@ -93,9 +88,8 @@ class _ChicoraAppState extends State<ChicoraApp> {
 
   void toggleTheme() {
     setState(() {
-      _themeMode = _themeMode == ThemeMode.light
-          ? ThemeMode.dark
-          : ThemeMode.light;
+      _themeMode =
+      _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
     });
   }
 
@@ -124,9 +118,7 @@ class _ChicoraAppState extends State<ChicoraApp> {
     try {
       final initial = await _appLinks.getInitialLink();
       if (initial != null) handle(initial);
-    } catch (_) {
-      // ignore: plugin may fail on unsupported platforms during tests
-    }
+    } catch (_) {}
 
     _linkSubscription = _appLinks.uriLinkStream.listen(handle);
   }
@@ -137,8 +129,7 @@ class _ChicoraAppState extends State<ChicoraApp> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildApp() {
     return ScreenUtilInit(
       designSize: const Size(412, 917),
       minTextAdapt: true,
@@ -152,10 +143,10 @@ class _ChicoraAppState extends State<ChicoraApp> {
           debugShowCheckedModeBanner: false,
           themeMode: _themeMode,
 
-          // ── Light theme (your existing)
+          // ── Light theme
           theme: AppTheme.lightTheme,
 
-          // ── Dark theme using your AppColors
+          // ── Dark theme
           darkTheme: ThemeData(
             brightness: Brightness.dark,
             scaffoldBackgroundColor: const Color(0xFF1A1A2E),
@@ -194,5 +185,25 @@ class _ChicoraAppState extends State<ChicoraApp> {
         );
       },
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.needsCartAndChat) {
+      return MultiBlocProvider(
+        providers: [
+          BlocProvider<CartCubit>(
+            create: (_) => getIt<CartCubit>()..getCart(),
+          ),
+          BlocProvider<ConversationsCubit>(
+            create: (_) => getIt<ConversationsCubit>()..loadUnreadCount(),
+          ),
+        ],
+        child: _buildApp(),
+      );
+    }
+
+    // Sellers get no cart or chat providers
+    return _buildApp();
   }
 }

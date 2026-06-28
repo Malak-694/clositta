@@ -20,11 +20,10 @@ class ChatCubit extends Cubit<ChatState<List<ChatMessageModel>>> {
     required String token,
     required String receiverId,
   }) async {
-    // ✅ Cancel subscriptions AND disconnect old socket before reinitializing
     for (final sub in _subscriptions) sub.cancel();
     _subscriptions.clear();
     _messages.clear();
-    _socketService.disconnect(); // ← key fix: kills old socket before init()
+    _socketService.disconnect();
 
     emit(const ChatState.loading());
 

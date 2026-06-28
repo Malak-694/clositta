@@ -160,6 +160,11 @@ abstract class ApiService {
     @Path("offerId") String offerId,
   );
 
+  @GET(ApiEndpoints.customerAcceptedOffers)
+  Future<List<OfferResponse>> getCustomerAcceptedOffers(
+      @Header("Authorization") String token,
+      );
+
   @GET(ApiEndpoints.myOrder)
   Future<List<AcceptedOfferResponse>> getMyAcceptedOffers(
       @Header('Authorization') String token,

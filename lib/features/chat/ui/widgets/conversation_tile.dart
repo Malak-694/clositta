@@ -1,5 +1,7 @@
+import 'package:chicora/core/constants/style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/router/route_names.dart';
@@ -44,11 +46,13 @@ class ConversationTile extends StatelessWidget {
     );
 
     return ListTile(
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: AppColors.lightprimery, width: 1.5),
+      ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
 
-      // ── Avatar ──────────────────────────────────
       leading: CircleAvatar(
-        radius: 26,
+        radius: 35.sp,
         backgroundColor: AppColors.lightprimery,
         backgroundImage: (other?.imageUrl != null && other!.imageUrl!.isNotEmpty)
             ? NetworkImage(other.imageUrl!)
@@ -56,22 +60,15 @@ class ConversationTile extends StatelessWidget {
         child: (other?.imageUrl == null || other!.imageUrl!.isEmpty)
             ? Text(
           name.isNotEmpty ? name[0].toUpperCase() : '?',
-          style: const TextStyle(
-            color: AppColors.primery,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
+          style:AppStyle.medPrimery ,
         )
             : null,
       ),
 
-      // ── Name + Last message ──────────────────────
       title: Text(
         name,
-        style: TextStyle(
+        style: AppStyle.medBlack.copyWith(
           fontWeight: unread > 0 ? FontWeight.bold : FontWeight.w500,
-          fontSize: 15,
-          color: AppColors.dark,
         ),
       ),
       subtitle: Text(
@@ -81,11 +78,10 @@ class ConversationTile extends StatelessWidget {
         style: TextStyle(
           color: unread > 0 ? AppColors.dark : AppColors.light,
           fontWeight: unread > 0 ? FontWeight.w500 : FontWeight.normal,
-          fontSize: 13,
+          fontSize: 15,
         ),
       ),
 
-      // ── Time + Unread badge ──────────────────────
       trailing: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -93,14 +89,14 @@ class ConversationTile extends StatelessWidget {
           Text(
             time,
             style: TextStyle(
-              fontSize: 11,
+              fontSize: 12,
               color: unread > 0 ? AppColors.primery : AppColors.light,
             ),
           ),
           const SizedBox(height: 4),
           if (unread > 0)
             Container(
-              padding: const EdgeInsets.all(5),
+              padding: const EdgeInsets.all(7),
               decoration: const BoxDecoration(
                 color: AppColors.primery,
                 shape: BoxShape.circle,
@@ -109,7 +105,7 @@ class ConversationTile extends StatelessWidget {
                 unread > 99 ? '99+' : '$unread',
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 10,
+                  fontSize: 13,
                   fontWeight: FontWeight.bold,
                 ),
               ),

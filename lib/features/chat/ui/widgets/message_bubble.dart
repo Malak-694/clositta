@@ -101,7 +101,7 @@ class MessageBubble extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 10,
                         fontStyle: FontStyle.italic,
-                        color: isMine ? Colors.white54 : Colors.black26,
+                        color:  isMine ? AppColors.background : AppColors.light,
                       ),
                     ),
                   Text(
@@ -136,8 +136,8 @@ class MessageBubble extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.delete, color: Colors.red),
-              title: const Text('Delete Message', style: TextStyle(color: Colors.red)),
+              leading: const Icon(Icons.delete, color: AppColors.ternary),
+              title: const Text('Delete Message', style: TextStyle(color: AppColors.ternary)),
               onTap: () {
                 Navigator.pop(context);
                 onDelete?.call(message);

@@ -1,5 +1,3 @@
-// lib/features/customer/bidding_customer/cubit/bidding_customer_cubit.dart
-
 import 'package:bloc/bloc.dart';
 import 'package:chicora/core/di/dependency_injection.dart';
 import 'package:chicora/core/helper/shared_key.dart';
@@ -16,20 +14,26 @@ class CustomerBiddingCubit extends Cubit<CustomerBiddingState> {
   final BiddingCustomerRepo _repository;
   final SharedPrefHelper _prefs = getIt<SharedPrefHelper>();
 
-  CustomerBiddingCubit(this._repository) : super(const CustomerBiddingState.initial());
+  CustomerBiddingCubit(this._repository)
+      : super(const CustomerBiddingState.initial());
 
   bool _loadedBids = false;
   bool _loadedBestOffers = false;
-  bool _loadedOffers =false ;
-  final Map<String, OfferResponse> _acceptedOffers = {};
-  Map<String, OfferResponse?> get acceptedOffers => _acceptedOffers;
+  bool _loadedOffers = false;
+  bool _loadedAcceptedOffers = false;
 
-  // Get token from shared preferences
+  List<BidResponse> _cachedBids = [];
+  List<OfferResponse> _cachedAcceptedOffers = [];
+  List<OfferResponse> get cachedAcceptedOffers => _cachedAcceptedOffers;
+
+  // ── Auth ──────────────────────────────────────────────────────────────────
+
   Future<String?> _getToken() async {
     return await _prefs.getSecureData(SharedPrefKey.token);
   }
 
-  // Get my bids
+  // ── Bids ──────────────────────────────────────────────────────────────────
+
   Future<void> getMyBids() async {
     if (_loadedBids) return;
     emit(const CustomerBiddingState.loading());
@@ -41,76 +45,21 @@ class CustomerBiddingCubit extends Cubit<CustomerBiddingState> {
       }
 
       final List<BidResponse> response = await _repository.getMyBids(token);
+      _cachedBids = response;
       emit(CustomerBiddingState.success(response));
       _loadedBids = true;
     } catch (e) {
-      emit(
-        CustomerBiddingState.fail(
-          e.toString().contains("Exception:")
-              ? e.toString().split("Exception: ")[1]
-              : "Failed to load my bids. Please try again.",
-        ),
-      );
+      emit(CustomerBiddingState.fail(_parseError(e, "Failed to load my bids")));
     }
   }
 
-
-  Future<void> getOffers(String postId) async {
-    if (_loadedOffers) return;
-    emit(const CustomerBiddingState.loading());
-    try {
-      final token = await _getToken();
-      if (token == null || token.isEmpty) {
-        emit(const CustomerBiddingState.fail("Authentication token not found"));
-        return;
-      }
-      print(token);
-      final List<OfferResponse> response =
-      await _repository.getOffers(token, postId);
-      emit(CustomerBiddingState.success(response));
-      _loadedOffers = true;
-    } catch (e) {
-      emit(CustomerBiddingState.fail(
-        e.toString().contains("Exception:")
-            ? e.toString().split("Exception: ")[1]
-            : "Failed to load offers. Please try again.",
-      ));
-    }
+  Future<void> refreshMyBids() async {
+    _loadedBids = false;
+    _cachedBids = [];
+    await getMyBids();
   }
 
-
-  // Get best offers for a specific bid
-  Future<void> getBestOffers(String bidId) async {
-    if (_loadedBestOffers) return;
-    emit(const CustomerBiddingState.loading());
-    try {
-      final token = await _getToken();
-      if (token == null || token.isEmpty) {
-        emit(const CustomerBiddingState.fail("Authentication token not found"));
-        return;
-      }
-
-      final List<OfferResponse> response = await _repository.getBestOffers(
-        token,
-        bidId,
-      );
-      emit(CustomerBiddingState.success(response));
-      _loadedBestOffers = true;
-    } catch (e) {
-      emit(
-        CustomerBiddingState.fail(
-          e.toString().contains("Exception:")
-              ? e.toString().split("Exception: ")[1]
-              : "Failed to load best offers. Please try again.",
-        ),
-      );
-    }
-  }
-
-// Update the createBid method:
-  Future<void> createBid({
-    required SendBiddingModel request,
-  }) async {
+  Future<void> createBid({required SendBiddingModel request}) async {
     emit(const CustomerBiddingState.loading());
     try {
       final token = await _getToken();
@@ -127,97 +76,17 @@ class CustomerBiddingCubit extends Cubit<CustomerBiddingState> {
       final BidResponse response = await _repository.createBidWithFile(
         token: token,
         description: request.description,
-        imagePath: request.imageUrl, // File path from ImagePicker
+        imagePath: request.imageUrl,
         price: request.price,
         time: request.time,
       );
 
       emit(CustomerBiddingState.success(response));
     } catch (e) {
-      emit(
-        CustomerBiddingState.fail(
-          e.toString().contains("Exception:")
-              ? e.toString().split("Exception: ")[1]
-              : "Failed to create bid. Please try again.",
-        ),
-      );
-    }
-  }
-  // Refresh my bids
-  Future<void> refreshMyBids() async {
-    await getMyBids();
-  }
-
-  // Clear state
-  void clearState() {
-    _loadedBids = false;
-    _loadedBestOffers = false;
-    emit(const CustomerBiddingState.initial());
-  }
-  Future<void> acceptOffer(String offerId, String bidId) async {
-    emit(const CustomerBiddingState.loading());
-    try {
-      final token = await _getToken();
-      if (token == null || token.isEmpty) {
-        emit(const CustomerBiddingState.fail("Authentication token not found"));
-        return;
-      }
-
-      await _repository.acceptOffer(token, offerId);
-
-      // emit success message first (listener catches this)
-      emit(const CustomerBiddingState.success("Offer accepted successfully"));
-
-      // then reload offers
-      _loadedBestOffers = false;
-      await getBestOffers(bidId);
-    } catch (e) {
-      emit(
-        CustomerBiddingState.fail(
-          e.toString().contains("Exception:")
-              ? e.toString().split("Exception: ")[1]
-              : "Failed to accept offer. Please try again.",
-        ),
-      );
+      emit(CustomerBiddingState.fail(_parseError(e, "Failed to create bid")));
     }
   }
 
-  Future<void> rateOffer({
-    required String offerId,
-    required int rating,
-    String? comment,
-  }) async {
-    try {
-      final token = await _getToken();
-      if (token == null || token.isEmpty) {
-        throw Exception("Authentication token not found");
-      }
-
-      await _repository.rateOffer(
-        token: token,
-        offerId: offerId,
-        body: RateOfferRequestModel(rating: rating, comment: comment),
-      );
-    } catch (e) {
-      throw Exception(
-        e.toString().contains("Exception:")
-            ? e.toString().split("Exception: ")[1]
-            : "Failed to submit rating. Please try again.",
-      );
-    }
-  }
-
-  Future<void> refreshBestOffers(String bidId) async {
-    _loadedBestOffers = false;
-    await getBestOffers(bidId);
-  }
-
-  Future<void> refreshOffers(String postId) async {
-    _loadedOffers = false;
-    await getOffers(postId);
-  }
-
-  // update bid
   Future<void> updateBid({
     required String bidId,
     required String description,
@@ -242,20 +111,14 @@ class CustomerBiddingCubit extends Cubit<CustomerBiddingState> {
         time: time,
       );
 
-      _loadedBids = false; // force refresh on next load
+      _loadedBids = false;
+      _cachedBids = [];
       emit(CustomerBiddingState.success(response));
     } catch (e) {
-      emit(
-        CustomerBiddingState.fail(
-          e.toString().contains("Exception:")
-              ? e.toString().split("Exception: ")[1]
-              : "Failed to update bid. Please try again.",
-        ),
-      );
+      emit(CustomerBiddingState.fail(_parseError(e, "Failed to update bid")));
     }
   }
 
-  // delete
   Future<void> deleteBid({required String bidId}) async {
     emit(const CustomerBiddingState.loading());
     try {
@@ -267,40 +130,150 @@ class CustomerBiddingCubit extends Cubit<CustomerBiddingState> {
 
       await _repository.deleteBid(token: token, bidId: bidId);
 
-      _loadedBids = false; // force refresh
+      _loadedBids = false;
+      _cachedBids = [];
       emit(const CustomerBiddingState.success("Bid deleted successfully"));
     } catch (e) {
-      emit(
-        CustomerBiddingState.fail(
-          e.toString().contains("Exception:")
-              ? e.toString().split("Exception: ")[1]
-              : "Failed to delete bid. Please try again.",
-        ),
-      );
+      emit(CustomerBiddingState.fail(_parseError(e, "Failed to delete bid")));
     }
   }
 
-  Future<void> loadAcceptedOffers(List<BidResponse> closedBids) async {
-    final token = await _getToken();
-    if (token == null || token.isEmpty) return;
+  // ── Offers ────────────────────────────────────────────────────────────────
 
-    await Future.wait(
-      closedBids
-          .where((bid) => bid.id != null && !_acceptedOffers.containsKey(bid.id))
-          .map((bid) async {
-        try {
-          final offers = await _repository.getOffers(token, bid.id!);
-          final accepted = offers.firstWhere(
-                (o) => o.status?.toLowerCase() == 'accepted',
-            orElse: () => offers.first,
-          );
-          _acceptedOffers[bid.id!] = accepted;
-        } catch (_) {}
-      }),
-    );
+  Future<void> getOffers(String postId) async {
+    if (_loadedOffers) return;
+    emit(const CustomerBiddingState.loading());
+    try {
+      final token = await _getToken();
+      if (token == null || token.isEmpty) {
+        emit(const CustomerBiddingState.fail("Authentication token not found"));
+        return;
+      }
 
-    emit(CustomerBiddingState.success(
-      state.maybeWhen(success: (d) => d, orElse: () => <BidResponse>[]),
-    ));
+      final List<OfferResponse> response =
+      await _repository.getOffers(token, postId);
+      emit(CustomerBiddingState.success(response));
+      _loadedOffers = true;
+    } catch (e) {
+      emit(CustomerBiddingState.fail(_parseError(e, "Failed to load offers")));
+    }
+  }
+
+  Future<void> refreshOffers(String postId) async {
+    _loadedOffers = false;
+    await getOffers(postId);
+  }
+
+  Future<void> getBestOffers(String bidId) async {
+    if (_loadedBestOffers) return;
+    emit(const CustomerBiddingState.loading());
+    try {
+      final token = await _getToken();
+      if (token == null || token.isEmpty) {
+        emit(const CustomerBiddingState.fail("Authentication token not found"));
+        return;
+      }
+
+      final List<OfferResponse> response =
+      await _repository.getBestOffers(token, bidId);
+      emit(CustomerBiddingState.success(response));
+      _loadedBestOffers = true;
+    } catch (e) {
+      emit(CustomerBiddingState.fail(
+          _parseError(e, "Failed to load best offers")));
+    }
+  }
+
+  Future<void> refreshBestOffers(String bidId) async {
+    _loadedBestOffers = false;
+    await getBestOffers(bidId);
+  }
+
+  Future<void> acceptOffer(String offerId, String bidId) async {
+    emit(const CustomerBiddingState.loading());
+    try {
+      final token = await _getToken();
+      if (token == null || token.isEmpty) {
+        emit(const CustomerBiddingState.fail("Authentication token not found"));
+        return;
+      }
+
+      await _repository.acceptOffer(token, offerId);
+      emit(const CustomerBiddingState.success("Offer accepted successfully"));
+
+      _loadedBestOffers = false;
+      await getBestOffers(bidId);
+    } catch (e) {
+      emit(CustomerBiddingState.fail(_parseError(e, "Failed to accept offer")));
+    }
+  }
+
+  Future<void> rateOffer({
+    required String offerId,
+    required int rating,
+    String? comment,
+  }) async {
+    try {
+      final token = await _getToken();
+      if (token == null || token.isEmpty) {
+        throw Exception("Authentication token not found");
+      }
+
+      await _repository.rateOffer(
+        token: token,
+        offerId: offerId,
+        body: RateOfferRequestModel(rating: rating, comment: comment),
+      );
+    } catch (e) {
+      throw Exception(_parseError(e, "Failed to submit rating"));
+    }
+  }
+
+  // ── Active Orders (replaces old mapping approach) ─────────────────────────
+
+  Future<void> loadAcceptedOffers() async {
+    if (_loadedAcceptedOffers) return;
+    emit(const CustomerBiddingState.loading());
+    try {
+      final token = await _getToken();
+      if (token == null || token.isEmpty) {
+        emit(const CustomerBiddingState.fail("Authentication token not found"));
+        return;
+      }
+
+      _cachedAcceptedOffers =
+      await _repository.getCustomerAcceptedOffers(token);
+      _loadedAcceptedOffers = true;
+
+      emit(CustomerBiddingState.success(_cachedAcceptedOffers));
+    } catch (e) {
+      emit(CustomerBiddingState.fail(
+          _parseError(e, "Failed to load active orders")));
+    }
+  }
+
+  Future<void> refreshAcceptedOffers() async {
+    _loadedAcceptedOffers = false;
+    _cachedAcceptedOffers = [];
+    await loadAcceptedOffers();
+  }
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+
+  String _parseError(Object e, String fallback) {
+    final msg = e.toString();
+    return msg.contains("Exception:")
+        ? msg.split("Exception: ").last
+        : fallback;
+  }
+
+  void clearState() {
+    _loadedBids = false;
+    _loadedBestOffers = false;
+    _loadedOffers = false;
+    _loadedAcceptedOffers = false;
+    _cachedBids = [];
+    _cachedAcceptedOffers = [];
+    emit(const CustomerBiddingState.initial());
   }
 }

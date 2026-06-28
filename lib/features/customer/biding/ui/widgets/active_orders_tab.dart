@@ -40,43 +40,29 @@ class ActiveOrdersTab extends StatelessWidget {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
+    final cubit = context.read<CustomerBiddingCubit>();
 
     String _monthName(int m) {
-      const months = [
-        '', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-      ];
+      const months = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       return months[m];
     }
-    String _formatDate(DateTime date) {
-      return '${date.day} ${_monthName(date.month)} ${date.year}';
-    }
 
+    String _formatDate(DateTime date) =>
+        '${date.day} ${_monthName(date.month)} ${date.year}';
 
     return BlocBuilder<CustomerBiddingCubit, CustomerBiddingState>(
       builder: (context, state) {
-        final cubit = context.read<CustomerBiddingCubit>();
-
         if (state is Loading) {
           return Center(child: circleIndicator());
         }
 
-        final allBids = state.maybeWhen(
-          success: (data) => data is List<BidResponse> ? data : <BidResponse>[],
-          orElse: () => <BidResponse>[],
-        );
+        // ✅ Use the offers list directly — no bid mapping needed
+        final activeOrders = cubit.cachedAcceptedOffers;
 
-        final activeOrders =
-        allBids.where((b) => b.status.toLowerCase() == 'closed').toList();
-
-        if (activeOrders.isNotEmpty) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            cubit.loadAcceptedOffers(activeOrders);
-          });
-        }
-
-        if (allBids.isEmpty || activeOrders.isEmpty){
+        if (activeOrders.isEmpty) {
           return Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -89,20 +75,23 @@ class ActiveOrdersTab extends StatelessWidget {
             ),
           );
         }
-        final acceptedOffers = cubit.acceptedOffers;
 
         return ListView.separated(
           padding: EdgeInsets.all(16.w),
           itemCount: activeOrders.length,
           separatorBuilder: (_, __) => SizedBox(height: 10.h),
           itemBuilder: (context, index) {
-            final bid = activeOrders[index];
-            final offer = acceptedOffers[bid.id];
-            final tailorName = offer?.tailor?.name ?? 'Unknown Tailor';
-            final workStatus = offer?.workStatus ?? 'accepted';
-            final receiverId = offer?.tailor?.id;
+            final offer = activeOrders[index];
+
+            // ✅ Get everything directly from offer — no lookup needed
+            final tailorName = offer.tailor?.name ?? 'Unknown Tailor';
+            final workStatus = offer.workStatus ?? 'accepted';
+            final receiverId = offer.tailor?.id;
             final canOpenChat = receiverId != null && receiverId.isNotEmpty;
             final isCompleted = workStatus.toLowerCase() == 'completed';
+
+            // ✅ Get description directly from nested bid object
+            final description = offer.bid?.requestDescription ?? '';
 
             return Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
@@ -125,7 +114,7 @@ class ActiveOrdersTab extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          bid.requestDescription ?? '',
+                          description,
                           style: AppStyle.medBlack,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -141,7 +130,7 @@ class ActiveOrdersTab extends StatelessWidget {
                         ),
                         child: Text(
                           _statusLabel(workStatus),
-                          style:  AppStyle.smallBackground,
+                          style: AppStyle.smallBackground,
                         ),
                       ),
                     ],
@@ -149,7 +138,7 @@ class ActiveOrdersTab extends StatelessWidget {
                   SizedBox(height: 10.h),
                   GestureDetector(
                     onTap: () {
-                      final tailor = offer?.tailor;
+                      final tailor = offer.tailor;
                       if (tailor == null) return;
                       Navigator.pushNamed(
                         context,
@@ -184,7 +173,7 @@ class ActiveOrdersTab extends StatelessWidget {
                               Text(tailorName, style: AppStyle.smallPrimery),
                               Text(
                                 'Tap to view profile',
-                                style: AppStyle.body5.copyWith(fontSize: 12.sp) ,
+                                style: AppStyle.body5.copyWith(fontSize: 12.sp),
                               ),
                             ],
                           ),
@@ -200,8 +189,8 @@ class ActiveOrdersTab extends StatelessWidget {
                       Expanded(
                         child: StateBox(
                           label: 'Price',
-                          value: offer?.price != null
-                              ? '${offer!.price} EGP'
+                          value: offer.price != null
+                              ? '${offer.price} EGP'
                               : '—',
                         ),
                       ),
@@ -209,53 +198,43 @@ class ActiveOrdersTab extends StatelessWidget {
                       Expanded(
                         child: StateBox(
                           label: 'Duration',
-                          value: offer?.timeInDays != null
-                              ? '${offer!.timeInDays} days'
+                          value: offer.timeInDays != null
+                              ? '${offer.timeInDays} days'
                               : '—',
                         ),
                       ),
                     ],
                   ),
                   SizedBox(height: 10.h),
-
-                  if (offer?.deadline != null) ...[
+                  if (offer.deadline != null) ...[
                     Row(
                       children: [
                         Icon(Icons.calendar_today_outlined,
                             size: 13.sp, color: AppColors.light),
                         SizedBox(width: 5.w),
-                        Text(
-                          'Deadline',
-                          style: AppStyle.body5.copyWith(fontSize: 14.sp),
-                        )
+                        Text('Deadline',
+                            style: AppStyle.body5.copyWith(fontSize: 14.sp)),
                       ],
                     ),
                     SizedBox(height: 4.h),
                     Row(
                       children: [
-                        Text(
-                          _formatDate(offer!.deadline!),
-                          style: AppStyle.smallPrimery,
-                        ),
-                        Spacer(),
-                        DeadlineBadge(deadline :offer.deadline!),
+                        Text(_formatDate(offer.deadline!),
+                            style: AppStyle.smallPrimery),
+                        const Spacer(),
+                        DeadlineBadge(deadline: offer.deadline!),
                       ],
                     ),
                     SizedBox(height: 10.h),
                   ],
-                  SizedBox(height: 5.h),
-
-                  if (offer?.message != null &&
-                      offer!.message!.isNotEmpty) ...[
+                  if (offer.message != null && offer.message!.isNotEmpty) ...[
                     Row(
                       children: [
                         Icon(Icons.chat_bubble_outline,
                             size: 13.sp, color: AppColors.light),
                         SizedBox(width: 5.w),
-                        Text(
-                          "Tailor's note",
-                          style: AppStyle.body5.copyWith(fontSize: 14.sp),
-                        ),
+                        Text("Tailor's note",
+                            style: AppStyle.body5.copyWith(fontSize: 14.sp)),
                       ],
                     ),
                     SizedBox(height: 6.h),
@@ -266,14 +245,11 @@ class ActiveOrdersTab extends StatelessWidget {
                         color: AppColors.lightprimery.withOpacity(0.4),
                         borderRadius: BorderRadius.circular(10.r),
                       ),
-                      child: Text(
-                        offer!.message!,
-                        style: AppStyle.smallPrimery,
-                      ),
+                      child: Text(offer.message!, style: AppStyle.smallPrimery),
                     ),
                     SizedBox(height: 14.h),
                   ],
-             Row(
+                  Row(
                     children: [
                       Expanded(
                         child: CustomButton(
@@ -289,8 +265,7 @@ class ActiveOrdersTab extends StatelessWidget {
                             RouteNames.chat_screen,
                             arguments: {
                               'receiverId': receiverId,
-                              'receiverName':
-                              offer?.tailor?.name ?? '',
+                              'receiverName': offer.tailor?.name ?? '',
                             },
                           )
                               : null,
@@ -306,12 +281,12 @@ class ActiveOrdersTab extends StatelessWidget {
                             foregroundColor: AppColors.secondary,
                             width: double.infinity,
                             height: 40,
-                            onPressed: offer?.id == null
+                            onPressed: offer.id == null
                                 ? null
                                 : () async {
                               final rated = await showRateTailorSheet(
                                 context: context,
-                                offerId: offer!.id!,
+                                offerId: offer.id!,
                                 tailorName: tailorName,
                                 onSubmit: (rating, comment) =>
                                     cubit.rateOffer(
@@ -321,13 +296,11 @@ class ActiveOrdersTab extends StatelessWidget {
                                     ),
                               );
                               if (rated == true && context.mounted) {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(
+                                ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: const Text(
                                         'Rating submitted successfully!'),
-                                    backgroundColor:
-                                    Colors.green.shade400,
+                                    backgroundColor: Colors.green.shade400,
                                     behavior: SnackBarBehavior.floating,
                                     shape: RoundedRectangleBorder(
                                       borderRadius:

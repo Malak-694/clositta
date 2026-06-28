@@ -27,7 +27,6 @@ class _ChatInputFieldState extends State<ChatInputField> {
     final text = _controller.text.trim();
 
     if (_selectedImage != null) {
-      // Send image with optional caption
       widget.onImageSelected(
         _selectedImage!,
         caption: text.isNotEmpty ? text : null,
@@ -65,7 +64,6 @@ class _ChatInputFieldState extends State<ChatInputField> {
     return Column(
       children: [
 
-        // ── Image preview ──────────────────────────
         if (_selectedImage != null)
           Container(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
@@ -88,12 +86,12 @@ class _ChatInputFieldState extends State<ChatInputField> {
                     onTap: _removeImage,
                     child: Container(
                       decoration: const BoxDecoration(
-                        color: Colors.black54,
+                        color: AppColors.light,
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
                         Icons.close,
-                        color: Colors.white,
+                        color: AppColors.background,
                         size: 18,
                       ),
                     ),
@@ -103,7 +101,6 @@ class _ChatInputFieldState extends State<ChatInputField> {
             ),
           ),
 
-        // ── Input row ──────────────────────────────
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(

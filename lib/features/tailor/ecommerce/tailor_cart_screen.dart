@@ -20,7 +20,7 @@ class TailorCartScreen extends StatelessWidget {
       backgroundColor: AppColors.background,
       appBar: CustomAppBar(
         title: "Welcome to Clositta",
-        style: AppStyle.medSecondary,
+        style: AppStyle.medBackground,
         leadingIcon: Icons.arrow_back,
         leading: true,
         showCartIcon: true,

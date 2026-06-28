@@ -64,8 +64,14 @@ class BiddingCustomerRepo {
     }
   }
 
+  Future<List<OfferResponse>> getCustomerAcceptedOffers(String token) async {
+    try {
+      return await apiService.getCustomerAcceptedOffers("Bearer $token");
+    } catch (e) {
+      throw Exception("Failed to fetch accepted offers: $e");
+    }
+  }
 
-  // In your repository:
   Future<BidResponse> createBidWithFile({
     required String token,
     required String description,

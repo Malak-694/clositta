@@ -28,7 +28,7 @@ class JoinBiddingScreen extends StatefulWidget {
 
   bool get isEditMode => offerId != null;
 
-  JoinBiddingScreen({
+  const JoinBiddingScreen({
     super.key,
     required this.imageUrl,
     required this.price,

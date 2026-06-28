@@ -42,15 +42,15 @@ class ActiveOrdersTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    String _monthName(int m) {
+    String monthName(int m) {
       const months = [
         '', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
       ];
       return months[m];
     }
-    String _formatDate(DateTime date) {
-      return '${date.day} ${_monthName(date.month)} ${date.year}';
+    String formatDate(DateTime date) {
+      return '${date.day} ${monthName(date.month)} ${date.year}';
     }
 
 
@@ -94,7 +94,7 @@ class ActiveOrdersTab extends StatelessWidget {
         return ListView.separated(
           padding: EdgeInsets.all(16.w),
           itemCount: activeOrders.length,
-          separatorBuilder: (_, __) => SizedBox(height: 10.h),
+          separatorBuilder: (_, _) => SizedBox(height: 10.h),
           itemBuilder: (context, index) {
             final bid = activeOrders[index];
             final offer = acceptedOffers[bid.id];
@@ -234,7 +234,7 @@ class ActiveOrdersTab extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          _formatDate(offer!.deadline!),
+                          formatDate(offer!.deadline!),
                           style: AppStyle.smallPrimery,
                         ),
                         Spacer(),
@@ -267,7 +267,7 @@ class ActiveOrdersTab extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10.r),
                       ),
                       child: Text(
-                        offer!.message!,
+                        offer.message!,
                         style: AppStyle.smallPrimery,
                       ),
                     ),

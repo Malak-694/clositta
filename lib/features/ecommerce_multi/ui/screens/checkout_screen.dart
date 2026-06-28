@@ -56,8 +56,8 @@ class _CheckoutScreenBodyState extends State<CheckoutScreenBody> {
   final _postalCodeController = TextEditingController();
   final _notesController = TextEditingController();
   String _paymentMethod = OrderRequestModel.paymentCredit;
-  Color _rolePrimary = AppColors.primery;
-  Color _roleDark = AppColors.darkprimery;
+  final Color _rolePrimary = AppColors.primery;
+  final Color _roleDark = AppColors.darkprimery;
 
   @override
   void initState() {

@@ -72,4 +72,7 @@ class ApiEndpoints {
   // _____ai _____________________________
   static const String searchByImage = '/api/ai/search_by_image/image';
   static const String searchByText = '/api/ai/search_by_image/text';
+
+  //_____________ notifications __________________________
+  static const String updateFcmToken = '/api/auth/fcm-token';
 }

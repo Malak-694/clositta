@@ -4,7 +4,6 @@ import 'package:chicora/features/auth/data/model/forgot_password_model.dart';
 import 'package:chicora/features/auth/data/model/google_auth_model.dart';
 import 'package:chicora/features/auth/data/model/login_model.dart';
 import 'package:chicora/features/auth/data/model/sign_up_model.dart';
-import 'package:chicora/features/chat/data/models/chat_message_model.dart';
 import 'package:chicora/features/customer/closet/data/models/closet_item_response_model.dart';
 import 'package:chicora/features/customer/measurements/data/model/measurements_request_model.dart';
 import 'package:chicora/features/customer/measurements/data/model/measurements_response_model.dart';
@@ -447,5 +446,12 @@ abstract class ApiService {
   @POST(ApiEndpoints.searchByText)
   Future<List<ProductSearchResponseModel>> searchByText(
     @Body() Map<String, dynamic> body,
+  );
+
+  //____________notifications_______________
+  @PUT(ApiEndpoints.updateFcmToken)
+  Future<MessageModel> updateFcmToken(
+    @Header("Authorization") String token,
+    @Body() Map<String, dynamic> body, // { "fcmToken": "..." }
   );
 }

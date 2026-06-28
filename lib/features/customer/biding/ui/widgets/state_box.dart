@@ -33,6 +33,6 @@ class StateBox extends StatelessWidget {
           ),
         ],
       ),
-    );;
+    );
   }
 }

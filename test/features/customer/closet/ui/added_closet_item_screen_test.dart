@@ -51,7 +51,7 @@ Widget buildScreen({
 }) {
   return ScreenUtilInit(
     designSize: const Size(390, 844),
-    builder: (_, __) => MaterialApp(
+    builder: (_, _) => MaterialApp(
       home: BlocProvider<ClosetCubit>.value(
         value: cubit,
         child: AddedClosetItemScreen(item: item),

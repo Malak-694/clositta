@@ -286,15 +286,15 @@ class CustomerBiddingCubit extends Cubit<CustomerBiddingState> {
 
     await Future.wait(
       closedBids
-          .where((bid) => bid.id != null && !_acceptedOffers.containsKey(bid.id))
+          .where((bid) => !_acceptedOffers.containsKey(bid.id))
           .map((bid) async {
         try {
-          final offers = await _repository.getOffers(token, bid.id!);
+          final offers = await _repository.getOffers(token, bid.id);
           final accepted = offers.firstWhere(
                 (o) => o.status?.toLowerCase() == 'accepted',
             orElse: () => offers.first,
           );
-          _acceptedOffers[bid.id!] = accepted;
+          _acceptedOffers[bid.id] = accepted;
         } catch (_) {}
       }),
     );

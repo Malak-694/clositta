@@ -1,7 +1,4 @@
 import 'dart:ui';
-import '../di/dependency_injection.dart';
-import '../helper/shared_pref_helper.dart';
-import '../helper/shared_key.dart';
 
 class AppColors {
   static const background = Color.fromARGB(255, 255, 255, 255);

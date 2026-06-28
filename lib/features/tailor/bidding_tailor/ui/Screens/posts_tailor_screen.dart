@@ -115,7 +115,7 @@ class PostScreenTailor extends StatelessWidget {
                               return ListView.separated(
                                 padding: EdgeInsets.only(top: 15.h),
                                 itemCount: posts.length,
-                                separatorBuilder: (_, __) =>
+                                separatorBuilder: (_, _) =>
                                     SizedBox(height: 15.h),
                                 itemBuilder: (context, index) {
                                   final post = posts[index];

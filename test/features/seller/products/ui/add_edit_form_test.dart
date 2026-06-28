@@ -60,7 +60,7 @@ Widget buildTestWidget({
 }) {
   return ScreenUtilInit(
     designSize: const Size(390, 844),
-    builder: (_, __) => MaterialApp(
+    builder: (_, _) => MaterialApp(
       home: BlocProvider<SellerProductsCubit>.value(
         value: cubit,
         child: AddedProductForm(product: product),

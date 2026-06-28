@@ -91,7 +91,7 @@ class _SellerOrderUpdateSheetState extends State<_SellerOrderUpdateSheet> {
           ),
           SizedBox(height: 8.h),
           DropdownButtonFormField<String>(
-            value: _orderStatus,
+            initialValue: _orderStatus,
             hint: Text(
               'No change',
               style: AppStyle.smallBlack.copyWith(fontSize: 14.sp),

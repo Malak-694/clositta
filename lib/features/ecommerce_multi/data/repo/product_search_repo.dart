@@ -1,8 +1,6 @@
 import 'dart:io';
 
 import 'package:chicora/core/networking/api_result.dart';
-import 'package:chicora/features/ecommerce_multi/data/mock/mock_products.dart';
-import 'package:chicora/features/ecommerce_multi/data/models/product_models/product_response_model.dart';
 import 'package:dio/dio.dart' show MultipartFile;
 
 import '../../../../core/networking/api_service.dart';

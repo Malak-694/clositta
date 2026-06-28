@@ -169,7 +169,7 @@ class _FormScreenState extends State<FormScreen> {
                             height: 180.h,
                             width: double.infinity,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Container(
+                            errorBuilder: (_, _, _) => Container(
                               height: 180.h,
                               color: Colors.grey.shade200,
                               child: const Center(

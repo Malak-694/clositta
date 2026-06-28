@@ -142,7 +142,7 @@ class _DetailesScreenState extends State<DetailesScreen> {
                     widget.urlImage,
                     fit: BoxFit.contain,
                     width: double.infinity,
-                    errorBuilder: (_, __, ___) => Container(
+                    errorBuilder: (_, _, _) => Container(
                       color: Colors.grey.shade100,
                       child: const Center(
                         child: Icon(

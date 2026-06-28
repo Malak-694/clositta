@@ -87,7 +87,7 @@ class ProfileMenuList extends StatelessWidget {
       physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       itemCount: items.length + 2 + customerExtraItems,
-      separatorBuilder: (_, __) => SizedBox(height: 12.h),
+      separatorBuilder: (_, _) => SizedBox(height: 12.h),
       itemBuilder: (context, index) {
         if (_isCustomer && index == items.length) {
           return MeasurementsProfileTile(

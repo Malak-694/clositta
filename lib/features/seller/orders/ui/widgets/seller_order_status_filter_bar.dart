@@ -29,7 +29,7 @@ class SellerOrderStatusFilterBar extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: filters.length,
-        separatorBuilder: (_, __) => SizedBox(width: 8.w),
+        separatorBuilder: (_, _) => SizedBox(width: 8.w),
         itemBuilder: (context, index) {
           final item = filters[index];
           final selected = item.value == selectedStatus;

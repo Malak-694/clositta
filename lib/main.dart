@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:app_links/app_links.dart';
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/di/dependency_injection.dart';
+import 'package:chicora/core/helper/notification_helper.dart';
 import 'package:chicora/core/helper/shared_key.dart';
 import 'package:chicora/core/helper/shared_pref_helper.dart';
 import 'package:chicora/core/theme/app_theme.dart';
@@ -40,28 +41,35 @@ void main() async {
   await setupGetIt();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  // Initialize NotificationHelper
+  await NotificationHelper.initialize();
   final prefs = getIt<SharedPrefHelper>();
   final token = await prefs.getSecureData(SharedPrefKey.token);
   final role = await prefs.getSecureData(SharedPrefKey.role);
+
+  // Sync token to backend if logged in
+  if (token != null && token.isNotEmpty) {
+    NotificationHelper.sendTokenToBackend();
+  }
+
   final initialRoute = getInitialRoute(token, role);
 
   // Decide which cubits to provide based on role
-  final bool needsCartAndChat =
-      role == 'customer' || role == 'tailor';
+  final bool needsCartAndChat = role == 'customer' || role == 'tailor';
 
   runApp(
     needsCartAndChat
         ? MultiBlocProvider(
-      providers: [
-        BlocProvider<CartCubit>(
-          create: (_) => getIt<CartCubit>()..getCart(),
-        ),
-        BlocProvider<ConversationsCubit>(
-          create: (_) => getIt<ConversationsCubit>()..loadUnreadCount(),
-        ),
-      ],
-      child: ChicoraApp(initialRoute: initialRoute),
-    )
+            providers: [
+              BlocProvider<CartCubit>(
+                create: (_) => getIt<CartCubit>()..getCart(),
+              ),
+              BlocProvider<ConversationsCubit>(
+                create: (_) => getIt<ConversationsCubit>()..loadUnreadCount(),
+              ),
+            ],
+            child: ChicoraApp(initialRoute: initialRoute),
+          )
         : ChicoraApp(initialRoute: initialRoute), // seller gets nothing extra
   );
 }
@@ -189,7 +197,9 @@ class _ChicoraAppState extends State<ChicoraApp> {
               iconColor: Colors.white70,
             ),
             dividerColor: Colors.white12,
-            dialogBackgroundColor: const Color(0xFF252540),
+            dialogTheme: DialogThemeData(
+              backgroundColor: const Color(0xFF252540),
+            ),
           ),
         );
       },

@@ -5,7 +5,6 @@ import 'package:chicora/core/helper/shared_pref_helper.dart';
 import 'package:chicora/core/networking/api_result.dart';
 import 'package:chicora/features/customer/measurements/data/measurements_repo.dart';
 import 'package:chicora/features/customer/measurements/data/model/measurements_request_model.dart';
-import 'package:chicora/features/customer/measurements/data/model/measurements_response_model.dart';
 import 'package:chicora/features/customer/measurements/logic/cubit/measurements_state.dart';
 
 class MeasurementsCubit extends Cubit<MeasurementsState> {

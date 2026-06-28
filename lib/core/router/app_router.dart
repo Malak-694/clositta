@@ -1,5 +1,6 @@
 import 'package:chicora/core/di/dependency_injection.dart';
 import 'package:chicora/features/chat/ui/screens/chat_screen.dart';
+import 'package:chicora/features/customer/ai/ui/screen/outfit_recomendation_screen.dart';
 import 'package:chicora/features/customer/closet/logic/cubit/closet_cubit.dart';
 import 'package:chicora/features/customer/closet/ui/screens/added_item_screen.dart';
 import 'package:chicora/features/customer/closet/ui/screens/closet_items_screen.dart';
@@ -177,7 +178,10 @@ class AppRouter {
             child: PostScreenTailor(),
           ),
         );
-
+      case RouteNames.outfit_recomendation:
+        return MaterialPageRoute(
+          builder: (_) => OutfitRecomendationScreen(),
+        );
       case RouteNames.post_details_customer:
         final args = settings.arguments as Map<String, dynamic>? ?? {};
         final bidId = args['bidId'] as String? ?? '';

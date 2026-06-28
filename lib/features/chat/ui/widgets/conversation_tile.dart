@@ -19,9 +19,26 @@ class ConversationTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final other     = conversation.otherUser;
     final name        = other?.name ?? 'Unknown';
-    final lastMsg   = conversation.lastMessageContent ?? 'No messages yet';
     final unread      = conversation.unreadCount ?? 0;
     final time        = _formatTime(conversation.lastMessageAt);
+
+    String _formatLastMessage({String? content, String? messageType}) {
+      switch (messageType) {
+        case 'image':
+          return 'Photo';
+        case 'both':
+          return '${content ?? 'Photo'}';
+        case 'text':
+        default:
+          return content?.isNotEmpty == true ? content! : 'No messages yet';
+      }
+    }
+
+    final lastMsgType = conversation.lastMessageType;
+    final lastMsg = _formatLastMessage(
+      content: conversation.lastMessageContent,
+      messageType: lastMsgType,
+    );
 
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),

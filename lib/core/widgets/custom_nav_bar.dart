@@ -38,7 +38,7 @@ class FloatingNavBar extends StatelessWidget {
       {
         "icon": Icons.star,
         "name": "AI",
-        "route": RouteNames.posts_customer,
+        "route": RouteNames.outfit_recomendation,
       },
       {
         "icon": Icons.checkroom,

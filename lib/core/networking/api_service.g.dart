@@ -1526,6 +1526,50 @@ class _ApiService implements ApiService {
   }
 
   @override
+  Future<ChatMessageModel> uploadChatImage(
+    String token,
+    String receiverId,
+    MultipartFile image, {
+    String? caption,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = FormData();
+    _data.fields.add(MapEntry('receiverId', receiverId));
+    _data.files.add(MapEntry('image', image));
+    if (caption != null) {
+      _data.fields.add(MapEntry('caption', caption));
+    }
+    final _options = _setStreamType<ChatMessageModel>(
+      Options(
+            method: 'POST',
+            headers: _headers,
+            extra: _extra,
+            contentType: 'multipart/form-data',
+          )
+          .compose(
+            _dio.options,
+            '/api/chat/upload-image',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late ChatMessageModel _value;
+    try {
+      _value = ChatMessageModel.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<int> getUnreadCount(String token) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};

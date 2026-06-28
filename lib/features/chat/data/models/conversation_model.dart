@@ -7,12 +7,14 @@ part 'conversation_model.g.dart';
 class ConversationModel {
   final LastMessageModel? lastMessage;
   final int?              unreadCount;
-  final UserModel?        otherUser;   // ✅ directly from API response
+  final UserModel?        otherUser;
+  final String? lastMessageType;
 
   ConversationModel({
     this.lastMessage,
     this.unreadCount,
     this.otherUser,
+    this.lastMessageType,
   });
 
   String?   get lastMessageContent => lastMessage?.content;

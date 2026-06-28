@@ -82,7 +82,7 @@ Future<void> setupGetIt() async {
         () => ViewProductsRepo(apiService: getIt()),
   );
   //Product search (mock)
-  getIt.registerLazySingleton<ProductSearchRepo>(() => ProductSearchRepo(apiService: getIt()));
+  getIt.registerLazySingleton<ProductSearchRepo>(() => ProductSearchRepo());
   getIt.registerFactory<ViewProductsCubit>(
         () => ViewProductsCubit(
           viewProductsRepo: getIt(),

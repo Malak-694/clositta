@@ -19,6 +19,9 @@ class RouteNames {
   static const post_details_customer   = "post_details";
   static const tailor_info_screen = 'tailor_info_screen';
 
+
+  // Ai
+  static const outfit_recomendation = 'outfit_recomendation';
   // tailor bidding
   static const view_bidding_tailor     = "view_bidding_tailor";
   static const join_bidding            = "join_bidding";

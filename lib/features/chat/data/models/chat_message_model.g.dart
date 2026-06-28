@@ -10,12 +10,10 @@ ChatMessageModel _$ChatMessageModelFromJson(Map<String, dynamic> json) =>
     ChatMessageModel(
       id: json['_id'] as String?,
       content: json['content'] as String?,
-      sender: json['sender'] == null
-          ? null
-          : UserModel.fromJson(json['sender'] as Map<String, dynamic>),
-      receiver: json['receiver'] == null
-          ? null
-          : UserModel.fromJson(json['receiver'] as Map<String, dynamic>),
+      imageUrl: json['imageUrl'] as String?,
+      messageType: json['messageType'] as String?,
+      sender: _userFromJson(json['sender']),
+      receiver: _userFromJson(json['receiver']),
       conversationId: json['conversationId'] as String?,
       isRead: json['isRead'] as bool?,
       isEdited: json['isEdited'] as bool?,
@@ -29,6 +27,8 @@ Map<String, dynamic> _$ChatMessageModelToJson(ChatMessageModel instance) =>
     <String, dynamic>{
       '_id': instance.id,
       'content': instance.content,
+      'imageUrl': instance.imageUrl,
+      'messageType': instance.messageType,
       'sender': instance.sender,
       'receiver': instance.receiver,
       'conversationId': instance.conversationId,

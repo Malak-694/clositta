@@ -38,8 +38,6 @@ class CustomTailorButton extends StatelessWidget {
           text,
           style: AppStyle.medLight.copyWith(
             foreground: Paint()
-              ..style = PaintingStyle.stroke
-              ..strokeWidth = .3
               ..color = foregroundColor,
           ),
         ),

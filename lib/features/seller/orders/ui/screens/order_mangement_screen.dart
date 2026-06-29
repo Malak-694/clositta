@@ -4,6 +4,7 @@ import 'package:chicora/core/constants/style.dart';
 import 'package:chicora/core/di/dependency_injection.dart';
 import 'package:chicora/core/widgets/custom_app_bar.dart';
 import 'package:chicora/core/widgets/custom_nav_bar.dart';
+import 'package:chicora/features/notifications/logic/cubit/notification_state.dart';
 import 'package:chicora/features/seller/orders/data/models/order_seller_response_model.dart';
 import 'package:chicora/features/seller/orders/logic/cubit/order_mangement_cubit.dart';
 import 'package:chicora/features/seller/orders/logic/cubit/order_mangement_state.dart';
@@ -13,18 +14,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../../core/router/route_names.dart';
+import '../../../../notifications/data/models/unread_count_response.dart';
+import '../../../../notifications/logic/cubit/notification_cubit.dart';
+
 class OrderMangementScreen extends StatelessWidget {
   const OrderMangementScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+
+    final notifCount  = context.watch<NotificationCubit>().state.maybeWhen(
+      success: (data) => data is UnreadCountResponse ? data.unreadCount : 0,
+      orElse: () => 0,
+    );
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.background,
       appBar: CustomAppBar(
         title: 'Orders',
         showCartIcon: false,
-        onCartTap: () {},
+        onCartTap: () => Navigator.pushNamed(context, RouteNames.customer_cart_screen),
+        showNotificationIcon: true,
+        unreadNotificationCount: notifCount,
+        onNotificationTap: () => Navigator.pushNamed(context, RouteNames.notification_screen),
+
       ),
       body: BlocProvider(
         create: (_) => getIt<OrderMangementCubit>()..getAllOrdersSeller(),

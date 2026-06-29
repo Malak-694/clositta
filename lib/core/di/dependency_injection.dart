@@ -39,6 +39,8 @@ import '../../features/customer/biding/logic/cubit/portfolio_cubit/portfolio_cub
 import '../../features/profile/data/repo/profile_repo.dart';
 import '../../features/profile/logic/profile_cubit.dart';
 import '../../features/tailor/portfolio/data/repo/portfolio_tailor_repo.dart';
+import '../../features/notifications/data/repo/notification_repo.dart';
+import '../../features/notifications/logic/cubit/notification_cubit.dart';
 import '../networking/socket_service.dart';
 
 final GetIt getIt = GetIt.instance;
@@ -85,9 +87,9 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton<ProductSearchRepo>(() => ProductSearchRepo(apiService: getIt()));
   getIt.registerFactory<ViewProductsCubit>(
         () => ViewProductsCubit(
-          viewProductsRepo: getIt(),
-          productSearchRepo: getIt(),
-        ),
+      viewProductsRepo: getIt(),
+      productSearchRepo: getIt(),
+    ),
   );
   //RateProducts
   getIt.registerLazySingleton<RateProductsRepo>(
@@ -106,7 +108,7 @@ Future<void> setupGetIt() async {
   //Measurements (mock)
   getIt.registerLazySingleton<MeasurementsRepo>(() => MeasurementsRepo(apiService: getIt()));
   getIt.registerFactory<MeasurementsCubit>(
-    () => MeasurementsCubit(repo: getIt()),
+        () => MeasurementsCubit(repo: getIt()),
   );
   //PortfolioTailor
   getIt.registerLazySingleton<PortfolioTailorRepo>(
@@ -124,24 +126,24 @@ Future<void> setupGetIt() async {
   );
   //SellerAnalysis
   getIt.registerLazySingleton<AnalysisSellerRepo>(
-    () => AnalysisSellerRepo(apiService: getIt()),
+        () => AnalysisSellerRepo(apiService: getIt()),
   );
   getIt.registerFactory<AnalysisSellerCubit>(
-    () => AnalysisSellerCubit(getIt()),
+        () => AnalysisSellerCubit(getIt()),
   );
   //Order
   getIt.registerLazySingleton<OrderRepo>(
-    () => OrderRepo(apiService: getIt()),
+        () => OrderRepo(apiService: getIt()),
   );
   getIt.registerFactory<OrderCubit>(
-    () => OrderCubit(getIt()),
+        () => OrderCubit(getIt()),
   );
   //Seller orders management
   getIt.registerLazySingleton<OrderMangementRepo>(
-    () => OrderMangementRepo(apiService: getIt()),
+        () => OrderMangementRepo(apiService: getIt()),
   );
   getIt.registerFactory<OrderMangementCubit>(
-    () => OrderMangementCubit(repo: getIt()),
+        () => OrderMangementCubit(repo: getIt()),
   );
 
   getIt.registerLazySingleton<SocketService>(() => SocketService());
@@ -168,4 +170,12 @@ Future<void> setupGetIt() async {
 
   getIt.registerFactory(() => PortfolioRepo(apiService: getIt<ApiService>()));
   getIt.registerFactory(() => PortfolioCubit(getIt<PortfolioRepo>()));
+
+  // Notifications
+  getIt.registerLazySingleton<NotificationRepo>(
+        () => NotificationRepo(apiService: getIt<ApiService>()),
+  );
+  getIt.registerFactory<NotificationCubit>(
+        () => NotificationCubit(getIt<NotificationRepo>()),
+  );
 }

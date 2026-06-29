@@ -39,7 +39,6 @@ class DetailesScreenTailor extends StatefulWidget {
 class _DetailesScreenTailorState extends State<DetailesScreenTailor> {
   final prefs = getIt<SharedPrefHelper>();
   String? _myTailorId;
-  // ✅ tracks my own offer if exists
   BidModelReponse? _myOffer;
 
   @override
@@ -54,7 +53,6 @@ class _DetailesScreenTailorState extends State<DetailesScreenTailor> {
 
   }
 
-  // ✅ Finds my offer from the loaded list
   void _updateMyOffer(List<BidModelReponse> offers) {
     final found = offers.where((o) => o.tailor.id == _myTailorId).firstOrNull;
     if (_myOffer?.id != found?.id) {

@@ -45,6 +45,13 @@ class ProfileMenuList extends StatelessWidget {
             'route': null,
             'arguments': null,
           },
+          {
+            'icon': Icons.notifications_outlined,
+            'title': 'Notification Preferences',
+            'subtitle': 'Manage your alerts',
+            'route': RouteNames.notification_preferences_screen,
+            'arguments': null,
+          },
         ];
       case 'clothes_seller':
       case 'material_seller':
@@ -57,12 +64,13 @@ class ProfileMenuList extends StatelessWidget {
             'route': RouteNames.seller_orders_screen,
             'arguments': null,
           },
-          // {
-          //   'icon': Icons.local_shipping_outlined,
-          //   'title': 'Shipping Information',
-          //   'subtitle': 'Manage shipping methods',
-          //   'route': null,
-          // },
+          {
+            'icon': Icons.notifications_outlined,
+            'title': 'Notification Preferences',
+            'subtitle': 'Manage your alerts',
+            'route': RouteNames.notification_preferences_screen,
+            'arguments': null,
+          },
         ];
       default:
         return [
@@ -72,6 +80,13 @@ class ProfileMenuList extends StatelessWidget {
             'subtitle': 'View your orders.',
             'route': RouteNames.order_view_screen,
             'arguments': {'fromCart': false},
+          },
+          {
+            'icon': Icons.notifications_outlined,
+            'title': 'Notification Preferences',
+            'subtitle': 'Manage your alerts',
+            'route': RouteNames.notification_preferences_screen,
+            'arguments': null,
           },
         ];
     }
@@ -138,21 +153,21 @@ class ProfileMenuList extends StatelessWidget {
         // Regular menu items
         final item = items[index];
         return _buildMenuCard(
-          icon: item['icon'] as IconData,
-          title: item['title'] as String,
-          subtitle: item['subtitle'] as String,
-          primaryColor: primaryColor,
-          lightColor: lightColor,
-          onTap: () {
-            final route = item['route'] as String?;
-            final arguments = item['arguments'] as Map<String, dynamic>?;  // ← read it
-            if (route != null) {
-              Navigator.of(context).pushNamed(
-                route,
-                arguments: arguments,   // ← pass it
-              );
+            icon: item['icon'] as IconData,
+            title: item['title'] as String,
+            subtitle: item['subtitle'] as String,
+            primaryColor: primaryColor,
+            lightColor: lightColor,
+            onTap: () {
+              final route = item['route'] as String?;
+              final arguments = item['arguments'] as Map<String, dynamic>?;  // ← read it
+              if (route != null) {
+                Navigator.of(context).pushNamed(
+                  route,
+                  arguments: arguments,   // ← pass it
+                );
+              }
             }
-          }
         );
       },
     );
@@ -264,12 +279,12 @@ class ProfileMenuList extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center, // ← centers content
           children: [
-            Icon(Icons.logout, color: Colors.red, size: 24.sp),
+            Icon(Icons.logout, color: AppColors.ternary, size: 24.sp),
             SizedBox(width: 8.w),
             Text(
               "Logout",
               style: AppStyle.body3.copyWith(
-                color: Colors.red,
+                color: AppColors.ternary,
                 fontWeight: FontWeight.w600,
                 fontSize: 16.sp,
               ),

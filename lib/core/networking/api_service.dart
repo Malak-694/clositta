@@ -1,3 +1,4 @@
+import 'package:chicora/features/notifications/data/models/notification_model.dart';
 import 'package:chicora/core/models/message_model.dart';
 import 'package:chicora/core/networking/api_endpoints.dart';
 import 'package:chicora/features/auth/data/model/forgot_password_model.dart';
@@ -27,6 +28,7 @@ import 'package:retrofit/error_logger.dart';
 import 'package:retrofit/http.dart';
 
 import '../../features/chat/data/models/chat_history_response.dart';
+import '../../features/chat/data/models/chat_message_model.dart';
 import '../../features/chat/data/models/conversation_model.dart';
 import '../../features/customer/biding/data/models/bid_customer_model.dart';
 import '../../features/customer/biding/data/models/offer_model.dart';
@@ -37,6 +39,10 @@ import '../../features/ecommerce_multi/data/models/cart_models/cart_request_mode
 import '../../features/ecommerce_multi/data/models/cart_models/cart_response_model.dart';
 import '../../features/ecommerce_multi/data/models/order_models/cancel_order_request_model.dart';
 import '../../features/ecommerce_multi/data/models/rating models/rating_response_model.dart';
+import '../../features/notifications/data/models/mark_all_read_response.dart';
+import '../../features/notifications/data/models/notification_preferences.dart';
+import '../../features/notifications/data/models/notifications_list_response.dart';
+import '../../features/notifications/data/models/unread_count_response.dart';
 import '../../features/profile/data/model/profile_model.dart';
 import '../../features/profile/data/model/update_profile_model.dart';
 import '../../features/seller/analysis/data/models/analysis_response_model.dart';
@@ -63,19 +69,19 @@ abstract class ApiService {
     @Part(name: 'image') MultipartFile? image,
   });
 
-    @POST(ApiEndpoints.login)
+  @POST(ApiEndpoints.login)
   Future<LoginResponse> logIn(@Body() LoginRequest body);
 
 
-    @POST(ApiEndpoints.google)
+  @POST(ApiEndpoints.google)
   Future<GoogleAuthResponseModel> googleAuth(@Body() GoogleAuthRequestModel body);
 
 
 
   @GET(ApiEndpoints.viewBiddingTailor)
   Future<List<PostTailorResponse>> viewBiddingTailor(
-    @Header("Authorization") String token,
-  );
+      @Header("Authorization") String token,
+      );
 
 
   @GET(ApiEndpoints.profile)
@@ -95,27 +101,27 @@ abstract class ApiService {
 
   @DELETE(ApiEndpoints.delete_profile_image)
   Future<MessageModel> deleteProfileImage(
-    @Header("Authorization") String token,
-  );
+      @Header("Authorization") String token,
+      );
 
   @GET(ApiEndpoints.offers)
   Future<List<BidModelReponse>> viewOffers(
-    @Header("Authorization") String token,
-    @Path("id") String id,
-  );
+      @Header("Authorization") String token,
+      @Path("id") String id,
+      );
 
   @GET(ApiEndpoints.offers)
   Future<List<OfferResponse>> viewOffersCustomer(
-    @Header("Authorization") String token,
-    @Path("id") String id,
-  );
+      @Header("Authorization") String token,
+      @Path("id") String id,
+      );
 
   @POST(ApiEndpoints.offers)
   Future<JoinBiddingResponse> joinBidding(
-    @Header("Authorization") String token,
-    @Path("id") String id,
-    @Body() JoinBiddingRequest body,
-  );
+      @Header("Authorization") String token,
+      @Path("id") String id,
+      @Body() JoinBiddingRequest body,
+      );
   @PATCH(ApiEndpoints.rateOffer)
   Future<MessageModel> rateOffer(
       @Header("Authorization") String token,
@@ -136,30 +142,30 @@ abstract class ApiService {
   @PUT(ApiEndpoints.updateBid)
   @MultiPart()
   Future<BidResponse> updateBid(
-    @Header("Authorization") String token,
-    @Path("bidId") String bidId,
-    @Part(name: "requestDescription") String description,
-    @Part(name: "image") MultipartFile? image,
-    @Part(name: "price") String? price,
-    @Part(name: "time") String? time,
-  );
+      @Header("Authorization") String token,
+      @Path("bidId") String bidId,
+      @Part(name: "requestDescription") String description,
+      @Part(name: "image") MultipartFile? image,
+      @Part(name: "price") String? price,
+      @Part(name: "time") String? time,
+      );
 
   @DELETE(ApiEndpoints.updateBid)
   Future<void> deleteBid(
-    @Header("Authorization") String token,
-    @Path("bidId") String bidId,
-  );
+      @Header("Authorization") String token,
+      @Path("bidId") String bidId,
+      );
 
   @GET(ApiEndpoints.bestOffers)
   Future<List<OfferResponse>> getBestOffers(
-    @Header("Authorization") String token,
-    @Path("bidId") String bidId,
-  );
+      @Header("Authorization") String token,
+      @Path("bidId") String bidId,
+      );
   @PATCH(ApiEndpoints.acceptOffer)
   Future<void> acceptOffer(
-    @Header("Authorization") String token,
-    @Path("offerId") String offerId,
-  );
+      @Header("Authorization") String token,
+      @Path("offerId") String offerId,
+      );
 
   @GET(ApiEndpoints.customerAcceptedOffers)
   Future<List<OfferResponse>> getCustomerAcceptedOffers(
@@ -181,9 +187,9 @@ abstract class ApiService {
 
   @DELETE(ApiEndpoints.editeOffer)
   Future<void> deleteOffer(
-    @Header("Authorization") String token,
-    @Path("offerId") String offerId,
-  );
+      @Header("Authorization") String token,
+      @Path("offerId") String offerId,
+      );
 
   @PUT(ApiEndpoints.editeOffer)
   Future<void> updateOffer({
@@ -194,26 +200,26 @@ abstract class ApiService {
   //seller-products
   @GET(ApiEndpoints.sellerProducts)
   Future<List<ProductModel>> getProductsSeller(
-    @Header("Authorization") String token,
-  );
+      @Header("Authorization") String token,
+      );
   @DELETE(ApiEndpoints.product)
   Future<MessageModel> deleteProduct(
-    @Header("Authorization") String token,
-    @Path("productId") String productId,
-  );
+      @Header("Authorization") String token,
+      @Path("productId") String productId,
+      );
 
   @POST(ApiEndpoints.addProduct)
   @MultiPart()
   Future<MessageModel> addProduct(
-    @Header("Authorization") String token,
-    @Part(name: "name") String name,
-    @Part(name: "description") String description,
-    @Part(name: "price") String price,
-    @Part(name: "stock") String stock,
-    @Part(name: "category") String category,
-    @Part(name: "type") String type,
-    @Part(name: "image") MultipartFile image,
-  );
+      @Header("Authorization") String token,
+      @Part(name: "name") String name,
+      @Part(name: "description") String description,
+      @Part(name: "price") String price,
+      @Part(name: "stock") String stock,
+      @Part(name: "category") String category,
+      @Part(name: "type") String type,
+      @Part(name: "image") MultipartFile image,
+      );
   //ecommerce -buyer
   @GET(ApiEndpoints.products)
   Future<List<ProductModelBuyer>> getProductsBuyer({
@@ -229,130 +235,130 @@ abstract class ApiService {
   //ecommerce -buyer -rate
   @POST(ApiEndpoints.ratePoduct)
   Future<RatingResponseModel> rateProduct(
-    @Header("Authorization") String token,
-    @Path("productId") String productId,
-    @Body() RatingRequestModel body,
-  );
+      @Header("Authorization") String token,
+      @Path("productId") String productId,
+      @Body() RatingRequestModel body,
+      );
   @DELETE(ApiEndpoints.ratePoduct)
   Future<MessageModel> deleteRateProduct(
-    @Header("Authorization") String token,
-    @Path("productId") String productId,
-  );
+      @Header("Authorization") String token,
+      @Path("productId") String productId,
+      );
   @PUT(ApiEndpoints.product)
   @MultiPart()
   Future<MessageModel> updateProduct(
-    @Header("Authorization") String token,
-    @Path("productId") String productId,
-    @Part(name: "name") String name,
-    @Part(name: "description") String description,
-    @Part(name: "price") String price,
-    @Part(name: "stock") String stock,
-    @Part(name: "category") String category,
-    @Part(name: "type") String type,
-    @Part(name: "image") MultipartFile? image,
-  );
+      @Header("Authorization") String token,
+      @Path("productId") String productId,
+      @Part(name: "name") String name,
+      @Part(name: "description") String description,
+      @Part(name: "price") String price,
+      @Part(name: "stock") String stock,
+      @Part(name: "category") String category,
+      @Part(name: "type") String type,
+      @Part(name: "image") MultipartFile? image,
+      );
 
   //ecommerce-cart
   @GET(ApiEndpoints.cart)
   Future<CartResponseModel> getCart(@Header("Authorization") String token);
   @POST(ApiEndpoints.cart)
   Future<CartResponseModel> addToCart(
-    @Header("Authorization") String token,
-    @Body() CartRequestModel body,
-  );
+      @Header("Authorization") String token,
+      @Body() CartRequestModel body,
+      );
   @PUT(ApiEndpoints.updateCartItems)
   Future<CartResponseModel> updateCart(
-    @Header("Authorization") String token,
-    @Path("productId") String productId,
-    @Body() CartRequestModel body,
-  );
+      @Header("Authorization") String token,
+      @Path("productId") String productId,
+      @Body() CartRequestModel body,
+      );
   @DELETE(ApiEndpoints.updateCartItems)
   Future<DeleteCartResponseModel> removeFromCart(
-    @Header("Authorization") String token,
-    @Path("productId") String productId,
-  );
+      @Header("Authorization") String token,
+      @Path("productId") String productId,
+      );
 
   @DELETE(ApiEndpoints.cart)
   Future<MessageModel> removeAllCart(@Header("Authorization") String token);
   //closet operations
   @GET(ApiEndpoints.viewClosetItems)
   Future<List<ClosetItemResponseModel>> viewClosetItems(
-    @Header("Authorization") String token,
-    @Query("category") String? category,
-    @Query("season") String? season,
-  );
+      @Header("Authorization") String token,
+      @Query("category") String? category,
+      @Query("season") String? season,
+      );
   @DELETE(ApiEndpoints.deleteClosetItem)
   Future<MessageModel> deleteClosetItem(
-    @Header("Authorization") String token,
-    @Path("itemId") String itemId,
-  );
+      @Header("Authorization") String token,
+      @Path("itemId") String itemId,
+      );
 
   @POST(ApiEndpoints.createClosetItems)
   @MultiPart()
   Future<MessageModel> addClosetItem(
-    @Header("Authorization") String token,
-    @Part(name: "name") String name,
-    @Part(name: "category") String category,
-    @Part(name: "season") String season,
-    @Part(name: "color") String color,
-    @Part(name: "image") MultipartFile image,
-  );
+      @Header("Authorization") String token,
+      @Part(name: "name") String name,
+      @Part(name: "category") String category,
+      @Part(name: "season") String season,
+      @Part(name: "color") String color,
+      @Part(name: "image") MultipartFile image,
+      );
 
   @PUT(ApiEndpoints.updateClosetItem)
   @MultiPart()
   Future<MessageModel> updateClosetItem(
-    @Header("Authorization") String token,
-    @Path("itemId") String itemId,
-    @Part(name: "name") String name,
-    @Part(name: "category") String category,
-    @Part(name: "season") String season,
-    @Part(name: "color") String color,
-    @Part(name: "image") MultipartFile? image,
-  );
+      @Header("Authorization") String token,
+      @Path("itemId") String itemId,
+      @Part(name: "name") String name,
+      @Part(name: "category") String category,
+      @Part(name: "season") String season,
+      @Part(name: "color") String color,
+      @Part(name: "image") MultipartFile? image,
+      );
 
   //tailor-portfolio
   @GET(ApiEndpoints.viewPortfolioTailor)
   Future<TailorPortfolioBundleModel> viewPortfolioTailor(
-    @Header("Authorization") String token,
-    @Query("category") String? category,
-  );
+      @Header("Authorization") String token,
+      @Query("category") String? category,
+      );
   @DELETE(ApiEndpoints.deletePortfolioTailor)
   Future<MessageModel> deletePortfolioTailor(
-    @Header("Authorization") String token,
-    @Path("itemId") String itemId,
-  );
+      @Header("Authorization") String token,
+      @Path("itemId") String itemId,
+      );
 
   @POST(ApiEndpoints.createPortfolioTailor)
   @MultiPart()
   Future<MessageModel> addPortfolioItem(
-    @Header("Authorization") String token,
-    @Part(name: "title") String title,
-    @Part(name: "category") String category,
-    @Part(name: "description") String description,
-    @Part(name: "image") MultipartFile image,
-  );
+      @Header("Authorization") String token,
+      @Part(name: "title") String title,
+      @Part(name: "category") String category,
+      @Part(name: "description") String description,
+      @Part(name: "image") MultipartFile image,
+      );
 
   @PUT(ApiEndpoints.updatePortfolioTailor)
   @MultiPart()
   Future<MessageModel> updatePortfolioItem(
-    @Header("Authorization") String token,
-    @Path("itemId") String itemId,
-    @Part(name: "title") String title,
-    @Part(name: "category") String category,
-    @Part(name: "description") String description,
-    @Part(name: "image") MultipartFile? image,
-  );
+      @Header("Authorization") String token,
+      @Path("itemId") String itemId,
+      @Part(name: "title") String title,
+      @Part(name: "category") String category,
+      @Part(name: "description") String description,
+      @Part(name: "image") MultipartFile? image,
+      );
 
   @GET(ApiEndpoints.conversations)
   Future<List<ConversationModel>> getMyConversations(
-    @Header("Authorization") String token,
-  );
+      @Header("Authorization") String token,
+      );
 
   @GET(ApiEndpoints.chatHistory)
   Future<ChatHistoryResponseModel> getChatHistory(
-    @Header("Authorization") String token,
-    @Path("userId") String userId,
-  );
+      @Header("Authorization") String token,
+      @Path("userId") String userId,
+      );
 
   @POST(ApiEndpoints.uploadChatImage)
   @MultiPart()
@@ -378,96 +384,135 @@ abstract class ApiService {
   //seller-analysis
   @GET(ApiEndpoints.sellerAnalysis)
   Future<AnalyticsResponseModel> getSellerAnalysis(
-    @Header("Authorization") String token,
-  );
+      @Header("Authorization") String token,
+      );
   @GET(ApiEndpoints.tailorInfo)
   Future<List<PortfolioItem>> getPortfolio(
-    @Header('Authorization') String token,
-    @Query('tailorId') String tailorId,
-  );
+      @Header('Authorization') String token,
+      @Query('tailorId') String tailorId,
+      );
 
   //checkout
   @POST(ApiEndpoints.placeOrder)
   Future<OrderResponseModel> placeOrder(
-    @Header("Authorization") String token,
-    @Body() OrderRequestModel body,
-  );
+      @Header("Authorization") String token,
+      @Body() OrderRequestModel body,
+      );
 
   @PUT(ApiEndpoints.cancelOrder)
   Future<MessageModel> cancelOrder(
-    @Header("Authorization") String token,
-    @Path("orderId") String orderId,
-    @Body() CancelOrderRequestModel body,
-  );
+      @Header("Authorization") String token,
+      @Path("orderId") String orderId,
+      @Body() CancelOrderRequestModel body,
+      );
 
   @PUT(ApiEndpoints.cancelSubOrder)
   Future<MessageModel> cancelSubOrder(
-    @Header("Authorization") String token,
-    @Path("orderId") String orderId,
-    @Path("subOrderId") String subOrderId,
-    @Body() CancelOrderRequestModel body,
-  );
+      @Header("Authorization") String token,
+      @Path("orderId") String orderId,
+      @Path("subOrderId") String subOrderId,
+      @Body() CancelOrderRequestModel body,
+      );
   @POST(ApiEndpoints.paymentInitiate)
   Future<PaymentInitiateResponseModel> paymentInitiate(
-    @Header("Authorization") String token,
-    @Body() PaymentInitiateRequestModel body,
-  );
+      @Header("Authorization") String token,
+      @Body() PaymentInitiateRequestModel body,
+      );
 
   @GET(ApiEndpoints.getMyOrders)
   Future<List<OrderDataModel>> getMyOrders(
-    @Header("Authorization") String token,
-  );
+      @Header("Authorization") String token,
+      );
 
   @GET(ApiEndpoints.getOrderById)
   Future<OrderDataModel> getOrderById(
-    @Header("Authorization") String token,
-    @Path("orderId") String orderId,
-  );
+      @Header("Authorization") String token,
+      @Path("orderId") String orderId,
+      );
 
   @GET(ApiEndpoints.getAllOrdersSeller)
   Future<List<OrderSellerResponseModel>> getAllOrdersSeller(
-    @Header("Authorization") String token, {
-    @Query("status") String? status,
-  });
+      @Header("Authorization") String token, {
+        @Query("status") String? status,
+      });
 
   @PUT(ApiEndpoints.updateOrderStatusSeller)
   Future<OrderUpdateSellerResponseModel> updateOrderStatusSeller(
-    @Header("Authorization") String token,
-    @Path("orderId") String orderId,
-    @Path("suborderId") String suborderId,
-    @Body() OrderUpdateSellerRequestModel body,
-  );
+      @Header("Authorization") String token,
+      @Path("orderId") String orderId,
+      @Path("suborderId") String suborderId,
+      @Body() OrderUpdateSellerRequestModel body,
+      );
   //measurements
   @GET(ApiEndpoints.measurements)
   Future<MeasurementsResponseModel> getMeasurements(
-    @Header("Authorization") String token,
-  );
+      @Header("Authorization") String token,
+      );
   @PUT(ApiEndpoints.measurements)
   Future<MeasurementsResponseModel> updateMeasurements(
-    @Header("Authorization") String token,
-    @Body() MeasurementsModel body,
-  );
+      @Header("Authorization") String token,
+      @Body() MeasurementsModel body,
+      );
   @DELETE(ApiEndpoints.measurements)
   Future<MessageModel> deleteMeasurements(
-    @Header("Authorization") String token,
-  );
+      @Header("Authorization") String token,
+      );
 
   //______ai_______________
   @POST(ApiEndpoints.searchByImage)
   @MultiPart()
   Future<List<ProductSearchResponseModel>> searchByImage(
-    @Part(name: "file") MultipartFile? image,
-  );
+      @Part(name: "file") MultipartFile? image,
+      );
 
   @POST(ApiEndpoints.searchByText)
   Future<List<ProductSearchResponseModel>> searchByText(
-    @Body() Map<String, dynamic> body,
-  );
+      @Body() Map<String, dynamic> body,
+      );
 
-  //____________notifications_______________
   @PUT(ApiEndpoints.updateFcmToken)
   Future<MessageModel> updateFcmToken(
-    @Header("Authorization") String token,
-    @Body() Map<String, dynamic> body, // { "fcmToken": "..." }
-  );
+      @Header("Authorization") String token,
+      @Body() Map<String, dynamic> body, // { "fcmToken": "..." }
+      );
+
+  @GET(ApiEndpoints.notificationPreferences)
+  Future<NotificationPreferencesResponse> getNotificationPreferences(
+      @Header("Authorization") String token,
+      );
+
+  @PUT(ApiEndpoints.notificationPreferences)
+  Future<UpdatePreferencesResponse> updateNotificationPreferences(
+      @Header("Authorization") String token,
+      @Body() Map<String, dynamic> body,
+      );
+
+  @GET(ApiEndpoints.notifications)
+  Future<NotificationsListResponse> getNotifications(
+      @Header("Authorization") String token, {
+        @Query("page") int? page,
+        @Query("limit") int? limit,
+      });
+
+  @GET(ApiEndpoints.unreadNotifications)
+  Future<UnreadCountResponse> getUnreadNotificationsCount(
+      @Header("Authorization") String token,
+      );
+
+  @PATCH(ApiEndpoints.markNotificationRead)
+  Future<MessageModel> markNotificationAsRead(
+      @Header("Authorization") String token,
+      @Path("id") String id,
+      );
+
+  @PATCH(ApiEndpoints.markAllNotificationsRead)
+  Future<MarkAllReadResponse> markAllNotificationsAsRead(
+      @Header("Authorization") String token,
+      );
+
+  @DELETE(ApiEndpoints.deleteNotification)
+  Future<MessageModel> deleteNotification(
+      @Header("Authorization") String token,
+      @Path("id") String id,
+      );
 }

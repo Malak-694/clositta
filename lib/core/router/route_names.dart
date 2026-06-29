@@ -59,4 +59,9 @@ class RouteNames {
   // chat
   static const chat_screen             = "chat_screen";
   static const conversations_screen    = "conversations_screen";
+
+  //notification
+// notifications
+  static const notification_screen             = 'notification_screen';
+  static const notification_preferences_screen = 'notification_preferences_screen';
 }

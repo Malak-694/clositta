@@ -4,6 +4,7 @@ import 'package:chicora/core/di/dependency_injection.dart';
 import 'package:chicora/core/helper/shared_pref_helper.dart';
 import 'package:chicora/core/widgets/custom_elevated_button.dart';
 import 'package:chicora/core/widgets/custom_nav_bar.dart';
+import 'package:chicora/features/notifications/logic/cubit/notification_state.dart';
 import 'package:chicora/features/tailor/bidding_tailor/ui/widgets/post_item_tailor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,6 +24,8 @@ import '../../../../chat/ui/screens/conversations_screen.dart';
 import '../../../../ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
 import '../../../../ecommerce_multi/logic/cart_cubit/cart_state.dart';
 import '../../../../ecommerce_multi/logic/cart_cubit/cart_total_quantity.dart';
+import '../../../../notifications/data/models/unread_count_response.dart';
+import '../../../../notifications/logic/cubit/notification_cubit.dart';
 
 class PostScreenTailor extends StatelessWidget {
   PostScreenTailor({super.key});
@@ -30,42 +33,35 @@ class PostScreenTailor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final cartCount   = cartTotalItemQuantity(context.watch<CartCubit>().state);
+    final chatCount   = context.watch<ConversationsCubit>().unreadCount;
+    final notifCount  = context.watch<NotificationCubit>().state.maybeWhen(
+      success: (data) => data is UnreadCountResponse ? data.unreadCount : 0,
+      orElse: () => 0,
+    );
+
+
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: BlocBuilder<CartCubit, CartState<dynamic>>(
-          builder: (context, cartState) {
-            return BlocBuilder<ConversationsCubit,
-                ConversationsState<List<ConversationModel>>>(
-              builder: (context, convState) {
-                final unreadCount =
-                    context.read<ConversationsCubit>().unreadCount;
-                return CustomAppBar(
-                  title: "My Post",
-                  showCartIcon: true,
-                  cartItemCount: cartTotalItemQuantity(cartState),
-                  onCartTap: () => Navigator.pushNamed(
-                    context,
-                    RouteNames.tailor_cart_screen,
-                  ),
-                  showChatIcon: true,
-                  unreadChatCount: unreadCount,
-                  onChatTap: () async {
-                    final userId = await prefs.getSecureData('id') ?? '';
-                    if (context.mounted) {
-                      Navigator.pushNamed(
-                        context,
-                        RouteNames.conversations_screen,
-                        arguments: {'currentUserId': userId},
-                      );
-                    }
-                  },
-                );
-              },
-            );
-          },
-        ),
-      ),
+      appBar: CustomAppBar(
+      title: 'My Post',
+      showCartIcon: true,
+      cartItemCount: cartCount,
+      onCartTap: () => Navigator.pushNamed(context, RouteNames.customer_cart_screen),
+      showNotificationIcon: true,
+      unreadNotificationCount: notifCount,
+      onNotificationTap: () => Navigator.pushNamed(context, RouteNames.notification_screen),
+      showChatIcon: true,
+      unreadChatCount: chatCount,
+      onChatTap: () async {
+        final userId = await prefs.getSecureData('id') ?? '';
+        Navigator.pushNamed(
+        context,
+        RouteNames.conversations_screen,
+        arguments: {'currentUserId': userId ?? ''},
+      );
+      }
+    ),
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Container(

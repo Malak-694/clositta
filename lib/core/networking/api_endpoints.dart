@@ -4,7 +4,7 @@ class ApiEndpoints {
 
   static const String login = '/api/auth/login';
   static const String signUp = '/api/auth/register';
-static const String google= '/api/auth/google';
+  static const String google= '/api/auth/google';
   static const String profile = "/api/auth/profile";
   static const String delete_profile_image = "/api/auth/profile/image";
   static const String forget_password = "/api/auth/forgot-password";
@@ -67,12 +67,18 @@ static const String google= '/api/auth/google';
   static const String unreadCount   = '/api/chat/unread';
   static const String uploadChatImage = '/api/chat/upload-image';
   // ── Measurements ──────────────────────────────────────────
-static const String measurements = '/api/auth/measurements';
+  static const String measurements = '/api/auth/measurements';
 
   // _____ai _____________________________
   static const String searchByImage = '/api/ai/search_by_image/image';
   static const String searchByText = '/api/ai/search_by_image/text';
 
   //_____________ notifications __________________________
-  static const String updateFcmToken = '/api/auth/fcm-token';
+  static const String updateFcmToken          = '/api/auth/fcm-token';
+  static const String notificationPreferences = '/api/auth/notification-preferences';
+  static const String notifications           = '/api/notifications';
+  static const String unreadNotifications     = '/api/notifications/unread-count';
+  static const String markNotificationRead    = '/api/notifications/{id}/read';
+  static const String markAllNotificationsRead= '/api/notifications/read-all';
+  static const String deleteNotification      = '/api/notifications/{id}';
 }

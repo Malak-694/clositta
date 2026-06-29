@@ -1,3 +1,4 @@
+import 'package:chicora/features/notifications/logic/cubit/notification_state.dart';
 import 'package:chicora/features/tailor/bidding_tailor/logic/cubit/bidding_tailor_cubit.dart';
 import 'package:chicora/features/tailor/bidding_tailor/logic/cubit/bidding_tailor_state.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,8 @@ import '../../../../chat/logic/conversations_cubit/conversations_state.dart';
 import '../../../../ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
 import '../../../../ecommerce_multi/logic/cart_cubit/cart_state.dart';
 import '../../../../ecommerce_multi/logic/cart_cubit/cart_total_quantity.dart';
+import '../../../../notifications/data/models/unread_count_response.dart';
+import '../../../../notifications/logic/cubit/notification_cubit.dart';
 import '../../data/models/accepted_offer_model.dart';
 
 class ActiveOrderScreen extends StatelessWidget {
@@ -43,7 +46,7 @@ class _ActiveOrderViewState extends State<_ActiveOrderView> {
   List<AcceptedOfferResponse> _orders = [];
   bool _isLoadingDialogOpen = false;
   String _selectedFilter = 'all';
-  List<String> states = ['all', 'accepted', 'in_progress', 'completed'] ;
+  List<String> states = ['all', 'accepted', 'in_progress', 'completed'];
   final prefs = getIt<SharedPrefHelper>();
   String _statusLabel(String? s) {
     switch (s) {
@@ -68,7 +71,9 @@ class _ActiveOrderViewState extends State<_ActiveOrderView> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
         title: Row(
           children: [
             Icon(Icons.error_outline, color: Colors.red, size: 24.sp),
@@ -91,49 +96,40 @@ class _ActiveOrderViewState extends State<_ActiveOrderView> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => const Center(
-        child: CircularProgressIndicator(),
-      ),
+      builder: (_) => const Center(child: CircularProgressIndicator()),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final cartCount = cartTotalItemQuantity(context.watch<CartCubit>().state);
+    final chatCount = context.watch<ConversationsCubit>().unreadCount;
+    final notifCount = context.watch<NotificationCubit>().state.maybeWhen(
+      success: (data) => data is UnreadCountResponse ? data.unreadCount : 0,
+      orElse: () => 0,
+    );
+
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: BlocBuilder<CartCubit, CartState<dynamic>>(
-          builder: (context, cartState) {
-            return BlocBuilder<ConversationsCubit,
-                ConversationsState<List<ConversationModel>>>(
-              builder: (context, convState) {
-                final unreadCount =
-                    context.read<ConversationsCubit>().unreadCount;
-                return CustomAppBar(
-                  title: "Active Orders",
-                  showCartIcon: true,
-                  cartItemCount: cartTotalItemQuantity(cartState),
-                  onCartTap: () => Navigator.pushNamed(
-                    context,
-                    RouteNames.tailor_cart_screen,
-                  ),
-                  showChatIcon: true,
-                  unreadChatCount: unreadCount,
-                  onChatTap: () async {
-                    final userId = await prefs.getSecureData('id') ?? '';
-                    if (context.mounted) {
-                      Navigator.pushNamed(
-                        context,
-                        RouteNames.conversations_screen,
-                        arguments: {'currentUserId': userId},
-                      );
-                    }
-                  },
-                );
-              },
-            );
-          },
-        ),
+      appBar: CustomAppBar(
+        title: 'Active Orders',
+        showCartIcon: true,
+        cartItemCount: cartCount,
+        onCartTap: () =>
+            Navigator.pushNamed(context, RouteNames.customer_cart_screen),
+        showNotificationIcon: true,
+        unreadNotificationCount: notifCount,
+        onNotificationTap: () =>
+            Navigator.pushNamed(context, RouteNames.notification_screen),
+        showChatIcon: true,
+        unreadChatCount: chatCount,
+        onChatTap: () async {
+          final userId = await prefs.getSecureData('id') ?? '';
+          Navigator.pushNamed(
+            context,
+            RouteNames.conversations_screen,
+            arguments: {'currentUserId': userId ?? ''},
+          );
+        },
       ),
       backgroundColor: AppColors.background,
       body: BlocListener<BiddingTailorCubit, BiddingTailorState>(
@@ -167,8 +163,7 @@ class _ActiveOrderViewState extends State<_ActiveOrderView> {
           children: [
             Padding(
               padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 10.w),
-              child:
-              Align(
+              child: Align(
                 alignment: Alignment.centerRight,
                 child: DropdownButton<String>(
                   isDense: true,
@@ -176,18 +171,26 @@ class _ActiveOrderViewState extends State<_ActiveOrderView> {
                   underline: const SizedBox.shrink(),
                   icon: Icon(Icons.sort, color: AppColors.primery, size: 22.sp),
                   style: AppStyle.medBlack.copyWith(fontSize: 14.sp),
-                  items: states.map((f) => DropdownMenuItem(
-                    value: f,
-                    child: Text(_statusLabel(f == 'all' ? null : f), style: AppStyle.smallBlack),
-                  ))
+                  items: states
+                      .map(
+                        (f) => DropdownMenuItem(
+                          value: f,
+                          child: Text(
+                            _statusLabel(f == 'all' ? null : f),
+                            style: AppStyle.smallBlack,
+                          ),
+                        ),
+                      )
                       .toList(),
                   selectedItemBuilder: (context) {
                     return states.map((f) {
                       if (f == 'all') return const SizedBox.shrink();
-                      return Row(children: [
-                        Text(_statusLabel(f), style: AppStyle.smallBlack),
-                        SizedBox(width: 4.w),
-                      ]);
+                      return Row(
+                        children: [
+                          Text(_statusLabel(f), style: AppStyle.smallBlack),
+                          SizedBox(width: 4.w),
+                        ],
+                      );
                     }).toList();
                   },
                   onChanged: (val) {
@@ -203,156 +206,163 @@ class _ActiveOrderViewState extends State<_ActiveOrderView> {
                   ? const Center(child: Text("No active orders"))
                   : _filteredOrders.isEmpty
                   ? Center(
-                child: Text(
-                  'No orders with status "${_statusLabel(_selectedFilter)}"',
-                  style: AppStyle.medLight,
-                ),
-              )
-                  : ListView.builder(
-                padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
-                itemCount: _filteredOrders.length,
-                itemBuilder: (context, index) {
-                  final order = _filteredOrders[index];
-                  final dropdownItems = [
-                    'accepted',
-                    'in_progress',
-                    'completed'
-                  ];
-
-                  return Card(
-                    color: AppColors.background,
-                    margin: EdgeInsets.only(bottom: 12.h),
-                    child: Padding(
-                      padding: EdgeInsets.all(12.w),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                order.bid.requestDescription,
-                                style: AppStyle.medBlack,
-                              ),
-                              const Spacer(),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10.w, vertical: 4.h),
-                                decoration: BoxDecoration(
-                                  borderRadius:
-                                  BorderRadius.circular(25),
-                                  color: AppColors.lightprimery,
-                                ),
-                                child: Text(
-                                  _statusLabel(order.workStatus),
-                                  style: TextStyle(fontSize: 11.sp),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 4.h),
-                          Text(
-                            'for ${order.bid.customer.name}',
-                            style: AppStyle.medPrimery
-                                .copyWith(fontSize: 17.sp),
-                          ),
-                          SizedBox(height: 8.h),
-                          Row(
-                            children: [
-                              Column(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
-                                children: [
-                                  Text('Deadline',
-                                      style: AppStyle.medPrimery
-                                          .copyWith(fontSize: 17.sp)),
-                                  Text(
-                                    order.isOverdue == true
-                                        ? 'Overdue!'
-                                        : '${order.daysRemaining ?? order.timeInDays} days',
-                                    style: AppStyle.body5,
-                                  ),
-                                ],
-                              ),
-                              const Spacer(),
-                              Column(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.end,
-                                children: [
-                                  Text('Payment',
-                                      style: AppStyle.medPrimery
-                                          .copyWith(fontSize: 17.sp)),
-                                  Text(
-                                    '\$${order.price}',
-                                    style: AppStyle.body5,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 10.h),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Expanded(
-                                child: CustomDropdownList(
-                                  label: "Status",
-                                  value:
-                                  order.workStatus ?? 'accepted',
-                                  items: dropdownItems,
-                                  hintText: "",
-                                  onChanged: (newStatus) {
-                                    context
-                                        .read<BiddingTailorCubit>()
-                                        .updateWorkStatus(
-                                        order.id, newStatus!);
-                                  },
-                                ),
-                              ),
-                              SizedBox(width: 8.w),
-                              InkWell(
-                                onTap: () {
-                                  Navigator.pushNamed(
-                                    context,
-                                    RouteNames.chat_screen,
-                                    arguments: {
-                                      'receiverId': order.bid.customer.id,
-                                      'receiverName': order.bid.customer.name,
-                                    },
-                                  );
-                                },
-                                borderRadius:
-                                BorderRadius.circular(12.r),
-                                child: Container(
-                                  padding: EdgeInsets.all(13.w),
-                                  width: 70.w ,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primery,
-                                    borderRadius:
-                                    BorderRadius.circular(12.r),
-                                  ),
-                                  child: Icon(
-                                    Icons.chat_bubble_outline_rounded,
-                                    color: AppColors.background,
-                                    size: 22.sp,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                      child: Text(
+                        'No orders with status "${_statusLabel(_selectedFilter)}"',
+                        style: AppStyle.medLight,
                       ),
+                    )
+                  : ListView.builder(
+                      padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
+                      itemCount: _filteredOrders.length,
+                      itemBuilder: (context, index) {
+                        final order = _filteredOrders[index];
+                        final dropdownItems = [
+                          'accepted',
+                          'in_progress',
+                          'completed',
+                        ];
+
+                        return Card(
+                          color: AppColors.background,
+                          margin: EdgeInsets.only(bottom: 12.h),
+                          child: Padding(
+                            padding: EdgeInsets.all(12.w),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      order.bid.requestDescription,
+                                      style: AppStyle.medBlack,
+                                    ),
+                                    const Spacer(),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 10.w,
+                                        vertical: 4.h,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(25),
+                                        color: AppColors.lightprimery,
+                                      ),
+                                      child: Text(
+                                        _statusLabel(order.workStatus),
+                                        style: TextStyle(fontSize: 11.sp),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 4.h),
+                                Text(
+                                  'for ${order.bid.customer.name}',
+                                  style: AppStyle.medPrimery.copyWith(
+                                    fontSize: 17.sp,
+                                  ),
+                                ),
+                                SizedBox(height: 8.h),
+                                Row(
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Deadline',
+                                          style: AppStyle.medPrimery.copyWith(
+                                            fontSize: 17.sp,
+                                          ),
+                                        ),
+                                        Text(
+                                          order.isOverdue == true
+                                              ? 'Overdue!'
+                                              : '${order.daysRemaining ?? order.timeInDays} days',
+                                          style: AppStyle.body5,
+                                        ),
+                                      ],
+                                    ),
+                                    const Spacer(),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          'Payment',
+                                          style: AppStyle.medPrimery.copyWith(
+                                            fontSize: 17.sp,
+                                          ),
+                                        ),
+                                        Text(
+                                          '\$${order.price}',
+                                          style: AppStyle.body5,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 10.h),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Expanded(
+                                      child: CustomDropdownList(
+                                        label: "Status",
+                                        value: order.workStatus ?? 'accepted',
+                                        items: dropdownItems,
+                                        hintText: "",
+                                        onChanged: (newStatus) {
+                                          context
+                                              .read<BiddingTailorCubit>()
+                                              .updateWorkStatus(
+                                                order.id,
+                                                newStatus!,
+                                              );
+                                        },
+                                      ),
+                                    ),
+                                    SizedBox(width: 8.w),
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                          context,
+                                          RouteNames.chat_screen,
+                                          arguments: {
+                                            'receiverId': order.bid.customer.id,
+                                            'receiverName':
+                                                order.bid.customer.name,
+                                          },
+                                        );
+                                      },
+                                      borderRadius: BorderRadius.circular(12.r),
+                                      child: Container(
+                                        padding: EdgeInsets.all(13.w),
+                                        width: 70.w,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.primery,
+                                          borderRadius: BorderRadius.circular(
+                                            12.r,
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.chat_bubble_outline_rounded,
+                                          color: AppColors.background,
+                                          size: 22.sp,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
           ],
         ),
       ),
-      bottomNavigationBar: FloatingNavBar(
-        userRole: 'tailor',
-        selectedIndex: 1,
-      ),
+      bottomNavigationBar: FloatingNavBar(userRole: 'tailor', selectedIndex: 1),
     );
   }
 }

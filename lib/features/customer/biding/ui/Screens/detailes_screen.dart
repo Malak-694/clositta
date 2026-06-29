@@ -1,6 +1,7 @@
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
 import 'package:chicora/core/widgets/circle_indicator.dart';
+import 'package:chicora/core/widgets/custom_app_bar.dart';
 import 'package:chicora/core/widgets/custom_elevated_button.dart';
 import 'package:chicora/features/customer/biding/data/models/offer_model.dart';
 import 'package:chicora/features/customer/biding/logic/cubit/custom_bidding_cubit/customer_bidding_cubit.dart';
@@ -107,14 +108,14 @@ class _DetailesScreenState extends State<DetailesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: Text("Back to Posts", style: AppStyle.boldTernary),
-        leadingWidth: 20.w,
-        iconTheme: IconThemeData(color: AppColors.ternary),
-        backgroundColor: AppColors.background,
+      appBar: CustomAppBar(
+        title: 'Back to posts',
+        showCartIcon: false,
+        onCartTap: () {},
+        leading: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(15, 0, 15, 15),
+        padding: const EdgeInsets.fromLTRB(15, 10, 15, 15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -216,9 +217,9 @@ class _DetailesScreenState extends State<DetailesScreen> {
                           ),
                         );
                         setState(() => isBidOpen = false);
-                        context
-                            .read<CustomerBiddingCubit>()
-                            .refreshBestOffers(widget.bidId);
+                        context.read<CustomerBiddingCubit>().refreshBestOffers(
+                          widget.bidId,
+                        );
                       }
                     },
                   );
@@ -250,8 +251,8 @@ class _DetailesScreenState extends State<DetailesScreen> {
                       final displayedOffers = isBidOpen
                           ? _applySort(offers)
                           : offers
-                          .where((o) => o.status == "accepted")
-                          .toList();
+                                .where((o) => o.status == "accepted")
+                                .toList();
 
                       if (displayedOffers.isEmpty) {
                         return Center(
@@ -270,17 +271,18 @@ class _DetailesScreenState extends State<DetailesScreen> {
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 10.0),
                             child: BidItem(
-                          offerId: offer.id ?? '',
-                            tailor: offer.tailor?.name ?? '',
-                            tailorId: offer.tailor?.id ?? '',
-                            duration: offer.timeInDays ?? 0,
-                            email: offer.tailor?.email ?? '',
-                            price: offer.price ?? 0,
-                            num_work: 0,
-                            comment: offer.message ?? '',
-                            showSelectButton: isBidOpen,
-                            onAccept: () => _handleAcceptOffer(context, offer.id ?? ''),
-                          ),
+                              offerId: offer.id ?? '',
+                              tailor: offer.tailor?.name ?? '',
+                              tailorId: offer.tailor?.id ?? '',
+                              duration: offer.timeInDays ?? 0,
+                              email: offer.tailor?.email ?? '',
+                              price: offer.price ?? 0,
+                              num_work: 0,
+                              comment: offer.message ?? '',
+                              showSelectButton: isBidOpen,
+                              onAccept: () =>
+                                  _handleAcceptOffer(context, offer.id ?? ''),
+                            ),
                           );
                         },
                       );

@@ -1,3 +1,4 @@
+import 'package:chicora/features/notifications/logic/cubit/notification_state.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/colors.dart';
@@ -15,6 +16,8 @@ import '../../ecommerce_multi/logic/cart_cubit/cart_state.dart';
 import '../../ecommerce_multi/logic/cart_cubit/cart_total_quantity.dart';
 import '../../ecommerce_multi/logic/view_product_logic/view_products_cubit.dart';
 import '../../ecommerce_multi/ui/screens/buyer_product_screen_body.dart';
+import '../../notifications/data/models/unread_count_response.dart';
+import '../../notifications/logic/cubit/notification_cubit.dart';
 
 class TailorProductsScreen extends StatelessWidget {
   const TailorProductsScreen({super.key});
@@ -22,44 +25,33 @@ class TailorProductsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final prefs = getIt<SharedPrefHelper>();
+    final cartCount   = cartTotalItemQuantity(context.watch<CartCubit>().state);
+    final chatCount   = context.watch<ConversationsCubit>().unreadCount;
+    final notifCount  = context.watch<NotificationCubit>().state.maybeWhen(
+      success: (data) => data is UnreadCountResponse ? data.unreadCount : 0,
+      orElse: () => 0,
+    );
+
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: BlocBuilder<CartCubit, CartState<dynamic>>(
-          builder: (context, cartState) {
-            return BlocBuilder<ConversationsCubit,
-                ConversationsState<List<ConversationModel>>>(
-              builder: (context, convState) {
-                final unreadCount =
-                    context.read<ConversationsCubit>().unreadCount;
-                return CustomAppBar(
-                  title: "Clositta Store",
-                  showCartIcon: true,
-                  cartItemCount: cartTotalItemQuantity(cartState),
-                  onCartTap: () => Navigator.pushNamed(
-                    context,
-                    RouteNames.tailor_cart_screen,
-                  ),
-                  showChatIcon: true,
-                  unreadChatCount: unreadCount,
-                  onChatTap: () async {
-                    final userId = await prefs.getSecureData('id') ?? '';
-                    if (context.mounted) {
-                      Navigator.pushNamed(
-                        context,
-                        RouteNames.conversations_screen,
-                        arguments: {'currentUserId': userId},
-                      );
-                    }
-                  },
-                );
-              },
+      appBar: CustomAppBar(
+          title: 'Clositta Store',
+          showCartIcon: true,
+          cartItemCount: cartCount,
+          onCartTap: () => Navigator.pushNamed(context, RouteNames.customer_cart_screen),
+          showNotificationIcon: true,
+          unreadNotificationCount: notifCount,
+          onNotificationTap: () => Navigator.pushNamed(context, RouteNames.notification_screen),
+          showChatIcon: true,
+          unreadChatCount: chatCount,
+          onChatTap: () async {
+            final userId = await prefs.getSecureData('id') ?? '';
+            Navigator.pushNamed(
+              context,
+              RouteNames.conversations_screen,
+              arguments: {'currentUserId': userId ?? ''},
             );
-          },
-        ),
-      ),
-
+          }),
       body: MultiBlocProvider(
         providers: [
           BlocProvider(create: (_) => getIt<ViewProductsCubit>()),

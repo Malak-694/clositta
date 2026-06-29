@@ -1,6 +1,7 @@
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/constants.dart';
 import 'package:chicora/core/widgets/custom_app_bar.dart';
+import 'package:chicora/features/notifications/logic/cubit/notification_state.dart';
 import 'package:chicora/features/seller/analysis/data/models/analysis_response_model.dart';
 import 'package:chicora/features/seller/analysis/logic/cubit/analysis_seller_cubit.dart';
 import 'package:chicora/features/seller/analysis/logic/cubit/analysis_seller_state.dart';
@@ -17,20 +18,33 @@ import 'package:chicora/features/seller/analysis/ui/widgets/analysis_status_item
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/router/route_names.dart';
 import '../../../../../core/widgets/custom_nav_bar.dart';
+import '../../../../notifications/data/models/unread_count_response.dart';
+import '../../../../notifications/logic/cubit/notification_cubit.dart';
 
 class AnalysisSellerScreen extends StatelessWidget {
   const AnalysisSellerScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+
+    final notifCount  = context.watch<NotificationCubit>().state.maybeWhen(
+      success: (data) => data is UnreadCountResponse ? data.unreadCount : 0,
+      orElse: () => 0,
+    );
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: CustomAppBar(
-        title: 'Seller Analytics',
+        title: 'Analytics',
         showCartIcon: false,
-        onCartTap: () {},
-      ),
+        onCartTap: () => Navigator.pushNamed(context, RouteNames.customer_cart_screen),
+    showNotificationIcon: true,
+    unreadNotificationCount: notifCount,
+    onNotificationTap: () => Navigator.pushNamed(context, RouteNames.notification_screen),
+
+    ),
       body: BlocBuilder<AnalysisSellerCubit, AnalysisSellerState>(
         builder: (context, state) {
           return state.when(

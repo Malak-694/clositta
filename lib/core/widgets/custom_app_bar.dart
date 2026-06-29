@@ -20,6 +20,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.showChatIcon = false,
     this.unreadChatCount = 0,
     this.onChatTap,
+    this.showNotificationIcon = false,
+    this.unreadNotificationCount = 0,
+    this.onNotificationTap,
   });
 
   final String title;
@@ -31,9 +34,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onCartTap;
   final List<Widget> extraActions; // ✅ new
   final VoidCallback? onLeadingPressed;
- final bool showChatIcon;
+  final bool showChatIcon;
   final int unreadChatCount;
   final VoidCallback? onChatTap;
+  final bool showNotificationIcon;
+  final int unreadNotificationCount;
+  final VoidCallback? onNotificationTap;
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -64,6 +70,50 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         ...extraActions,
+
+        if (showNotificationIcon)
+          Padding(
+            padding: const EdgeInsets.only(right: 4.0),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(
+                    Icons.notifications_outlined,
+                    color: AppColors.background,
+                  ),
+                  onPressed: onNotificationTap,
+                ),
+                if (unreadNotificationCount > 0)
+                  Positioned(
+                    top: 6,
+                    right: 6,
+                    child: Container(
+                      padding: const EdgeInsets.all(3),
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 16,
+                        minHeight: 16,
+                      ),
+                      child: Text(
+                        unreadNotificationCount > 99
+                            ? '99+'
+                            : '$unreadNotificationCount',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
 
         if (showChatIcon)
           Padding(

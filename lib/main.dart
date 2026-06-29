@@ -15,6 +15,7 @@ import 'core/router/route_names.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'features/chat/logic/conversations_cubit/conversations_cubit.dart';
 import 'features/ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
+import 'features/notifications/logic/cubit/notification_cubit.dart';
 import 'firebase_options.dart';
 
 final GlobalKey<NavigatorState> appNavigatorKey = GlobalKey<NavigatorState>();
@@ -67,10 +68,13 @@ void main() async {
         BlocProvider<ConversationsCubit>(
           create: (_) => getIt<ConversationsCubit>()..loadUnreadCount(),
         ),
+        BlocProvider<NotificationCubit>(
+          create: (_) => getIt<NotificationCubit>()..getUnreadCount(),
+        ),
       ],
       child: ChicoraApp(initialRoute: initialRoute),
     )
-        : ChicoraApp(initialRoute: initialRoute), // seller gets nothing extra
+        : ChicoraApp(initialRoute: initialRoute),
   );
 }
 

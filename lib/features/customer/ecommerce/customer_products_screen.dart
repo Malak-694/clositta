@@ -6,15 +6,14 @@ import 'package:chicora/core/router/route_names.dart';
 import 'package:chicora/core/widgets/custom_app_bar.dart';
 import 'package:chicora/core/widgets/custom_nav_bar.dart';
 import 'package:chicora/features/chat/logic/conversations_cubit/conversations_cubit.dart';
-import 'package:chicora/features/chat/logic/conversations_cubit/conversations_state.dart';
+import 'package:chicora/features/notifications/logic/cubit/notification_cubit.dart';
+import 'package:chicora/features/notifications/data/models/unread_count_response.dart';
 import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
-import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_state.dart';
 import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_total_quantity.dart';
 import 'package:chicora/features/ecommerce_multi/ui/screens/buyer_product_screen_body.dart';
+import 'package:chicora/features/notifications/logic/cubit/notification_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../chat/data/models/conversation_model.dart';
 
 class CustomerProductsScreen extends StatefulWidget {
   const CustomerProductsScreen({super.key});
@@ -42,45 +41,31 @@ class _CustomerProductsScreenState extends State<CustomerProductsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // ── Read all counts here once, no nesting ──────────────
+    final cartCount   = cartTotalItemQuantity(context.watch<CartCubit>().state);
+    final chatCount   = context.watch<ConversationsCubit>().unreadCount;
+    final notifCount = context.read<NotificationCubit>().unreadCount;
+
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: BlocBuilder<CartCubit, CartState<dynamic>>(
-          builder: (context, cartState) {
-            return BlocBuilder<ConversationsCubit,
-                ConversationsState<List<ConversationModel>>>(
-              builder: (context, convState) {
-                final unreadCount = context.read<ConversationsCubit>().unreadCount;
-
-                return CustomAppBar(
-                  title: "Welcome to Clositta",
-                  showCartIcon: true,
-                  cartItemCount: cartTotalItemQuantity(cartState),
-                  onCartTap: () => Navigator.pushNamed(
-                    context,
-                    RouteNames.customer_cart_screen,
-                  ),
-                  showChatIcon: true,
-                  unreadChatCount: unreadCount,
-                  onChatTap: () => Navigator.pushNamed(
-                    context,
-                    RouteNames.conversations_screen,
-                    arguments: {
-                      'currentUserId': _currentUserId ?? '',
-                    },
-                  ),
-                );
-              },
-            );
-          },
+      appBar: CustomAppBar(
+        title: 'Welcome to Clositta',
+        showCartIcon: true,
+        cartItemCount: cartCount,
+        onCartTap: () => Navigator.pushNamed(context, RouteNames.customer_cart_screen),
+        showNotificationIcon: true,
+        unreadNotificationCount: notifCount,
+        onNotificationTap: () => Navigator.pushNamed(context, RouteNames.notification_screen),
+        showChatIcon: true,
+        unreadChatCount: chatCount,
+        onChatTap: () => Navigator.pushNamed(
+          context,
+          RouteNames.conversations_screen,
+          arguments: {'currentUserId': _currentUserId ?? ''},
         ),
       ),
       body: const BuyerProductScreenBody(),
-      bottomNavigationBar: FloatingNavBar(
-        userRole: 'customer',
-        selectedIndex: 0,
-      ),
+      bottomNavigationBar: FloatingNavBar(userRole: 'customer', selectedIndex: 0),
     );
   }
 }

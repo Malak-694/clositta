@@ -41,6 +41,8 @@ import '../../features/customer/ecommerce/customer_products_screen.dart';
 import '../../features/customer/profile/ui/customer_profile_screen.dart';
 import '../../features/ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
 import '../../features/ecommerce_multi/ui/screens/seller_info_screen.dart';
+import '../../features/notifications/ui/screens/notification_prefrence_screen.dart';
+import '../../features/notifications/ui/screens/notification_sreen.dart';
 import '../../features/profile/data/model/profile_model.dart';
 import '../../features/profile/logic/profile_cubit.dart';
 import '../../features/profile/ui/screens/edit_profile_screen.dart';
@@ -452,6 +454,14 @@ class AppRouter {
           builder: (_) => ConversationsScreen(
             currentUserId: currentUserId,
           ),
+        );
+      case RouteNames.notification_screen:
+        return MaterialPageRoute(
+          builder: (_) => const NotificationScreen(),
+        );
+      case RouteNames.notification_preferences_screen:
+        return MaterialPageRoute(
+          builder: (_) => const NotificationPreferencesScreen(),
         );
       default:
         return MaterialPageRoute(

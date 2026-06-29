@@ -1,4 +1,5 @@
 import 'package:chicora/features/ecommerce_multi/ui/widgets/comment_section_widget.dart';
+import 'package:chicora/features/notifications/logic/cubit/notification_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,6 +15,8 @@ import '../../../../chat/logic/conversations_cubit/conversations_state.dart';
 import '../../../../ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
 import '../../../../ecommerce_multi/logic/cart_cubit/cart_state.dart';
 import '../../../../ecommerce_multi/logic/cart_cubit/cart_total_quantity.dart';
+import '../../../../notifications/data/models/unread_count_response.dart';
+import '../../../../notifications/logic/cubit/notification_cubit.dart';
 import '../../data/repo/portfolio_tailor_repo.dart';
 import '../../logic/cubit/portfolio_tailor_cubit.dart';
 import '../../logic/cubit/portfolio_tailor_state.dart';
@@ -26,49 +29,39 @@ class PortfolioTailorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final prefs = getIt<SharedPrefHelper>();
+    final cartCount = cartTotalItemQuantity(context.watch<CartCubit>().state);
+    final chatCount = context.watch<ConversationsCubit>().unreadCount;
+    final notifCount = context.watch<NotificationCubit>().state.maybeWhen(
+      success: (data) => data is UnreadCountResponse ? data.unreadCount : 0,
+      orElse: () => 0,
+    );
+
     return BlocProvider(
       create: (context) => PortfolioTailorCubit(
         portfolioTailorRepo: getIt<PortfolioTailorRepo>(),
       ),
       child: Scaffold(
         backgroundColor: AppColors.background,
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(kToolbarHeight),
-          child: BlocBuilder<CartCubit, CartState<dynamic>>(
-            builder: (context, cartState) {
-              return BlocBuilder<
-                ConversationsCubit,
-                ConversationsState<List<ConversationModel>>
-              >(
-                builder: (context, convState) {
-                  final unreadCount = context
-                      .read<ConversationsCubit>()
-                      .unreadCount;
-                  return CustomAppBar(
-                    title: "My Portfolio",
-                    showCartIcon: true,
-                    cartItemCount: cartTotalItemQuantity(cartState),
-                    onCartTap: () => Navigator.pushNamed(
-                      context,
-                      RouteNames.tailor_cart_screen,
-                    ),
-                    showChatIcon: true,
-                    unreadChatCount: unreadCount,
-                    onChatTap: () async {
-                      final userId = await prefs.getSecureData('id') ?? '';
-                      if (context.mounted) {
-                        Navigator.pushNamed(
-                          context,
-                          RouteNames.conversations_screen,
-                          arguments: {'currentUserId': userId},
-                        );
-                      }
-                    },
-                  );
-                },
-              );
-            },
-          ),
+        appBar: CustomAppBar(
+          title: 'My Portfolio',
+          showCartIcon: true,
+          cartItemCount: cartCount,
+          onCartTap: () =>
+              Navigator.pushNamed(context, RouteNames.customer_cart_screen),
+          showNotificationIcon: true,
+          unreadNotificationCount: notifCount,
+          onNotificationTap: () =>
+              Navigator.pushNamed(context, RouteNames.notification_screen),
+          showChatIcon: true,
+          unreadChatCount: chatCount,
+          onChatTap: () async {
+            final userId = await prefs.getSecureData('id') ?? '';
+            Navigator.pushNamed(
+              context,
+              RouteNames.conversations_screen,
+              arguments: {'currentUserId': userId ?? ''},
+            );
+          },
         ),
         body: BlocBuilder<PortfolioTailorCubit, PortfolioTailorState>(
           builder: (context, state) {

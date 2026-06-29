@@ -4,6 +4,7 @@ import 'package:chicora/core/di/dependency_injection.dart';
 import 'package:chicora/core/helper/shared_pref_helper.dart';
 import 'package:chicora/core/widgets/custom_nav_bar.dart';
 import 'package:chicora/features/customer/biding/logic/cubit/custom_bidding_cubit/customer_bidding_cubit.dart';
+import 'package:chicora/features/notifications/logic/cubit/notification_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,6 +19,8 @@ import '../../../../../core/widgets/custom_app_bar.dart';
 import '../../../../chat/data/models/conversation_model.dart';
 import '../../../../chat/logic/conversations_cubit/conversations_cubit.dart';
 import '../../../../chat/logic/conversations_cubit/conversations_state.dart';
+import '../../../../notifications/data/models/unread_count_response.dart';
+import '../../../../notifications/logic/cubit/notification_cubit.dart';
 import '../widgets/active_orders_tab.dart';
 import '../widgets/posts_tab.dart';
 
@@ -64,34 +67,31 @@ class _PostScreenState extends State<PostScreen>
 
   @override
   Widget build(BuildContext context) {
+
+    final cartCount   = cartTotalItemQuantity(context.watch<CartCubit>().state);
+    final chatCount   = context.watch<ConversationsCubit>().unreadCount;
+    final notifCount  = context.watch<NotificationCubit>().state.maybeWhen(
+      success: (data) => data is UnreadCountResponse ? data.unreadCount : 0,
+      orElse: () => 0,
+    );
+
+
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: BlocBuilder<CartCubit, CartState<dynamic>>(
-          builder: (context, cartState) {
-            return BlocBuilder<ConversationsCubit,
-                ConversationsState<List<ConversationModel>>>(
-              builder: (context, convState) {
-                final unreadCount =
-                    context.read<ConversationsCubit>().unreadCount;
-                return CustomAppBar(
-                  title: "Your Biddings",
-                  showCartIcon: true,
-                  cartItemCount: cartTotalItemQuantity(cartState),
-                  onCartTap: () => Navigator.pushNamed(
-                      context, RouteNames.customer_cart_screen),
-                  showChatIcon: true,
-                  unreadChatCount: unreadCount,
-                  onChatTap: () => Navigator.pushNamed(
-                    context,
-                    RouteNames.conversations_screen,
-                    arguments: {'currentUserId': _currentUserId ?? ''},
-                  ),
-                );
-              },
-            );
-          },
+      appBar: CustomAppBar(
+        title: 'Your Biddings',
+        showCartIcon: true,
+        cartItemCount: cartCount,
+        onCartTap: () => Navigator.pushNamed(context, RouteNames.customer_cart_screen),
+        showNotificationIcon: true,
+        unreadNotificationCount: notifCount,
+        onNotificationTap: () => Navigator.pushNamed(context, RouteNames.notification_screen),
+        showChatIcon: true,
+        unreadChatCount: chatCount,
+        onChatTap: () => Navigator.pushNamed(
+          context,
+          RouteNames.conversations_screen,
+          arguments: {'currentUserId': _currentUserId ?? ''},
         ),
       ),
       body: SafeArea(

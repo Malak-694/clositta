@@ -37,7 +37,7 @@ import '../../features/customer/biding/data/repo/bid_repo.dart';
 import '../../features/customer/biding/data/repo/portfolio_repo.dart';
 import '../../features/customer/biding/logic/cubit/portfolio_cubit/portfolio_cubit.dart';
 import '../../features/profile/data/repo/profile_repo.dart';
-import '../../features/profile/logic/profile_cubit.dart';
+import '../../features/profile/logic/cubit/profile_cubit.dart';
 import '../../features/tailor/portfolio/data/repo/portfolio_tailor_repo.dart';
 import '../../features/notifications/data/repo/notification_repo.dart';
 import '../../features/notifications/logic/cubit/notification_cubit.dart';

@@ -1,9 +1,9 @@
 import 'package:chicora/core/networking/api_service.dart';
-import 'package:chicora/features/ecommerce_multi/data/models/rating%20models/rating_request_model.dart';
-import 'package:chicora/features/ecommerce_multi/data/models/rating%20models/rating_response_model.dart';
 
 import '../../../../core/models/message_model.dart';
 import '../../../../core/networking/api_result.dart';
+import '../models/rating_models/rating_request_model.dart';
+import '../models/rating_models/rating_response_model.dart';
 
 class RateProductsRepo {
   final ApiService apiService;

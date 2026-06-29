@@ -15,7 +15,6 @@ import 'package:chicora/features/ecommerce_multi/data/models/order_models/order_
 import 'package:chicora/features/ecommerce_multi/data/models/order_models/pay_model.dart';
 import 'package:chicora/features/ecommerce_multi/data/models/product_models/product_response_model.dart';
 import 'package:chicora/features/ecommerce_multi/data/models/product_models/product_search_response_model.dart';
-import 'package:chicora/features/ecommerce_multi/data/models/rating%20models/rating_request_model.dart';
 import 'package:chicora/features/seller/orders/data/models/order_seller_response_model.dart';
 import 'package:chicora/features/seller/orders/data/models/order_update_seller_request_model.dart';
 import 'package:chicora/features/seller/orders/data/models/order_update_seller_response.dart';
@@ -28,7 +27,6 @@ import 'package:retrofit/error_logger.dart';
 import 'package:retrofit/http.dart';
 
 import '../../features/chat/data/models/chat_history_response.dart';
-import '../../features/chat/data/models/chat_message_model.dart';
 import '../../features/chat/data/models/conversation_model.dart';
 import '../../features/customer/biding/data/models/bid_customer_model.dart';
 import '../../features/customer/biding/data/models/offer_model.dart';
@@ -38,7 +36,8 @@ import '../../features/customer/biding/data/models/rate_offer_request_model.dart
 import '../../features/ecommerce_multi/data/models/cart_models/cart_request_model.dart';
 import '../../features/ecommerce_multi/data/models/cart_models/cart_response_model.dart';
 import '../../features/ecommerce_multi/data/models/order_models/cancel_order_request_model.dart';
-import '../../features/ecommerce_multi/data/models/rating models/rating_response_model.dart';
+import '../../features/ecommerce_multi/data/models/rating_models/rating_request_model.dart';
+import '../../features/ecommerce_multi/data/models/rating_models/rating_response_model.dart';
 import '../../features/notifications/data/models/mark_all_read_response.dart';
 import '../../features/notifications/data/models/notification_preferences.dart';
 import '../../features/notifications/data/models/notifications_list_response.dart';

@@ -44,7 +44,7 @@ import '../../features/ecommerce_multi/ui/screens/seller_info_screen.dart';
 import '../../features/notifications/ui/screens/notification_prefrence_screen.dart';
 import '../../features/notifications/ui/screens/notification_sreen.dart';
 import '../../features/profile/data/model/profile_model.dart';
-import '../../features/profile/logic/profile_cubit.dart';
+import '../../features/profile/logic/cubit/profile_cubit.dart';
 import '../../features/profile/ui/screens/edit_profile_screen.dart';
 import '../../features/seller/orders/logic/cubit/order_mangement_cubit.dart';
 import '../../features/seller/products/data/models/product_model_response.dart';
@@ -72,14 +72,14 @@ class AppRouter {
             child: LoginScreen(),
           ),
         );
-      case RouteNames.sing_up:
+      case RouteNames.sign_up:
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
             create: (_) => getIt<AuthCubit>(),
             child: SignUpScreen(),
           ),
         );
-      case RouteNames.passord_recovery:
+      case RouteNames.password_recovery:
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
             create: (_) => getIt<AuthCubit>(),

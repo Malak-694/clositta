@@ -7,8 +7,9 @@ import 'package:chicora/features/ecommerce_multi/logic/rate_products_logic/rate_
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/helper/shared_key.dart';
 import '../../../../core/helper/shared_pref_helper.dart';
-import '../../data/models/rating models/rating_request_model.dart';
-import '../../data/models/rating models/rating_response_model.dart';
+import '../../data/models/rating_models/rating_request_model.dart';
+import '../../data/models/rating_models/rating_response_model.dart';
+
 
 class RateProductsCubit extends Cubit<RateProductsState> {
   final SharedPrefHelper _prefs = getIt<SharedPrefHelper>();

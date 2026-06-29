@@ -5,6 +5,7 @@ import 'package:chicora/core/helper/shared_key.dart';
 import 'package:chicora/core/helper/shared_pref_helper.dart';
 import 'package:chicora/core/router/route_names.dart';
 import 'package:chicora/main.dart';
+import 'package:flutter/foundation.dart';
 
 class DioFactory {
   DioFactory._();
@@ -32,15 +33,16 @@ class DioFactory {
   }
 
   static void addDioInterceptor() {
-    dio?.interceptors.add(
-      PrettyDioLogger(
-        requestBody: true,
-        requestHeader: true,
-        responseHeader: true,
-        responseBody: true,
-      ),
-    );
-
+    if (kDebugMode) {
+      dio?.interceptors.add(
+        PrettyDioLogger(
+          requestBody: true,
+          requestHeader: true,
+          responseHeader: true,
+          responseBody: true,
+        ),
+      );
+    }
     dio?.interceptors.add(
       InterceptorsWrapper(
         onError: (error, handler) async {

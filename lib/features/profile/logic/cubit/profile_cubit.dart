@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:chicora/core/di/dependency_injection.dart';
 import 'package:chicora/core/helper/shared_key.dart';
 import 'package:chicora/core/helper/shared_pref_helper.dart';
-import '../data/repo/profile_repo.dart';
+import '../../data/repo/profile_repo.dart';
 import 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {

@@ -5,7 +5,7 @@ import 'package:chicora/core/helper/shared_pref_helper.dart';
 import 'package:chicora/core/router/route_names.dart';
 import 'package:chicora/features/customer/measurements/ui/widgets/measurements_profile_tile.dart';
 import 'package:chicora/features/profile/data/model/profile_model.dart';
-import 'package:chicora/features/profile/logic/profile_cubit.dart';
+import 'package:chicora/features/profile/logic/cubit/profile_cubit.dart';
 import 'package:chicora/features/profile/ui/screens/edit_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -258,7 +258,7 @@ class ProfileMenuList extends StatelessWidget {
 
         if (!context.mounted) return;
         Navigator.of(context).pushNamedAndRemoveUntil(
-          RouteNames.sing_up,
+          RouteNames.login,
               (route) => false,
         );
       },

@@ -146,7 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: () {
                           Navigator.pushNamed(
                             context,
-                            RouteNames.passord_recovery,
+                            RouteNames.password_recovery,
                           );
                         },
                         child: Text(
@@ -176,7 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(height: 16.h),
                   TextButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, RouteNames.sing_up);
+                      Navigator.pushNamed(context, RouteNames.sign_up);
                     },
                     child: Text(
                       "First time to see us?",

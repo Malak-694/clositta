@@ -26,7 +26,7 @@ class SellerProductsScreen extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
 
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
         title: 'My Products',
         showCartIcon: false,

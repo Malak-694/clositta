@@ -89,7 +89,7 @@ class _AddedProductFormState extends State<AddedProductForm> {
         );
       },
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: CustomAppBar(
           title: _isUpdate ? "Update Product" : "Add New Product",
           leading: true,

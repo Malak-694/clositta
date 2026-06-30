@@ -142,7 +142,7 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
         final hasExisting = cubit.currentMeasurements?.hasMeasurements ?? false;
 
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: CustomAppBar(
             title: 'Body Measurements',
             leading: true,

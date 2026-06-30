@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// Top-of-screen profile: avatar, name/email, role badge, tailor location + maps, theme toggle.
 class ProfileIdentityHeader extends StatelessWidget {
   const ProfileIdentityHeader({
     super.key,
@@ -143,7 +142,7 @@ class ProfileIdentityHeader extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      color: AppColors.background,
+      color: Theme.of(context).scaffoldBackgroundColor,
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
       child: Column(
         children: [

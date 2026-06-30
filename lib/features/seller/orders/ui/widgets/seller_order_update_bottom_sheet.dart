@@ -13,7 +13,7 @@ Future<void> showSellerOrderUpdateBottomSheet({
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: AppColors.background,
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
     ),
@@ -99,10 +99,10 @@ class _SellerOrderUpdateSheetState extends State<_SellerOrderUpdateSheet> {
             items: kSellerOrderStatusValues
                 .map(
                   (v) => DropdownMenuItem(
-                    value: v,
-                    child: Text(sellerOrderStatusLabel(v)),
-                  ),
-                )
+                value: v,
+                child: Text(sellerOrderStatusLabel(v)),
+              ),
+            )
                 .toList(),
             onChanged: (v) => setState(() => _orderStatus = v),
             decoration: InputDecoration(

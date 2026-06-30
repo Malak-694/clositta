@@ -89,9 +89,9 @@ class _ChatInputFieldState extends State<ChatInputField> {
                         color: AppColors.light,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
+                      child:  Icon(
                         Icons.close,
-                        color: AppColors.background,
+                        color: Theme.of(context).cardColor,
                         size: 18,
                       ),
                     ),
@@ -155,7 +155,7 @@ class _ChatInputFieldState extends State<ChatInputField> {
                 child: IconButton(
                   icon: Icon(
                     Icons.send,
-                    color: AppColors.background,
+                    color: Theme.of(context).cardColor,
                     size: 18,
                   ),
                   onPressed: _handleSend,

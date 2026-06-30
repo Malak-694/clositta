@@ -24,7 +24,7 @@ class CheckoutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
         title: "Checkout",
         leading: true,
@@ -81,8 +81,8 @@ class _CheckoutScreenBodyState extends State<CheckoutScreenBody> {
     if (items == null) return 0;
     return items.fold(
       0,
-      (sum, item) =>
-          sum + (item.subtotal ?? (item.priceAtAddTime ?? 0) * (item.quantity ?? 1)),
+          (sum, item) =>
+      sum + (item.subtotal ?? (item.priceAtAddTime ?? 0) * (item.quantity ?? 1)),
     );
   }
 
@@ -271,11 +271,11 @@ class _CheckoutScreenBodyState extends State<CheckoutScreenBody> {
                             SizedBox(height: 8.h),
                             ...List.generate(
                               subOrderCount,
-                              (index) => Padding(
+                                  (index) => Padding(
                                 padding: EdgeInsets.only(bottom: 4.h),
                                 child: Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       'Seller ${index + 1}',
@@ -296,21 +296,21 @@ class _CheckoutScreenBodyState extends State<CheckoutScreenBody> {
                     SizedBox(height: 20.h),
                     isSubmitting
                         ? Center(
-                            child: CircularProgressIndicator(
-                              color: _rolePrimary,
-                            ),
-                          )
+                      child: CircularProgressIndicator(
+                        color: _rolePrimary,
+                      ),
+                    )
                         : Center(
-                            child: CustomElevatedButton(
-                              value: 'Place Order',
-                              height: 52.h,
-                              background: _rolePrimary,
-                              style: AppStyle.medBackground.copyWith(
-                                fontSize: 18.sp,
-                              ),
-                              onPressed: _submitOrder,
-                            ),
-                          ),
+                      child: CustomElevatedButton(
+                        value: 'Place Order',
+                        height: 52.h,
+                        background: _rolePrimary,
+                        style: AppStyle.medBackground.copyWith(
+                          fontSize: 18.sp,
+                        ),
+                        onPressed: _submitOrder,
+                      ),
+                    ),
                     SizedBox(height: 20.h),
                   ],
                 ),

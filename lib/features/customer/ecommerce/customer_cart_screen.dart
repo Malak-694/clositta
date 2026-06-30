@@ -23,7 +23,7 @@ class CustomerCartScreen extends StatelessWidget {
         return cart;
       },
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
           child: BlocBuilder<CartCubit, CartState<dynamic>>(

@@ -18,7 +18,7 @@ class ConversationsScreen extends StatelessWidget {
     return BlocProvider(
       create: (_) => getIt<ConversationsCubit>()..loadConversations(),
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
           backgroundColor: AppColors.primery,
           foregroundColor: Colors.white,

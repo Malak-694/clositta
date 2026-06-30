@@ -20,9 +20,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 Future<void> leaveOrdersScreen(
-  BuildContext context,
-  bool openedFromCart,
-) async {
+    BuildContext context,
+    bool openedFromCart,
+    ) async {
   if (openedFromCart) {
     if (Navigator.of(context).canPop()) {
       Navigator.of(context).pop();
@@ -55,7 +55,7 @@ class OrderViewScreen extends StatelessWidget {
           if (!didPop) await leaveOrdersScreen(context, openedFromCart);
         },
         child: Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: CustomAppBar(
             title: 'My Orders',
             leading: true,
@@ -86,7 +86,7 @@ class OrderViewBody extends StatelessWidget {
     if (subOrders == null || subOrders.isEmpty) return 0;
     return subOrders.fold<double>(
       0,
-      (sum, subOrder) => sum + (subOrder.itemsTotal ?? 0),
+          (sum, subOrder) => sum + (subOrder.itemsTotal ?? 0),
     );
   }
 
@@ -95,7 +95,7 @@ class OrderViewBody extends StatelessWidget {
     if (subOrders == null || subOrders.isEmpty) return 0;
     return subOrders.fold<double>(
       0,
-      (sum, subOrder) => sum + (subOrder.shippingFee ?? 0),
+          (sum, subOrder) => sum + (subOrder.shippingFee ?? 0),
     );
   }
 
@@ -173,7 +173,7 @@ class OrderViewBody extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
@@ -224,7 +224,7 @@ class OrderViewBody extends StatelessWidget {
   bool _canAllCancel(List<SubOrderModel>? subOrders) {
     if (subOrders == null || subOrders.isEmpty) return false;
     return subOrders.every(
-      (subOrder) => _isCancellableStatus(subOrder.orderStatus),
+          (subOrder) => _isCancellableStatus(subOrder.orderStatus),
     );
   }
 
@@ -239,10 +239,10 @@ class OrderViewBody extends StatelessWidget {
     final cancellableSubOrders = (order.subOrders ?? const <SubOrderModel>[])
         .where(
           (subOrder) =>
-              subOrder.id != null &&
-              subOrder.id!.isNotEmpty &&
-              _isCancellableStatus(subOrder.orderStatus),
-        )
+      subOrder.id != null &&
+          subOrder.id!.isNotEmpty &&
+          _isCancellableStatus(subOrder.orderStatus),
+    )
         .toList();
 
     if (cancellableSubOrders.isEmpty) return;
@@ -257,17 +257,17 @@ class OrderViewBody extends StatelessWidget {
     final cancellableSubOrders = (order.subOrders ?? const <SubOrderModel>[])
         .where(
           (subOrder) =>
-              subOrder.id != null &&
-              subOrder.id!.isNotEmpty &&
-              _isCancellableStatus(subOrder.orderStatus),
-        )
+      subOrder.id != null &&
+          subOrder.id!.isNotEmpty &&
+          _isCancellableStatus(subOrder.orderStatus),
+    )
         .toList();
 
     if (cancellableSubOrders.isEmpty) return;
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
@@ -284,7 +284,7 @@ class OrderViewBody extends StatelessWidget {
               ),
               SizedBox(height: 8.h),
               ...cancellableSubOrders.map(
-                (subOrder) => ListTile(
+                    (subOrder) => ListTile(
                   contentPadding: EdgeInsets.zero,
                   title: Text(
                     subOrder.seller?.name ?? 'Seller',
@@ -312,10 +312,10 @@ class OrderViewBody extends StatelessWidget {
   }
 
   void _showCancelSubOrderDialog(
-    BuildContext context,
-    OrderDataModel order,
-    String subOrderId,
-  ) {
+      BuildContext context,
+      OrderDataModel order,
+      String subOrderId,
+      ) {
     if (order.id == null || order.id!.isEmpty) return;
     showCancelOrderDialog(
       context: context,

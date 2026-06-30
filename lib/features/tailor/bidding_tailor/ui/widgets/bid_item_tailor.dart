@@ -30,7 +30,7 @@ class BidItemTailor extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
       decoration: ShapeDecoration(
-        color: AppColors.background,
+        color: Theme.of(context).cardColor,
         shape: RoundedRectangleBorder(
           side: const BorderSide(color: Colors.black26),
           borderRadius: BorderRadius.circular(15.sp),

@@ -26,7 +26,7 @@ class OutfitRecomendationScreen extends StatelessWidget {
         showCartIcon: false,
         onCartTap: () {},
       ),
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Container(
         height: double.infinity,
         width: double.infinity,

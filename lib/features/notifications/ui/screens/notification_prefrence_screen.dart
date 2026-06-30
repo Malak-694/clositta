@@ -84,7 +84,7 @@ class _PreferencesBodyState extends State<_PreferencesBody> {
     final keys = keysForRole(_role);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
         title: 'Notification Preferences',
         showCartIcon: false,

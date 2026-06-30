@@ -31,7 +31,7 @@ class PasswordRecoveryScreen extends StatelessWidget {
       builder: (context, state) {
         final isLoading = state == const AuthState.loading();
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: Container(
             width: double.infinity,
             height: double.infinity,

@@ -43,7 +43,7 @@ class _RateProductWidgetState extends State<RateProductWidget> {
       width: double.infinity,
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
           color: widget.accent.withValues(alpha: 0.12),
@@ -64,7 +64,7 @@ class _RateProductWidgetState extends State<RateProductWidget> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(
               5,
-              (index) => Material(
+                  (index) => Material(
                 color: Colors.transparent,
                 child: InkWell(
                   onTap: () {

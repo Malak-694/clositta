@@ -31,7 +31,7 @@ class OrderMangementScreen extends StatelessWidget {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
         title: 'Orders',
         showCartIcon: false,
@@ -114,8 +114,8 @@ class _OrderMangementBodyState extends State<_OrderMangementBody> {
                   SizedBox(height: 16.h),
                   FilledButton(
                     onPressed: () => context.read<OrderMangementCubit>().getAllOrdersSeller(
-                          status: _statusFilter,
-                        ),
+                      status: _statusFilter,
+                    ),
                     child: const Text('Retry'),
                   ),
                 ],
@@ -140,8 +140,8 @@ class _OrderMangementBodyState extends State<_OrderMangementBody> {
                 onStatusSelected: (value) {
                   setState(() => _statusFilter = value);
                   context.read<OrderMangementCubit>().getAllOrdersSeller(
-                        status: value,
-                      );
+                    status: value,
+                  );
                 },
               ),
               SizedBox(height: 12.h),
@@ -152,19 +152,19 @@ class _OrderMangementBodyState extends State<_OrderMangementBody> {
                   orders: _orders,
                   onRefresh: () async {
                     await context.read<OrderMangementCubit>().getAllOrdersSeller(
-                          status: _statusFilter,
-                          forceRefresh: true,
-                        );
+                      status: _statusFilter,
+                      forceRefresh: true,
+                    );
                   },
                   onUpdateStatus: (order, {orderStatus}) async {
                     final id = order.resolvedOrderId;
                     final subOrderId = order.resolvedSubOrderId;
                     if (id == null || subOrderId == null) return;
                     await context.read<OrderMangementCubit>().updateOrderStatusSeller(
-                          orderId: id,
-                          suborderId: subOrderId,
-                          orderStatus: orderStatus,
-                        );
+                      orderId: id,
+                      suborderId: subOrderId,
+                      orderStatus: orderStatus,
+                    );
                   },
                 ),
               ),

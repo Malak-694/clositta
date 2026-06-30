@@ -134,7 +134,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         );
       },
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: CustomAppBar(
           title: "Edit Profile",
           leading: true,
@@ -160,16 +160,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               key: _formKey,
               child: SingleChildScrollView(
                 padding:
-                    EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
+                EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
                 child: Column(
                   children: [
 
-                  Center(
-                    child: Stack(
-                      children: [
-                        GestureDetector(
-                          onTap: _pickImage,
-                          child: CircleAvatar(
+                    Center(
+                      child: Stack(
+                        children: [
+                          GestureDetector(
+                              onTap: _pickImage,
+                              child: CircleAvatar(
                                 radius: 73.r,
                                 backgroundColor: widget.lightColor,
                                 backgroundImage: imageToShow,
@@ -183,106 +183,106 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               )
                           ),
 
-                        if (!_imageRemoved &&
-                            (_newImagePath != null ||
-                                widget.profile.imageUrl != null))
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: GestureDetector(
-                              onTap: _removeImage,
-                              child: Container(
-                                width: 36.w,
-                                height: 36.h,
-                                decoration: BoxDecoration(
-                                  color: widget.primaryColor,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: AppColors.background,
-                                    width: 2,
+                          if (!_imageRemoved &&
+                              (_newImagePath != null ||
+                                  widget.profile.imageUrl != null))
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: GestureDetector(
+                                onTap: _removeImage,
+                                child: Container(
+                                  width: 36.w,
+                                  height: 36.h,
+                                  decoration: BoxDecoration(
+                                    color: widget.primaryColor,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Theme.of(context).cardColor,
+                                      width: 2,
+                                    ),
                                   ),
-                                ),
-                                child: Icon(
-                                  Icons.delete_outline,
-                                  color: AppColors.background,
-                                  size: 18.sp,
+                                  child: Icon(
+                                    Icons.delete_outline,
+                                    color: Theme.of(context).cardColor,
+                                    size: 18.sp,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 8.h),
+                    SizedBox(height: 8.h),
 
-                  Text(
-                    "Tap to change photo",
-                    style: TextStyle(fontSize: 12.sp, color: AppColors.light),
-                  ),
-                  SizedBox(height: 32.h),
+                    Text(
+                      "Tap to change photo",
+                      style: TextStyle(fontSize: 12.sp, color: AppColors.light),
+                    ),
+                    SizedBox(height: 32.h),
 
-                  // ── Name
-                  LabeledTextField(
-                    controller: _nameController,
-                    hintText: "Enter your name",
-                    label: "Name",
-                    required: true,
-                    focusedBorderColor: widget.primaryColor,
-                  ),
-                  SizedBox(height: 16.h),
-
-                  // ── Email
-                  LabeledTextField(
-                    controller: _emailController,
-                    hintText: "Enter your email",
-                    label: "Email",
-                    required: true,
-                    keyboardType: TextInputType.emailAddress,
-                    focusedBorderColor: widget.primaryColor,
-                  ),
-                  SizedBox(height: 16.h),
-
-                  // ── Phone
-                  LabeledTextField(
-                    controller: _phoneController,
-                    hintText: "Enter your phone",
-                    label: "Phone",
-                    keyboardType: TextInputType.phone,
-                    focusedBorderColor: widget.primaryColor,
-                    validator: Validators.validateOptionalPhone,
-                  ),
-                  if (widget.profile.role.toLowerCase() == 'tailor') ...[
-                    SizedBox(height: 16.h),
+                    // ── Name
                     LabeledTextField(
-                      controller: _locationController,
-                      hintText: "e.g. Maadi, Cairo (optional)",
-                      label: "Workshop address",
-                      required: false,
+                      controller: _nameController,
+                      hintText: "Enter your name",
+                      label: "Name",
+                      required: true,
                       focusedBorderColor: widget.primaryColor,
-                      maxLines: 2,
                     ),
                     SizedBox(height: 16.h),
-                    LabeledTextField(
-                      controller: _mapsUrlController,
-                      hintText: "https://www.google.com/maps/...",
-                      label: "Google Maps link",
-                      required: false,
-                      keyboardType: TextInputType.url,
-                      focusedBorderColor: widget.primaryColor,
-                      validator: Validators.validateOptionalHttpUrl,
-                    ),
-                  ],
-                  SizedBox(height: 40.h),
 
-                  isLoading
-                      ? Center(child: circleIndicator())
-                      : CustomElevatedButton(
-                    height: 55.h ,
-                    width: 380.w,
-                    value: "Save Changes",
-                    background: widget.primaryColor,
-                    onPressed: _save,
-                  ),
+                    // ── Email
+                    LabeledTextField(
+                      controller: _emailController,
+                      hintText: "Enter your email",
+                      label: "Email",
+                      required: true,
+                      keyboardType: TextInputType.emailAddress,
+                      focusedBorderColor: widget.primaryColor,
+                    ),
+                    SizedBox(height: 16.h),
+
+                    // ── Phone
+                    LabeledTextField(
+                      controller: _phoneController,
+                      hintText: "Enter your phone",
+                      label: "Phone",
+                      keyboardType: TextInputType.phone,
+                      focusedBorderColor: widget.primaryColor,
+                      validator: Validators.validateOptionalPhone,
+                    ),
+                    if (widget.profile.role.toLowerCase() == 'tailor') ...[
+                      SizedBox(height: 16.h),
+                      LabeledTextField(
+                        controller: _locationController,
+                        hintText: "e.g. Maadi, Cairo (optional)",
+                        label: "Workshop address",
+                        required: false,
+                        focusedBorderColor: widget.primaryColor,
+                        maxLines: 2,
+                      ),
+                      SizedBox(height: 16.h),
+                      LabeledTextField(
+                        controller: _mapsUrlController,
+                        hintText: "https://www.google.com/maps/...",
+                        label: "Google Maps link",
+                        required: false,
+                        keyboardType: TextInputType.url,
+                        focusedBorderColor: widget.primaryColor,
+                        validator: Validators.validateOptionalHttpUrl,
+                      ),
+                    ],
+                    SizedBox(height: 40.h),
+
+                    isLoading
+                        ? Center(child: circleIndicator())
+                        : CustomElevatedButton(
+                      height: 55.h ,
+                      width: 380.w,
+                      value: "Save Changes",
+                      background: widget.primaryColor,
+                      onPressed: _save,
+                    ),
                   ],
                 ),
               ),

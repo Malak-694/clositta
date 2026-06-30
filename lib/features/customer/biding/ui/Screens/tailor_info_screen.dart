@@ -30,32 +30,20 @@ class TailorInfoScreen extends StatelessWidget {
   final String name;
 
   final String tailorId;
-
   final String? imageUrl;
-
   final String? location;
-
   final double? rating;
-
   final int? reviewCount;
-
   final String? email;
 
   const TailorInfoScreen({
     super.key,
-
     required this.name,
-
     required this.tailorId,
-
     this.imageUrl,
-
     this.location,
-
     this.rating,
-
     this.reviewCount,
-
     this.email,
   });
 
@@ -65,15 +53,12 @@ class TailorInfoScreen extends StatelessWidget {
       create: (_) => getIt<PortfolioCubit>()..loadPortfolio(tailorId),
 
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
         appBar: CustomAppBar(
           title: name,
-
           leading: true,
-
           showCartIcon: false,
-
           onCartTap: () {},
         ),
 
@@ -96,7 +81,7 @@ class TailorInfoScreen extends StatelessWidget {
 
                       orElse: () => null,
                     );
-                    
+
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
 
@@ -105,15 +90,10 @@ class TailorInfoScreen extends StatelessWidget {
 
                         InfoCard(
                           name: tailor?.name ?? name,
-
                           imageUrl: tailor?.imageUrl ?? imageUrl,
-
                           location: tailor?.location ?? location,
-
                           rating: tailor?.averageRating ?? rating,
-
                           reviewCount: tailor?.totalRatings ?? reviewCount,
-
                           email: tailor?.email ?? email,
                           mapUrl: tailor?.mapsUrl,
                         ),
@@ -134,7 +114,7 @@ class TailorInfoScreen extends StatelessWidget {
                         initial: () => const SizedBox(),
 
                         loading: () =>
-                            const Center(child: CircularProgressIndicator()),
+                        const Center(child: CircularProgressIndicator()),
 
                         fail: (msg) => Center(
                           child: Column(
@@ -165,10 +145,8 @@ class TailorInfoScreen extends StatelessWidget {
                             return Center(
                               child: Text(
                                 'No products yet',
-
                                 style: TextStyle(
                                   color: AppColors.light,
-
                                   fontSize: 14.sp,
                                 ),
                               ),
@@ -190,24 +168,15 @@ class TailorInfoScreen extends StatelessWidget {
                                       .toList(),
 
                                   mainColor: AppColors.secondary,
-
                                   darkColor: AppColors.darksecondary,
-
                                   onTap: (_) {},
-
                                   configBuilder: (item) => PinterestCardConfig(
                                     imageUrl: item['image'],
-
                                     name: item['name'],
-
                                     showPrice: true,
-
                                     showRating: true,
-
                                     showCart: false,
-
                                     showEdit: false,
-
                                     showStatus: false,
                                   ),
                                 ),
@@ -217,15 +186,10 @@ class TailorInfoScreen extends StatelessWidget {
 
                                   CommentSection(
                                     productComments: ratings,
-
                                     userRating: null,
-
                                     currentUserId: null,
-
                                     accent: AppColors.lightsecondary,
-
                                     accentDark: AppColors.darksecondary,
-
                                     onDelete: null,
                                   ),
 

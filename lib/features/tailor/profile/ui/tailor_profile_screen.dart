@@ -14,7 +14,7 @@ class TailorProfileScreen extends StatelessWidget {
     return BlocProvider(
       create: (_) => getIt<ProfileCubit>()..getProfile(),
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: const ProfileScreen(),
         bottomNavigationBar: FloatingNavBar(
           userRole: 'tailor',

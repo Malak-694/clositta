@@ -50,7 +50,7 @@ class CommentCard extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 12.h),
       padding: EdgeInsets.all(14.w),
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: Theme.of(context).cardColor,
         border: Border.all(
           color: accent.withValues(alpha: 0.12),
         ),
@@ -107,7 +107,7 @@ class CommentCard extends StatelessWidget {
               Row(
                 children: List.generate(
                   5,
-                  (index) => Icon(
+                      (index) => Icon(
                     Icons.star_rounded,
                     size: 16.sp,
                     color: index < comment.rating

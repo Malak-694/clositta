@@ -33,7 +33,7 @@ class TailorProductsScreen extends StatelessWidget {
     );
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
           title: 'Clositta Store',
           showCartIcon: true,

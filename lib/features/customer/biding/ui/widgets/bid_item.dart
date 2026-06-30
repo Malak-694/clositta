@@ -39,7 +39,7 @@ class BidItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: ShapeDecoration(
-        color: AppColors.background,
+        color: Theme.of(context).cardColor,
         shape: RoundedRectangleBorder(
           side: const BorderSide(color: Colors.black26),
           borderRadius: BorderRadius.circular(15.sp),
@@ -148,7 +148,7 @@ class BidItem extends StatelessWidget {
                 CustomButton(
                   text: "Select",
                   onPressed: onAccept ?? () {},
-                  backgroundColor: AppColors.background,
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                   foregroundColor: AppColors.light,
                   icon: LucideIcons.userRoundCheck,
                 ),

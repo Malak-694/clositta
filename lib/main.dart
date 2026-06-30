@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:app_links/app_links.dart';
-import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/di/dependency_injection.dart';
 import 'package:chicora/core/helper/notification_helper.dart';
 import 'package:chicora/core/helper/shared_key.dart';
@@ -42,20 +41,17 @@ void main() async {
   await setupGetIt();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Initialize NotificationHelper
   await NotificationHelper.initialize();
   final prefs = getIt<SharedPrefHelper>();
-  final token = await prefs.getSecureData(SharedPrefKey.token);
-  final role = await prefs.getSecureData(SharedPrefKey.role);
+  final token      = await prefs.getSecureData(SharedPrefKey.token);
+  final role       = await prefs.getSecureData(SharedPrefKey.role);
+  final savedDark  = prefs.getData(SharedPrefKey.isDarkMode) as bool? ?? false;
 
-  // Sync token to backend if logged in
   if (token != null && token.isNotEmpty) {
     NotificationHelper.sendTokenToBackend();
   }
 
   final initialRoute = getInitialRoute(token, role);
-
-  // Decide which cubits to provide based on role
   final bool needsCartAndChat = role == 'customer' || role == 'tailor';
 
   runApp(
@@ -72,13 +68,12 @@ void main() async {
           create: (_) => getIt<NotificationCubit>()..getUnreadCount(),
         ),
       ],
-      child: ChicoraApp(initialRoute: initialRoute),
+      child: ChicoraApp(initialRoute: initialRoute, savedDark: savedDark),
     )
-        : ChicoraApp(initialRoute: initialRoute),
+        : ChicoraApp(initialRoute: initialRoute, savedDark: savedDark),
   );
 }
 
-/// Matches Paymob HTML callback: `app://clositta.com/orders/?...`
 bool _isOrdersReturnDeepLink(Uri uri) {
   if (uri.scheme != 'app' || uri.host != 'clositta.com') return false;
   final p = uri.path;
@@ -87,9 +82,9 @@ bool _isOrdersReturnDeepLink(Uri uri) {
 
 class ChicoraApp extends StatefulWidget {
   final String initialRoute;
-  const ChicoraApp({super.key, required this.initialRoute});
+  final bool savedDark;
+  const ChicoraApp({super.key, required this.initialRoute, this.savedDark = false});
 
-  // ← Any widget calls ChicoraApp.of(context).toggleTheme()
   static _ChicoraAppState of(BuildContext context) =>
       context.findAncestorStateOfType<_ChicoraAppState>()!;
 
@@ -101,23 +96,26 @@ class _ChicoraAppState extends State<ChicoraApp> {
   final AppLinks _appLinks = AppLinks();
   StreamSubscription<Uri>? _linkSubscription;
 
-  ThemeMode _themeMode = ThemeMode.light;
-
-  void toggleTheme() {
-    setState(() {
-      _themeMode = _themeMode == ThemeMode.light
-          ? ThemeMode.dark
-          : ThemeMode.light;
-    });
-  }
-
-  bool get isDarkMode => _themeMode == ThemeMode.dark;
+  late ThemeMode _themeMode;
 
   @override
   void initState() {
     super.initState();
+    _themeMode = widget.savedDark ? ThemeMode.dark : ThemeMode.light;
     _listenForOrderReturnDeepLinks();
   }
+
+  Future<void> toggleTheme() async {
+    final newMode = _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    setState(() => _themeMode = newMode);
+    // Persist so the choice survives app restarts
+    await getIt<SharedPrefHelper>().setData(
+      SharedPrefKey.isDarkMode,
+      newMode == ThemeMode.dark,
+    );
+  }
+
+  bool get isDarkMode => _themeMode == ThemeMode.dark;
 
   Future<void> _listenForOrderReturnDeepLinks() async {
     Uri? handledForDedup;
@@ -136,9 +134,7 @@ class _ChicoraAppState extends State<ChicoraApp> {
     try {
       final initial = await _appLinks.getInitialLink();
       if (initial != null) handle(initial);
-    } catch (_) {
-      // ignore: plugin may fail on unsupported platforms during tests
-    }
+    } catch (_) {}
 
     _linkSubscription = _appLinks.uriLinkStream.listen(handle);
   }
@@ -163,48 +159,8 @@ class _ChicoraAppState extends State<ChicoraApp> {
           onGenerateRoute: AppRouter.generateRoute,
           debugShowCheckedModeBanner: false,
           themeMode: _themeMode,
-
-          // ── Light theme (your existing)
           theme: AppTheme.lightTheme,
-
-          // ── Dark theme using your AppColors
-          darkTheme: ThemeData(
-            brightness: Brightness.dark,
-            scaffoldBackgroundColor: const Color(0xFF1A1A2E),
-            primaryColor: AppColors.primery,
-            colorScheme: const ColorScheme.dark(
-              primary: AppColors.primery,
-              secondary: AppColors.darksecondary,
-              surface: Color(0xFF1A1A2E),
-              error: AppColors.ternary,
-            ),
-            appBarTheme: const AppBarTheme(
-              backgroundColor: Color(0xFF1A1A2E),
-              elevation: 0,
-              iconTheme: IconThemeData(color: Colors.white),
-              titleTextStyle: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            cardColor: const Color(0xFF252540),
-            iconTheme: const IconThemeData(color: Colors.white),
-            textTheme: const TextTheme(
-              bodyLarge: TextStyle(color: Colors.white),
-              bodyMedium: TextStyle(color: Colors.white70),
-              bodySmall: TextStyle(color: Colors.white60),
-            ),
-            listTileTheme: const ListTileThemeData(
-              tileColor: Color(0xFF252540),
-              textColor: Colors.white,
-              iconColor: Colors.white70,
-            ),
-            dividerColor: Colors.white12,
-            dialogTheme: DialogThemeData(
-              backgroundColor: const Color(0xFF252540),
-            ),
-          ),
+          darkTheme: AppTheme.darkTheme,
         );
       },
     );

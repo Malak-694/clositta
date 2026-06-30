@@ -127,7 +127,7 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
             ]
                 : [],
           ),
-          backgroundColor: AppColors.background,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: SingleChildScrollView(
             padding: EdgeInsets.all(20.w),
             child: Column(

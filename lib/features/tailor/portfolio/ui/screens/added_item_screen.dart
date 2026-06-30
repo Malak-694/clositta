@@ -75,7 +75,7 @@ class _AddedItemScreenState extends State<AddedItemScreen> {
         );
       },
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: CustomAppBar(
           title: _isUpdate ? "Update Item" : "Add New Item",
           leading: true,
@@ -97,8 +97,8 @@ class _AddedItemScreenState extends State<AddedItemScreen> {
                     ImageUploadWidget(
                       imagePath: _selectedImagePath, // new picked image
                       imageUrl:
-                          _selectedImagePath ==
-                              null // show existing only if no new image
+                      _selectedImagePath ==
+                          null // show existing only if no new image
                           ? _existingImageUrl
                           : null,
                       onTap: _pickImage,

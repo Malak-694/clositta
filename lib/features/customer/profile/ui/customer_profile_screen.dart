@@ -12,9 +12,9 @@ class CustomerProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<ProfileCubit>()..getProfile(), // 👈 call here directly
+      create: (_) => getIt<ProfileCubit>()..getProfile(),
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: const ProfileScreen(),
         bottomNavigationBar: FloatingNavBar(
           userRole: 'customer',

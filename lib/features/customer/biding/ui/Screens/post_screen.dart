@@ -77,7 +77,7 @@ class _PostScreenState extends State<PostScreen>
 
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
         title: 'Your Biddings',
         showCartIcon: true,

@@ -84,7 +84,7 @@ class _RateTailorBottomSheetState extends State<RateTailorBottomSheet> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 24.h),
         decoration: BoxDecoration(
-          color: AppColors.background,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
         ),
         child: Column(
@@ -185,14 +185,14 @@ class _RateTailorBottomSheetState extends State<RateTailorBottomSheet> {
                     ? SizedBox(
                   height: 20.h,
                   width: 20.h,
-                  child: const CircularProgressIndicator(
-                    color: AppColors.background,
+                  child:  CircularProgressIndicator(
+                    color: Theme.of(context).cardColor,
                     strokeWidth: 2,
                   ),
                 )
                     : Text(
-                  'Submit Rating',
-                  style: AppStyle.medBackground
+                    'Submit Rating',
+                    style: AppStyle.medBackground
                 ),
               ),
             ),

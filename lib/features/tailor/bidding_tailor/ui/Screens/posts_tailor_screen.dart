@@ -44,25 +44,25 @@ class PostScreenTailor extends StatelessWidget {
 
     return Scaffold(
       appBar: CustomAppBar(
-      title: 'My Post',
-      showCartIcon: true,
-      cartItemCount: cartCount,
-      onCartTap: () => Navigator.pushNamed(context, RouteNames.customer_cart_screen),
-      showNotificationIcon: true,
-      unreadNotificationCount: notifCount,
-      onNotificationTap: () => Navigator.pushNamed(context, RouteNames.notification_screen),
-      showChatIcon: true,
-      unreadChatCount: chatCount,
-      onChatTap: () async {
-        final userId = await prefs.getSecureData('id') ?? '';
-        Navigator.pushNamed(
-        context,
-        RouteNames.conversations_screen,
-        arguments: {'currentUserId': userId ?? ''},
-      );
-      }
-    ),
-      backgroundColor: AppColors.background,
+          title: 'My Post',
+          showCartIcon: true,
+          cartItemCount: cartCount,
+          onCartTap: () => Navigator.pushNamed(context, RouteNames.customer_cart_screen),
+          showNotificationIcon: true,
+          unreadNotificationCount: notifCount,
+          onNotificationTap: () => Navigator.pushNamed(context, RouteNames.notification_screen),
+          showChatIcon: true,
+          unreadChatCount: chatCount,
+          onChatTap: () async {
+            final userId = await prefs.getSecureData('id') ?? '';
+            Navigator.pushNamed(
+              context,
+              RouteNames.conversations_screen,
+              arguments: {'currentUserId': userId ?? ''},
+            );
+          }
+      ),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Container(
           height: double.infinity,

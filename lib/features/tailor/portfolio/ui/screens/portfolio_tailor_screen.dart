@@ -41,7 +41,7 @@ class PortfolioTailorScreen extends StatelessWidget {
         portfolioTailorRepo: getIt<PortfolioTailorRepo>(),
       ),
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: CustomAppBar(
           title: 'My Portfolio',
           showCartIcon: true,
@@ -77,13 +77,13 @@ class PortfolioTailorScreen extends StatelessWidget {
                     reviewsSection: ratings == null
                         ? null
                         : CommentSection(
-                            productComments: ratings,
-                            userRating: null,
-                            currentUserId: null,
-                            accent: AppColors.lightsecondary,
-                            accentDark: AppColors.darksecondary,
-                            onDelete: null,
-                          ),
+                      productComments: ratings,
+                      userRating: null,
+                      currentUserId: null,
+                      accent: AppColors.lightsecondary,
+                      accentDark: AppColors.darksecondary,
+                      onDelete: null,
+                    ),
                   ),
                 ),
               ],

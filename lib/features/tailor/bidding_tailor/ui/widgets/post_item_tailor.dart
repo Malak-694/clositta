@@ -55,46 +55,46 @@ class PostItemTailor extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(color: AppColors.lightprimery),
           borderRadius: BorderRadius.circular(16.r),
-          color: AppColors.background,
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.lightprimery,
-              blurRadius: 5,
-              offset: const Offset(2, 5),
-            ),
-          ],
+          color: Theme.of(context).cardColor,
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: AppColors.lightprimery,
+          //     blurRadius: 5,
+          //     offset: const Offset(2, 5),
+          //   ),
+          // ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(16.r),
-                  ),
-                  child: Container(
+            ClipRRect(
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(16.r),
+              ),
+              child: Container(
+                height: 220.h,
+                width: double.infinity,
+                color: Colors.grey.shade50,
+                child: Image.network(
+                  Image_url,
+                  height: 220.h,
+                  width: double.infinity,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, _, _) => Container(
                     height: 220.h,
-                    width: double.infinity,
-                    color: Colors.grey.shade50,
-                    child: Image.network(
-                      Image_url,
-                      height: 220.h,
-                      width: double.infinity,
-                      fit: BoxFit.contain,
-                      errorBuilder: (_, _, _) => Container(
-                        height: 220.h,
-                        color: Colors.grey.shade100,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.checkroom, color: Colors.grey.shade400, size: 40),
-                            SizedBox(height: 8.h),
-                            Text('No image', style: TextStyle(color: Colors.grey.shade400, fontSize: 12.sp)),
-                          ],
-                        ),
-                      ),
+                    color: Colors.grey.shade100,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.checkroom, color: Colors.grey.shade400, size: 40),
+                        SizedBox(height: 8.h),
+                        Text('No image', style: TextStyle(color: Colors.grey.shade400, fontSize: 12.sp)),
+                      ],
                     ),
                   ),
                 ),
+              ),
+            ),
 
             Padding(
               padding: EdgeInsets.all(12.w),

@@ -132,7 +132,7 @@ class FloatingNavBar extends StatelessWidget {
           borderRadius: BorderRadius.circular(28.r),
           child: BottomAppBar(
             padding: EdgeInsets.all(4.r),
-            color: AppColors.background,
+            color: Theme.of(context).cardColor,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: List.generate(navItems.length, (index) {

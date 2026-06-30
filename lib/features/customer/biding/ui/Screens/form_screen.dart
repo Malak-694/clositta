@@ -130,7 +130,7 @@ class _FormScreenState extends State<FormScreen> {
         );
 
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: CustomAppBar(
             title: widget.isEditMode ? 'Edit Post' : 'Create New Post',
             leading: true,

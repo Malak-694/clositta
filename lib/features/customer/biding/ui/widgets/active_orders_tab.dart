@@ -95,7 +95,7 @@ class ActiveOrdersTab extends StatelessWidget {
             return Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
               decoration: BoxDecoration(
-                color: AppColors.background,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(16.r),
                 border: Border.all(color: AppColors.lightprimery, width: 1.5),
                 boxShadow: [

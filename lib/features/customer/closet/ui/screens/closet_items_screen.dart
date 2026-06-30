@@ -53,7 +53,7 @@ class _ClosetItemsScreenState extends State<ClosetItemsScreen> {
     );
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
         title: 'Your clothes',
         showCartIcon: true,

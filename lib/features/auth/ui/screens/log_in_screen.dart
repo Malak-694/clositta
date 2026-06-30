@@ -75,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
       },
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: Container(
             width: double.infinity,
             height: double.infinity,
@@ -166,8 +166,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: state is Loading
                         ? null
                         : () {
-                            context.read<AuthCubit>().googleAuth();
-                          },
+                      context.read<AuthCubit>().googleAuth();
+                    },
                     child: Text(
                       "- Sign in with google -",
                       style: AppStyle.smallBlack,

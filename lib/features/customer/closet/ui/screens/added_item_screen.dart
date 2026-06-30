@@ -70,13 +70,13 @@ class _AddedClosetItemScreenState extends State<AddedClosetItemScreen> {
       listener: (context, state) {
         state.whenOrNull(
           success: (_) {
-             Navigator.pop(context);
+            Navigator.pop(context);
           },
           fail: (error) => _showSnackBar(error),
         );
       },
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: CustomAppBar(
           title: _isUpdate ? "Update Item" : "Add New Item",
           leading: true,
@@ -85,7 +85,7 @@ class _AddedClosetItemScreenState extends State<AddedClosetItemScreen> {
             context,
             RouteNames.customer_cart_screen,
           ),
-          
+
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(15, 30, 15, 10),

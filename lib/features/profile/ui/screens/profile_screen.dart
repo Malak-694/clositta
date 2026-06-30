@@ -23,13 +23,11 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   String? _role;
-  final bool _isDarkMode = false;
 
   @override
   void initState() {
     super.initState();
     _initAndLoad();
-    // Fetch profile on screen load
     context.read<ProfileCubit>().getProfile();
   }
 
@@ -37,22 +35,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final prefs = getIt<SharedPrefHelper>();
     final role = await prefs.getSecureData(SharedPrefKey.role);
     if (!mounted) return;
-    setState(() {
-      _role = role;
-    });
+    setState(() => _role = role);
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = ChicoraApp.of(context).isDarkMode;
+    final scaffoldColor = isDark
+        ? AppColors.darkScaffold
+        : AppColors.lightprimery.withOpacity(0.40);
+
     return SafeArea(
       child: Scaffold(
-        backgroundColor: AppColors.lightprimery.withOpacity(0.50),
+        backgroundColor: scaffoldColor,
         body: SizedBox(
           height: double.infinity,
           width: double.infinity,
           child: BlocBuilder<ProfileCubit, ProfileState>(
             builder: (context, state) {
-              // Extract profile once, share between both widgets
               final profile = state.maybeWhen(
                 success: (data) => data is ProfileResponse ? data : null,
                 orElse: () => null,
@@ -64,14 +64,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               return Column(
                 children: [
-                  // ── Header with avatar, name, email, theme toggle
                   ProfileIdentityHeader(
                     profile: profile,
                     isLoading: isLoading,
-                    primaryColor: AppColors.primery,
-                    darkColor: AppColors.darkprimery,
-                    lightColor: AppColors.lightprimery,
-                    isDarkMode: ChicoraApp.of(context).isDarkMode,
+                    primaryColor: isDark ? AppColors.darkPrimary : AppColors.primery,
+                    darkColor: isDark ? AppColors.darkPrimaryLight : AppColors.darkprimery,
+                    lightColor: isDark ? AppColors.darkPrimaryTint : AppColors.lightprimery,
+                    isDarkMode: isDark,
                     onThemeToggle: () => ChicoraApp.of(context).toggleTheme(),
                     onEditProfile: (p) {
                       Navigator.push(
@@ -81,23 +80,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             value: context.read<ProfileCubit>(),
                             child: EditProfileScreen(
                               profile: p,
-                              primaryColor: AppColors.primery,
-                              lightColor: AppColors.lightprimery,
+                              primaryColor: isDark ? AppColors.darkPrimary : AppColors.primery,
+                              lightColor: isDark ? AppColors.darkPrimaryTint : AppColors.lightprimery,
                             ),
                           ),
                         ),
                       );
                     },
                   ),
-
                   SizedBox(height: 30.h),
                   Expanded(
                     child: Center(
                       child: ProfileMenuList(
                         role: _role,
                         profile: profile,
-                        primaryColor: AppColors.primery,
-                        lightColor: AppColors.lightprimery,
+                        primaryColor: isDark ? AppColors.darkPrimary : AppColors.primery,
+                        lightColor: isDark ? AppColors.darkPrimaryTint : AppColors.lightprimery,
                       ),
                     ),
                   ),

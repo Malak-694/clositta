@@ -47,7 +47,7 @@ class _CustomerProductsScreenState extends State<CustomerProductsScreen> {
     final notifCount = context.read<NotificationCubit>().unreadCount;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
         title: 'Welcome to Clositta',
         showCartIcon: true,

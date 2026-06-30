@@ -87,7 +87,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       },
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: Container(
             width: double.infinity,
             height: double.infinity,

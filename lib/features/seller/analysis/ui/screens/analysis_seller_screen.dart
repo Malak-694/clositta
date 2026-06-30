@@ -35,16 +35,16 @@ class AnalysisSellerScreen extends StatelessWidget {
     );
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
         title: 'Analytics',
         showCartIcon: false,
         onCartTap: () => Navigator.pushNamed(context, RouteNames.customer_cart_screen),
-    showNotificationIcon: true,
-    unreadNotificationCount: notifCount,
-    onNotificationTap: () => Navigator.pushNamed(context, RouteNames.notification_screen),
+        showNotificationIcon: true,
+        unreadNotificationCount: notifCount,
+        onNotificationTap: () => Navigator.pushNamed(context, RouteNames.notification_screen),
 
-    ),
+      ),
       body: BlocBuilder<AnalysisSellerCubit, AnalysisSellerState>(
         builder: (context, state) {
           return state.when(
@@ -100,7 +100,7 @@ class _AnalysisContent extends StatelessWidget {
             child: AnalysisRevenueList(
               items: monthlyRevenue,
               getLabel: (item) =>
-                  item.monthName ?? 'M${item.month ?? '-'}',
+              item.monthName ?? 'M${item.month ?? '-'}',
               getSubLabel: (item) => 'Year ${item.year}',
             ),
           ),
@@ -170,7 +170,7 @@ class _AnalysisContent extends StatelessWidget {
           const SizedBox(height: 20),
         ],
       ),
-      
+
     );
   }
 }

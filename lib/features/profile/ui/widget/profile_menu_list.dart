@@ -141,7 +141,7 @@ class ProfileMenuList extends StatelessWidget {
                       ),
                 ),
               );
-            },
+            }, context: context,
           );
         }
 
@@ -167,7 +167,7 @@ class ProfileMenuList extends StatelessWidget {
                   arguments: arguments,   // ← pass it
                 );
               }
-            }
+            }, context: context
         );
       },
     );
@@ -180,13 +180,13 @@ class ProfileMenuList extends StatelessWidget {
     required Color primaryColor,
     required Color lightColor,
     required VoidCallback onTap,
+    required BuildContext context,
   }) {
     return Container(
       height: 100.h,
       margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
-      // ← adds space on both sides
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
@@ -266,7 +266,7 @@ class ProfileMenuList extends StatelessWidget {
         height: 80.h,
         margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
         decoration: BoxDecoration(
-          color: AppColors.background,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(

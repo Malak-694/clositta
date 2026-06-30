@@ -107,7 +107,7 @@ class _DetailesScreenState extends State<DetailesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
         title: 'Back to posts',
         showCartIcon: false,
@@ -251,8 +251,8 @@ class _DetailesScreenState extends State<DetailesScreen> {
                       final displayedOffers = isBidOpen
                           ? _applySort(offers)
                           : offers
-                                .where((o) => o.status == "accepted")
-                                .toList();
+                          .where((o) => o.status == "accepted")
+                          .toList();
 
                       if (displayedOffers.isEmpty) {
                         return Center(

@@ -4,7 +4,7 @@ class ApiEndpoints {
 
   static const String login = '/api/auth/login';
   static const String signUp = '/api/auth/register';
-  static const String google= '/api/auth/google';
+  static const String google = '/api/auth/google';
   static const String profile = "/api/auth/profile";
   static const String delete_profile_image = "/api/auth/profile/image";
   static const String forget_password = "/api/auth/forgot-password";
@@ -22,7 +22,7 @@ class ApiEndpoints {
   static const String deletePortfolioTailor = '/api/portfolio/{itemId}';
   static const String updatePortfolioTailor = '/api/portfolio/{itemId}';
   static const String createPortfolioTailor = '/api/portfolio';
-  static const String tailorInfo = '/api/portfolio/all' ;
+  static const String tailorInfo = '/api/portfolio/all';
   // Customer
   static const String myBids = '/api/bids';
   static const String createBid = '/api/bids';
@@ -57,14 +57,15 @@ class ApiEndpoints {
   static const String paymentInitiate = '/api/payments/initiate';
   //seller-orders
   static const String getAllOrdersSeller = '/api/orders/seller';
-  static const String updateOrderStatusSeller = '/api/orders/{orderId}/suborders/{suborderId}/status';
+  static const String updateOrderStatusSeller =
+      '/api/orders/{orderId}/suborders/{suborderId}/status';
 
   static const String socketUrl = baseUrl;
 
   // ── Chat ──────────────────────────────────────────
   static const String conversations = '/api/chat/conversations';
-  static const String chatHistory   = '/api/chat/{userId}';
-  static const String unreadCount   = '/api/chat/unread';
+  static const String chatHistory = '/api/chat/{userId}';
+  static const String unreadCount = '/api/chat/unread';
   static const String uploadChatImage = '/api/chat/upload-image';
   // ── Measurements ──────────────────────────────────────────
   static const String measurements = '/api/auth/measurements';
@@ -72,13 +73,14 @@ class ApiEndpoints {
   // _____ai _____________________________
   static const String searchByImage = '/api/ai/search_by_image/image';
   static const String searchByText = '/api/ai/search_by_image/text';
-
+  static const String generateImage = '/api/ai_generator/generate';
   //_____________ notifications __________________________
-  static const String updateFcmToken          = '/api/auth/fcm-token';
-  static const String notificationPreferences = '/api/auth/notification-preferences';
-  static const String notifications           = '/api/notifications';
-  static const String unreadNotifications     = '/api/notifications/unread-count';
-  static const String markNotificationRead    = '/api/notifications/{id}/read';
-  static const String markAllNotificationsRead= '/api/notifications/read-all';
-  static const String deleteNotification      = '/api/notifications/{id}';
+  static const String updateFcmToken = '/api/auth/fcm-token';
+  static const String notificationPreferences =
+      '/api/auth/notification-preferences';
+  static const String notifications = '/api/notifications';
+  static const String unreadNotifications = '/api/notifications/unread-count';
+  static const String markNotificationRead = '/api/notifications/{id}/read';
+  static const String markAllNotificationsRead = '/api/notifications/read-all';
+  static const String deleteNotification = '/api/notifications/{id}';
 }

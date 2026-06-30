@@ -25,7 +25,7 @@ String getInitialRoute(String? token, String? role) {
   }
   switch (role) {
     case 'customer':
-      return RouteNames.posts_customer;
+      return RouteNames.ai_customer_screen;
     case 'tailor':
       return RouteNames.view_bidding_tailor;
     case 'clothes_seller':

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CheckoutTextField extends StatelessWidget {
-  const CheckoutTextField({
+   CheckoutTextField({
     super.key,
     required this.controller,
     required this.label,
@@ -19,6 +19,7 @@ class CheckoutTextField extends StatelessWidget {
     this.focusNode,
     this.textInputAction,
     this.onFieldSubmitted,
+    this.labelSize =13
   });
 
   final TextEditingController controller;
@@ -34,6 +35,7 @@ class CheckoutTextField extends StatelessWidget {
   final FocusNode? focusNode;
   final TextInputAction? textInputAction;
   final ValueChanged<String>? onFieldSubmitted;
+  final double labelSize;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +61,7 @@ class CheckoutTextField extends StatelessWidget {
           labelText: label,
           hintText: hint,
           labelStyle: AppStyle.smallPrimery.copyWith(
-            fontSize: 13.sp,
+            fontSize: labelSize.sp,
             color: labelColor ?? AppColors.primery,
           ),
           hintStyle: AppStyle.smallBlack.copyWith(color: AppColors.light),

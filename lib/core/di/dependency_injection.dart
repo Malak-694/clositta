@@ -3,6 +3,8 @@ import 'package:chicora/core/networking/api_service.dart';
 import 'package:chicora/core/networking/dio_factory.dart';
 import 'package:chicora/features/auth/data/repo/auth_repo.dart';
 import 'package:chicora/features/auth/logic/cubit/authentication_cubit.dart';
+import 'package:chicora/features/customer/ai/generate/data/generate_repo.dart';
+import 'package:chicora/features/customer/ai/generate/logic/cubit/ai_generator_cubit.dart';
 import 'package:chicora/features/customer/biding/logic/cubit/custom_bidding_cubit/customer_bidding_cubit.dart';
 import 'package:chicora/features/customer/closet/data/repo/closet_repo.dart';
 import 'package:chicora/features/customer/closet/logic/cubit/closet_cubit.dart';
@@ -54,118 +56,105 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton<AuthRepo>(() => AuthRepo(apiService: getIt()));
   getIt.registerFactory<AuthCubit>(() => AuthCubit(getIt()));
   //profile
-  getIt.registerFactory<ProfileCubit>(
-        () => ProfileCubit(getIt<ProfileRepo>()),
-  );
+  getIt.registerFactory<ProfileCubit>(() => ProfileCubit(getIt<ProfileRepo>()));
   getIt.registerFactory<ProfileRepo>(
-        () => ProfileRepo(apiService: getIt<ApiService>()),
+    () => ProfileRepo(apiService: getIt<ApiService>()),
   );
   //BiddingTailor
   getIt.registerLazySingleton<BiddingTailorRepo>(
-        () => BiddingTailorRepo(apiService: getIt()),
+    () => BiddingTailorRepo(apiService: getIt()),
   );
   getIt.registerFactory<BiddingTailorCubit>(() => BiddingTailorCubit(getIt()));
   //BiddingCustomer
   getIt.registerLazySingleton<BiddingCustomerRepo>(
-        () => BiddingCustomerRepo(apiService: getIt()),
+    () => BiddingCustomerRepo(apiService: getIt()),
   );
   getIt.registerFactory<CustomerBiddingCubit>(
-        () => CustomerBiddingCubit(getIt()),
+    () => CustomerBiddingCubit(getIt()),
   );
   //SellerProduct
   getIt.registerLazySingleton<SellerProductRepo>(
-        () => SellerProductRepo(apiService: getIt()),
+    () => SellerProductRepo(apiService: getIt()),
   );
   getIt.registerFactory<SellerProductsCubit>(
-        () => SellerProductsCubit(sellerProductRepo: getIt()),
+    () => SellerProductsCubit(sellerProductRepo: getIt()),
   );
   //ViewProducts
   getIt.registerLazySingleton<ViewProductsRepo>(
-        () => ViewProductsRepo(apiService: getIt()),
+    () => ViewProductsRepo(apiService: getIt()),
   );
   //Product search (mock)
-  getIt.registerLazySingleton<ProductSearchRepo>(() => ProductSearchRepo(apiService: getIt()));
+  getIt.registerLazySingleton<ProductSearchRepo>(
+    () => ProductSearchRepo(apiService: getIt()),
+  );
   getIt.registerFactory<ViewProductsCubit>(
-        () => ViewProductsCubit(
+    () => ViewProductsCubit(
       viewProductsRepo: getIt(),
       productSearchRepo: getIt(),
     ),
   );
   //RateProducts
   getIt.registerLazySingleton<RateProductsRepo>(
-        () => RateProductsRepo(apiService: getIt()),
+    () => RateProductsRepo(apiService: getIt()),
   );
   getIt.registerFactory<RateProductsCubit>(
-        () => RateProductsCubit(rateProductsRepo: getIt()),
+    () => RateProductsCubit(rateProductsRepo: getIt()),
   );
   //Closet
   getIt.registerLazySingleton<ClosetRepo>(
-        () => ClosetRepo(apiService: getIt()),
+    () => ClosetRepo(apiService: getIt()),
   );
-  getIt.registerFactory<ClosetCubit>(
-        () => ClosetCubit(closetRepo: getIt()),
-  );
+  getIt.registerFactory<ClosetCubit>(() => ClosetCubit(closetRepo: getIt()));
   //Measurements (mock)
-  getIt.registerLazySingleton<MeasurementsRepo>(() => MeasurementsRepo(apiService: getIt()));
+  getIt.registerLazySingleton<MeasurementsRepo>(
+    () => MeasurementsRepo(apiService: getIt()),
+  );
   getIt.registerFactory<MeasurementsCubit>(
-        () => MeasurementsCubit(repo: getIt()),
+    () => MeasurementsCubit(repo: getIt()),
   );
   //PortfolioTailor
   getIt.registerLazySingleton<PortfolioTailorRepo>(
-        () => PortfolioTailorRepo(apiService: getIt()),
+    () => PortfolioTailorRepo(apiService: getIt()),
   );
   getIt.registerFactory<PortfolioTailorCubit>(
-        () => PortfolioTailorCubit(portfolioTailorRepo: getIt()),
+    () => PortfolioTailorCubit(portfolioTailorRepo: getIt()),
   );
   //Cart
-  getIt.registerLazySingleton<CartRepo>(
-        () => CartRepo(apiService: getIt()),
-  );
-  getIt.registerFactory<CartCubit>(
-        () => CartCubit(cartRepo: getIt()),
-  );
+  getIt.registerLazySingleton<CartRepo>(() => CartRepo(apiService: getIt()));
+  getIt.registerFactory<CartCubit>(() => CartCubit(cartRepo: getIt()));
   //SellerAnalysis
   getIt.registerLazySingleton<AnalysisSellerRepo>(
-        () => AnalysisSellerRepo(apiService: getIt()),
+    () => AnalysisSellerRepo(apiService: getIt()),
   );
   getIt.registerFactory<AnalysisSellerCubit>(
-        () => AnalysisSellerCubit(getIt()),
+    () => AnalysisSellerCubit(getIt()),
   );
   //Order
-  getIt.registerLazySingleton<OrderRepo>(
-        () => OrderRepo(apiService: getIt()),
-  );
-  getIt.registerFactory<OrderCubit>(
-        () => OrderCubit(getIt()),
-  );
+  getIt.registerLazySingleton<OrderRepo>(() => OrderRepo(apiService: getIt()));
+  getIt.registerFactory<OrderCubit>(() => OrderCubit(getIt()));
   //Seller orders management
   getIt.registerLazySingleton<OrderMangementRepo>(
-        () => OrderMangementRepo(apiService: getIt()),
+    () => OrderMangementRepo(apiService: getIt()),
   );
   getIt.registerFactory<OrderMangementCubit>(
-        () => OrderMangementCubit(repo: getIt()),
+    () => OrderMangementCubit(repo: getIt()),
   );
 
   getIt.registerLazySingleton<SocketService>(() => SocketService());
 
   getIt.registerLazySingleton<ConversationsRepo>(
-        () => ConversationsRepo(getIt<ApiService>()),
+    () => ConversationsRepo(getIt<ApiService>()),
   );
   getIt.registerFactory<ConversationsCubit>(
-        () => ConversationsCubit(getIt<ConversationsRepo>()),
+    () => ConversationsCubit(getIt<ConversationsRepo>()),
   );
 
   // Register ChatRepo
-  getIt.registerLazySingleton<ChatRepo>(
-        () => ChatRepo(getIt<ApiService>()),
-  );
+  getIt.registerLazySingleton<ChatRepo>(() => ChatRepo(getIt<ApiService>()));
 
-// Register ChatCubit (factory so a new instance is created each time)
+  // Register ChatCubit (factory so a new instance is created each time)
   getIt.registerFactory<ChatCubit>(
-        () => ChatCubit(
-      getIt<SocketService>(),
-      getIt<ChatRepo>(),
-    ),
+    () => ChatCubit(getIt<SocketService>(), getIt<ChatRepo>()),
   );
 
   getIt.registerFactory(() => PortfolioRepo(apiService: getIt<ApiService>()));
@@ -173,9 +162,17 @@ Future<void> setupGetIt() async {
 
   // Notifications
   getIt.registerLazySingleton<NotificationRepo>(
-        () => NotificationRepo(apiService: getIt<ApiService>()),
+    () => NotificationRepo(apiService: getIt<ApiService>()),
   );
   getIt.registerFactory<NotificationCubit>(
-        () => NotificationCubit(getIt<NotificationRepo>()),
+    () => NotificationCubit(getIt<NotificationRepo>()),
+  );
+
+  //AI Generator
+  getIt.registerLazySingleton<AiGeneratorRepo>(
+    () => AiGeneratorRepo(apiService: getIt<ApiService>()),
+  );
+  getIt.registerFactory<AiGeneratorCubit>(
+    () => AiGeneratorCubit(repo: getIt()  , closetRepo: getIt()),
   );
 }

@@ -36,9 +36,9 @@ class FloatingNavBar extends StatelessWidget {
         "route": RouteNames.customer_products_screen,
       },
       {
-        "icon": Icons.star,
+        "icon": Icons.auto_awesome,
         "name": "AI",
-        "route": RouteNames.outfit_recomendation,
+        "route": RouteNames.ai_customer_screen,
       },
       {
         "icon": Icons.checkroom,
@@ -110,77 +110,80 @@ class FloatingNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final navItems =
-        roleNavItems[_normalizedRole] ?? roleNavItems["customer"]!;
+    final navItems = roleNavItems[_normalizedRole] ?? roleNavItems["customer"]!;
+    final double w = MediaQuery.of(context).size.width;
+    final double h = MediaQuery.of(context).size.height;
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(w * 0.04, 0, w * 0.04, h * 0.01),
+        child: Container(
+          height: h * 0.08,
+          width: w * 0.9,
+          decoration: BoxDecoration(
+            color: Colors.transparent,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(28.r),
+            child: BottomAppBar(
+              padding: EdgeInsets.all(4.r),
+              color: Theme.of(context).cardColor,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: List.generate(navItems.length, (index) {
+                  final item = navItems[index];
+                  final bool isSelected = selectedIndex == index;
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 12),
-      child: Container(
-        height: 65.h,
-        width: 380.w,
-        decoration: BoxDecoration(
-          color: Colors.transparent,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(28.r),
-          child: BottomAppBar(
-            padding: EdgeInsets.all(4.r),
-            color: Theme.of(context).cardColor,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: List.generate(navItems.length, (index) {
-                final item = navItems[index];
-                final bool isSelected = selectedIndex == index;
-
-                return GestureDetector(
-                  onTap: () {
-                    if (ModalRoute.of(context)?.settings.name !=
-                        item["route"]) {
-                      Navigator.pushReplacementNamed(  // ← fixed: was pushNamed
-                        context,
-                        item["route"],
-                      );
-                    }
-                  },
-                  child: TweenAnimationBuilder<double>(
-                    tween: Tween<double>(
-                      begin: isSelected ? 1.0 : 0.8,
-                      end: isSelected ? 1.2 : 0.9,
-                    ),
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeOutBack,
-                    builder: (context, scale, child) {
-                      return Transform.scale(
-                        scale: scale,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Icon(
-                              item["icon"],
-                              color: isSelected ? focused : notSelected,
-                              size: item["name"] == "Profile" ? 34.r : 32.r,
-                            ),
-                            Text(
-                              item["name"],
-                              style: TextStyle(
-                                color: isSelected ? focused : notSelected,
-                                fontSize: 12.r,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
+                  return GestureDetector(
+                    onTap: () {
+                      if (ModalRoute.of(context)?.settings.name !=
+                          item["route"]) {
+                        Navigator.pushReplacementNamed(
+                          // ← fixed: was pushNamed
+                          context,
+                          item["route"],
+                        );
+                      }
                     },
-                  ),
-                );
-              }),
+                    child: TweenAnimationBuilder<double>(
+                      tween: Tween<double>(
+                        begin: isSelected ? 1.0 : 0.8,
+                        end: isSelected ? 1.2 : 0.9,
+                      ),
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeOutBack,
+                      builder: (context, scale, child) {
+                        return Transform.scale(
+                          scale: scale,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Icon(
+                                item["icon"],
+                                color: isSelected ? focused : notSelected,
+                                size: item["name"] == "Profile" ? 34.r : 32.r,
+                              ),
+                              Text(
+                                item["name"],
+                                style: TextStyle(
+                                  color: isSelected ? focused : notSelected,
+                                  fontSize: 12.r,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                }),
+              ),
             ),
           ),
         ),

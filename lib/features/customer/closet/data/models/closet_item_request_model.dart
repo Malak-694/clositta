@@ -10,6 +10,7 @@ class ClosetItemRequestModel {
   final String name;
   final String category;
   final String season;
+  final String occasion;
   final String color;
 
   ClosetItemRequestModel({
@@ -17,6 +18,7 @@ class ClosetItemRequestModel {
     required this.name,
     required this.category,
     required this.season,
+    required this.occasion,
     required this.color,
   });
 

@@ -52,7 +52,6 @@ class _ChatInputFieldState extends State<ChatInputField> {
   }
 
   void _removeImage() => setState(() => _selectedImage = null);
-
   @override
   void dispose() {
     _controller.dispose();

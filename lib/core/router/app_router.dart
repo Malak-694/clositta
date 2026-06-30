@@ -1,6 +1,11 @@
 import 'package:chicora/core/di/dependency_injection.dart';
+import 'package:chicora/features/chat/logic/conversations_cubit/conversations_cubit.dart';
 import 'package:chicora/features/chat/ui/screens/chat_screen.dart';
-import 'package:chicora/features/customer/ai/ui/screen/outfit_recomendation_screen.dart';
+import 'package:chicora/features/customer/ai/ai_screen.dart';
+import 'package:chicora/features/customer/ai/complete_recommend/complete_outfit_screen.dart';
+import 'package:chicora/features/customer/ai/generate/generate_image_screen.dart';
+import 'package:chicora/features/customer/ai/complete_recommend/outfit_recomendation_screen.dart';
+import 'package:chicora/features/customer/ai/generate/logic/cubit/ai_generator_cubit.dart';
 import 'package:chicora/features/customer/closet/logic/cubit/closet_cubit.dart';
 import 'package:chicora/features/customer/closet/ui/screens/added_item_screen.dart';
 import 'package:chicora/features/customer/closet/ui/screens/closet_items_screen.dart';
@@ -18,6 +23,7 @@ import 'package:chicora/features/customer/biding/ui/Screens/form_screen.dart';
 import 'package:chicora/features/customer/biding/ui/Screens/post_screen.dart';
 import 'package:chicora/features/ecommerce_multi/ui/screens/order_view_screen.dart';
 import 'package:chicora/features/ecommerce_multi/ui/screens/product_details_screen.dart';
+import 'package:chicora/features/notifications/logic/cubit/notification_cubit.dart';
 import 'package:chicora/features/seller/products/logic/cubit/seller_products_cubit.dart';
 import 'package:chicora/features/seller/analysis/logic/cubit/analysis_seller_cubit.dart';
 import 'package:chicora/features/seller/products/ui/screens/added_product_form.dart';
@@ -51,7 +57,7 @@ import '../../features/seller/products/data/models/product_model_response.dart';
 import '../../features/seller/analysis/ui/screens/analysis_seller_screen.dart';
 import '../../features/seller/orders/ui/screens/order_mangement_screen.dart';
 import '../../features/seller/products/ui/screens/seller_products_screen.dart';
-import '../../features/seller/profile/ui/seller_profile_screen.dart' hide TailorProfileScreen;
+import '../../features/seller/profile/ui/seller_profile_screen.dart';
 import '../../features/tailor/bidding_tailor/ui/Screens/active_order_screen.dart';
 import '../../features/tailor/bidding_tailor/ui/Screens/posts_tailor_screen.dart';
 import '../../features/tailor/ecommerce/tailor_cart_screen.dart';
@@ -105,23 +111,19 @@ class AppRouter {
           ),
         );
       case RouteNames.profile_customer_screen:
-        return MaterialPageRoute(
-          builder: (_) => const CustomerProfileScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const CustomerProfileScreen());
       case RouteNames.profile_tailor_screen:
-        return MaterialPageRoute(
-          builder: (_) => const TailorProfileScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const TailorProfileScreen());
 
       case RouteNames.profile_seller_screen:
-        return MaterialPageRoute(
-          builder: (_) => const SellerProfileScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const SellerProfileScreen());
       case RouteNames.edit_profile_screen:
         final args = settings.arguments as Map<String, dynamic>? ?? {};
         final profile = args['profile'] as ProfileResponse?;
-        final primaryColor = args['primaryColor'] as Color? ?? AppColors.primery;
-        final lightColor = args['lightColor'] as Color? ?? AppColors.lightprimery;
+        final primaryColor =
+            args['primaryColor'] as Color? ?? AppColors.primery;
+        final lightColor =
+            args['lightColor'] as Color? ?? AppColors.lightprimery;
 
         if (profile == null) {
           return MaterialPageRoute(
@@ -147,18 +149,17 @@ class AppRouter {
             providers: [
               BlocProvider(create: (_) => getIt<CustomerBiddingCubit>()),
               BlocProvider(create: (_) => getIt<ViewProductsCubit>()),
-
             ],
             child: const PostScreen(),
           ),
         );
-    // case RouteNames.upload_post:
-    //   return MaterialPageRoute(
-    //     builder: (_) => BlocProvider(
-    //       create: (_) => getIt<CustomerBiddingCubit>(),
-    //       child: FormScreen(),
-    //     ),
-    //   );
+      // case RouteNames.upload_post:
+      //   return MaterialPageRoute(
+      //     builder: (_) => BlocProvider(
+      //       create: (_) => getIt<CustomerBiddingCubit>(),
+      //       child: FormScreen(),
+      //     ),
+      //   );
       case RouteNames.upload_post:
         final args = settings.arguments as Map<String, dynamic>?;
         return MaterialPageRoute(
@@ -180,16 +181,25 @@ class AppRouter {
             child: PostScreenTailor(),
           ),
         );
+      case RouteNames.ai_customer_screen:
+        return MaterialPageRoute(builder: (_) => AiCustomerScreen());
       case RouteNames.outfit_recomendation:
+        return MaterialPageRoute(builder: (_) => OutfitRecomendationScreen());
+      case RouteNames.complete_outfit_screen:
+        return MaterialPageRoute(builder: (_) => CompleteOutfitScreen());
+      case RouteNames.generate_image_screen:
         return MaterialPageRoute(
-          builder: (_) => OutfitRecomendationScreen(),
+          builder: (_) => BlocProvider(
+            create: (context) => getIt<AiGeneratorCubit>(),
+            child: GenerateImageScreen(),
+          ),
         );
       case RouteNames.post_details_customer:
         final args = settings.arguments as Map<String, dynamic>? ?? {};
         final bidId = args['bidId'] as String? ?? '';
         final urlImage = args['urlImage'] as String? ?? '';
         final description = args['description'] as String? ?? '';
-        final status = args["status"] as String ?? '' ;
+        final status = args["status"] as String? ?? '';
 
         return MaterialPageRoute(
           builder: (_) => BlocProvider<CustomerBiddingCubit>(
@@ -222,26 +232,26 @@ class AppRouter {
             ),
           ),
         );
-    // case RouteNames.join_bidding:
-    //   final args = settings.arguments as Map<String, dynamic>? ?? {};
-    //   final urlImage = args['urlImage'] as String? ?? '';
-    //   final price = args['price'] as String? ?? '';
-    //   final period = args['period'] as String? ?? '';
-    //   final title = args['title'] as String? ?? '';
-    //   final postId = args['postId'] as String? ?? '';
-    //
-    //   return MaterialPageRoute(
-    //     builder: (_) => BlocProvider(
-    //       create: (_) => getIt<BiddingTailorCubit>(),
-    //       child: JoinBiddingScreen(
-    //         imageUrl: urlImage,
-    //         price: price,
-    //         period: period,
-    //         title: title,
-    //         postId: postId,
-    //       ),
-    //     ),
-    //   );
+      // case RouteNames.join_bidding:
+      //   final args = settings.arguments as Map<String, dynamic>? ?? {};
+      //   final urlImage = args['urlImage'] as String? ?? '';
+      //   final price = args['price'] as String? ?? '';
+      //   final period = args['period'] as String? ?? '';
+      //   final title = args['title'] as String? ?? '';
+      //   final postId = args['postId'] as String? ?? '';
+      //
+      //   return MaterialPageRoute(
+      //     builder: (_) => BlocProvider(
+      //       create: (_) => getIt<BiddingTailorCubit>(),
+      //       child: JoinBiddingScreen(
+      //         imageUrl: urlImage,
+      //         price: price,
+      //         period: period,
+      //         title: title,
+      //         postId: postId,
+      //       ),
+      //     ),
+      //   );
       case RouteNames.active_order:
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
@@ -318,8 +328,17 @@ class AppRouter {
         );
       case RouteNames.customer_products_screen:
         return MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (_) => getIt<ViewProductsCubit>(),
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (_) => getIt<ViewProductsCubit>()),
+              BlocProvider(create: (_) => getIt<CartCubit>()..getCart()),
+              BlocProvider(
+                create: (_) => getIt<ConversationsCubit>()..loadUnreadCount(),
+              ),
+              BlocProvider(
+                create: (_) => getIt<NotificationCubit>()..getUnreadCount(),
+              ),
+            ],
             child: CustomerProductsScreen(),
           ),
         );
@@ -347,7 +366,7 @@ class AppRouter {
         if (product == null || cartCubit == null) {
           return MaterialPageRoute(
             builder: (_) =>
-            const Scaffold(body: Center(child: Text('Product not found'))),
+                const Scaffold(body: Center(child: Text('Product not found'))),
           );
         }
 
@@ -355,9 +374,7 @@ class AppRouter {
           builder: (_) => MultiBlocProvider(
             providers: [
               BlocProvider(create: (_) => getIt<RateProductsCubit>()),
-              BlocProvider.value(
-                value: cartCubit,
-              ),
+              BlocProvider.value(value: cartCubit),
             ],
             child: ProductDetailScreen(product: product),
           ),
@@ -423,25 +440,21 @@ class AppRouter {
       case RouteNames.tailor_cart_screen:
         return MaterialPageRoute(builder: (_) => TailorCartScreen());
       case RouteNames.order_view_screen:
-        final orderArgs =
-            settings.arguments as Map<String, dynamic>? ?? {};
+        final orderArgs = settings.arguments as Map<String, dynamic>? ?? {};
         final openedFromCart = orderArgs['fromCart'] as bool? ?? false;
         return MaterialPageRoute(
           builder: (_) => OrderViewScreen(openedFromCart: openedFromCart),
         );
       case RouteNames.chat_screen:
-        final args         = settings.arguments as Map<String, dynamic>? ?? {};
-        final receiverId   = args['receiverId']   as String? ?? '';
+        final args = settings.arguments as Map<String, dynamic>? ?? {};
+        final receiverId = args['receiverId'] as String? ?? '';
         final receiverName = args['receiverName'] as String? ?? '';
 
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
-            create: (_) => ChatCubit(
-              getIt<SocketService>(),
-              getIt<ChatRepo>(),
-            ),
+            create: (_) => ChatCubit(getIt<SocketService>(), getIt<ChatRepo>()),
             child: ChatScreen(
-              receiverId:   receiverId,
+              receiverId: receiverId,
               receiverName: receiverName,
             ),
           ),
@@ -451,14 +464,10 @@ class AppRouter {
         final currentUserId = args['currentUserId'] as String? ?? '';
 
         return MaterialPageRoute(
-          builder: (_) => ConversationsScreen(
-            currentUserId: currentUserId,
-          ),
+          builder: (_) => ConversationsScreen(currentUserId: currentUserId),
         );
       case RouteNames.notification_screen:
-        return MaterialPageRoute(
-          builder: (_) => const NotificationScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const NotificationScreen());
       case RouteNames.notification_preferences_screen:
         return MaterialPageRoute(
           builder: (_) => const NotificationPreferencesScreen(),

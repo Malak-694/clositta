@@ -10,7 +10,8 @@ class ClosetItemResponseModel {
   final String? name;
   final String? category;
   final String? season;
-  final String? color;
+  final String? occasion;
+  final String?   color;
   final String? imageUrl;
   final String? imageFileId;
   final String? createdAt;
@@ -24,6 +25,7 @@ class ClosetItemResponseModel {
     this.name,
     this.category,
     this.season,
+    this.occasion,
     this.color,
     this.imageUrl,
     this.imageFileId,

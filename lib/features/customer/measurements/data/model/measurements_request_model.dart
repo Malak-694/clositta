@@ -5,6 +5,7 @@ part 'measurements_request_model.g.dart';
 @JsonSerializable()
 class MeasurementsModel {
   String? unit;
+  int? weight;
   int? chest;
   int? waist;
   int? hips;
@@ -15,6 +16,7 @@ class MeasurementsModel {
 
   MeasurementsModel({
     this.unit,
+    this.weight,
     this.chest,
     this.waist,
     this.hips,

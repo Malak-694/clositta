@@ -22,7 +22,62 @@ class MeasurementsCubit extends Cubit<MeasurementsState> {
     return _prefs.getSecureData(SharedPrefKey.token);
   }
 
+  _saveMeasurements(MeasurementsModel measurements) async {
+    _prefs.setData(SharedPrefKey.unit, measurements.unit ?? '');
+    _prefs.setData(SharedPrefKey.weight, measurements.weight ?? 0);
+    _prefs.setData(SharedPrefKey.chest, measurements.chest ?? 0);
+    _prefs.setData(SharedPrefKey.waist, measurements.waist ?? 0);
+    _prefs.setData(SharedPrefKey.hips, measurements.hips ?? 0);
+    _prefs.setData(SharedPrefKey.shoulders, measurements.shoulders ?? 0);
+    _prefs.setData(SharedPrefKey.armLength, measurements.armLength ?? 0);
+    _prefs.setData(SharedPrefKey.inseam, measurements.inseam ?? 0);
+    _prefs.setData(SharedPrefKey.height, measurements.height ?? 0);
+  }
+
+  MeasurementsModel? _getMeasurementsFromCache() {
+    final unit = _prefs.getData(SharedPrefKey.unit);
+
+    // If there is no cached data, return null.
+    if (unit == null || unit.isEmpty) {
+      return null;
+    }
+
+    return MeasurementsModel(
+      unit: unit,
+      weight: _prefs.getData(SharedPrefKey.weight),
+      chest: _prefs.getData(SharedPrefKey.chest),
+      waist: _prefs.getData(SharedPrefKey.waist),
+      hips: _prefs.getData(SharedPrefKey.hips),
+      shoulders: _prefs.getData(SharedPrefKey.shoulders),
+      armLength: _prefs.getData(SharedPrefKey.armLength),
+      inseam: _prefs.getData(SharedPrefKey.inseam),
+      height: _prefs.getData(SharedPrefKey.height),
+    );
+  }
+
+  Future<void> _clearMeasurementsCache() async {
+    await _prefs.remove(SharedPrefKey.unit);
+    await _prefs.remove(SharedPrefKey.weight);
+    await _prefs.remove(SharedPrefKey.chest);
+    await _prefs.remove(SharedPrefKey.waist);
+    await _prefs.remove(SharedPrefKey.hips);
+    await _prefs.remove(SharedPrefKey.shoulders);
+    await _prefs.remove(SharedPrefKey.armLength);
+    await _prefs.remove(SharedPrefKey.inseam);
+    await _prefs.remove(SharedPrefKey.height);
+  }
+
   Future<void> getMeasurements() async {
+    final cachedMeasurements = _getMeasurementsFromCache();
+
+    if (cachedMeasurements != null) {
+      currentMeasurements = cachedMeasurements;
+
+      emit(MeasurementsState.success(cachedMeasurements));
+
+      return;
+    }
+
     emit(const MeasurementsState.loading());
     final token = await _getUserToken();
     if (token == null || token.isEmpty) {
@@ -34,7 +89,8 @@ class MeasurementsCubit extends Cubit<MeasurementsState> {
     result.when(
       success: (data) {
         currentMeasurements = data.measurements;
-        emit(MeasurementsState.success(data));
+        _saveMeasurements(data.measurements!);
+        emit(MeasurementsState.success(data.measurements!));
       },
       failure: (message) {
         currentMeasurements = null;
@@ -55,6 +111,7 @@ class MeasurementsCubit extends Cubit<MeasurementsState> {
     result.when(
       success: (data) {
         currentMeasurements = data.measurements;
+        _saveMeasurements(data.measurements!);
         emit(MeasurementsState.success(data));
       },
       failure: (message) {
@@ -76,6 +133,7 @@ class MeasurementsCubit extends Cubit<MeasurementsState> {
     result.when(
       success: (data) {
         currentMeasurements = null;
+        _clearMeasurementsCache();
         emit(MeasurementsState.success(data));
       },
       failure: (message) => emit(MeasurementsState.fail(message)),

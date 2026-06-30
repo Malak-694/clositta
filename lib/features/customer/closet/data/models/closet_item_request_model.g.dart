@@ -13,6 +13,7 @@ ClosetItemRequestModel _$ClosetItemRequestModelFromJson(
   name: json['name'] as String,
   category: json['category'] as String,
   season: json['season'] as String,
+  occasion: json['occasion'] as String,
   color: json['color'] as String,
 );
 
@@ -23,5 +24,6 @@ Map<String, dynamic> _$ClosetItemRequestModelToJson(
   'name': instance.name,
   'category': instance.category,
   'season': instance.season,
+  'occasion': instance.occasion,
   'color': instance.color,
 };

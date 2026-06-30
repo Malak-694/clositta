@@ -31,7 +31,6 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
   final _heightController = TextEditingController();
 
   String _unit = 'CM';
-  bool _formPopulated = false;
 
   @override
   void dispose() {
@@ -56,26 +55,25 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
 
     _unit = data.unit ?? 'CM';
 
-    _formPopulated = true;
   }
 
-  String _formatValue(int value) {
-    return value == value.roundToDouble()
-        ? value.toInt().toString()
-        : value.toString();
-  }
+  // String _formatValue(int value) {
+  //   return value == value.roundToDouble()
+  //       ? value.toInt().toString()
+  //       : value.toString();
+  // }
 
-  void _clearForm() {
-    _chestController.clear();
-    _waistController.clear();
-    _hipsController.clear();
-    _shouldersController.clear();
-    _armLengthController.clear();
-    _inseamController.clear();
-    _heightController.clear();
-    _unit = 'CM';
-    _formPopulated = false;
-  }
+  // void _clearForm() {
+  //   _chestController.clear();
+  //   _waistController.clear();
+  //   _hipsController.clear();
+  //   _shouldersController.clear();
+  //   _armLengthController.clear();
+  //   _inseamController.clear();
+  //   _heightController.clear();
+  //   _unit = 'CM';
+  //   _formPopulated = false;
+  // }
 
   MeasurementsModel _buildRequest() {
     return MeasurementsModel(
@@ -117,16 +115,35 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    // If cubit already has data (cache hit), populate immediately
+    final existing = context.read<MeasurementsCubit>().currentMeasurements;
+    if (existing != null) {
+      _populateForm(existing);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocConsumer<MeasurementsCubit, MeasurementsState>(
       listener: (context, state) {
         state.whenOrNull(
           success: (data) {
-            if (data is MeasurementsResponseModel &&
-                data.measurements != null) {
-              if (!_formPopulated) {
-                setState(() => _populateForm(data.measurements!));
-              }
+            MeasurementsModel? measurements;
+
+            if (data is MeasurementsResponseModel) {
+              measurements = data.measurements;
+            } else if (data is MeasurementsModel) {
+              measurements = data;
+            }
+
+            if (measurements != null) {
+              setState(() {
+                _populateForm(
+                  measurements!,
+                ); // always re-populate, remove the guard
+              });
             }
           },
           fail: (message) => _showSnackBar(message),

@@ -30,15 +30,29 @@ class _AddedClosetItemScreenState extends State<AddedClosetItemScreen> {
   final _colorController = TextEditingController();
 
   final ImagePicker _picker = ImagePicker();
-  final List<String> categories = ['Tops', 'Bottoms', 'Shoes', 'Accessories'];
-  final List<String> seasons = [
-    'All Season', 'Winter', 'Spring', 'Summer', 'Autumn'
+  final List<String> categories = [
+    "top",
+    "bottom",
+    "jacket",
+    "scarf",
+    "dress",
+    "shoes",
+    "accessories",
+  ];
+  final List<String> seasons = ["summer", "winter", "spring", "fall", "all"];
+  final List<String> occasions = [
+    "casual",
+    "formal",
+    "semi-formal",
+    "party",
+    "sporty",
   ];
 
   String? _selectedCategory;
   String? _selectedSeason;
   String? _selectedImagePath;
   String? _existingImageUrl;
+  String? _selectedOccasion;
 
   bool get _isUpdate => widget.item != null;
 
@@ -54,6 +68,7 @@ class _AddedClosetItemScreenState extends State<AddedClosetItemScreen> {
     } else {
       _selectedCategory = categories.first;
       _selectedSeason = seasons.first;
+      _selectedOccasion = occasions.first;
     }
   }
 
@@ -81,11 +96,8 @@ class _AddedClosetItemScreenState extends State<AddedClosetItemScreen> {
           title: _isUpdate ? "Update Item" : "Add New Item",
           leading: true,
           showCartIcon: true,
-          onCartTap: () => Navigator.pushNamed(
-            context,
-            RouteNames.customer_cart_screen,
-          ),
-
+          onCartTap: () =>
+              Navigator.pushNamed(context, RouteNames.customer_cart_screen),
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(15, 30, 15, 10),
@@ -149,6 +161,17 @@ class _AddedClosetItemScreenState extends State<AddedClosetItemScreen> {
                             setState(() => _selectedSeason = value),
                       ),
                     ),
+                    SizedBox(width: 10.w),
+                    Expanded(
+                      child: CustomDropdownList(
+                        label: "Occasion",
+                        value: _selectedOccasion,
+                        items: occasions,
+                        hintText: "casual",
+                        onChanged: (value) =>
+                            setState(() => _selectedOccasion = value),
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(height: 30.h),
@@ -166,8 +189,7 @@ class _AddedClosetItemScreenState extends State<AddedClosetItemScreen> {
                         child: ElevatedButton(
                           onPressed: null,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                            AppColors.primery.withOpacity(0.6),
+                            backgroundColor: AppColors.primery.withOpacity(0.6),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.r),
                             ),

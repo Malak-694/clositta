@@ -35,6 +35,10 @@ import '../../features/chat/data/repo/chat_repo.dart';
 import '../../features/chat/data/repo/conversations_repo.dart';
 import '../../features/chat/logic/chat_cubit/chat_cubit.dart';
 import '../../features/chat/logic/conversations_cubit/conversations_cubit.dart';
+import '../../features/customer/ai/complete_recommend/data/repo/complete_outfit_repo.dart';
+import '../../features/customer/ai/complete_recommend/data/repo/outfit_recommendation_repo.dart';
+import '../../features/customer/ai/complete_recommend/logic/complete_outfit_cubit/complete_outfit_cubit.dart';
+import '../../features/customer/ai/complete_recommend/logic/cubit/outfit_recommendation_cubit.dart';
 import '../../features/customer/biding/data/repo/bid_repo.dart';
 import '../../features/customer/biding/data/repo/portfolio_repo.dart';
 import '../../features/customer/biding/logic/cubit/portfolio_cubit/portfolio_cubit.dart';
@@ -174,5 +178,23 @@ Future<void> setupGetIt() async {
   );
   getIt.registerFactory<AiGeneratorCubit>(
     () => AiGeneratorCubit(repo: getIt()  , closetRepo: getIt()),
+  );
+
+  getIt.registerLazySingleton<OutfitRecommendationRepo>(
+        () => OutfitRecommendationRepo(getIt<ApiService>()),
+  );
+
+  getIt.registerFactory<OutfitRecommendationCubit>(
+        () => OutfitRecommendationCubit(
+      getIt<OutfitRecommendationRepo>(),
+      getIt<SharedPrefHelper>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<CompleteOutfitRepo>(
+        () => CompleteOutfitRepo(getIt<ApiService>()),
+  );
+  getIt.registerFactory<CompleteOutfitCubit>(
+        () => CompleteOutfitCubit(getIt<CompleteOutfitRepo>()),
   );
 }

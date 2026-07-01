@@ -28,6 +28,10 @@ import 'package:retrofit/http.dart';
 
 import '../../features/chat/data/models/chat_history_response.dart';
 import '../../features/chat/data/models/conversation_model.dart';
+
+import '../../features/customer/ai/complete_recommend/data/models/complete_outfit_response_model.dart';
+import '../../features/customer/ai/complete_recommend/data/models/daily_outfit_request_model.dart';
+import '../../features/customer/ai/complete_recommend/data/models/daily_outfit_response_model.dart';
 import '../../features/customer/biding/data/models/bid_customer_model.dart';
 import '../../features/customer/biding/data/models/offer_model.dart';
 
@@ -469,6 +473,18 @@ abstract class ApiService {
       @Body() Map<String, dynamic> body,
       );
 
+  @POST(ApiEndpoints.dailyOutfitRecommendation)
+  Future<DailyOutfitRecommendationResponse> getDailyOutfitRecommendation(
+      @Header("Authorization") String token,
+      @Body() DailyOutfitRequestModel body,
+      );
+
+  @POST(ApiEndpoints.completeOutfitRecommend)
+  @MultiPart()
+  Future<CompleteOutfitResponseModel> getCompleteOutfitRecommendation(
+      @Part(name: 'image') MultipartFile image,
+      @Part(name: 'payload') String payload,
+      );
  
 
 //___________notifications

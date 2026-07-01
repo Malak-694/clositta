@@ -5,7 +5,6 @@ import 'package:chicora/core/helper/shared_key.dart';
 import 'package:chicora/core/helper/shared_pref_helper.dart';
 import 'package:chicora/core/widgets/custom_nav_bar.dart';
 import 'package:chicora/features/chat/logic/conversations_cubit/conversations_cubit.dart';
-import 'package:chicora/features/customer/ai/ui/widgets/option_card.dart';
 import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
 import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_total_quantity.dart';
 import 'package:chicora/features/notifications/logic/cubit/notification_cubit.dart';
@@ -15,6 +14,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/router/route_names.dart';
 import '../../../core/widgets/custom_app_bar.dart';
+import 'complete_recommend/ui/widgets/option_card.dart';
 
 class AiCustomerScreen extends StatefulWidget {
   AiCustomerScreen({super.key});

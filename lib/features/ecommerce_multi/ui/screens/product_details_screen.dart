@@ -42,6 +42,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   final Color _rolePrimary = AppColors.primery;
   final Color _roleDark = AppColors.darkprimery;
 
+  /// True when this product came from a full catalog lookup (has an id).
+  /// AI-matched previews only carry name/category/image, so cart and
+  /// rating actions — which require a real product id — are hidden.
+  bool get _hasFullProductData => widget.product.pId != null;
+
   @override
   void initState() {
     super.initState();
@@ -51,7 +56,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         : ['https://via.placeholder.com/400x500?text=No+Image'];
     // initialize ratings list and load current user info
     _ratings = List<RatingModel>.from(widget.product.ratings ?? []);
-    _loadUserInfo();
+    if (_hasFullProductData) _loadUserInfo();
   }
 
   Future<void> _loadUserInfo() async {
@@ -151,6 +156,20 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (!_hasFullProductData)
+                  Container(
+                    width: double.infinity,
+                    margin: EdgeInsets.only(bottom: 16.h),
+                    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+                    decoration: BoxDecoration(
+                      color: AppColors.lightprimery,
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                    child: Text(
+                      'This is an AI-matched preview. Full details, cart, and reviews aren\'t available for this item.',
+                      style: AppStyle.body5,
+                    ),
+                  ),
                 // Product Image Gallery
                 GestureDetector(
                   onTap: () => _showZoomedImage(
@@ -275,67 +294,69 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   ),
                 ),
                 SizedBox(height: 20.h),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      '\$${widget.product.price ?? 0}',
-                      style: AppStyle.boldSecondary.copyWith(color: _roleDark),
-                    ),
-                    const Spacer(),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10.w,
-                        vertical: 6.h,
+                if (_hasFullProductData) ...[
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        '\$${widget.product.price ?? 0}',
+                        style: AppStyle.boldSecondary.copyWith(color: _roleDark),
                       ),
-                      decoration: BoxDecoration(
-                        color: AppColors.lightsecondary,
-                        borderRadius: BorderRadius.circular(12.r),
+                      const Spacer(),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10.w,
+                          vertical: 6.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.lightsecondary,
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.star_rounded,
+                              color: AppColors.secondary,
+                              size: 20.sp,
+                            ),
+                            SizedBox(width: 4.w),
+                            Text(
+                              widget.product.averageRating?.toStringAsFixed(1) ??
+                                  '0',
+                              style: AppStyle.body6,
+                            ),
+                            SizedBox(width: 4.w),
+                            Text(
+                              '(${widget.product.totalRatings ?? 0})',
+                              style: AppStyle.body5,
+                            ),
+                          ],
+                        ),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.star_rounded,
-                            color: AppColors.secondary,
-                            size: 20.sp,
-                          ),
-                          SizedBox(width: 4.w),
-                          Text(
-                            widget.product.averageRating?.toStringAsFixed(1) ??
-                                '0',
-                            style: AppStyle.body6,
-                          ),
-                          SizedBox(width: 4.w),
-                          Text(
-                            '(${widget.product.totalRatings ?? 0})',
-                            style: AppStyle.body5,
-                          ),
-                        ],
+                    ],
+                  ),
+                  SizedBox(height: 20.h),
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 20.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.lightprimery,
+                      borderRadius: BorderRadius.circular(16.r),
+                      border: Border.all(
+                        color: _rolePrimary.withValues(alpha: 0.12),
                       ),
                     ),
-                  ],
-                ),
-                SizedBox(height: 20.h),
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 20.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.lightprimery,
-                    borderRadius: BorderRadius.circular(16.r),
-                    border: Border.all(
-                      color: _rolePrimary.withValues(alpha: 0.12),
+                    child: AddToCartSection(
+                      productId: widget.product.pId!,
+                      accent: _rolePrimary,
+                      accentDark: _roleDark,
                     ),
                   ),
-                  child: AddToCartSection(
-                    productId: widget.product.pId!,
-                    accent: _rolePrimary,
-                    accentDark: _roleDark,
-                  ),
-                ),
+                ],
                 SizedBox(height: 28.h),
                 // Description
                 Text(
@@ -354,51 +375,52 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   ),
                 ),
                 SizedBox(height: 24.h),
-                SellerInfo(
-                  seller: widget.product.seller,
-                  accent: _rolePrimary,
-                  accentDark: _roleDark,
-                ),
-
-                SizedBox(height: 24.h),
-
-                // Rating Section
-                if (!_userHasRated)
-                  RateProductWidget(
-                    productId: widget.product.pId ?? '',
+                if (_hasFullProductData) ...[
+                  if (widget.product.seller != null)
+                    SellerInfo(
+                      seller: widget.product.seller,
+                      accent: _rolePrimary,
+                      accentDark: _roleDark,
+                    ),
+                  SizedBox(height: 24.h),
+                  // Rating Section
+                  if (!_userHasRated)
+                    RateProductWidget(
+                      productId: widget.product.pId ?? '',
+                      accent: _rolePrimary,
+                      accentDark: _roleDark,
+                      onRated: (r, comment) {
+                        // create a temporary RatingModel and add to top of list
+                        final now = DateTime.now();
+                        final newRating = RatingModel(
+                          user: User(id: _userId ?? '', name: _userName ?? ''),
+                          rating: r,
+                          comment: comment,
+                          id: now.toIso8601String(),
+                          createdAt: now,
+                          updatedAt: now,
+                        );
+                        setState(() {
+                          _userHasRated = true;
+                          _userRatingModel = newRating;
+                          _ratings.insert(0, newRating);
+                        });
+                      },
+                    ),
+                  SizedBox(height: 8.h),
+                  CommentSection(
+                    productComments: _ratings,
+                    userRating: _userRatingModel,
+                    currentUserId: _userId,
                     accent: _rolePrimary,
                     accentDark: _roleDark,
-                    onRated: (r, comment) {
-                      // create a temporary RatingModel and add to top of list
-                      final now = DateTime.now();
-                      final newRating = RatingModel(
-                        user: User(id: _userId ?? '', name: _userName ?? ''),
-                        rating: r,
-                        comment: comment,
-                        id: now.toIso8601String(),
-                        createdAt: now,
-                        updatedAt: now,
+                    onDelete: (ratingId) {
+                      context.read<RateProductsCubit>().deleteRateProduct(
+                        widget.product.pId ?? '',
                       );
-                      setState(() {
-                        _userHasRated = true;
-                        _userRatingModel = newRating;
-                        _ratings.insert(0, newRating);
-                      });
                     },
                   ),
-                SizedBox(height: 8.h),
-                CommentSection(
-                  productComments: _ratings,
-                  userRating: _userRatingModel,
-                  currentUserId: _userId,
-                  accent: _rolePrimary,
-                  accentDark: _roleDark,
-                  onDelete: (ratingId) {
-                    context.read<RateProductsCubit>().deleteRateProduct(
-                      widget.product.pId ?? '',
-                    );
-                  },
-                ),
+                ],
                 SizedBox(height: 32.h),
               ],
             ),

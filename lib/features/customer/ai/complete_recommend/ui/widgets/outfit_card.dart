@@ -25,7 +25,7 @@ class OutfitCard extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.light, width: 0.7),
+        border: Border.all(color: AppColors.light, width: 0.2),
       ),
       padding: EdgeInsets.all(12.w),
       child: Column(
@@ -51,6 +51,15 @@ class OutfitCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppColors.lightprimery,
                   borderRadius: BorderRadius.circular(15),
+                  // border: Border.all(color: AppColors.light, width: 0.7),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.light, // shadow color
+                      spreadRadius: 2,                       // how much the shadow spreads
+                      blurRadius: 4,                         // how blurry the edges are
+                      offset: Offset(0, 4),                  // horizontal, vertical shift
+                    ),
+                  ],
                 ),
                 child: Column(
                   children: [

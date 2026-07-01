@@ -38,10 +38,6 @@ class _OutfitRecomendationScreenState
   String selectedOccasion = 'Casual';
   String selectedSeason = 'Summer';
 
-  /// See the note in complete_outfit_screen.dart: this now builds a full
-  /// ProductModelBuyer, since the API returns complete product data
-  /// (price, stock, seller name/email, ratings summary) — not just
-  /// name/category as before.
   void _openProductDetails(BuildContext context, OutfitItemModel item) {
     final info = item.product!;
     Navigator.pushNamed(

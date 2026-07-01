@@ -53,6 +53,13 @@ class _CompleteOutfitScreenState extends State<CompleteOutfitScreen> {
   String _toBackendValue(String display) =>
       display.toLowerCase().replaceAll(' ', '-');
 
+  /// Capitalizes the first letter of a category key for display
+  /// (e.g. "top" -> "Top", "bottom" -> "Bottom").
+  String _formatCategoryTitle(String category) {
+    if (category.isEmpty) return category;
+    return category[0].toUpperCase() + category.substring(1);
+  }
+
   Future<void> _pickImage() async {
     final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (picked != null) setState(() => imagePath = picked.path);
@@ -113,9 +120,11 @@ class _CompleteOutfitScreenState extends State<CompleteOutfitScreen> {
         builder: (context, state) {
           final isLoading = state.maybeWhen(loading: () => true, orElse: () => false);
 
-          final outfits = state.maybeWhen(
-            success: (data) => data.buildOutfits(),
-            orElse: () => <Map<String, OutfitItemModel>>[],
+          // Get category -> items map directly from the response
+          // instead of flattening into combined "outfits".
+          final categoryResults = state.maybeWhen(
+            success: (data) => data.results,
+            orElse: () => <String, List<OutfitItemModel>>{},
           );
 
           return Scaffold(
@@ -123,6 +132,7 @@ class _CompleteOutfitScreenState extends State<CompleteOutfitScreen> {
               title: "Complete Outfit",
               showCartIcon: false,
               onCartTap: () {},
+              leading: true,
             ),
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             body: ListView(
@@ -247,30 +257,31 @@ class _CompleteOutfitScreenState extends State<CompleteOutfitScreen> {
 
                 SizedBox(height: 25.h),
 
-                // ── Results ──
+                // ── Results grouped by category ──
                 if (isLoading)
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 40.h),
                     child: const Center(child: CircularProgressIndicator()),
                   )
-                else if (outfits.isNotEmpty) ...[
+                else if (categoryResults.isNotEmpty) ...[
                   Text('Recommendations', style: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.bold)),
                   SizedBox(height: 10.h),
-                  ...List.generate(
-                    outfits.length,
-                        (i) {
-                      final outfitMap = outfits[i]; // Map<String, OutfitItemModel>
-                      return OutfitCard(
-                        title: 'Outfit ${i + 1}',
-                        categories: outfitMap.keys.toList(),
-                        items: outfitMap.values.toList(),
-                        onItemTap: (item, category) {
-                          if (item.product == null) return; // closet-only item, nothing to open
-                          _openProductDetails(context, item);
-                        },
-                      );
-                    },
-                  ),
+                  ...categoryResults.entries.map((entry) {
+                    final category = entry.key;   // e.g. "top", "bottom", "shoes"
+                    final items = entry.value;    // List<OutfitItemModel> for that category
+
+                    if (items.isEmpty) return const SizedBox.shrink();
+
+                    return OutfitCard(
+                      title: _formatCategoryTitle(category),
+                      categories: List.filled(items.length, category),
+                      items: items,
+                      onItemTap: (item, cat) {
+                        if (item.product == null) return; // closet-only item, nothing to open
+                        _openProductDetails(context, item);
+                      },
+                    );
+                  }),
                 ],
               ],
             ),

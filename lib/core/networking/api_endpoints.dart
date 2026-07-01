@@ -74,6 +74,8 @@ class ApiEndpoints {
   static const String searchByImage = '/api/ai/search_by_image/image';
   static const String searchByText = '/api/ai/search_by_image/text';
   static const String generateImage = '/api/ai_generator/generate';
+  static const String dailyOutfitRecommendation = '/api/ai/daily_outfit_recommendation/recommend';
+  static const String completeOutfitRecommend = '/api/ai/complete_outfit/recommend';
   //_____________ notifications __________________________
   static const String updateFcmToken = '/api/auth/fcm-token';
   static const String notificationPreferences =

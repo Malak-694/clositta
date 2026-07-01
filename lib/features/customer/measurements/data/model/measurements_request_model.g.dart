@@ -9,6 +9,7 @@ part of 'measurements_request_model.dart';
 MeasurementsModel _$MeasurementsModelFromJson(Map<String, dynamic> json) =>
     MeasurementsModel(
       unit: json['unit'] as String?,
+      weight: (json['weight'] as num?)?.toInt(),
       chest: (json['chest'] as num?)?.toInt(),
       waist: (json['waist'] as num?)?.toInt(),
       hips: (json['hips'] as num?)?.toInt(),
@@ -21,6 +22,7 @@ MeasurementsModel _$MeasurementsModelFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$MeasurementsModelToJson(MeasurementsModel instance) =>
     <String, dynamic>{
       'unit': instance.unit,
+      'weight': instance.weight,
       'chest': instance.chest,
       'waist': instance.waist,
       'hips': instance.hips,

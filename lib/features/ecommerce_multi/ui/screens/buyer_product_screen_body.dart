@@ -37,16 +37,13 @@ class BuyerProductScreenBody extends StatefulWidget {
 class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
   final List<String> _categories = [
     'All',
-    'Tops',
-    'Bottoms',
-    'Dress',
-    'Shoes',
-    'Outwear',
-    'Accessories',
-    'Women',
-    'Men',
-    'Kids',
-    'Others',
+    'top',
+    'bottom',
+    'dress',
+    'shoes',
+    'accessories',
+    'jacket',
+    'scarf'
   ];
   // local token for API calls
   String? _token;

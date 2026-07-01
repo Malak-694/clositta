@@ -24,6 +24,7 @@ class RouteNames {
   static const outfit_recomendation = 'outfit_recomendation';
   static const complete_outfit_screen = 'complete_outfit_screen';
   static const generate_image_screen = 'generate_image_screen';
+  static const outfit_recommendation_result = 'outfit_recommendation_result';
   // tailor bidding
   static const view_bidding_tailor = "view_bidding_tailor";
   static const join_bidding = "join_bidding";

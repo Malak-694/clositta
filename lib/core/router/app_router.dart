@@ -2,9 +2,7 @@ import 'package:chicora/core/di/dependency_injection.dart';
 import 'package:chicora/features/chat/logic/conversations_cubit/conversations_cubit.dart';
 import 'package:chicora/features/chat/ui/screens/chat_screen.dart';
 import 'package:chicora/features/customer/ai/ai_screen.dart';
-import 'package:chicora/features/customer/ai/complete_recommend/complete_outfit_screen.dart';
 import 'package:chicora/features/customer/ai/generate/generate_image_screen.dart';
-import 'package:chicora/features/customer/ai/complete_recommend/outfit_recomendation_screen.dart';
 import 'package:chicora/features/customer/ai/generate/logic/cubit/ai_generator_cubit.dart';
 import 'package:chicora/features/customer/closet/logic/cubit/closet_cubit.dart';
 import 'package:chicora/features/customer/closet/ui/screens/added_item_screen.dart';
@@ -39,6 +37,9 @@ import '../../features/auth/ui/screens/sign_up_screen.dart';
 import '../../features/chat/data/repo/chat_repo.dart';
 import '../../features/chat/logic/chat_cubit/chat_cubit.dart';
 import '../../features/chat/ui/screens/conversations_screen.dart';
+import '../../features/customer/ai/complete_recommend/data/models/daily_outfit_response_model.dart';
+import '../../features/customer/ai/complete_recommend/ui/screens/complete_outfit_screen.dart';
+import '../../features/customer/ai/complete_recommend/ui/screens/outfit_recomendation_screen.dart';
 import '../../features/customer/biding/ui/Screens/tailor_info_screen.dart';
 import '../../features/customer/closet/data/models/closet_item_response_model.dart';
 import '../../features/customer/closet/data/repo/closet_repo.dart';
@@ -193,6 +194,11 @@ class AppRouter {
             create: (context) => getIt<AiGeneratorCubit>(),
             child: GenerateImageScreen(),
           ),
+        );
+      case RouteNames.outfit_recommendation_result:
+        final response = settings.arguments as DailyOutfitRecommendationResponse;
+        return MaterialPageRoute(
+          builder: (_) => OutfitRecomendationScreen(),
         );
       case RouteNames.post_details_customer:
         final args = settings.arguments as Map<String, dynamic>? ?? {};

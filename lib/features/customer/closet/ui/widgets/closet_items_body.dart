@@ -27,12 +27,15 @@ class _ClosetItemsScreenBodyState extends State<ClosetItemsScreenBody> {
   final Color _darkColor = AppColors.darkprimery;
   final List<String> _categories = [
     'All',
-    'Tops',
-    'Bottoms',
-    'Shoes',
-    'Accessories',
+    "top",
+    "bottom",
+    "jacket",
+    "scarf",
+    "dress",
+    "shoes",
+    "accessories",
   ];
-  final List<String> _seasons = ['All', 'Winter', 'Spring', 'Summer', 'Fall'];
+  final List<String> _seasons = ['All', 'winter', 'spring', 'summer', 'fall'];
   late String _selectedCategory;
   late String _selectedSeason;
 
@@ -102,7 +105,6 @@ class _ClosetItemsScreenBodyState extends State<ClosetItemsScreenBody> {
             ],
           ),
 
-
           SizedBox(height: 20.h),
           Expanded(
             child: BlocBuilder<ClosetCubit, ClosetState>(
@@ -148,7 +150,8 @@ class _ClosetItemsScreenBodyState extends State<ClosetItemsScreenBody> {
                               context.read<ClosetCubit>().viewClosetItems();
                             });
                           },
-                          onDelete: () => _showDeleteConfirmation(context, item), // ✅ new
+                          onDelete: () =>
+                              _showDeleteConfirmation(context, item), // ✅ new
                           onTap: () {},
                         ),
                       );

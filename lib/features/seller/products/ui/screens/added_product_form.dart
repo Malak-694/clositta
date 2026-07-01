@@ -32,17 +32,14 @@ class _AddedProductFormState extends State<AddedProductForm> {
   final ImagePicker _picker = ImagePicker();
 
   final List<String> categories = [
-    'Tops',
-    'Bottoms',
-    'Dress',
-    'Shoes',
-    'Outwear',
-    'Accessories',
-    'Women',
-    'Men',
-    'Kids',
-    'Others',
-  ];
+    "All",
+    "top",
+    "bottom",
+    "jacket",
+    "scarf",
+    "dress",
+    "shoes",
+    "accessories",  ];
   final List<String> types = ['Clothes', 'Material'];
 
   String? _selectedCategory;
@@ -61,8 +58,14 @@ class _AddedProductFormState extends State<AddedProductForm> {
       _descriptionController.text = widget.product!.description;
       _priceController.text = widget.product!.price.toString();
       _stockController.text = widget.product!.stock.toString();
-      _selectedCategory = widget.product!.category;
-      _selectedType = widget.product!.type;
+      _selectedCategory = categories.firstWhere(
+        (c) => c.toLowerCase() == widget.product!.category.toLowerCase(),
+        orElse: () => categories.first,
+      );
+      _selectedType = types.firstWhere(
+        (t) => t.toLowerCase() == widget.product!.type.toLowerCase(),
+        orElse: () => types.first,
+      );
       _existingImageUrl = widget.product!.imageUrl;
     } else {
       _selectedCategory = categories.first;

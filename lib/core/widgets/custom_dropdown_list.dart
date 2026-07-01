@@ -65,7 +65,7 @@ class CustomDropdownList extends StatelessWidget {
           height: height?.h,
           child: DropdownButtonFormField<String>(
             isExpanded: isExpanded,
-            initialValue: value,
+            initialValue: value??items.first,
             hint: Text(
               hintText,
               style: textStyle,

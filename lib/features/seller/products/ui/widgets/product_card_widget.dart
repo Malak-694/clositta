@@ -99,7 +99,7 @@ Widget buildProductCard(BuildContext context, ProductModel product) {
             ),
             SizedBox(height: 6.h),
             Text(
-              '£$pricePerYard/Meter',
+              '£$pricePerYard/Item',
               style: AppStyle.medGray.copyWith(fontSize: 16.sp),
             ),
             Text('Stock: $stock', style: AppStyle.smallPrimery),

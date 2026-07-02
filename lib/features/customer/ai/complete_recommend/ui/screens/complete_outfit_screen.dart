@@ -5,10 +5,15 @@ import 'package:chicora/core/di/dependency_injection.dart';
 import 'package:chicora/core/widgets/custom_app_bar.dart';
 import 'package:chicora/core/widgets/custom_dropdown_list.dart';
 import 'package:chicora/core/widgets/custom_elevated_button.dart';
+import 'package:chicora/features/customer/closet/data/models/closet_item_response_model.dart';
+import 'package:chicora/features/customer/closet/logic/cubit/closet_cubit.dart';
+import 'package:chicora/features/customer/closet/logic/cubit/closet_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:dio/dio.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../../../../../core/router/route_names.dart';
 
@@ -23,7 +28,6 @@ import '../../logic/complete_outfit_cubit/complete_outfit_state.dart';
 import '../widgets/category_selector.dart';
 import '../widgets/outfit_card.dart';
 
-
 class CompleteOutfitScreen extends StatefulWidget {
   const CompleteOutfitScreen({super.key});
 
@@ -33,13 +37,44 @@ class CompleteOutfitScreen extends StatefulWidget {
 
 class _CompleteOutfitScreenState extends State<CompleteOutfitScreen> {
   final List<String> categoryOptions = [
-    'Top', 'Bottom', 'Jacket', 'Chemise', 'Blazer', 'Dress', 'Shoes', 'Accessories',
+    'Top',
+    'Bottom',
+    'Jacket',
+    'Chemise',
+    'Blazer',
+    'Dress',
+    'Shoes',
+    'Accessories',
   ];
-  final List<String> occasionOptions = ['Casual', 'Formal', 'Semi-Formal', 'Party', 'Sporty'];
-  final List<String> seasonOptions = ['Summer', 'Winter', 'Spring', 'Fall']; // 'all' is backend-only, intentionally excluded
+  final List<String> occasionOptions = [
+    'Casual',
+    'Formal',
+    'Semi-Formal',
+    'Party',
+    'Sporty',
+  ];
+  final List<String> seasonOptions = [
+    'Summer',
+    'Winter',
+    'Spring',
+    'Fall',
+  ]; // 'all' is backend-only, intentionally excluded
   final List<String> colorOptions = [
-    'White', 'Black', 'Beige', 'Red', 'Soft Blue', 'Hot Blue', 'Green', 'Yellow',
-    'Orange', 'Gold', 'Grey', 'Soft Pink', 'Hot Pink', 'Purple', 'Other',
+    'White',
+    'Black',
+    'Beige',
+    'Red',
+    'Soft Blue',
+    'Hot Blue',
+    'Green',
+    'Yellow',
+    'Orange',
+    'Gold',
+    'Grey',
+    'Soft Pink',
+    'Hot Pink',
+    'Purple',
+    'Other',
   ];
   final List<String> genderOptions = ['Female', 'Male', 'Unisex'];
 
@@ -63,6 +98,160 @@ class _CompleteOutfitScreenState extends State<CompleteOutfitScreen> {
   Future<void> _pickImage() async {
     final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (picked != null) setState(() => imagePath = picked.path);
+  }
+
+  Future<void> _pickFromCloset() async {
+    final closetCubit = getIt<ClosetCubit>()..viewClosetItems();
+    final pickedItem = await showModalBottomSheet<ClosetItemResponseModel>(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return BlocProvider.value(
+          value: closetCubit,
+          child: BlocBuilder<ClosetCubit, ClosetState>(
+            builder: (context, state) {
+              return Container(
+                height: MediaQuery.of(context).size.height * 0.7,
+                padding: EdgeInsets.all(16.w),
+                child: Column(
+                  children: [
+                    Text(
+                      'Select from Closet',
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 16.h),
+                    Expanded(
+                      child: state.maybeWhen(
+                        loading: () =>
+                            const Center(child: CircularProgressIndicator()),
+                        success: (items) {
+                          if (items.isEmpty)
+                            return const Center(
+                              child: Text('Your closet is empty.'),
+                            );
+                          return GridView.builder(
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 10,
+                                  mainAxisSpacing: 10,
+                                ),
+                            itemCount: items.length,
+                            itemBuilder: (context, index) {
+                              final item = items[index];
+                              return GestureDetector(
+                                onTap: () => Navigator.pop(context, item),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.grey.shade300,
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Expanded(
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              const BorderRadius.vertical(
+                                                top: Radius.circular(12),
+                                              ),
+                                          child: item.imageUrl != null
+                                              ? Image.network(
+                                                  item.imageUrl!,
+                                                  fit: BoxFit.cover,
+                                                  width: double.infinity,
+                                                )
+                                              : const Icon(Icons.image),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          item.name ?? 'Item',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        fail: (msg) => Center(child: Text(msg)),
+                        orElse: () => const SizedBox(),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+
+    if (pickedItem != null) {
+      if (pickedItem.imageUrl != null) {
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   const SnackBar(content: Text('Downloading image to be sent to AI')),
+        // );
+        try {
+          final tempDir = await getTemporaryDirectory();
+          final tempFile = File(
+            '${tempDir.path}/${pickedItem.id ?? DateTime.now().millisecondsSinceEpoch}.jpg',
+          );
+          await Dio().download(pickedItem.imageUrl!, tempFile.path);
+          setState(() {
+            imagePath = tempFile.path;
+          });
+        } catch (e) {
+          if (mounted)
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Failed to download image')),
+            );
+        }
+      }
+
+      setState(() {
+        if (pickedItem.category != null && pickedItem.category!.isNotEmpty) {
+          selectedCategories.clear();
+          final cat = pickedItem.category!;
+          final displayCat = cat[0].toUpperCase() + cat.substring(1);
+          for (final option in categoryOptions) {
+            if (option.toLowerCase() != displayCat.toLowerCase()) {
+              selectedCategories.add(option);
+            }
+          }
+        }
+        if (pickedItem.season != null && pickedItem.season!.isNotEmpty) {
+          final s = pickedItem.season!;
+          final displayS = s[0].toUpperCase() + s.substring(1);
+          if (seasonOptions.contains(displayS)) {
+            selectedSeason = displayS;
+          }
+        }
+        if (pickedItem.occasion != null && pickedItem.occasion!.isNotEmpty) {
+          final o = pickedItem.occasion!;
+          final displayO = o[0].toUpperCase() + o.substring(1);
+          if (occasionOptions.contains(displayO)) {
+            selectedOccasion = displayO;
+          }
+        }
+        if (pickedItem.color != null && pickedItem.color!.isNotEmpty) {
+          final c = pickedItem.color!;
+          final displayC = c[0].toUpperCase() + c.substring(1);
+          if (colorOptions.contains(displayC)) {
+            selectedColor = displayC;
+          }
+        }
+      });
+    }
   }
 
   bool _validateRequiredFields(BuildContext context) {
@@ -98,7 +287,6 @@ class _CompleteOutfitScreenState extends State<CompleteOutfitScreen> {
           averageRating: info.averageRating,
           totalRatings: info.totalRatings,
           ratings: const [],
-
         ),
         'cartCubit': getIt<CartCubit>()..getCart(),
       },
@@ -109,185 +297,241 @@ class _CompleteOutfitScreenState extends State<CompleteOutfitScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => getIt<CompleteOutfitCubit>(),
-      child: BlocConsumer<CompleteOutfitCubit, CompleteOutfitState<CompleteOutfitResponseModel>>(
-        listener: (context, state) {
-          state.whenOrNull(
-            fail: (message) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      child:
+          BlocConsumer<
+            CompleteOutfitCubit,
+            CompleteOutfitState<CompleteOutfitResponseModel>
+          >(
+            listener: (context, state) {
+              state.whenOrNull(
+                fail: (message) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(message)));
+                },
+              );
             },
-          );
-        },
-        builder: (context, state) {
-          final isLoading = state.maybeWhen(loading: () => true, orElse: () => false);
+            builder: (context, state) {
+              final isLoading = state.maybeWhen(
+                loading: () => true,
+                orElse: () => false,
+              );
 
-          // Get category -> items map directly from the response
-          // instead of flattening into combined "outfits".
-          final categoryResults = state.maybeWhen(
-            success: (data) => data.results,
-            orElse: () => <String, List<OutfitItemModel>>{},
-          );
+              // Get category -> items map directly from the response
+              // instead of flattening into combined "outfits".
+              final categoryResults = state.maybeWhen(
+                success: (data) => data.results,
+                orElse: () => <String, List<OutfitItemModel>>{},
+              );
 
-          return Scaffold(
-            appBar: CustomAppBar(
-              title: "Complete Outfit",
-              showCartIcon: false,
-              onCartTap: () {},
-              leading: true,
-            ),
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            body: ListView(
-              padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 20.h),
-              children: [
-                // ── Form card ──
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppColors.light, width: 0.7),
-                  ),
-                  padding: EdgeInsets.all(15.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _RequiredLabel('Item Photo'),
-                      SizedBox(height: 8.h),
-                      ImageUploadWidget(
-                        imagePath: imagePath,
-                        onTap: _pickImage,
-                        onRemove: () => setState(() => imagePath = null),
-                        placeholderText: 'Tap to upload your item',
-                      ),
-                      SizedBox(height: 20.h),
-
-                      _RequiredLabel('Categories'),
-                      SizedBox(height: 8.h),
-                      CustomMultiCategorySelector(
-                        categories: categoryOptions,
-                        selectedCategories: selectedCategories,
-                        onCategoryToggled: (cat) => setState(() {
-                          selectedCategories.contains(cat)
-                              ? selectedCategories.remove(cat)
-                              : selectedCategories.add(cat);
-                        }),
-                        selectedColor: AppColors.primery,
-                        unselectedColor: AppColors.light,
-                      ),
-                      SizedBox(height: 20.h),
-
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: CustomDropdownList(
-                              height: 47.h,
-                              value: selectedOccasion,
-                              items: occasionOptions,
-                              hintText: 'ex,Casual',
-                              onChanged: (val) => setState(() => selectedOccasion = val ?? selectedOccasion),
-                              label: 'Occasion',
-                            ),
-                          ),
-                          SizedBox(width: 12.w),
-                          Expanded(
-                            child: CustomDropdownList(
-                              height: 47.h,
-                              value: selectedSeason,
-                              items: seasonOptions,
-                              hintText: 'ex,Summer',
-                              onChanged: (val) => setState(() => selectedSeason = val ?? selectedSeason),
-                              label: 'Season',
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 15.h),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: CustomDropdownList(
-                              height: 47.h,
-                              value: selectedColor,
-                              items: colorOptions,
-                              hintText: 'ex,Black',
-                              onChanged: (val) => setState(() => selectedColor = val ?? selectedColor),
-                              label: 'Color',
-                            ),
-                          ),
-                          SizedBox(width: 12.w),
-                          Expanded(
-                            child: CustomDropdownList(
-                              height: 47.h,
-                              value: selectedGender,
-                              items: genderOptions,
-                              hintText: 'ex,Female',
-                              onChanged: (val) => setState(() => selectedGender = val ?? selectedGender),
-                              label: 'Gender',
-                              required: true,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20.h),
-
-                      CustomElevatedButton(
-                        value: isLoading ? '...' : 'Get Recommendations',
-                        onPressed: isLoading
-                            ? () {}
-                            : () {
-                          if (!_validateRequiredFields(context)) return;
-                          context.read<CompleteOutfitCubit>().getCompleteOutfit(
-                            imagePath: imagePath!,
-                            body: CompleteOutfitRequestModel(
-                              occasion: _toBackendValue(selectedOccasion),
-                              season: _toBackendValue(selectedSeason),
-                              color: _toBackendValue(selectedColor),
-                              gender: _toBackendValue(selectedGender),
-                              categories: selectedCategories
-                                  .map(_toBackendValue)
-                                  .toList(),
-                            ),
-                          );
-                        },
-                        height: 50.h,
-                        style: AppStyle.button.copyWith(fontSize: 17),
-                      ),
-                    ],
-                  ),
+              return Scaffold(
+                appBar: CustomAppBar(
+                  title: "Complete Outfit",
+                  showCartIcon: false,
+                  onCartTap: () {},
+                  leading: true,
                 ),
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                body: ListView(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 15.w,
+                    vertical: 20.h,
+                  ),
+                  children: [
+                    // ── Form card ──
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: AppColors.light, width: 0.7),
+                      ),
+                      padding: EdgeInsets.all(15.w),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              _RequiredLabel('Item Photo'),
+                              TextButton.icon(
+                                onPressed: _pickFromCloset,
+                                icon: const Icon(Icons.checkroom, size: 18),
+                                label: const Text('Pick from Closet'),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 8.h),
+                          ImageUploadWidget(
+                            imagePath: imagePath,
+                            onTap: _pickImage,
+                            onRemove: () => setState(() => imagePath = null),
+                            placeholderText: 'Tap to upload your item',
+                          ),
+                          SizedBox(height: 20.h),
 
-                SizedBox(height: 25.h),
+                          _RequiredLabel('Categories'),
+                          SizedBox(height: 8.h),
+                          CustomMultiCategorySelector(
+                            categories: categoryOptions,
+                            selectedCategories: selectedCategories,
+                            onCategoryToggled: (cat) => setState(() {
+                              selectedCategories.contains(cat)
+                                  ? selectedCategories.remove(cat)
+                                  : selectedCategories.add(cat);
+                            }),
+                            selectedColor: AppColors.primery,
+                            unselectedColor: AppColors.light,
+                          ),
+                          SizedBox(height: 20.h),
 
-                // ── Results grouped by category ──
-                if (isLoading)
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 40.h),
-                    child: const Center(child: CircularProgressIndicator()),
-                  )
-                else if (categoryResults.isNotEmpty) ...[
-                  Text('Recommendations', style: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 10.h),
-                  ...categoryResults.entries.map((entry) {
-                    final category = entry.key;   // e.g. "top", "bottom", "shoes"
-                    final items = entry.value;    // List<OutfitItemModel> for that category
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: CustomDropdownList(
+                                  height: 47.h,
+                                  value: selectedOccasion,
+                                  items: occasionOptions,
+                                  hintText: 'ex,Casual',
+                                  onChanged: (val) => setState(
+                                    () => selectedOccasion =
+                                        val ?? selectedOccasion,
+                                  ),
+                                  label: 'Occasion',
+                                ),
+                              ),
+                              SizedBox(width: 12.w),
+                              Expanded(
+                                child: CustomDropdownList(
+                                  height: 47.h,
+                                  value: selectedSeason,
+                                  items: seasonOptions,
+                                  hintText: 'ex,Summer',
+                                  onChanged: (val) => setState(
+                                    () =>
+                                        selectedSeason = val ?? selectedSeason,
+                                  ),
+                                  label: 'Season',
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 15.h),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: CustomDropdownList(
+                                  height: 47.h,
+                                  value: selectedColor,
+                                  items: colorOptions,
+                                  hintText: 'ex,Black',
+                                  onChanged: (val) => setState(
+                                    () => selectedColor = val ?? selectedColor,
+                                  ),
+                                  label: 'Color',
+                                ),
+                              ),
+                              SizedBox(width: 12.w),
+                              Expanded(
+                                child: CustomDropdownList(
+                                  height: 47.h,
+                                  value: selectedGender,
+                                  items: genderOptions,
+                                  hintText: 'ex,Female',
+                                  onChanged: (val) => setState(
+                                    () =>
+                                        selectedGender = val ?? selectedGender,
+                                  ),
+                                  label: 'Gender',
+                                  required: true,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 20.h),
 
-                    if (items.isEmpty) return const SizedBox.shrink();
+                          CustomElevatedButton(
+                            value: isLoading ? '...' : 'Get Recommendations',
+                            onPressed: isLoading
+                                ? () {}
+                                : () {
+                                    if (!_validateRequiredFields(context))
+                                      return;
+                                    context
+                                        .read<CompleteOutfitCubit>()
+                                        .getCompleteOutfit(
+                                          imagePath: imagePath!,
+                                          body: CompleteOutfitRequestModel(
+                                            occasion: _toBackendValue(
+                                              selectedOccasion,
+                                            ),
+                                            season: _toBackendValue(
+                                              selectedSeason,
+                                            ),
+                                            color: _toBackendValue(
+                                              selectedColor,
+                                            ),
+                                            gender: _toBackendValue(
+                                              selectedGender,
+                                            ),
+                                            categories: selectedCategories
+                                                .map(_toBackendValue)
+                                                .toList(),
+                                          ),
+                                        );
+                                  },
+                            height: 50.h,
+                            style: AppStyle.button.copyWith(fontSize: 17),
+                          ),
+                        ],
+                      ),
+                    ),
 
-                    return OutfitCard(
-                      title: _formatCategoryTitle(category),
-                      categories: List.filled(items.length, category),
-                      items: items,
-                      onItemTap: (item, cat) {
-                        if (item.product == null) return; // closet-only item, nothing to open
-                        _openProductDetails(context, item);
-                      },
-                    );
-                  }),
-                ],
-              ],
-            ),
-          );
-        },
-      ),
+                    SizedBox(height: 25.h),
+
+                    // ── Results grouped by category ──
+                    if (isLoading)
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 40.h),
+                        child: const Center(child: CircularProgressIndicator()),
+                      )
+                    else if (categoryResults.isNotEmpty) ...[
+                      Text(
+                        'Recommendations',
+                        style: TextStyle(
+                          fontSize: 17.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 10.h),
+                      ...categoryResults.entries.map((entry) {
+                        final category =
+                            entry.key; // e.g. "top", "bottom", "shoes"
+                        final items = entry.value.where((item) => 
+                            item.product != null && 
+                            item.product!.description != null && 
+                            item.product!.description!.isNotEmpty).toList();
+
+                        if (items.isEmpty) return const SizedBox.shrink();
+
+                        return OutfitCard(
+                          title: _formatCategoryTitle(category),
+                          categories: List.filled(items.length, category),
+                          items: items,
+                          onItemTap: (item, cat) {
+                            if (item.product == null) {
+                              return;
+                            } // closet-only item, nothing to open
+                            _openProductDetails(context, item);
+                          },
+                        );
+                      }),
+                    ],
+                  ],
+                ),
+              );
+            },
+          ),
     );
   }
 }

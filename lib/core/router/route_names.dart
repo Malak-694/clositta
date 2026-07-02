@@ -30,7 +30,9 @@ class RouteNames {
   static const join_bidding = "join_bidding";
   static const view_offers_tailor = "view_offers";
   static const active_order = "active_order";
-
+  //tailor ai
+  static const generate_image_tailor_screen = "generate_image_tailor_screen";
+  //seller
   static const seller_products_screen = "seller_products_screen";
   static const analysis_seller_screen = "analysis_seller_screen";
   static const seller_orders_screen = "seller_orders_screen";

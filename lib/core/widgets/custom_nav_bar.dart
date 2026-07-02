@@ -63,6 +63,11 @@ class FloatingNavBar extends StatelessWidget {
         "route": RouteNames.view_bidding_tailor,
       },
       {
+        "icon": Icons.auto_awesome,
+        "name": "AI",
+        "route": RouteNames.generate_image_tailor_screen,
+      },
+      {
         "icon": Icons.assignment_outlined,
         "name": "orders",
         "route": RouteNames.active_order,
@@ -144,11 +149,19 @@ class FloatingNavBar extends StatelessWidget {
                     onTap: () {
                       if (ModalRoute.of(context)?.settings.name !=
                           item["route"]) {
-                        Navigator.pushReplacementNamed(
-                          // ← fixed: was pushNamed
-                          context,
-                          item["route"],
-                        );
+                        final isTailorAi =
+                            _normalizedRole == 'tailor' &&
+                            item["route"] ==
+                                RouteNames.generate_image_tailor_screen;
+
+                        if (isTailorAi) {
+                          Navigator.pushNamed(context, item["route"]);
+                        } else {
+                          Navigator.pushReplacementNamed(
+                            context,
+                            item["route"],
+                          );
+                        }
                       }
                     },
                     child: TweenAnimationBuilder<double>(

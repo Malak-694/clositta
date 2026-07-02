@@ -17,10 +17,11 @@ class AiGeneratorRepo {
     bool useMyMeasurements = true,
     MeasurementsModel? enteredMeasures,
     required String token,
+    required bool isTailor,
   }) async {
     try {
       final MeasurementsModel measures;
-      if (useMyMeasurements) {
+      if (useMyMeasurements && !isTailor) {
         if (enteredMeasures != null) { //measures from cache
           measures = enteredMeasures;
         } else { 

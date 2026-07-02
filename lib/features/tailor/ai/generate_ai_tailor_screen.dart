@@ -10,9 +10,8 @@ import 'package:chicora/core/widgets/custom_app_bar.dart';
 import 'package:chicora/features/chat/logic/conversations_cubit/conversations_cubit.dart';
 import 'package:chicora/features/chat/ui/widgets/chat_input_field.dart';
 import 'package:chicora/features/customer/ai/generate/logic/cubit/ai_generator_cubit.dart';
-import 'package:chicora/features/customer/ai/generate/ui/widgets/closet_add_widget.dart';
 import 'package:chicora/features/customer/ai/generate/ui/widgets/full_screen_image.dart';
-import 'package:path_provider/path_provider.dart';
+
 import 'package:chicora/features/customer/ai/generate/logic/cubit/ai_generator_state.dart';
 import 'package:chicora/features/customer/ai/generate/ui/widgets/other_dialog_widget.dart';
 import 'package:chicora/features/customer/ai/generate/ui/widgets/yes_no_toggle.dart';
@@ -25,6 +24,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:vision_gallery_saver/vision_gallery_saver.dart';
+import 'package:vision_gallery_saver/vision_gallery_saver_method_channel.dart';
 
 class AiGenerateMessage {
   final String text;
@@ -42,16 +42,16 @@ class AiGenerateMessage {
   });
 }
 
-class GenerateImageScreen extends StatefulWidget {
-  GenerateImageScreen({super.key});
+class GenerateImageScreenTailor extends StatefulWidget {
+  GenerateImageScreenTailor({super.key});
 
   @override
-  State<GenerateImageScreen> createState() => _AiCustomerScreenState();
+  State<GenerateImageScreenTailor> createState() => _AiCustomerScreenState();
 }
 
-class _AiCustomerScreenState extends State<GenerateImageScreen> {
+class _AiCustomerScreenState extends State<GenerateImageScreenTailor> {
   String? _currentUserId;
-  bool _useMyMeasurements = true;
+  bool _useMyMeasurements = false;
   final List<AiGenerateMessage> _messages = [];
   Uint8List? _lastGeneratedImage;
   MeasurementsModel? _others;
@@ -105,11 +105,13 @@ class _AiCustomerScreenState extends State<GenerateImageScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Text(
-                    'Use my measurements',
+                    'Enter Measurements',
                     style: AppStyle.medGray.copyWith(fontSize: 15.sp),
                   ),
                   YesNoToggle(
                     initialValue: _useMyMeasurements,
+                    isTailor: true,
+
                     onChanged: (value) async {
                       if (!value) {
                         final result = await showOtherMeasuresBottomSheet(
@@ -248,11 +250,7 @@ class _AiCustomerScreenState extends State<GenerateImageScreen> {
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width * 0.6,
                   height: 220.h,
-                  child: Image.file(
-                    msg.userImage!,
-                    width: 200.w,
-                    fit: BoxFit.cover,
-                  ),
+                  child: Image.file(msg.userImage!, fit: BoxFit.cover),
                 ),
               ),
             if (msg.aiImage != null)
@@ -270,106 +268,70 @@ class _AiCustomerScreenState extends State<GenerateImageScreen> {
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.6,
                     height: 220.h,
-                    child: Image.memory(
-                      msg.aiImage!,
-                      width: 200.w,
-                      fit: BoxFit.cover,
-                    ),
+                    child: Image.memory(msg.aiImage!, fit: BoxFit.cover),
                   ),
                 ),
               ),
 
             if (!isMine && msg.aiImage != null)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 8.h),
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        PermissionStatus status = await Permission.storage
-                            .request();
-                        if (!status.isGranted) {
-                          status = await Permission.photos.request();
-                        }
+              Padding(
+                padding: EdgeInsets.only(top: 8.h),
+                child: ElevatedButton(
+                  onPressed: () async {
+                    PermissionStatus status = await Permission.storage
+                        .request();
+                    if (!status.isGranted) {
+                      status = await Permission.photos.request();
+                    }
 
-                        if (status.isGranted) {
-                          final result = await VisionGallerySaver.saveImage(
-                            msg.aiImage!,
-                            name: 'ai_${DateTime.now().millisecondsSinceEpoch}',
-                            quality: 100,
-                          );
+                    if (status.isGranted) {
+                      final result = await VisionGallerySaver.saveImage(
+                        msg.aiImage!,
+                        name: 'ai_${DateTime.now().millisecondsSinceEpoch}',
+                        quality: 100,
+                      );
 
-                          if (result['isSuccess'] == true) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Image saved to gallery'),
-                              ),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Failed to save image'),
-                              ),
-                            );
-                          }
-                        } else if (status.isPermanentlyDenied) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: const Text(
-                                'Permission permanently denied. Please enable in settings.',
-                              ),
-                              action: SnackBarAction(
-                                label: 'Settings',
-                                onPressed: () {
-                                  openAppSettings();
-                                },
-                              ),
-                            ),
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: const Text('Storage permission denied'),
-                              action: SnackBarAction(
-                                label: 'Settings',
-                                onPressed: () {
-                                  openAppSettings();
-                                },
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                      child: const Text('Download'),
-                    ),
-                  ),
-
-                  Padding(
-                    padding: EdgeInsets.only(top: 8.h),
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        final result = await showAddToClosetSheet(context);
-
-                        if (result != null) {
-                          final dir = await getApplicationDocumentsDirectory();
-                          final filePath =
-                              '${dir.path}/ai_${DateTime.now().millisecondsSinceEpoch}.png';
-                          final file = File(filePath);
-                          await file.writeAsBytes(msg.aiImage!);
-                          context.read<AiGeneratorCubit>().addClosetItem(
-                            name: 'AI Generated',
-                            category: result['category'] ?? 'All',
-                            season: result['season'] ?? 'All',
-                            color: result['color'] ?? '',
-                            imagePath: filePath,
-                          );
-                        }
-                      },
-                      child: Text('Add to Closet'),
-                    ),
-                  ),
-                ],
+                      if (result['isSuccess'] == true) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Image saved to gallery'),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Failed to save image')),
+                        );
+                      }
+                    } else if (status.isPermanentlyDenied) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text(
+                            'Permission permanently denied. Please enable in settings.',
+                          ),
+                          action: SnackBarAction(
+                            label: 'Settings',
+                            onPressed: () {
+                              openAppSettings();
+                            },
+                          ),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text('Storage permission denied'),
+                          action: SnackBarAction(
+                            label: 'Settings',
+                            onPressed: () {
+                              openAppSettings();
+                            },
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  child: const Text('Download'),
+                ),
               ),
             if (msg.userImage != null || msg.aiImage != null)
               const SizedBox(height: 6),

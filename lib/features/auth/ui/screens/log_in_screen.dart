@@ -76,114 +76,118 @@ class _LoginScreenState extends State<LoginScreen> {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          body: Container(
-            width: double.infinity,
-            height: double.infinity,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("assets/images/login.png"),
-                fit: BoxFit.cover,
+          body: SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height,
               ),
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(height: 350.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+              child: Container(
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/images/login.png"),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 350.h),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Login", style: AppStyle.boldBlack),
+                            Text(
+                              "Good to see you back",
+                              textAlign: TextAlign.start,
+                              style: AppStyle.medBlack,
+                            ),
+                          ],
+                        ),
+                        SizedBox(width: 150.w),
+                      ],
+                    ),
+                    Form(
+                      key: _formKey,
+                      child: Column(
                         children: [
-                          Text("Login", style: AppStyle.boldBlack),
-                          Text(
-                            "Good to see you back",
-                            textAlign: TextAlign.start,
-                            style: AppStyle.medBlack,
+                          SizedBox(height: 25.h),
+                          CustomTextFormField(
+                            text: "Email",
+                            controller: _email,
+                            validator: Validators.validateEmail,
+                          ),
+                          SizedBox(height: 10.h),
+
+                          CustomTextFormField(
+                            text: "Password",
+                            controller: _password,
+                            isPassword: true,
+                            validator: Validators.validatePassword,
+                          ),
+                          SizedBox(height: 30.h),
+                          CustomMediumButton(
+                            value: "LogIn",
+                            isLoading: state is Loading,
+                            onPressed: state is Loading ? () {} : _handleLogin,
+                            color: AppColors.primery,
+                            width: MediaQuery.of(context).size.width - 60.w,
                           ),
                         ],
                       ),
-                      SizedBox(width: 150.w),
-                    ],
-                  ),
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        SizedBox(height: 25.h),
-                        CustomTextFormField(
-                          text: "Email",
-                          controller: _email,
-                          validator: Validators.validateEmail,
-                        ),
-                        SizedBox(height: 10.h),
+                    ),
 
-                        CustomTextFormField(
-                          text: "Password",
-                          controller: _password,
-                          isPassword: true,
-                          validator: Validators.validatePassword,
+                    SizedBox(height: 20.h),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              RouteNames.password_recovery,
+                            );
+                          },
+                          child: Text(
+                            "Forget your password ",
+                            style: AppStyle.smallPrimery.copyWith(
+                              fontSize: 18.sp,
+                            ),
+                            textAlign: TextAlign.start,
+                          ),
                         ),
-                        SizedBox(height: 30.h),
-                        CustomMediumButton(
-                          value: "LogIn",
-                          isLoading: state is Loading,
-                          onPressed: state is Loading ? () {} : _handleLogin,
-                          color: AppColors.primery,
-                          width: MediaQuery.of(context).size.width - 60.w,
-                        ),
+                        SizedBox(width: 140.w),
                       ],
                     ),
-                  ),
+                    SizedBox(height: 20.h),
 
-                  SizedBox(height: 20.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(
-                            context,
-                            RouteNames.password_recovery,
-                          );
-                        },
-                        child: Text(
-                          "Forget your password ",
-                          style: AppStyle.smallPrimery.copyWith(
-                            fontSize: 18.sp,
-                          ),
-                          textAlign: TextAlign.start,
-                        ),
+                    TextButton(
+                      onPressed: state is Loading
+                          ? null
+                          : () {
+                              context.read<AuthCubit>().googleAuth();
+                            },
+                      child: Text(
+                        "- Sign in with google -",
+                        style: AppStyle.smallBlack,
                       ),
-                      SizedBox(width: 140.w),
-                    ],
-                  ),
-                  SizedBox(height: 20.h),
-
-                  TextButton(
-                    onPressed: state is Loading
-                        ? null
-                        : () {
-                      context.read<AuthCubit>().googleAuth();
-                    },
-                    child: Text(
-                      "- Sign in with google -",
-                      style: AppStyle.smallBlack,
                     ),
-                  ),
-                  SizedBox(height: 16.h),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, RouteNames.sign_up);
-                    },
-                    child: Text(
-                      "First time to see us?",
-                      style: AppStyle.smallBlack,
+                    SizedBox(height: 16.h),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, RouteNames.sign_up);
+                      },
+                      child: Text(
+                        "First time to see us?",
+                        style: AppStyle.smallBlack,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

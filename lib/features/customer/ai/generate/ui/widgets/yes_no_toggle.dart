@@ -5,8 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class YesNoToggle extends StatefulWidget {
   final bool initialValue;
   final ValueChanged<bool>? onChanged;
+  final bool isTailor;
 
-  const YesNoToggle({super.key, this.initialValue = true, this.onChanged});
+  const YesNoToggle({super.key, this.initialValue = true, this.onChanged, this.isTailor = false});
 
   @override
   State<YesNoToggle> createState() => _YesNoToggleState();
@@ -14,11 +15,13 @@ class YesNoToggle extends StatefulWidget {
 
 class _YesNoToggleState extends State<YesNoToggle> {
   late bool isYes;
+  late bool isTailor;
 
   @override
   void initState() {
     super.initState();
     isYes = widget.initialValue;
+    isTailor = widget.isTailor;
   }
 
   void _toggle(bool value) {
@@ -39,12 +42,12 @@ class _YesNoToggleState extends State<YesNoToggle> {
       child: Row(
         children: [
           _buildOption(
-            label: 'Yes',
+            label: isTailor ? 'No' : 'Yes',
             selected: isYes,
             onTap: () => _toggle(true),
           ),
           _buildOption(
-            label: 'No',
+            label: isTailor ? 'Yes' : 'No',
             selected: !isYes,
             onTap: () => _toggle(false),
           ),

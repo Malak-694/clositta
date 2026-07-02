@@ -25,6 +25,7 @@ import 'package:chicora/features/notifications/logic/cubit/notification_cubit.da
 import 'package:chicora/features/seller/products/logic/cubit/seller_products_cubit.dart';
 import 'package:chicora/features/seller/analysis/logic/cubit/analysis_seller_cubit.dart';
 import 'package:chicora/features/seller/products/ui/screens/added_product_form.dart';
+import 'package:chicora/features/tailor/ai/generate_ai_tailor_screen.dart';
 import 'package:chicora/features/tailor/bidding_tailor/logic/cubit/bidding_tailor_cubit.dart';
 import 'package:chicora/features/tailor/bidding_tailor/ui/Screens/detailes_screen_tailor.dart';
 import 'package:chicora/features/tailor/bidding_tailor/ui/Screens/join_bidding_screen.dart';
@@ -195,11 +196,18 @@ class AppRouter {
             child: GenerateImageScreen(),
           ),
         );
-      case RouteNames.outfit_recommendation_result:
-        final response = settings.arguments as DailyOutfitRecommendationResponse;
+      case RouteNames.generate_image_tailor_screen:
         return MaterialPageRoute(
-          builder: (_) => OutfitRecomendationScreen(),
+          builder: (_) => BlocProvider(
+            create: (context) => getIt<AiGeneratorCubit>(),
+            child: GenerateImageScreenTailor(),
+          ),
         );
+      case RouteNames.outfit_recommendation_result:
+        // ignore: unused_local_variable
+        final response =
+            settings.arguments as DailyOutfitRecommendationResponse;
+        return MaterialPageRoute(builder: (_) => OutfitRecomendationScreen());
       case RouteNames.post_details_customer:
         final args = settings.arguments as Map<String, dynamic>? ?? {};
         final bidId = args['bidId'] as String? ?? '';

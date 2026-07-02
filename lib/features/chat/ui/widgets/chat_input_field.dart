@@ -62,7 +62,6 @@ class _ChatInputFieldState extends State<ChatInputField> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-
         if (_selectedImage != null)
           Container(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
@@ -71,11 +70,10 @@ class _ChatInputFieldState extends State<ChatInputField> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10.r),
-                  child: Image.file(
-                    _selectedImage!,
-                    height: 350.h,
-                    width: 300.w,
-                    fit: BoxFit.cover,
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.6,
+                    height: 220.h,
+                    child: Image.file(_selectedImage!, fit: BoxFit.cover),
                   ),
                 ),
                 Positioned(
@@ -88,7 +86,7 @@ class _ChatInputFieldState extends State<ChatInputField> {
                         color: AppColors.light,
                         shape: BoxShape.circle,
                       ),
-                      child:  Icon(
+                      child: Icon(
                         Icons.close,
                         color: Theme.of(context).cardColor,
                         size: 18,
@@ -105,10 +103,7 @@ class _ChatInputFieldState extends State<ChatInputField> {
           decoration: BoxDecoration(
             color: Colors.white,
             boxShadow: [
-              BoxShadow(
-                color: AppColors.light.withOpacity(0.7),
-                blurRadius: 4,
-              ),
+              BoxShadow(color: AppColors.light.withOpacity(0.7), blurRadius: 4),
             ],
           ),
           child: Row(
@@ -140,8 +135,7 @@ class _ChatInputFieldState extends State<ChatInputField> {
                       borderRadius: BorderRadius.circular(24.r),
                       borderSide: BorderSide.none,
                     ),
-                    contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                   ),
                 ),
               ),

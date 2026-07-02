@@ -70,12 +70,22 @@ class AiGeneratorCubit extends Cubit<AiGeneratorState> {
         filename: 'reference.jpg',
       );
     }
-    final MeasurementsModel? others = _getMeasurementsFromCache();
+    final role = await _prefs.getSecureData(SharedPrefKey.role);
+
+    bool isTailor = role != "customer";
+
+    MeasurementsModel? enteredMeasures = others;
+
+    if (!isTailor && useMyMeasurements) {
+      enteredMeasures = _getMeasurementsFromCache();
+    }
+
     final result = await _repo.generateImage(
       prompt: prompt,
       useMyMeasurements: useMyMeasurements,
-      enteredMeasures: others,
+      enteredMeasures: enteredMeasures,
       referenceImage: multipartFile,
+      isTailor: isTailor,
       token: token,
     );
     result.when(

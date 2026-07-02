@@ -17,12 +17,14 @@ class FilterResult {
   final String? gender;
   final String? season;
   final String? occasion;
+  final String? type;
 
   const FilterResult({
     required this.priceSort,
     required this.gender,
     required this.season,
     required this.occasion,
+    this.type,
   });
 }
 
@@ -32,8 +34,10 @@ Future<FilterResult?> showFilterSidebar(
   required String? initialGender,
   required String? initialSeason,
   required String? initialOccasion,
+  String? initialType,
   bool usePrice = true,
   bool useGender = true,
+  bool useType = false,
 }) {
   return showGeneralDialog<FilterResult>(
     context: context,
@@ -48,8 +52,10 @@ Future<FilterResult?> showFilterSidebar(
         initialGender: initialGender,
         initialSeason: initialSeason,
         initialOccasion: initialOccasion,
+        initialType: initialType,
         usePrice: usePrice,
         useGender: useGender,
+        useType: useType,
       );
     },
     transitionBuilder: (context, animation, secondaryAnimation, child) {
@@ -69,16 +75,20 @@ class _FilterSidebar extends StatefulWidget {
   final String? initialGender;
   final String? initialSeason;
   final String? initialOccasion;
+  final String? initialType;
   final bool usePrice;
   final bool useGender;
+  final bool useType;
 
   const _FilterSidebar({
     required this.initialPriceSort,
     required this.initialGender,
     required this.initialSeason,
     required this.initialOccasion,
+    this.initialType,
     this.usePrice = true,
     this.useGender = true,
+    this.useType = false,
   });
 
   @override
@@ -90,6 +100,7 @@ class _FilterSidebarState extends State<_FilterSidebar> {
   late String? _gender = widget.initialGender;
   late String? _season = widget.initialSeason;
   late String? _occasion = widget.initialOccasion;
+  late String? _type = widget.initialType;
 
   void _pop() {
     Navigator.pop(
@@ -99,6 +110,7 @@ class _FilterSidebarState extends State<_FilterSidebar> {
         gender: _gender,
         season: _season,
         occasion: _occasion,
+        type: _type,
       ),
     );
   }
@@ -160,6 +172,19 @@ class _FilterSidebarState extends State<_FilterSidebar> {
                     ),
                     SizedBox(height: 20.h),
                   ],
+
+                  if (widget.useType) ...[
+                    Text('Type', style: AppStyle.body5),
+                    SizedBox(height: 8.h),
+                    _buildDropdown(
+                      hint: 'Type',
+                      value: _type,
+                      items: const ['Clothes', 'Material'],
+                      onChanged: (val) => setState(() => _type = val),
+                    ),
+                    SizedBox(height: 20.h),
+                  ],
+
                   Text('Season', style: AppStyle.body5),
                   SizedBox(height: 8.h),
                   _buildDropdown(
@@ -209,6 +234,7 @@ class _FilterSidebarState extends State<_FilterSidebar> {
                         setState(() {
                           if (widget.usePrice) _priceSort = PriceSortOrder.none;
                           if (widget.useGender) _gender = null;
+                          if (widget.useType) _type = null;
                           _season = null;
                           _occasion = null;
                         });

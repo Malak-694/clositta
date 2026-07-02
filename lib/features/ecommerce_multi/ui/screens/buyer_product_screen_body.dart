@@ -44,6 +44,7 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
   String? _selectedGender;
   String? _selectedSeason;
   String? _selectedOccasion;
+  String? _selectedType;
 
   final TextEditingController searchController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
@@ -120,6 +121,12 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
           _selectedOccasion!.toLowerCase() != 'all') {
         if (p.occasion == null ||
             p.occasion!.toLowerCase() != _selectedOccasion!.toLowerCase()) {
+          return false;
+        }
+      }
+      if (_selectedType != null && _selectedType!.toLowerCase() != 'all') {
+        if (p.type == null ||
+            p.type!.toLowerCase() != _selectedType!.toLowerCase()) {
           return false;
         }
       }
@@ -321,8 +328,10 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
       context,
       initialPriceSort: _priceSort,
       initialGender: _selectedGender,
-      initialSeason: null,
-      initialOccasion: null,
+      initialSeason: _selectedSeason,
+      initialOccasion: _selectedOccasion,
+      initialType: _selectedType,
+      useType: true, // enable Type filter on this screen
     );
     if (result == null) return;
     setState(() {
@@ -330,9 +339,11 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
       _selectedGender = result.gender;
       _selectedSeason = result.season;
       _selectedOccasion = result.occasion;
+      _selectedType = result.type;
     });
     final cubit = context.read<ViewProductsCubit>();
     cubit.filterBySeason(_selectedSeason);
     cubit.filterByOccasion(_selectedOccasion);
+    cubit.filterByType(_selectedType);
   }
 }

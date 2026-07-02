@@ -253,6 +253,7 @@ class OrderViewBody extends StatelessWidget {
     }
   }
 
+  // ignore: unused_element
   void _showSubOrderPicker(BuildContext context, OrderDataModel order) {
     final cancellableSubOrders = (order.subOrders ?? const <SubOrderModel>[])
         .where(

@@ -1,19 +1,15 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:chicora/core/helper/shared_pref_helper.dart';
 import 'package:chicora/core/networking/api_result.dart';
 import 'package:chicora/features/ecommerce_multi/data/repo/product_search_repo.dart';
 import 'package:chicora/features/ecommerce_multi/data/repo/view_products_repo.dart';
 import 'package:chicora/features/ecommerce_multi/logic/view_product_logic/view_products_state.dart';
 
-import '../../../../core/di/dependency_injection.dart';
-import '../../../../core/helper/shared_key.dart';
 import '../../data/models/product_models/product_response_model.dart';
 import '../../data/models/product_models/product_search_response_model.dart';
 
 class ViewProductsCubit extends Cubit<ViewProductsState> {
-  final SharedPrefHelper _prefs = getIt<SharedPrefHelper>();
   final ViewProductsRepo viewProductsRepo;
   final ProductSearchRepo productSearchRepo;
 
@@ -22,6 +18,7 @@ class ViewProductsCubit extends Cubit<ViewProductsState> {
   // Filtering criteria
   String? _selectedSeason;
   String? _selectedOccasion;
+  String? _selectedType;
 
   ViewProductsCubit({
     required this.viewProductsRepo,
@@ -39,10 +36,10 @@ class ViewProductsCubit extends Cubit<ViewProductsState> {
     String? type,
   }) async {
     try {
-      final roleVal = _prefs.getData(SharedPrefKey.role);
-      final String userRole = (roleVal is String) ? roleVal : '';
-      final effectiveType =
-          type ?? (userRole.toLowerCase() == 'tailor' ? 'material' : 'Clothes');
+      // final roleVal = _prefs.getSecureData(SharedPrefKey.role);
+      // final String? userRole = roleVal as String?;
+      // final effectiveType =
+      //     type ?? (userRole == 'tailor' ? 'Material' : 'Clothes');
 
       emit(ViewProductsState.loading());
       final response = await viewProductsRepo.getProductsBuyer(
@@ -53,7 +50,7 @@ class ViewProductsCubit extends Cubit<ViewProductsState> {
         inStock: inStock,
         sellerId: sellerId,
         search: search,
-        type: effectiveType,
+        type: type,
       );
 
       response.when(
@@ -140,16 +137,39 @@ class ViewProductsCubit extends Cubit<ViewProductsState> {
     _applyFilters();
   }
 
+  void filterByType(String? type) {
+    _selectedType = type;
+    _applyFilters();
+  }
+
   void _applyFilters() {
     var filtered = _allProducts;
     if (_selectedSeason != null && _selectedSeason!.toLowerCase() != 'all') {
       filtered = filtered
-          .where((p) => p.season != null && p.season!.toLowerCase() == _selectedSeason!.toLowerCase())
+          .where(
+            (p) =>
+                p.season != null &&
+                p.season!.toLowerCase() == _selectedSeason!.toLowerCase(),
+          )
           .toList();
     }
-    if (_selectedOccasion != null && _selectedOccasion!.toLowerCase() != 'all') {
+    if (_selectedOccasion != null &&
+        _selectedOccasion!.toLowerCase() != 'all') {
       filtered = filtered
-          .where((p) => p.occasion != null && p.occasion!.toLowerCase() == _selectedOccasion!.toLowerCase())
+          .where(
+            (p) =>
+                p.occasion != null &&
+                p.occasion!.toLowerCase() == _selectedOccasion!.toLowerCase(),
+          )
+          .toList();
+    }
+    if (_selectedType != null && _selectedType!.toLowerCase() != 'all') {
+      filtered = filtered
+          .where(
+            (p) =>
+                p.type != null &&
+                p.type!.toLowerCase() == _selectedType!.toLowerCase(),
+          )
           .toList();
     }
     emit(ViewProductsState.success(filtered));

@@ -16,6 +16,10 @@ ProductRequestModel _$ProductRequestModelFromJson(Map<String, dynamic> json) =>
       category: json['category'] as String,
       type: json['type'] as String,
       imageUrl: json['imageUrl'] as String?,
+      gender: json['gender'] as String,
+      season: json['season'] as String,
+      occasion: json['occasion'] as String,
+      color: json['color'] as String?,
     );
 
 Map<String, dynamic> _$ProductRequestModelToJson(
@@ -28,5 +32,9 @@ Map<String, dynamic> _$ProductRequestModelToJson(
   'stock': instance.stock,
   'category': instance.category,
   'type': instance.type,
+  'gender': instance.gender,
+  'season': instance.season,
+  'occasion': instance.occasion,
+  'color': instance.color,
   'imageUrl': instance.imageUrl,
 };

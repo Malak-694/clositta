@@ -31,6 +31,10 @@ class SellerProductRepo {
     required String stock,
     required String category,
     required String type,
+    required String gender,
+    required String season,
+    required String occasion,
+    String? color,
     required String imagePath,
   }) async {
     try {
@@ -53,6 +57,10 @@ class SellerProductRepo {
         stock,
         category,
         type,
+        gender,
+        season,
+        occasion,
+        color,
         multipartFile,
       );
 
@@ -77,6 +85,10 @@ class SellerProductRepo {
     required String stock,
     required String category,
     required String type,
+    required String gender,
+    required String season,
+    required String occasion,
+    String? color,
     String? imagePath,
   }) async {
     try {
@@ -100,6 +112,10 @@ class SellerProductRepo {
         stock,
         category,
         type,
+        gender,
+        season,
+        occasion,
+        color,
         multipartFile,
       );
 

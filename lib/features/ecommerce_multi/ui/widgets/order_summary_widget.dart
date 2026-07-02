@@ -169,7 +169,7 @@ class _SellerSubOrdersSection extends StatelessWidget {
                             borderRadius: BorderRadius.circular(20.r),
                           ),
                           child: Text(
-                            status ?? 'pending',
+                            status,
                             style: AppStyle.smallBlack.copyWith(
                               color: _orderStatusColor(status),
                               fontWeight: FontWeight.w700,

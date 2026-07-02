@@ -25,7 +25,7 @@ String getInitialRoute(String? token, String? role) {
   }
   switch (role) {
     case 'customer':
-      return RouteNames.ai_customer_screen;
+      return RouteNames.closet_items_screen;
     case 'tailor':
       return RouteNames.view_bidding_tailor;
     case 'clothes_seller':
@@ -52,11 +52,19 @@ void main() async {
   }
 
   final initialRoute = getInitialRoute(token, role);
-  final bool needsCartAndChat = role == 'customer' || role == 'tailor';
 
-  runApp(
-    needsCartAndChat
-        ? MultiBlocProvider(
+  Widget appProviders;
+  if (role == "clothes_seller" || role == "material_seller") {
+    appProviders = MultiBlocProvider(
+      providers: [
+        BlocProvider<NotificationCubit>(
+          create: (_) => getIt<NotificationCubit>()..getUnreadCount(),
+        ),
+      ],
+      child: ChicoraApp(initialRoute: initialRoute, savedDark: savedDark),
+    );
+  } else {
+    appProviders = MultiBlocProvider(
       providers: [
         BlocProvider<CartCubit>(
           create: (_) => getIt<CartCubit>()..getCart(),
@@ -69,9 +77,10 @@ void main() async {
         ),
       ],
       child: ChicoraApp(initialRoute: initialRoute, savedDark: savedDark),
-    )
-        : ChicoraApp(initialRoute: initialRoute, savedDark: savedDark),
-  );
+    );
+  }
+
+  runApp(appProviders);
 }
 
 bool _isOrdersReturnDeepLink(Uri uri) {

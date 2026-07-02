@@ -15,6 +15,10 @@ class ProductModel {
   final int stock;
   final String category;
   final String type;
+  final String? gender;
+  final String? season;
+  final String? occasion;
+  final String? color;
   final String imageUrl;
   final String imageFileId;
   final double averageRating;
@@ -37,6 +41,10 @@ class ProductModel {
     required this.stock,
     required this.category,
     required this.type,
+    this.gender,
+    this.season,
+    this.occasion,
+    this.color,
     required this.imageUrl,
     required this.imageFileId,
     required this.averageRating,

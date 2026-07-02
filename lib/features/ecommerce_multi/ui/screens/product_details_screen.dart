@@ -374,6 +374,21 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     height: 1.45,
                   ),
                 ),
+                SizedBox(height: 16.h),
+                Wrap(
+                  spacing: 8.w,
+                  runSpacing: 8.h,
+                  children: [
+                    if (widget.product.gender != null && widget.product.gender!.isNotEmpty)
+                      _buildAttributeChip('Gender: ${widget.product.gender}'),
+                    if (widget.product.season != null && widget.product.season!.isNotEmpty)
+                      _buildAttributeChip('Season: ${widget.product.season}'),
+                    if (widget.product.occasion != null && widget.product.occasion!.isNotEmpty)
+                      _buildAttributeChip('Occasion: ${widget.product.occasion}'),
+                    if (widget.product.color != null && widget.product.color!.isNotEmpty)
+                      _buildAttributeChip('Color: ${widget.product.color}'),
+                  ],
+                ),
                 SizedBox(height: 24.h),
                 if (_hasFullProductData) ...[
                   if (widget.product.seller != null)
@@ -425,6 +440,24 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAttributeChip(String text) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+      decoration: BoxDecoration(
+        color: _rolePrimary.withValues(alpha: 0.05),
+        border: Border.all(color: _rolePrimary.withValues(alpha: 0.2)),
+        borderRadius: BorderRadius.circular(16.r),
+      ),
+      child: Text(
+        text,
+        style: AppStyle.caption.copyWith(
+          color: _roleDark,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );

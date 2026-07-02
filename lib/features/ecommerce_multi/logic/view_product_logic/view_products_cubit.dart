@@ -17,6 +17,12 @@ class ViewProductsCubit extends Cubit<ViewProductsState> {
   final ViewProductsRepo viewProductsRepo;
   final ProductSearchRepo productSearchRepo;
 
+  // Full list of fetched products
+  List<ProductModelBuyer> _allProducts = [];
+  // Filtering criteria
+  String? _selectedSeason;
+  String? _selectedOccasion;
+
   ViewProductsCubit({
     required this.viewProductsRepo,
     required this.productSearchRepo,
@@ -52,7 +58,10 @@ class ViewProductsCubit extends Cubit<ViewProductsState> {
 
       response.when(
         success: (List<ProductModelBuyer> products) {
-          emit(ViewProductsState.success(products));
+          // Keep the full list for local filtering
+          _allProducts = products;
+          // Apply any existing filters before emitting
+          _applyFilters();
         },
         failure: (String error) {
           emit(ViewProductsState.fail(error));
@@ -118,6 +127,32 @@ class ViewProductsCubit extends Cubit<ViewProductsState> {
     } catch (e) {
       emit(ViewProductsState.fail(e.toString()));
     }
+  }
+
+  /// Local filtering methods for season and occasion
+  void filterBySeason(String? season) {
+    _selectedSeason = season;
+    _applyFilters();
+  }
+
+  void filterByOccasion(String? occasion) {
+    _selectedOccasion = occasion;
+    _applyFilters();
+  }
+
+  void _applyFilters() {
+    var filtered = _allProducts;
+    if (_selectedSeason != null && _selectedSeason!.toLowerCase() != 'all') {
+      filtered = filtered
+          .where((p) => p.season != null && p.season!.toLowerCase() == _selectedSeason!.toLowerCase())
+          .toList();
+    }
+    if (_selectedOccasion != null && _selectedOccasion!.toLowerCase() != 'all') {
+      filtered = filtered
+          .where((p) => p.occasion != null && p.occasion!.toLowerCase() == _selectedOccasion!.toLowerCase())
+          .toList();
+    }
+    emit(ViewProductsState.success(filtered));
   }
 
   /// No local filtering or caching; backend provides filtered lists.

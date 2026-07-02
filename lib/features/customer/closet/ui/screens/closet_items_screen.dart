@@ -3,17 +3,13 @@ import 'package:chicora/features/notifications/logic/cubit/notification_state.da
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../core/constants/colors.dart';
 import '../../../../../core/di/dependency_injection.dart';
 import '../../../../../core/helper/shared_key.dart';
 import '../../../../../core/helper/shared_pref_helper.dart';
 import '../../../../../core/widgets/custom_app_bar.dart';
 import '../../../../../core/widgets/custom_nav_bar.dart';
-import '../../../../chat/data/models/conversation_model.dart';
 import '../../../../chat/logic/conversations_cubit/conversations_cubit.dart';
-import '../../../../chat/logic/conversations_cubit/conversations_state.dart';
 import '../../../../ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
-import '../../../../ecommerce_multi/logic/cart_cubit/cart_state.dart';
 import '../../../../ecommerce_multi/logic/cart_cubit/cart_total_quantity.dart';
 import '../../../../notifications/data/models/unread_count_response.dart';
 import '../../../../notifications/logic/cubit/notification_cubit.dart';

@@ -56,6 +56,10 @@ class SellerProductsCubit extends Cubit<SellerProductsState> {
     required String stock,
     required String category,
     required String type,
+    required String gender,
+    required String season,
+    required String occasion,
+    String? color,
     required String imagePath,
   }) async {
     emit(SellerProductsState.loading());
@@ -73,6 +77,10 @@ class SellerProductsCubit extends Cubit<SellerProductsState> {
         stock: stock,
         category: category,
         type: type,
+        gender: gender,
+        season: season,
+        occasion: occasion,
+        color: color,
         imagePath: imagePath,
       );
 
@@ -97,6 +105,10 @@ class SellerProductsCubit extends Cubit<SellerProductsState> {
     required String stock,
     required String category,
     required String type,
+    required String gender,
+    required String season,
+    required String occasion,
+    String? color,
     String? imagePath,
   }) async {
     emit(SellerProductsState.loading());
@@ -115,6 +127,10 @@ class SellerProductsCubit extends Cubit<SellerProductsState> {
         stock: stock,
         category: category,
         type: type,
+        gender: gender,
+        season: season,
+        occasion: occasion,
+        color: color,
         imagePath: imagePath,
       );
 

@@ -29,6 +29,7 @@ class _AddedProductFormState extends State<AddedProductForm> {
   final _descriptionController = TextEditingController();
   final _priceController = TextEditingController();
   final _stockController = TextEditingController();
+  final _colorController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
 
   final List<String> categories = [
@@ -41,9 +42,15 @@ class _AddedProductFormState extends State<AddedProductForm> {
     "shoes",
     "accessories",  ];
   final List<String> types = ['Clothes', 'Material'];
+  final List<String> genders = ['male', 'female', 'unisex'];
+  final List<String> seasons = ['summer', 'winter', 'spring', 'autumn', 'all-season'];
+  final List<String> occasions = ['casual', 'formal', 'wedding', 'sport', 'beach', 'party', 'other'];
 
   String? _selectedCategory;
   String? _selectedType;
+  String? _selectedGender;
+  String? _selectedSeason;
+  String? _selectedOccasion;
   String? _selectedImagePath;
   String? _existingImageUrl;
 
@@ -66,10 +73,26 @@ class _AddedProductFormState extends State<AddedProductForm> {
         (t) => t.toLowerCase() == widget.product!.type.toLowerCase(),
         orElse: () => types.first,
       );
+      _colorController.text = widget.product!.color ?? '';
+      _selectedGender = genders.firstWhere(
+        (g) => g.toLowerCase() == widget.product!.gender?.toLowerCase(),
+        orElse: () => genders.first,
+      );
+      _selectedSeason = seasons.firstWhere(
+        (s) => s.toLowerCase() == widget.product!.season?.toLowerCase(),
+        orElse: () => seasons.first,
+      );
+      _selectedOccasion = occasions.firstWhere(
+        (o) => o.toLowerCase() == widget.product!.occasion?.toLowerCase(),
+        orElse: () => occasions.first,
+      );
       _existingImageUrl = widget.product!.imageUrl;
     } else {
       _selectedCategory = categories.first;
       _selectedType = types.first;
+      _selectedGender = genders.first;
+      _selectedSeason = seasons.first;
+      _selectedOccasion = occasions.first;
     }
   }
 
@@ -79,6 +102,7 @@ class _AddedProductFormState extends State<AddedProductForm> {
     _descriptionController.dispose();
     _priceController.dispose();
     _stockController.dispose();
+    _colorController.dispose();
     super.dispose();
   }
 
@@ -193,6 +217,58 @@ class _AddedProductFormState extends State<AddedProductForm> {
                     ),
                   ],
                 ),
+                SizedBox(height: 15.h),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomDropdownList(
+                        label: "Gender",
+                        value: _selectedGender,
+                        items: genders,
+                        hintText: "Select gender",
+                        onChanged: (value) =>
+                            setState(() => _selectedGender = value),
+                      ),
+                    ),
+                    SizedBox(width: 10.w),
+                    Expanded(
+                      child: CustomDropdownList(
+                        label: "Season",
+                        value: _selectedSeason,
+                        items: seasons,
+                        hintText: "Select season",
+                        onChanged: (value) =>
+                            setState(() => _selectedSeason = value),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 15.h),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomDropdownList(
+                        label: "Occasion",
+                        value: _selectedOccasion,
+                        items: occasions,
+                        hintText: "Select occasion",
+                        onChanged: (value) =>
+                            setState(() => _selectedOccasion = value),
+                      ),
+                    ),
+                    SizedBox(width: 10.w),
+                    Expanded(
+                      child: LabeledTextField(
+                        controller: _colorController,
+                        hintText: "e.g., Red",
+                        label: "Color",
+                        labelStyle: AppStyle.body6,
+                        fillColor: AppColors.lightprimery,
+                        filled: true,
+                      ),
+                    ),
+                  ],
+                ),
                 SizedBox(height: 30.h),
                 BlocBuilder<SellerProductsCubit, SellerProductsState>(
                   builder: (context, state) {
@@ -265,6 +341,10 @@ class _AddedProductFormState extends State<AddedProductForm> {
         stock: _stockController.text.trim(),
         category: _selectedCategory ?? categories.first,
         type: _selectedType ?? types.first,
+        gender: _selectedGender ?? genders.first,
+        season: _selectedSeason ?? seasons.first,
+        occasion: _selectedOccasion ?? occasions.first,
+        color: _colorController.text.trim().isEmpty ? null : _colorController.text.trim(),
         imagePath: _selectedImagePath, // ✅ null if not changed
       );
     } else {
@@ -275,6 +355,10 @@ class _AddedProductFormState extends State<AddedProductForm> {
         stock: _stockController.text.trim(),
         category: _selectedCategory ?? categories.first,
         type: _selectedType ?? types.first,
+        gender: _selectedGender ?? genders.first,
+        season: _selectedSeason ?? seasons.first,
+        occasion: _selectedOccasion ?? occasions.first,
+        color: _colorController.text.trim().isEmpty ? null : _colorController.text.trim(),
         imagePath: _selectedImagePath!,
       );
     }

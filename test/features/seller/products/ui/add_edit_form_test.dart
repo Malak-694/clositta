@@ -19,8 +19,6 @@ class MockSellerProductsCubit extends MockCubit<SellerProductsState>
 
 class MockSharedPrefHelper extends Mock implements SharedPrefHelper {}
 
-
-
 void setPhoneSize(WidgetTester tester) {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1.0;
@@ -40,10 +38,7 @@ void ignoreOverflowErrors(WidgetTester tester) {
 }
 
 Future<void> scrollAndTapButton(WidgetTester tester, String label) async {
-  await tester.drag(
-    find.byType(SingleChildScrollView),
-    const Offset(0, -600),
-  );
+  await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -600));
   await tester.pumpAndSettle();
 
   final btn = find.ancestor(
@@ -69,7 +64,6 @@ Widget buildTestWidget({
   );
 }
 
-
 final fakeProduct = ProductModel(
   ratingDistribution: {'1': 0, '2': 0, '3': 1, '4': 2, '5': 5},
   id: 'test-product-id-1',
@@ -90,7 +84,6 @@ final fakeProduct = ProductModel(
   v: 0,
 );
 
-
 void main() {
   late MockSellerProductsCubit mockCubit;
   late MockSharedPrefHelper mockPrefs;
@@ -98,80 +91,83 @@ void main() {
   setUp(() {
     mockPrefs = MockSharedPrefHelper();
     getIt.registerSingleton<SharedPrefHelper>(mockPrefs);
-    when(() => mockPrefs.getSecureData(any()))
-        .thenAnswer((_) async => null);
+    when(() => mockPrefs.getSecureData(any())).thenAnswer((_) async => null);
 
     mockCubit = MockSellerProductsCubit();
-    when(() => mockCubit.state)
-        .thenReturn(const SellerProductsState.initial());
+    when(() => mockCubit.state).thenReturn(const SellerProductsState.initial());
   });
 
   tearDown(() => getIt.reset());
 
   group('Add mode (product == null)', () {
+    testWidgets('renders "Add New Product" title and "Add Product" button', (
+      tester,
+    ) async {
+      setPhoneSize(tester);
+      ignoreOverflowErrors(tester);
 
+      await tester.pumpWidget(buildTestWidget(cubit: mockCubit));
+      await tester.pump();
 
-    testWidgets('renders "Add New Product" title and "Add Product" button',
-            (tester) async {
-          setPhoneSize(tester);
-          ignoreOverflowErrors(tester);
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.text('Add New Product'),
+        ),
+        findsOneWidget,
+      );
 
-          await tester.pumpWidget(buildTestWidget(cubit: mockCubit));
-          await tester.pump();
+      await tester.drag(
+        find.byType(SingleChildScrollView),
+        const Offset(0, -600),
+      );
+      await tester.pumpAndSettle();
 
-          expect(
-            find.descendant(
-              of: find.byType(AppBar),
-              matching: find.text('Add New Product'),
-            ),
-            findsOneWidget,
-          );
+      expect(
+        find.ancestor(
+          of: find.text('Add Product'),
+          matching: find.byType(ElevatedButton),
+        ),
+        findsOneWidget,
+      );
+    });
 
-          await tester.drag(
-              find.byType(SingleChildScrollView), const Offset(0, -600));
-          await tester.pumpAndSettle();
+    testWidgets('shows snackbar when submitting with empty fields', (
+      tester,
+    ) async {
+      setPhoneSize(tester);
+      ignoreOverflowErrors(tester);
 
-          expect(
-            find.ancestor(
-              of: find.text('Add Product'),
-              matching: find.byType(ElevatedButton),
-            ),
-            findsOneWidget,
-          );
-        });
+      await tester.pumpWidget(buildTestWidget(cubit: mockCubit));
 
-    testWidgets('shows snackbar when submitting with empty fields',
-            (tester) async {
-          setPhoneSize(tester);
-          ignoreOverflowErrors(tester);
+      await scrollAndTapButton(tester, 'Add Product');
 
-          await tester.pumpWidget(buildTestWidget(cubit: mockCubit));
+      expect(find.text('Please enter all fields'), findsOneWidget);
+    });
 
-          await scrollAndTapButton(tester, 'Add Product');
+    testWidgets('shows snackbar when all fields filled but no image selected', (
+      tester,
+    ) async {
+      setPhoneSize(tester);
+      ignoreOverflowErrors(tester);
 
-          expect(find.text('Please enter all fields'), findsOneWidget);
-        });
+      await tester.pumpWidget(buildTestWidget(cubit: mockCubit));
 
-    testWidgets('shows snackbar when all fields filled but no image selected',
-            (tester) async {
-          setPhoneSize(tester);
-          ignoreOverflowErrors(tester);
+      await tester.enterText(
+        find.widgetWithText(TextField, 'e.g., Wedding Dress'),
+        'My Fabric',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Describe your product...'),
+        'Nice',
+      );
+      await tester.enterText(find.widgetWithText(TextField, '00.0'), '25.00');
+      await tester.enterText(find.widgetWithText(TextField, '0'), '50');
 
-          await tester.pumpWidget(buildTestWidget(cubit: mockCubit));
+      await scrollAndTapButton(tester, 'Add Product');
 
-          await tester.enterText(
-              find.widgetWithText(TextField, 'e.g., Wedding Dress'), 'My Fabric');
-          await tester.enterText(
-              find.widgetWithText(TextField, 'Describe your product...'), 'Nice');
-          await tester.enterText(
-              find.widgetWithText(TextField, '00.0'), '25.00');
-          await tester.enterText(
-              find.widgetWithText(TextField, '0'), '50');
-
-          await scrollAndTapButton(tester, 'Add Product');
-
-          expect(find.text('Please select an image'), findsOneWidget);
-        });
+      expect(find.text('Please select an image'), findsOneWidget);
+    });
 
     testWidgets('does not call addProduct without an image', (tester) async {
       setPhoneSize(tester);
@@ -180,118 +176,146 @@ void main() {
       await tester.pumpWidget(buildTestWidget(cubit: mockCubit));
 
       await tester.enterText(
-          find.widgetWithText(TextField, 'e.g., Wedding Dress'), 'My Fabric');
+        find.widgetWithText(TextField, 'e.g., Wedding Dress'),
+        'My Fabric',
+      );
       await tester.enterText(
-          find.widgetWithText(TextField, 'Describe your product...'), 'Nice');
-      await tester.enterText(
-          find.widgetWithText(TextField, '00.0'), '10.00');
-      await tester.enterText(
-          find.widgetWithText(TextField, '0'), '20');
+        find.widgetWithText(TextField, 'Describe your product...'),
+        'Nice',
+      );
+      await tester.enterText(find.widgetWithText(TextField, '00.0'), '10.00');
+      await tester.enterText(find.widgetWithText(TextField, '0'), '20');
 
       await scrollAndTapButton(tester, 'Add Product');
 
-      verifyNever(() => mockCubit.addProduct(
-        name: any(named: 'name'),
-        description: any(named: 'description'),
-        price: any(named: 'price'),
-        stock: any(named: 'stock'),
-        category: any(named: 'category'),
-        type: any(named: 'type'),
-        imagePath: any(named: 'imagePath'),
-      ));
+      verifyNever(
+        () => mockCubit.addProduct(
+          name: any(named: 'name'),
+          description: any(named: 'description'),
+          price: any(named: 'price'),
+          stock: any(named: 'stock'),
+          category: any(named: 'category'),
+          type: any(named: 'type'),
+          gender: any(named: 'gender'),
+          season: any(named: 'season'),
+          occasion: any(named: 'occasion'),
+          color: any(named: 'color'),
+          imagePath: any(named: 'imagePath'),
+        ),
+      );
     });
   });
 
-
   group('Update mode (product != null)', () {
-    testWidgets('renders "Update Product" title and pre-fills all fields',
-            (tester) async {
-          setPhoneSize(tester);
-          ignoreOverflowErrors(tester);
+    testWidgets('renders "Update Product" title and pre-fills all fields', (
+      tester,
+    ) async {
+      setPhoneSize(tester);
+      ignoreOverflowErrors(tester);
 
-          await tester.pumpWidget(
-              buildTestWidget(cubit: mockCubit, product: fakeProduct));
-          await tester.pump();
+      await tester.pumpWidget(
+        buildTestWidget(cubit: mockCubit, product: fakeProduct),
+      );
+      await tester.pump();
 
-          expect(
-            find.descendant(
-              of: find.byType(AppBar),
-              matching: find.text('Update Product'),
-            ),
-            findsOneWidget,
-          );
-          expect(find.text('Add New Product'), findsNothing);
-          expect(find.text('Blue Cotton Fabric'), findsOneWidget);
-          expect(find.text('High quality cotton fabric'), findsOneWidget);
-          expect(find.text('12.99'), findsOneWidget);
-          expect(find.text('500'), findsOneWidget);
-        });
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.text('Update Product'),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text('Add New Product'), findsNothing);
+      expect(find.text('Blue Cotton Fabric'), findsOneWidget);
+      expect(find.text('High quality cotton fabric'), findsOneWidget);
+      expect(find.text('12.99'), findsOneWidget);
+      expect(find.text('500'), findsOneWidget);
+    });
 
-    testWidgets('calls cubit.updateProduct when form is valid and submitted',
-            (tester) async {
-          setPhoneSize(tester);
-          ignoreOverflowErrors(tester);
+    testWidgets('calls cubit.updateProduct when form is valid and submitted', (
+      tester,
+    ) async {
+      setPhoneSize(tester);
+      ignoreOverflowErrors(tester);
 
-          when(() => mockCubit.updateProduct(
-            productId: any(named: 'productId'),
-            name: any(named: 'name'),
-            description: any(named: 'description'),
-            price: any(named: 'price'),
-            stock: any(named: 'stock'),
-            category: any(named: 'category'),
-            type: any(named: 'type'),
-            imagePath: any(named: 'imagePath'),
-          )).thenAnswer((_) async {});
+      when(
+        () => mockCubit.updateProduct(
+          productId: any(named: 'productId'),
+          name: any(named: 'name'),
+          description: any(named: 'description'),
+          price: any(named: 'price'),
+          stock: any(named: 'stock'),
+          category: any(named: 'category'),
+          type: any(named: 'type'),
+          gender: any(named: 'gender'),
+          season: any(named: 'season'),
+          occasion: any(named: 'occasion'),
+          color: any(named: 'color'),
+          imagePath: any(named: 'imagePath'),
+        ),
+      ).thenAnswer((_) async {});
 
-          await tester.pumpWidget(
-              buildTestWidget(cubit: mockCubit, product: fakeProduct));
+      await tester.pumpWidget(
+        buildTestWidget(cubit: mockCubit, product: fakeProduct),
+      );
 
-          await scrollAndTapButton(tester, 'Update Product');
+      await scrollAndTapButton(tester, 'Update Product');
 
-          verify(() => mockCubit.updateProduct(
-            productId: 'test-product-id-1',
-            name: 'Blue Cotton Fabric',
-            description: 'High quality cotton fabric',
-            price: '12.99',
-            stock: '500',
-            category: 'Tops',
-            type: 'Clothes',
-            imagePath: null,
-          )).called(1);
-        });
+      verify(
+        () => mockCubit.updateProduct(
+          productId: 'test-product-id-1',
+          name: 'Blue Cotton Fabric',
+          description: 'High quality cotton fabric',
+          price: '12.99',
+          stock: '500',
+          category: 'Tops',
+          type: 'Clothes',
+          gender: 'Unisex',
+          season: 'All',
+          occasion: 'Casual',
+          color: 'Red',
+          imagePath: null,
+        ),
+      ).called(1);
+    });
 
-    testWidgets('shows snackbar when updating with an empty required field',
-            (tester) async {
-          setPhoneSize(tester);
-          ignoreOverflowErrors(tester);
+    testWidgets('shows snackbar when updating with an empty required field', (
+      tester,
+    ) async {
+      setPhoneSize(tester);
+      ignoreOverflowErrors(tester);
 
-          await tester.pumpWidget(
-              buildTestWidget(cubit: mockCubit, product: fakeProduct));
+      await tester.pumpWidget(
+        buildTestWidget(cubit: mockCubit, product: fakeProduct),
+      );
 
-          await tester.enterText(
-              find.widgetWithText(TextField, 'Blue Cotton Fabric'), '');
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Blue Cotton Fabric'),
+        '',
+      );
 
-          await scrollAndTapButton(tester, 'Update Product');
+      await scrollAndTapButton(tester, 'Update Product');
 
-          expect(find.text('Please enter all fields'), findsOneWidget);
-        });
+      expect(find.text('Please enter all fields'), findsOneWidget);
+    });
   });
 
-
   group('State reactions', () {
-    testWidgets('shows CircularProgressIndicator when state is loading',
-            (tester) async {
-          setPhoneSize(tester);
-          ignoreOverflowErrors(tester);
+    testWidgets('shows CircularProgressIndicator when state is loading', (
+      tester,
+    ) async {
+      setPhoneSize(tester);
+      ignoreOverflowErrors(tester);
 
-          when(() => mockCubit.state)
-              .thenReturn(const SellerProductsState.loading());
+      when(
+        () => mockCubit.state,
+      ).thenReturn(const SellerProductsState.loading());
 
-          await tester.pumpWidget(buildTestWidget(cubit: mockCubit));
-          await tester.pump();
+      await tester.pumpWidget(buildTestWidget(cubit: mockCubit));
+      await tester.pump();
 
-          expect(find.byType(CircularProgressIndicator), findsOneWidget);
-        });
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    });
 
     testWidgets('pops the screen on success state', (tester) async {
       setPhoneSize(tester);
@@ -312,23 +336,24 @@ void main() {
       expect(find.byType(AddedProductForm), findsNothing);
     });
 
-    testWidgets('shows snackbar with error message on fail state',
-            (tester) async {
-          setPhoneSize(tester);
-          ignoreOverflowErrors(tester);
+    testWidgets('shows snackbar with error message on fail state', (
+      tester,
+    ) async {
+      setPhoneSize(tester);
+      ignoreOverflowErrors(tester);
 
-          whenListen(
-            mockCubit,
-            Stream.fromIterable([
-              const SellerProductsState.fail('Something went wrong'),
-            ]),
-            initialState: const SellerProductsState.initial(),
-          );
+      whenListen(
+        mockCubit,
+        Stream.fromIterable([
+          const SellerProductsState.fail('Something went wrong'),
+        ]),
+        initialState: const SellerProductsState.initial(),
+      );
 
-          await tester.pumpWidget(buildTestWidget(cubit: mockCubit));
-          await tester.pump();
+      await tester.pumpWidget(buildTestWidget(cubit: mockCubit));
+      await tester.pump();
 
-          expect(find.text('Something went wrong'), findsOneWidget);
-        });
+      expect(find.text('Something went wrong'), findsOneWidget);
+    });
   });
 }

@@ -10,6 +10,11 @@ class ProductRequestModel {
   final String stock;
   final String category;
   final String type;
+  final String gender;
+  final String season;
+  final String occasion;
+  final String? color;
+
   final String? imageUrl;
 
   ProductRequestModel({
@@ -21,6 +26,10 @@ class ProductRequestModel {
     required this.category,
     required this.type,
     this.imageUrl,
+    required this.gender,
+    required this.season,
+    required this.occasion,
+    this.color,
   });
 
   factory ProductRequestModel.fromJson(Map<String, dynamic> json) =>

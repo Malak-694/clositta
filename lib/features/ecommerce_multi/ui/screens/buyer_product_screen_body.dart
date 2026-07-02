@@ -1,5 +1,6 @@
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/widgets/custom_category_selector.dart';
+import 'package:chicora/features/ecommerce_multi/ui/widgets/filter_side_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,15 +19,6 @@ import '../../logic/cart_cubit/cart_cubit.dart';
 import '../../logic/view_product_logic/view_products_cubit.dart';
 import '../../logic/view_product_logic/view_products_state.dart';
 
-enum _PriceSortOrder {
-  none('Default'),
-  lowToHigh('Price: Low to High'),
-  highToLow('Price: High to Low');
-
-  const _PriceSortOrder(this.label);
-  final String label;
-}
-
 class BuyerProductScreenBody extends StatefulWidget {
   const BuyerProductScreenBody({super.key});
 
@@ -43,12 +35,15 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
     'shoes',
     'accessories',
     'jacket',
-    'scarf'
+    'scarf',
   ];
   // local token for API calls
   String? _token;
   String _selectedCategory = 'All'; // Track selected category
-  _PriceSortOrder _priceSort = _PriceSortOrder.none;
+  PriceSortOrder _priceSort = PriceSortOrder.none;
+  String? _selectedGender;
+  String? _selectedSeason;
+  String? _selectedOccasion;
 
   final TextEditingController searchController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
@@ -105,19 +100,43 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
     context.read<ViewProductsCubit>().searchByText(query: q);
   }
 
-  List<ProductModelBuyer> _sortProducts(List<ProductModelBuyer> products) {
-    if (_priceSort == _PriceSortOrder.none) return products;
+  List<ProductModelBuyer> _filterAndSortProducts(
+    List<ProductModelBuyer> products,
+  ) {
+    var filtered = products.where((p) {
+      if (_selectedGender != null && _selectedGender!.toLowerCase() != 'all') {
+        if (p.gender == null ||
+            p.gender!.toLowerCase() != _selectedGender!.toLowerCase()) {
+          return false;
+        }
+      }
+      if (_selectedSeason != null && _selectedSeason!.toLowerCase() != 'all') {
+        if (p.season == null ||
+            p.season!.toLowerCase() != _selectedSeason!.toLowerCase()) {
+          return false;
+        }
+      }
+      if (_selectedOccasion != null &&
+          _selectedOccasion!.toLowerCase() != 'all') {
+        if (p.occasion == null ||
+            p.occasion!.toLowerCase() != _selectedOccasion!.toLowerCase()) {
+          return false;
+        }
+      }
+      return true;
+    }).toList();
 
-    final sorted = List<ProductModelBuyer>.from(products);
+    if (_priceSort == PriceSortOrder.none) return filtered;
+
     switch (_priceSort) {
-      case _PriceSortOrder.lowToHigh:
-        sorted.sort((a, b) => (a.price ?? 0).compareTo(b.price ?? 0));
-      case _PriceSortOrder.highToLow:
-        sorted.sort((a, b) => (b.price ?? 0).compareTo(a.price ?? 0));
-      case _PriceSortOrder.none:
+      case PriceSortOrder.lowToHigh:
+        filtered.sort((a, b) => (a.price ?? 0).compareTo(b.price ?? 0));
+      case PriceSortOrder.highToLow:
+        filtered.sort((a, b) => (b.price ?? 0).compareTo(a.price ?? 0));
+      case PriceSortOrder.none:
         break;
     }
-    return sorted;
+    return filtered;
   }
 
   Future<void> _onImageSearch() async {
@@ -186,41 +205,29 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
           SizedBox(height: 12.h),
           Align(
             alignment: Alignment.centerRight,
-
-            child: DropdownButton<_PriceSortOrder>(
-              isDense: true,
-
-              value: _priceSort,
-              underline: const SizedBox.shrink(),
-              icon: Icon(Icons.sort, color: AppColors.primery, size: 22.sp),
-              style: AppStyle.medBlack.copyWith(fontSize: 14.sp),
-              items: _PriceSortOrder.values
-                  .map(
-                    (order) => DropdownMenuItem(
-                      value: order,
-                      child: Text(order.label, style: AppStyle.smallBlack),
+            child: InkWell(
+              onTap: _openFilterSidebar,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: AppColors.primery.withValues(alpha: 0.3),
+                  ),
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.filter_list,
+                      color: AppColors.primery,
+                      size: 20.sp,
                     ),
-                  )
-                  .toList(),
-              selectedItemBuilder: (context) {
-                return _PriceSortOrder.values.map((order) {
-                  if (order == _PriceSortOrder.none) {
-                    return const SizedBox.shrink();
-                  }
-
-                  return Row(
-                    children: [
-                      Text(order.label, style: AppStyle.smallBlack),
-                      SizedBox(width: 4.w),
-                    ],
-                  );
-                }).toList();
-              },
-
-              onChanged: (order) {
-                if (order == null) return;
-                setState(() => _priceSort = order);
-              },
+                    SizedBox(width: 6.w),
+                    Text('Filter & Sort', style: AppStyle.smallBlack),
+                  ],
+                ),
+              ),
             ),
           ),
 
@@ -237,7 +244,7 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
                     ),
                   ),
                   success: (products) {
-                    final sortedProducts = _sortProducts(products);
+                    final sortedProducts = _filterAndSortProducts(products);
                     return sortedProducts.isEmpty
                         ? Center(
                             child: Padding(
@@ -307,5 +314,25 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
         ],
       ),
     );
+  }
+
+  Future<void> _openFilterSidebar() async {
+    final result = await showFilterSidebar(
+      context,
+      initialPriceSort: _priceSort,
+      initialGender: _selectedGender,
+      initialSeason: null,
+      initialOccasion: null,
+    );
+    if (result == null) return;
+    setState(() {
+      _priceSort = result.priceSort;
+      _selectedGender = result.gender;
+      _selectedSeason = result.season;
+      _selectedOccasion = result.occasion;
+    });
+    final cubit = context.read<ViewProductsCubit>();
+    cubit.filterBySeason(_selectedSeason);
+    cubit.filterByOccasion(_selectedOccasion);
   }
 }

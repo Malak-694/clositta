@@ -16,6 +16,7 @@ class ClosetCubit extends Cubit<ClosetState> {
   List<ClosetItemResponseModel> allItems = [];
   String selectedCategory = 'All';
   String selectedSeason = 'All';
+  String selectedOccasion = 'All';
 
   ClosetCubit({required this.closetRepo}) : super(ClosetState.initial());
   Future<String?> _getToken() async {
@@ -67,16 +68,26 @@ class ClosetCubit extends Cubit<ClosetState> {
     _applyFilters();
   }
 
+  void filterByOccasion(String occasion) {
+    selectedOccasion = occasion;
+    _applyFilters();
+  }
+
   void _applyFilters() {
     List<ClosetItemResponseModel> filtered = allItems;
     if (selectedCategory != 'All') {
       filtered = filtered
-          .where((item) => item.category == selectedCategory)
+          .where((item) => item.category == selectedCategory.toLowerCase())
           .toList();
     }
     if (selectedSeason != 'All') {
       filtered = filtered
-          .where((item) => item.season == selectedSeason)
+          .where((item) => item.season == selectedSeason.toLowerCase())
+          .toList();
+    }
+    if (selectedOccasion != 'All') {
+      filtered = filtered
+          .where((item) => item.occasion == selectedOccasion.toLowerCase())
           .toList();
     }
 
@@ -87,7 +98,7 @@ class ClosetCubit extends Cubit<ClosetState> {
     required String name,
     required String category,
     required String season,
-    required String color ,
+    required String color,
     required String imagePath,
   }) async {
     emit(ClosetState.loading());
@@ -122,11 +133,13 @@ class ClosetCubit extends Cubit<ClosetState> {
         },
       );
     } catch (e) {
-      emit(ClosetState.fail(
-        e.toString().contains("Exception:")
-            ? e.toString().split("Exception: ")[1]
-            : "Failed to add item. Please try again.",
-      ));
+      emit(
+        ClosetState.fail(
+          e.toString().contains("Exception:")
+              ? e.toString().split("Exception: ")[1]
+              : "Failed to add item. Please try again.",
+        ),
+      );
     }
   }
 
@@ -195,11 +208,13 @@ class ClosetCubit extends Cubit<ClosetState> {
         failure: (error) => emit(ClosetState.fail(error)),
       );
     } catch (e) {
-      emit(ClosetState.fail(
-        e.toString().contains("Exception:")
-            ? e.toString().split("Exception: ")[1]
-            : "Failed to update item. Please try again.",
-      ));
+      emit(
+        ClosetState.fail(
+          e.toString().contains("Exception:")
+              ? e.toString().split("Exception: ")[1]
+              : "Failed to update item. Please try again.",
+        ),
+      );
     }
   }
 }

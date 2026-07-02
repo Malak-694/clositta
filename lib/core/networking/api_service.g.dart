@@ -818,10 +818,15 @@ class _ApiService implements ApiService {
     String stock,
     String category,
     String type,
+    String gender,
+    String season,
+    String occasion,
+    String? color,
     MultipartFile image,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
     final _data = FormData();
@@ -831,6 +836,12 @@ class _ApiService implements ApiService {
     _data.fields.add(MapEntry('stock', stock));
     _data.fields.add(MapEntry('category', category));
     _data.fields.add(MapEntry('type', type));
+    _data.fields.add(MapEntry('gender', gender));
+    _data.fields.add(MapEntry('season', season));
+    _data.fields.add(MapEntry('occasion', occasion));
+    if (color != null) {
+      _data.fields.add(MapEntry('color', color));
+    }
     _data.files.add(MapEntry('image', image));
     final _options = _setStreamType<MessageModel>(
       Options(
@@ -980,6 +991,10 @@ class _ApiService implements ApiService {
     String stock,
     String category,
     String type,
+    String gender,
+    String season,
+    String occasion,
+    String? color,
     MultipartFile? image,
   ) async {
     final _extra = <String, dynamic>{};
@@ -994,6 +1009,12 @@ class _ApiService implements ApiService {
     _data.fields.add(MapEntry('stock', stock));
     _data.fields.add(MapEntry('category', category));
     _data.fields.add(MapEntry('type', type));
+    _data.fields.add(MapEntry('gender', gender));
+    _data.fields.add(MapEntry('season', season));
+    _data.fields.add(MapEntry('occasion', occasion));
+    if (color != null) {
+      _data.fields.add(MapEntry('color', color));
+    }
     if (image != null) {
       _data.files.add(MapEntry('image', image));
     }

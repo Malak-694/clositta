@@ -2,7 +2,6 @@ import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/constants.dart';
 import 'package:chicora/core/widgets/custom_elevated_button.dart';
 import 'package:chicora/core/widgets/pinterest_grid.dart';
-import 'package:chicora/features/auth/ui/widgets/drop_down_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,6 +9,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/constants/style.dart';
 import '../../../../../core/router/route_names.dart';
 import '../../../../../core/widgets/pinterest_grid_config.dart';
+import '../../../../../core/widgets/custom_category_selector.dart';
+import '../../../../ecommerce_multi/ui/widgets/filter_side_bar_widget.dart';
 import '../../data/models/closet_item_response_model.dart';
 import '../../logic/cubit/closet_cubit.dart';
 import '../../logic/cubit/closet_state.dart';
@@ -23,8 +24,7 @@ class ClosetItemsScreenBody extends StatefulWidget {
 
 class _ClosetItemsScreenBodyState extends State<ClosetItemsScreenBody> {
   final TextEditingController searchController = TextEditingController();
-  final Color _primaryColor = AppColors.primery;
-  final Color _darkColor = AppColors.darkprimery;
+
   final List<String> _categories = [
     'All',
     "top",
@@ -35,15 +35,16 @@ class _ClosetItemsScreenBodyState extends State<ClosetItemsScreenBody> {
     "shoes",
     "accessories",
   ];
-  final List<String> _seasons = ['All', 'winter', 'spring', 'summer', 'fall'];
-  late String _selectedCategory;
-  late String _selectedSeason;
+  String _selectedCategory = 'All';
+  String? _selectedSeason;
+  String? _selectedOccasion;
 
   @override
   void initState() {
     super.initState();
     _selectedCategory = 'All';
-    _selectedSeason = 'All';
+    _selectedSeason = null;
+    _selectedOccasion = null;
     // Load closet items on init
     context.read<ClosetCubit>().viewClosetItems(category: null);
   }
@@ -60,38 +61,53 @@ class _ClosetItemsScreenBodyState extends State<ClosetItemsScreenBody> {
       padding: EdgeInsetsGeometry.all(kHorizontalPadding),
       child: Column(
         children: [
+          CustomCategorySelector(
+            categories: _categories,
+            selectedCategory: _selectedCategory,
+            onCategorySelected: (category) {
+              setState(() {
+                _selectedCategory = category;
+              });
+              context.read<ClosetCubit>().filterByCategory(category);
+            },
+            selectedColor: AppColors.darkprimery,
+            unselectedColor: AppColors.primery,
+          ),
+          SizedBox(height: 10.h),
           Row(
             children: [
-              CustomDropdown(
-                vPadding: 8.h,
-                style: AppStyle.medPrimery,
-                items: _categories,
-                value: 'All',
-                hintText: 'Category',
-                width: 130.w,
-                onChanged: (category) {
-                  setState(() {
-                    _selectedCategory = category!;
-                  });
-                  context.read<ClosetCubit>().filterByCategory(category!);
-                },
+              Spacer(),
+              Align(
+                alignment: Alignment.centerRight,
+                child: InkWell(
+                  onTap: _openFilterSidebar,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 8.h,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: AppColors.primery.withValues(alpha: 0.3),
+                      ),
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.filter_list,
+                          color: AppColors.primery,
+                          size: 20.sp,
+                        ),
+                        SizedBox(width: 6.w),
+                        Text('Filter & Sort', style: AppStyle.smallBlack),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-              const Spacer(),
-              CustomDropdown(
-                vPadding: 8.h,
-                style: AppStyle.medPrimery,
-                items: _seasons,
-                value: 'All',
-                hintText: 'Season',
-                width: 130.w,
-                onChanged: (season) {
-                  setState(() {
-                    _selectedSeason = season!;
-                  });
-                  context.read<ClosetCubit>().filterBySeason(season!);
-                },
-              ),
-              const Spacer(),
+
               SizedBox(width: 10.w),
               CustomElevatedButton(
                 value: 'Add',
@@ -214,5 +230,25 @@ class _ClosetItemsScreenBodyState extends State<ClosetItemsScreenBody> {
         ],
       ),
     );
+  }
+
+  Future<void> _openFilterSidebar() async {
+    final result = await showFilterSidebar(
+      context,
+      initialPriceSort: PriceSortOrder.none,
+      initialGender: '',
+      initialSeason: _selectedSeason,
+      initialOccasion: _selectedOccasion,
+      usePrice: false,
+      useGender: false,
+    );
+    if (result == null) return;
+    setState(() {
+      _selectedSeason = result.season;
+      _selectedOccasion = result.occasion;
+    });
+    final cubit = context.read<ClosetCubit>();
+    cubit.filterBySeason(_selectedSeason ?? 'All');
+    cubit.filterByOccasion(_selectedOccasion ?? 'All');
   }
 }

@@ -221,6 +221,10 @@ abstract class ApiService {
       @Part(name: "stock") String stock,
       @Part(name: "category") String category,
       @Part(name: "type") String type,
+      @Part(name: "gender") String gender,
+      @Part(name: "season") String season,
+      @Part(name: "occasion") String occasion,
+      @Part(name: "color") String? color,
       @Part(name: "image") MultipartFile image,
       );
   //ecommerce -buyer
@@ -258,6 +262,10 @@ abstract class ApiService {
       @Part(name: "stock") String stock,
       @Part(name: "category") String category,
       @Part(name: "type") String type,
+      @Part(name: "gender") String gender,
+      @Part(name: "season") String season,
+      @Part(name: "occasion") String occasion,
+      @Part(name: "color") String? color,
       @Part(name: "image") MultipartFile? image,
       );
 

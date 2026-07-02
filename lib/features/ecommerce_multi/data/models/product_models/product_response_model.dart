@@ -17,6 +17,10 @@ class ProductModelBuyer {
   int? stock;
   String? category;
   String? type;
+  String? gender;
+  String? season;
+  String? occasion;
+  String? color;
   String? imageUrl;
   String? imageFileId;
   double? averageRating;

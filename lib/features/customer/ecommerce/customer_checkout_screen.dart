@@ -1,4 +1,3 @@
-import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/di/dependency_injection.dart';
 import 'package:chicora/core/router/route_names.dart';
 import 'package:chicora/core/widgets/custom_app_bar.dart';

@@ -48,13 +48,21 @@ class OrderCubit extends Cubit<OrderState> {
             final payResult = await repo.initiatePayment(token, orderId);
             switch (payResult) {
               case api.Failure(:final message):
+                await repo.cancelOrder(
+                  token,
+                  orderId,
+                  CancelOrderRequestModel(reason: "Payment failed"),
+                );
                 emit(OrderState.fail(message));
               case api.Success(data: final PaymentInitiateResponseModel pay):
                 final url = pay.iframeUrl;
                 if (url == null || url.trim().isEmpty) {
-                  emit(
-                    const OrderState.fail('Payment link was not returned.'),
+                  await repo.cancelOrder(
+                    token,
+                    orderId,
+                    CancelOrderRequestModel(reason: "Payment failed"),
                   );
+                  emit(const OrderState.fail('Payment link was not returned.'));
                   return;
                 }
                 emit(

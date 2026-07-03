@@ -8,10 +8,14 @@ import 'package:chicora/features/ecommerce_multi/logic/view_product_logic/view_p
 
 import '../../data/models/product_models/product_response_model.dart';
 import '../../data/models/product_models/product_search_response_model.dart';
+import 'package:chicora/core/di/dependency_injection.dart';
+import 'package:chicora/core/helper/shared_key.dart';
+import 'package:chicora/core/helper/shared_pref_helper.dart';
 
 class ViewProductsCubit extends Cubit<ViewProductsState> {
   final ViewProductsRepo viewProductsRepo;
   final ProductSearchRepo productSearchRepo;
+  final prefs = getIt<SharedPrefHelper>();
 
   // Full list of fetched products
   List<ProductModelBuyer> _allProducts = [];
@@ -36,15 +40,15 @@ class ViewProductsCubit extends Cubit<ViewProductsState> {
     String? type,
   }) async {
     try {
-      // final roleVal = _prefs.getSecureData(SharedPrefKey.role);
-      // final String? userRole = roleVal as String?;
-      // final effectiveType =
-      //     type ?? (userRole == 'tailor' ? 'Material' : 'Clothes');
+      final roleVal = await prefs.getSecureData(SharedPrefKey.role);
+      final String? userRole = roleVal;
+      final effectiveCategory =
+          category ?? (userRole == 'tailor' ? 'Material' : 'Clothes');
 
       emit(ViewProductsState.loading());
       final response = await viewProductsRepo.getProductsBuyer(
         token: token,
-        category: category,
+        category: effectiveCategory,
         minPrice: minPrice,
         maxPrice: maxPrice,
         inStock: inStock,

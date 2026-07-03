@@ -5,7 +5,6 @@ import 'package:chicora/features/ecommerce_multi/ui/screens/cart_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../core/constants/colors.dart';
 import '../../../core/di/dependency_injection.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/widgets/custom_app_bar.dart';

@@ -40,11 +40,26 @@ class _AddedProductFormState extends State<AddedProductForm> {
     "scarf",
     "dress",
     "shoes",
-    "accessories",  ];
+    "accessories",
+  ];
   final List<String> types = ['Clothes', 'Material'];
   final List<String> genders = ['male', 'female', 'unisex'];
-  final List<String> seasons = ['summer', 'winter', 'spring', 'autumn', 'all-season'];
-  final List<String> occasions = ['casual', 'formal', 'wedding', 'sport', 'beach', 'party', 'other'];
+  final List<String> seasons = [
+    'summer',
+    'winter',
+    'spring',
+    'autumn',
+    'all-season',
+  ];
+  final List<String> occasions = [
+    'casual',
+    'formal',
+    'wedding',
+    'sport',
+    'beach',
+    'party',
+    'other',
+  ];
 
   String? _selectedCategory;
   String? _selectedType;
@@ -149,9 +164,8 @@ class _AddedProductFormState extends State<AddedProductForm> {
                   controller: _productNameController,
                   hintText: "e.g., Wedding Dress",
                   label: "Name",
-                  labelStyle: AppStyle.body6,
-                  fillColor: AppColors.lightprimery,
-                  filled: true,
+                  labelStyle: AppStyle.body3,
+                  textInputAction: TextInputAction.next,
                 ),
                 SizedBox(height: 15.h),
                 LabeledTextField(
@@ -159,11 +173,20 @@ class _AddedProductFormState extends State<AddedProductForm> {
                   hintText: "Describe your product...",
                   maxLines: 3,
                   label: "Description",
-                  labelStyle: AppStyle.body6,
-                  fillColor: AppColors.lightprimery,
-                  filled: true,
+                  labelStyle: AppStyle.body3,
+                  textInputAction: TextInputAction.next,
                 ),
                 SizedBox(height: 15.h),
+                LabeledTextField(
+                  controller: _colorController,
+                  hintText: "e.g., Red",
+                  label: "Color",
+                  labelStyle: AppStyle.body3,
+                  textInputAction: TextInputAction.next,
+                ),
+
+                SizedBox(height: 15.h),
+
                 Row(
                   children: [
                     Expanded(
@@ -172,9 +195,8 @@ class _AddedProductFormState extends State<AddedProductForm> {
                         keyboardType: TextInputType.number,
                         hintText: "00.0",
                         label: 'Price (\$)',
-                        labelStyle: AppStyle.body6,
-                        fillColor: AppColors.lightprimery,
-                        filled: true,
+                        labelStyle: AppStyle.body3,
+                        textInputAction: TextInputAction.next,
                       ),
                     ),
                     SizedBox(width: 10.w),
@@ -184,9 +206,8 @@ class _AddedProductFormState extends State<AddedProductForm> {
                         keyboardType: TextInputType.number,
                         hintText: "0",
                         label: "Stock",
-                        labelStyle: AppStyle.body6,
-                        fillColor: AppColors.lightprimery,
-                        filled: true,
+                        labelStyle: AppStyle.body3,
+                        textInputAction: TextInputAction.next,
                       ),
                     ),
                   ],
@@ -257,16 +278,6 @@ class _AddedProductFormState extends State<AddedProductForm> {
                       ),
                     ),
                     SizedBox(width: 10.w),
-                    Expanded(
-                      child: LabeledTextField(
-                        controller: _colorController,
-                        hintText: "e.g., Red",
-                        label: "Color",
-                        labelStyle: AppStyle.body6,
-                        fillColor: AppColors.lightprimery,
-                        filled: true,
-                      ),
-                    ),
                   ],
                 ),
                 SizedBox(height: 30.h),
@@ -344,7 +355,9 @@ class _AddedProductFormState extends State<AddedProductForm> {
         gender: _selectedGender ?? genders.first,
         season: _selectedSeason ?? seasons.first,
         occasion: _selectedOccasion ?? occasions.first,
-        color: _colorController.text.trim().isEmpty ? null : _colorController.text.trim(),
+        color: _colorController.text.trim().isEmpty
+            ? null
+            : _colorController.text.trim(),
         imagePath: _selectedImagePath, // ✅ null if not changed
       );
     } else {
@@ -358,7 +371,9 @@ class _AddedProductFormState extends State<AddedProductForm> {
         gender: _selectedGender ?? genders.first,
         season: _selectedSeason ?? seasons.first,
         occasion: _selectedOccasion ?? occasions.first,
-        color: _colorController.text.trim().isEmpty ? null : _colorController.text.trim(),
+        color: _colorController.text.trim().isEmpty
+            ? null
+            : _colorController.text.trim(),
         imagePath: _selectedImagePath!,
       );
     }

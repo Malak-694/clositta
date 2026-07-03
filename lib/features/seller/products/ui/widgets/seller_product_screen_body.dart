@@ -99,20 +99,10 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
             children: [
               SizedBox(height: 8.h),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
                     "${_filteredProducts.length} Products",
-                    style: AppStyle.medPrimery,
-                  ),
-                  CustomElevatedButton(
-                    value: "+ Product ",
-                    onPressed: () {
-                      Navigator.pushNamed(context, "added_product_item");
-                    },
-                    height: 40.h,
-                    width: 190.w,
-                    background: AppColors.lightsecondary,
                     style: AppStyle.medPrimery,
                   ),
                 ],
@@ -128,19 +118,35 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  CustomCategorySelector(
-                    categories: _stockLevels,
-                    selectedCategory: _selectedStockLevel,
-                    onCategorySelected: (category) {
-                      setState(() {
-                        _selectedStockLevel = category;
-                      });
-                      _performSearch();
+                  Expanded(
+                    child: CustomCategorySelector(
+                      categories: _stockLevels,
+                      selectedCategory: _selectedStockLevel,
+                      onCategorySelected: (category) {
+                        setState(() {
+                          _selectedStockLevel = category;
+                        });
+                        _performSearch();
+                      },
+                      selectedColor: AppColors.ternary,
+                      unselectedColor: AppColors.lightsecondary,
+                      selectedTextColor: AppColors.background,
+                      unselectedTextColor: AppColors.darkPrimary,
+                    ),
+                  ),
+                  SizedBox(width: 7.h),
+                  CustomElevatedButton(
+                    value: "Add",
+                    onPressed: () {
+                      Navigator.pushNamed(context, "added_product_item");
                     },
-                    selectedColor: AppColors.ternary,
-                    unselectedColor: AppColors.lightsecondary,
-                    selectedTextColor: AppColors.background,
-                    unselectedTextColor: AppColors.darkPrimary,
+                    height: 35.h,
+                    width: 75.w,
+                    background: AppColors.darkPrimaryLight,
+                    style: AppStyle.medSecondary.copyWith(
+                      color: AppColors.lightsecondary,
+                      fontSize: 13.sp,
+                    ),
                   ),
                 ],
               ),

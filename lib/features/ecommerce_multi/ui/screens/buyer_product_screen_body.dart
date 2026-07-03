@@ -40,6 +40,7 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
   ];
   // local token for API calls
   String? _token;
+  // ignore: unused_field
   String? _userRole;
   bool _typeFilterTouchedByUser =
       false; // becomes true once user picks a Type manually

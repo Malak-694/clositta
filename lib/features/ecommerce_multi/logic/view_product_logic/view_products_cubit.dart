@@ -40,15 +40,11 @@ class ViewProductsCubit extends Cubit<ViewProductsState> {
     String? type,
   }) async {
     try {
-      final roleVal = await prefs.getSecureData(SharedPrefKey.role);
-      final String? userRole = roleVal;
-      final effectiveCategory =
-          category ?? (userRole == 'tailor' ? 'Material' : 'Clothes');
-
+    
       emit(ViewProductsState.loading());
       final response = await viewProductsRepo.getProductsBuyer(
         token: token,
-        category: effectiveCategory,
+        category: category,
         minPrice: minPrice,
         maxPrice: maxPrice,
         inStock: inStock,

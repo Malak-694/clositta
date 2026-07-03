@@ -104,9 +104,8 @@ class _AddedItemScreenState extends State<AddedItemScreen> {
                   controller: _titleController,
                   hintText: "e.g., Navy Blazer",
                   label: "Title",
-                  labelStyle: AppStyle.body6,
-                  fillColor: AppColors.lightprimery,
-                  filled: true,
+                  labelStyle: AppStyle.body3,
+                  textInputAction: TextInputAction.next,
                 ),
                 SizedBox(height: 15.h),
                 LabeledTextField(
@@ -114,9 +113,8 @@ class _AddedItemScreenState extends State<AddedItemScreen> {
                   hintText: "e.g., Custom Navy Blazer",
                   label: "Description",
                   maxLines: 3,
-                  labelStyle: AppStyle.body6,
-                  fillColor: AppColors.lightprimery,
-                  filled: true,
+                  labelStyle: AppStyle.body3,
+                  textInputAction: TextInputAction.newline,
                 ),
                 SizedBox(height: 15.h),
                 CustomDropdownList(

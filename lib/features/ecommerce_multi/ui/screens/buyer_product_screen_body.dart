@@ -1,4 +1,5 @@
 import 'package:chicora/core/constants/colors.dart';
+import 'package:chicora/core/helper/shared_key.dart';
 import 'package:chicora/core/widgets/custom_category_selector.dart';
 import 'package:chicora/core/widgets/filter_side_bar_widget.dart';
 import 'package:flutter/material.dart';
@@ -39,6 +40,10 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
   ];
   // local token for API calls
   String? _token;
+  String? _userRole;
+  bool _typeFilterTouchedByUser =
+      false; // becomes true once user picks a Type manually
+
   String _selectedCategory = 'All'; // Track selected category
   PriceSortOrder _priceSort = PriceSortOrder.none;
   String? _selectedGender;
@@ -59,9 +64,19 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
   Future<void> _initAndLoad() async {
     final prefs = getIt<SharedPrefHelper>();
     final token = await prefs.getSecureData('token');
+    final roleVal = await prefs.getSecureData(SharedPrefKey.role);
+    final String? userRole = roleVal;
+    final effectiveType = userRole == 'tailor' ? 'Material' : 'Clothes';
+
     setState(() {
       _token = token;
+      _userRole = userRole;
+      // Only seed the default if the user hasn't manually picked a Type yet
+      if (!_typeFilterTouchedByUser) {
+        _selectedType = effectiveType;
+      }
     });
+
     if (_token != null) {
       context.read<ViewProductsCubit>().getProductsBuyer(token: _token!);
     }
@@ -340,6 +355,7 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
       _selectedSeason = result.season;
       _selectedOccasion = result.occasion;
       _selectedType = result.type;
+      _typeFilterTouchedByUser = true; // user now controls Type explicitly
     });
     final cubit = context.read<ViewProductsCubit>();
     cubit.filterBySeason(_selectedSeason);

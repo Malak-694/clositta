@@ -1,3 +1,4 @@
+import 'package:chicora/core/widgets/labeled_text_field.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -56,8 +57,9 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
     super.initState();
     _priceController = TextEditingController(text: widget.initialPrice ?? '');
     _durationController = TextEditingController(text: widget.initialDays ?? '');
-    _descriptionController = TextEditingController(text: widget.initialMessage ?? '');
-
+    _descriptionController = TextEditingController(
+      text: widget.initialMessage ?? '',
+    );
   }
 
   @override
@@ -116,15 +118,22 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
             onCartTap: () {},
             extraActions: widget.isEditMode
                 ? [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 12, 0),
-                child: IconButton(
-                  icon: Icon(Icons.delete_outline, color: AppColors.ternary ,size: 30,),
-                  onPressed: isLoading ? null : () => _confirmDeleteOffer(context,widget.offerId!),
-                  tooltip: 'Delete Post',
-                ),
-              ),
-            ]
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 12, 0),
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.delete_outline,
+                          color: AppColors.ternary,
+                          size: 30,
+                        ),
+                        onPressed: isLoading
+                            ? null
+                            : () =>
+                                  _confirmDeleteOffer(context, widget.offerId!),
+                        tooltip: 'Delete Post',
+                      ),
+                    ),
+                  ]
                 : [],
           ),
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -133,8 +142,6 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Description", style: AppStyle.boldSecondary),
-                SizedBox(height: 10.h),
                 Text(widget.title, style: AppStyle.body6),
                 SizedBox(height: 10.h),
 
@@ -159,30 +166,21 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Price', style: AppStyle.body6),
-                          SizedBox(height: 8.h),
                           Container(
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.grey[300]!),
                               borderRadius: BorderRadius.circular(12.r),
                             ),
-                            child: TextField(
-                              enabled: !isLoading,
+                            child: LabeledTextField(
+                              label: "Price",
                               controller: _priceController,
-                              keyboardType: TextInputType.number,
-                              style: AppStyle.body6,
-                              decoration: InputDecoration(
-                                hintText: 'write the price',
-                                hintStyle: AppStyle.smallBlack.copyWith(
-                                  color: AppColors.light,
-                                ),
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.all(12.w),
-                                prefixIcon: Icon(
-                                  LucideIcons.dollarSign,
-                                  size: 20.sp,
-                                ),
+                              hintText: 'write the price',
+                              suffixIcon: Icon(
+                                LucideIcons.dollarSign,
+                                size: 20.sp,
                               ),
+                              textInputAction: TextInputAction.next,
+                              keyboardType: TextInputType.number,
                             ),
                           ),
                         ],
@@ -193,30 +191,21 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Duration (days)', style: AppStyle.body6),
-                          SizedBox(height: 8.h),
                           Container(
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.grey[300]!),
                               borderRadius: BorderRadius.circular(12.r),
                             ),
-                            child: TextField(
-                              enabled: !isLoading,
+                            child: LabeledTextField(
+                              label: "Days",
                               controller: _durationController,
-                              keyboardType: TextInputType.number,
-                              style: AppStyle.body6,
-                              decoration: InputDecoration(
-                                hintText: 'write the duration',
-                                hintStyle: AppStyle.smallBlack.copyWith(
-                                  color: AppColors.light,
-                                ),
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.all(12.w),
-                                suffixIcon: Icon(
-                                  LucideIcons.calendarDays,
-                                  size: 20.sp,
-                                ),
+                              hintText: 'write the duration',
+                              suffixIcon: Icon(
+                                LucideIcons.calendarDays,
+                                size: 20.sp,
                               ),
+                              textInputAction: TextInputAction.next,
+                              keyboardType: TextInputType.number,
                             ),
                           ),
                         ],
@@ -228,29 +217,16 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
                 SizedBox(height: 15.h),
 
                 // ── Message ──────────────────────────────────────
-                Text(
-                  'Description (optional)',
-                  style: AppStyle.body6,
-                ),
-                SizedBox(height: 8.h),
                 Container(
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey[300]!),
                     borderRadius: BorderRadius.circular(12.r),
                   ),
-                  child: TextField(
-                    enabled: !isLoading,
+                  child: LabeledTextField(
                     controller: _descriptionController,
-                    maxLines: 3,
-                    style: AppStyle.body6,
-                    decoration: InputDecoration(
-                      hintText: 'What you can offer...',
-                      hintStyle: AppStyle.smallBlack.copyWith(
-                        color: AppColors.light,
-                      ),
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.all(12.w),
-                    ),
+                    hintText: 'What you can offer...',
+                    label: "Description",
+                    textInputAction: TextInputAction.done,
                   ),
                 ),
 
@@ -351,6 +327,7 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
       cubit.joinBidding(postId: widget.postId, request: request);
     }
   }
+
   void _confirmDeleteOffer(BuildContext context, String offerId) {
     showDialog(
       context: context,

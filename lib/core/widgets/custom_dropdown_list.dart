@@ -40,6 +40,8 @@ class CustomDropdownList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textStyle = style ?? AppStyle.body3;
+    // Ensure items are unique to avoid duplicate DropdownMenuItem values
+    final List<String> uniqueItems = items.toSet().toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,7 +82,7 @@ class CustomDropdownList extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
             selectedItemBuilder: (context) {
-              final allItems = [if (showAllOption) 'All', ...items];
+              final allItems = [if (showAllOption) 'All', ...uniqueItems];
               return allItems.map((item) {
                 return Align(
                   alignment: AlignmentDirectional.centerStart,
@@ -99,7 +101,7 @@ class CustomDropdownList extends StatelessWidget {
                   value: null,
                   child: Text('All', style: textStyle),
                 ),
-              ...items.map(
+              ...uniqueItems.map(
                 (item) => DropdownMenuItem<String>(
                   value: item,
                   child: Text(

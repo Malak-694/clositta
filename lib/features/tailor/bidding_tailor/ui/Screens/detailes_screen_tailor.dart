@@ -50,7 +50,6 @@ class _DetailesScreenTailorState extends State<DetailesScreenTailor> {
   Future<void> _loadMyId() async {
     final id = await prefs.getSecureData(SharedPrefKey.id);
     if (mounted) setState(() => _myTailorId = id);
-
   }
 
   void _updateMyOffer(List<BidModelReponse> offers) {
@@ -60,7 +59,6 @@ class _DetailesScreenTailorState extends State<DetailesScreenTailor> {
         if (mounted) setState(() => _myOffer = found);
       });
     }
-
   }
 
   void _confirmDeleteOffer(BuildContext context, String offerId) {
@@ -140,7 +138,9 @@ class _DetailesScreenTailorState extends State<DetailesScreenTailor> {
                 builder: (context) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     if (widget.postId.isNotEmpty) {
-                      context.read<BiddingTailorCubit>().getOffers(widget.postId);
+                      context.read<BiddingTailorCubit>().getOffers(
+                        widget.postId,
+                      );
                     }
                   });
 
@@ -157,7 +157,8 @@ class _DetailesScreenTailorState extends State<DetailesScreenTailor> {
                             strokeWidth: 5.0,
                           ),
                         ),
-                        fail: (msg) => Center(child: Text(AppStyle.userMessage(msg))),
+                        fail: (msg) =>
+                            Center(child: Text(AppStyle.userMessage(msg))),
                         success: (data) {
                           if (data is List<BidModelReponse>) {
                             // ✅ update my offer reference
@@ -182,26 +183,32 @@ class _DetailesScreenTailorState extends State<DetailesScreenTailor> {
                                   price: offer.price,
                                   comment: offer.message,
                                   isMyOffer: isMyOffer,
-                                  onEdit: ()=> Navigator.pushNamed(
-                                    context,
-                                    RouteNames.join_bidding,
-                                    arguments: {
-                                      'urlImage': widget.urlImage,
-                                      'price': widget.price,
-                                      'period': widget.period,
-                                      'title': widget.describtion,
-                                      'postId': widget.postId,
-                                      'offerId': offer.id,
-                                      'initialPrice': offer.price.toString(),
-                                      'initialDays': offer.timeInDays.toString(),
-                                      'initialMessage': offer.message ?? '',
-                                    },
-                                  ).then((_) {
-                                    // ✅ refreshOffers resets flag then reloads fresh data
-                                    if (context.mounted) {
-                                      context.read<BiddingTailorCubit>().refreshOffers(widget.postId);
-                                    }
-                                  }),
+                                  onEdit: () =>
+                                      Navigator.pushNamed(
+                                        context,
+                                        RouteNames.join_bidding,
+                                        arguments: {
+                                          'urlImage': widget.urlImage,
+                                          'price': widget.price,
+                                          'period': widget.period,
+                                          'title': widget.describtion,
+                                          'postId': widget.postId,
+                                          'offerId': offer.id,
+                                          'initialPrice': offer.price
+                                              .toString(),
+                                          'initialDays': offer.timeInDays
+                                              .toString(),
+                                          // ignore: dead_code, dead_null_aware_expression
+                                          'initialMessage': offer.message ?? '',
+                                        },
+                                      ).then((_) {
+                                        // ✅ refreshOffers resets flag then reloads fresh data
+                                        if (context.mounted) {
+                                          context
+                                              .read<BiddingTailorCubit>()
+                                              .refreshOffers(widget.postId);
+                                        }
+                                      }),
                                   onDelete: () =>
                                       _confirmDeleteOffer(context, offer.id),
                                 );
@@ -224,17 +231,25 @@ class _DetailesScreenTailorState extends State<DetailesScreenTailor> {
                   value: 'Join Bidding',
                   height: 50.h,
                   width: 350.w,
-                  onPressed: () => Navigator.pushNamed(
-                    context,
-                    RouteNames.join_bidding,
-                    arguments: {
-                      'urlImage': widget.urlImage,
-                      'price': widget.price,
-                      'period': widget.period,
-                      'title': widget.describtion,
-                      'postId': widget.postId,
-                    },
-                  ),
+                  onPressed: () async {
+                    await Navigator.pushNamed(
+                      context,
+                      RouteNames.join_bidding,
+                      arguments: {
+                        'urlImage': widget.urlImage,
+                        'price': widget.price,
+                        'period': widget.period,
+                        'title': widget.describtion,
+                        'postId': widget.postId,
+                      },
+                    );
+
+                    if (!mounted) return;
+
+                    context.read<BiddingTailorCubit>().refreshOffers(
+                      widget.postId,
+                    );
+                  },
                 ),
               ),
 
@@ -242,10 +257,7 @@ class _DetailesScreenTailorState extends State<DetailesScreenTailor> {
           ],
         ),
       ),
-      bottomNavigationBar: FloatingNavBar(
-        userRole: 'tailor',
-        selectedIndex: 0,
-      ),
+      bottomNavigationBar: FloatingNavBar(userRole: 'tailor', selectedIndex: 0),
     );
   }
 }

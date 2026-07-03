@@ -64,6 +64,22 @@ class _ActiveOrderViewState extends State<_ActiveOrderView> {
     }
   }
 
+  List<String> getNextStatuses(String? status) {
+    switch (status) {
+      case 'accepted':
+        return ['accepted', 'in_progress'];
+
+      case 'in_progress':
+        return ['in_progress', 'completed'];
+
+      case 'completed':
+        return ['completed'];
+
+      default:
+        return ['accepted', 'in_progress', 'completed'];
+    }
+  }
+
   List<AcceptedOfferResponse> get _filteredOrders {
     if (_selectedFilter == 'all') return _orders;
     return _orders.where((o) {
@@ -132,6 +148,7 @@ class _ActiveOrderViewState extends State<_ActiveOrderView> {
           Navigator.pushNamed(
             context,
             RouteNames.conversations_screen,
+            // ignore: dead_null_aware_expression, dead_code
             arguments: {'currentUserId': userId ?? ''},
           );
         },
@@ -189,7 +206,7 @@ class _ActiveOrderViewState extends State<_ActiveOrderView> {
             SizedBox(height: 8.h),
             Expanded(
               child: _orders.isEmpty
-                  ? const Center(child: Text("No active orders"))
+                  ? const Center(child: Text(" active orders "))
                   : _filteredOrders.isEmpty
                   ? Center(
                       child: Text(
@@ -202,12 +219,7 @@ class _ActiveOrderViewState extends State<_ActiveOrderView> {
                       itemCount: _filteredOrders.length,
                       itemBuilder: (context, index) {
                         final order = _filteredOrders[index];
-                        final dropdownItems = [
-                          'accepted',
-                          'in_progress',
-                          'completed',
-                        ];
-
+                        final dropdownItems = getNextStatuses(order.workStatus);
                         return Card(
                           color: Theme.of(context).cardColor,
                           margin: EdgeInsets.only(bottom: 12.h),
@@ -297,14 +309,18 @@ class _ActiveOrderViewState extends State<_ActiveOrderView> {
                                         items: dropdownItems,
                                         hintText: "",
                                         onChanged: (newStatus) {
+                                          if (newStatus == null ||
+                                              newStatus == order.workStatus) {
+                                            return;
+                                          }
+
                                           context
                                               .read<BiddingTailorCubit>()
                                               .updateWorkStatus(
                                                 order.id,
-                                                newStatus!,
+                                                newStatus,
                                               );
                                         },
-                                       
                                       ),
                                     ),
                                     SizedBox(width: 8.w),

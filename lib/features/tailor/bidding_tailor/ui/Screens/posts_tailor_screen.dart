@@ -53,6 +53,7 @@ class PostScreenTailor extends StatelessWidget {
           Navigator.pushNamed(
             context,
             RouteNames.conversations_screen,
+            // ignore: dead_code, dead_null_aware_expression
             arguments: {'currentUserId': userId ?? ''},
           );
         },

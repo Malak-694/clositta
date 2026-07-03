@@ -31,16 +31,18 @@ class BiddingTailorCubit extends Cubit<BiddingTailorState> {
         emit(const BiddingTailorState.fail("Authentication token not found"));
         return;
       }
-      final List<PostTailorResponse> response =
-      await _repository.getBiddingTailors(token);
+      final List<PostTailorResponse> response = await _repository
+          .getBiddingTailors(token);
       emit(BiddingTailorState.success(response));
       _loadedPosts = true;
     } catch (e) {
-      emit(BiddingTailorState.fail(
-        e.toString().contains("Exception:")
-            ? e.toString().split("Exception: ")[1]
-            : "Failed to load bidding posts. Please try again.",
-      ));
+      emit(
+        BiddingTailorState.fail(
+          e.toString().contains("Exception:")
+              ? e.toString().split("Exception: ")[1]
+              : "Failed to load bidding posts. Please try again.",
+        ),
+      );
     }
   }
 
@@ -54,16 +56,20 @@ class BiddingTailorCubit extends Cubit<BiddingTailorState> {
         return;
       }
       print(token);
-      final List<BidModelReponse> response =
-      await _repository.getOffers(token, postId);
+      final List<BidModelReponse> response = await _repository.getOffers(
+        token,
+        postId,
+      );
       emit(BiddingTailorState.success(response));
       _loadedoOffers = true;
     } catch (e) {
-      emit(BiddingTailorState.fail(
-        e.toString().contains("Exception:")
-            ? e.toString().split("Exception: ")[1]
-            : "Failed to load offers. Please try again.",
-      ));
+      emit(
+        BiddingTailorState.fail(
+          e.toString().contains("Exception:")
+              ? e.toString().split("Exception: ")[1]
+              : "Failed to load offers. Please try again.",
+        ),
+      );
     }
   }
 
@@ -83,15 +89,20 @@ class BiddingTailorCubit extends Cubit<BiddingTailorState> {
         emit(const BiddingTailorState.fail("Authentication token not found"));
         return;
       }
-      final JoinBiddingResponse response =
-      await _repository.joinBidding(token, postId, request);
+      final JoinBiddingResponse response = await _repository.joinBidding(
+        token,
+        postId,
+        request,
+      );
       emit(BiddingTailorState.success(response));
     } catch (e) {
-      emit(BiddingTailorState.fail(
-        e.toString().contains("Exception:")
-            ? e.toString().split("Exception: ")[1]
-            : "Failed to join bidding. Please try again.",
-      ));
+      emit(
+        BiddingTailorState.fail(
+          e.toString().contains("Exception:")
+              ? e.toString().split("Exception: ")[1]
+              : "Failed to join bidding. Please try again.",
+        ),
+      );
     }
   }
 
@@ -132,11 +143,13 @@ class BiddingTailorCubit extends Cubit<BiddingTailorState> {
       }
     } catch (e) {
       if (!isClosed) {
-        emit(BiddingTailorState.fail(
-          e.toString().contains("Exception:")
-              ? e.toString().split("Exception: ")[1]
-              : "Failed to update offer.",
-        ));
+        emit(
+          BiddingTailorState.fail(
+            e.toString().contains("Exception:")
+                ? e.toString().split("Exception: ")[1]
+                : "Failed to update offer.",
+          ),
+        );
       }
     }
   }
@@ -162,16 +175,16 @@ class BiddingTailorCubit extends Cubit<BiddingTailorState> {
       if (!isClosed) await getOffers(postId);
     } catch (e) {
       if (!isClosed) {
-        emit(BiddingTailorState.fail(
-          e.toString().contains("Exception:")
-              ? e.toString().split("Exception: ")[1]
-              : "Failed to delete offer.",
-        ));
+        emit(
+          BiddingTailorState.fail(
+            e.toString().contains("Exception:")
+                ? e.toString().split("Exception: ")[1]
+                : "Failed to delete offer.",
+          ),
+        );
       }
     }
   }
-
-
 
   Future<void> getMyAcceptedOffers() async {
     if (_loadedAcceptedOffers) return;
@@ -182,16 +195,18 @@ class BiddingTailorCubit extends Cubit<BiddingTailorState> {
         emit(const BiddingTailorState.fail("Authentication token not found"));
         return;
       }
-      final List<AcceptedOfferResponse> response =
-      await _repository.getMyAcceptedOffers(token);
+      final List<AcceptedOfferResponse> response = await _repository
+          .getMyAcceptedOffers(token);
       emit(BiddingTailorState.success(response));
       _loadedAcceptedOffers = true;
     } catch (e) {
-      emit(BiddingTailorState.fail(
-        e.toString().contains("Exception:")
-            ? e.toString().split("Exception: ")[1]
-            : "Failed to load accepted orders. Please try again.",
-      ));
+      emit(
+        BiddingTailorState.fail(
+          e.toString().contains("Exception:")
+              ? e.toString().split("Exception: ")[1]
+              : "Failed to load accepted orders. Please try again.",
+        ),
+      );
     }
   }
 
@@ -211,11 +226,11 @@ class BiddingTailorCubit extends Cubit<BiddingTailorState> {
       _loadedAcceptedOffers = false;
       await getMyAcceptedOffers();
     } catch (e) {
-      emit(BiddingTailorState.fail(
-        e.toString().contains("Exception:")
-            ? e.toString().split("Exception: ")[1]
-            : "Failed to update work status. Please try again.",
-      ));
+      emit(
+        BiddingTailorState.fail(
+          "Failed to update work status. Please try again.",
+        ),
+      );
     }
   }
 

@@ -25,28 +25,7 @@ class PostItemTailor extends StatelessWidget {
     required this.id,
   });
 
-  Color get _statusColor {
-    switch (status) {
-      case 'closed':
-        return Colors.red.shade100;
-      case 'open':
-        return Colors.green.shade100;
-      default:
-        return AppColors.lightprimery;
-    }
-  }
-
-  Color get _statusTextColor {
-    switch (status) {
-      case 'closed':
-        return Colors.red.shade700;
-      case 'open':
-        return Colors.green.shade700;
-      default:
-        return AppColors.primery;
-    }
-  }
-
+ 
   @override
   Widget build(BuildContext context) {
     return Center(

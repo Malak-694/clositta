@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'package:bloc/bloc.dart';
 import 'package:chicora/core/di/dependency_injection.dart';
 import 'package:chicora/core/helper/shared_key.dart';
@@ -8,6 +10,7 @@ import 'package:chicora/features/customer/biding/data/models/send_bidding_model.
 import 'package:chicora/features/customer/biding/data/repo/bid_repo.dart';
 import 'package:chicora/features/customer/biding/logic/cubit/custom_bidding_cubit/customer_bidding_state.dart';
 
+// ignore: unused_import
 import '../../../data/models/rate_offer_request_model.dart';
 
 class CustomerBiddingCubit extends Cubit<CustomerBiddingState> {

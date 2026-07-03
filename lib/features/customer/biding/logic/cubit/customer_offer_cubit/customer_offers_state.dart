@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+// ignore: unused_import
 import '../../../data/models/offer_model.dart';
 
 part 'customer_offers_state.freezed.dart';

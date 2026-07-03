@@ -115,9 +115,7 @@ class CustomDropdownList extends StatelessWidget {
             dropdownColor: fillColor,
             decoration: InputDecoration(
               filled: true,
-              fillColor: value != null
-                  ? AppColors.primery.withValues(alpha: 0.1)
-                  : fillColor,
+              fillColor: value != null ? AppColors.lightprimery : fillColor,
               contentPadding: EdgeInsets.symmetric(
                 horizontal: 14.w,
                 vertical: vPadding ?? 12.h,

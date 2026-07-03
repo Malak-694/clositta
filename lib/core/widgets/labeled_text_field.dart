@@ -93,8 +93,7 @@ class _LabeledTextFieldState extends State<LabeledTextField> {
     final effectiveBorderColor = widget.borderColor ?? AppColors.lightprimery;
     final effectiveFocusedBorderColor =
         widget.focusedBorderColor ?? AppColors.primery;
-    final effectiveFillColor =
-        widget.fillColor ?? const Color.fromARGB(255, 41, 16, 200);
+    final effectiveFillColor = widget.fillColor ?? AppColors.lightprimery;
 
     // Build the floating label text, appending '*' when required
     final effectiveLabelText = widget.label == null

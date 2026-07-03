@@ -3,7 +3,6 @@ import 'package:chicora/core/constants/style.dart';
 import 'package:chicora/core/di/dependency_injection.dart';
 import 'package:chicora/core/helper/shared_pref_helper.dart';
 import 'package:chicora/core/widgets/custom_nav_bar.dart';
-import 'package:chicora/features/customer/biding/logic/cubit/custom_bidding_cubit/customer_bidding_cubit.dart';
 import 'package:chicora/features/notifications/logic/cubit/notification_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,7 +17,6 @@ import '../../../../../core/widgets/custom_app_bar.dart';
 import '../../../../chat/logic/conversations_cubit/conversations_cubit.dart';
 import '../../../../notifications/data/models/unread_count_response.dart';
 import '../../../../notifications/logic/cubit/notification_cubit.dart';
-import '../../logic/cubit/customer_offer_cubit/customer_offers_cubit.dart';
 import '../widgets/active_orders_tab.dart';
 import '../widgets/posts_tab.dart';
 

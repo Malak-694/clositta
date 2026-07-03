@@ -48,9 +48,15 @@ class _FormScreenState extends State<FormScreen> {
   @override
   void initState() {
     super.initState();
-    _descriptionController = TextEditingController(text: widget.initialDescription ?? '');
-    _priceController = TextEditingController(text: widget.initialPrice?.toString() ?? '');
-    _durationController = TextEditingController(text: widget.initialDuration ?? '');
+    _descriptionController = TextEditingController(
+      text: widget.initialDescription ?? '',
+    );
+    _priceController = TextEditingController(
+      text: widget.initialPrice?.toString() ?? '',
+    );
+    _durationController = TextEditingController(
+      text: widget.initialDuration ?? '',
+    );
     _existingImageUrl = widget.initialImageUrl;
   }
 
@@ -114,12 +120,15 @@ class _FormScreenState extends State<FormScreen> {
 
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(AppStyle.userMessage(message), style: AppStyle.body6),
+                content: Text(
+                  AppStyle.userMessage(message),
+                  style: AppStyle.body6,
+                ),
                 backgroundColor: AppColors.lightprimery,
                 behavior: SnackBarBehavior.floating,
               ),
             );
-            Navigator.pop(context,true);
+            Navigator.pop(context, true);
           },
         );
       },
@@ -138,15 +147,21 @@ class _FormScreenState extends State<FormScreen> {
             onCartTap: () {},
             extraActions: widget.isEditMode
                 ? [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 12, 0),
-                child: IconButton(
-                  icon: Icon(Icons.delete_outline, color: AppColors.ternary ,size: 30,),
-                  onPressed: isLoading ? null : () => _confirmDelete(context),
-                  tooltip: 'Delete Post',
-                ),
-              ),
-            ]
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 12, 0),
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.delete_outline,
+                          color: AppColors.ternary,
+                          size: 30,
+                        ),
+                        onPressed: isLoading
+                            ? null
+                            : () => _confirmDelete(context),
+                        tooltip: 'Delete Post',
+                      ),
+                    ),
+                  ]
                 : [],
           ),
           body: SingleChildScrollView(
@@ -203,9 +218,9 @@ class _FormScreenState extends State<FormScreen> {
                     onRemove: isLoading
                         ? null
                         : () => setState(() {
-                      _selectedImagePath = null;
-                      _existingImageUrl = widget.initialImageUrl;
-                    }),
+                            _selectedImagePath = null;
+                            _existingImageUrl = widget.initialImageUrl;
+                          }),
                     enabled: !isLoading,
                   ),
 
@@ -217,10 +232,9 @@ class _FormScreenState extends State<FormScreen> {
                   label: 'Description',
                   hintText: 'Enter detailed description...',
                   maxLines: 5,
-                  labelStyle: AppStyle.body6,
-                  fillColor: AppColors.lightprimery,
-                  filled: true,
+
                   enabled: !isLoading,
+                  textInputAction: TextInputAction.next,
                 ),
                 SizedBox(height: 20.h),
 
@@ -233,10 +247,9 @@ class _FormScreenState extends State<FormScreen> {
                         label: 'Price',
                         hintText: 'Write the price',
                         keyboardType: TextInputType.number,
-                        labelStyle: AppStyle.body6,
-                        fillColor: AppColors.lightprimery,
-                        filled: true,
+
                         enabled: !isLoading,
+                        textInputAction: TextInputAction.next,
                       ),
                     ),
                     SizedBox(width: 20.w),
@@ -246,10 +259,9 @@ class _FormScreenState extends State<FormScreen> {
                         label: 'Duration (days)',
                         hintText: 'Write the duration',
                         keyboardType: TextInputType.number,
-                        labelStyle: AppStyle.body6,
-                        fillColor: AppColors.lightprimery,
-                        filled: true,
+
                         enabled: !isLoading,
+                        textInputAction: TextInputAction.done,
                       ),
                     ),
                   ],

@@ -29,8 +29,11 @@ class _ClosetItemsScreenState extends State<ClosetItemsScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<ConversationsCubit>().loadUnreadCount();
+    });
     _loadUserId();
-    context.read<ConversationsCubit>().loadUnreadCount();
   }
   Future<void> _loadUserId() async {
     final prefs = getIt<SharedPrefHelper>();

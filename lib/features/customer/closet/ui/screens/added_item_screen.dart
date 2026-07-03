@@ -85,7 +85,7 @@ class _AddedClosetItemScreenState extends State<AddedClosetItemScreen> {
       listener: (context, state) {
         state.whenOrNull(
           success: (_) {
-            Navigator.pop(context);
+            Navigator.pop(context, true);
           },
           fail: (error) => _showSnackBar(error),
         );

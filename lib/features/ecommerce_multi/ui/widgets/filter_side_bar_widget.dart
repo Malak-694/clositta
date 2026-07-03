@@ -1,3 +1,4 @@
+import 'package:chicora/core/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors.dart';
@@ -215,21 +216,14 @@ class _FilterSidebarState extends State<_FilterSidebar> {
                     width: double.infinity,
                     child: OutlinedButton(
                       onPressed: _pop,
-                      child: const Text('Apply'),
+                      child:  Text('Apply' , style: AppStyle.medPrimery,),
                     ),
                   ),
                   SizedBox(height: 8.h),
 
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primery,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.r),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 14.h),
-                      ),
+                  CustomElevatedButton(
+                    height: 47.h,
+                      value: 'Clear Filters',
                       onPressed: () {
                         setState(() {
                           if (widget.usePrice) _priceSort = PriceSortOrder.none;
@@ -238,13 +232,7 @@ class _FilterSidebarState extends State<_FilterSidebar> {
                           _season = null;
                           _occasion = null;
                         });
-                      },
-                      child: Text(
-                        'Clear Filters',
-                        style: AppStyle.medBackground,
-                      ),
-                    ),
-                  ),
+                      }),
                   SizedBox(height: 8.h),
                 ],
               ),
@@ -286,7 +274,7 @@ class _FilterSidebarState extends State<_FilterSidebar> {
           if (hint != 'Price Sort')
             DropdownMenuItem<String>(
               value: null,
-              child: Text('All', style: AppStyle.smallBlack),
+              child: Text('All', style: AppStyle.smallBlack.copyWith(fontSize: 16)),
             ),
           ...items.map(
             (item) => DropdownMenuItem<String>(

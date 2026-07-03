@@ -27,9 +27,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<ProfileCubit>().getProfile();
+    });
     _initAndLoad();
-    context.read<ProfileCubit>().getProfile();
   }
+
 
   Future<void> _initAndLoad() async {
     final prefs = getIt<SharedPrefHelper>();
@@ -43,7 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final isDark = ChicoraApp.of(context).isDarkMode;
     final scaffoldColor = isDark
         ? AppColors.darkScaffold
-        : AppColors.lightprimery.withOpacity(0.40);
+        : AppColors.lightprimery.withOpacity(0.2);
 
     return SafeArea(
       child: Scaffold(

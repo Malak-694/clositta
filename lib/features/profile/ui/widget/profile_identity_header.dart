@@ -29,23 +29,6 @@ class ProfileIdentityHeader extends StatelessWidget {
   final bool isDarkMode;
   final VoidCallback? onThemeToggle;
 
-  String _getRoleDisplayName(String? role) {
-    if (role == null) return 'Customer';
-    switch (role.toLowerCase()) {
-      case 'tailor':
-        return 'Tailor';
-      case 'clothes_seller':
-      case 'material_seller':
-      case 'seller':
-        return 'Seller';
-      case 'customer':
-      default:
-        return 'Customer';
-    }
-  }
-
-  /// Driving directions from the user's current location to the workshop.
-  /// Tries HTTPS Maps directions, then `geo:`, then the original [mapsUrl].
   Future<void> _openMapsDirections(
       BuildContext context,
       String mapsUrl,
@@ -89,7 +72,6 @@ class ProfileIdentityHeader extends StatelessWidget {
     }
   }
 
-  /// Avoid passing another URL as `destination` (breaks the Maps app parser).
   static String? _sanitizeDirDestination(String? dest) {
     if (dest == null) return null;
     final t = dest.trim();
@@ -101,7 +83,6 @@ class ProfileIdentityHeader extends StatelessWidget {
     return t;
   }
 
-  /// Best-effort destination string for Google Maps directions URL (api=1).
   static String? _directionsDestination(String mapsUrl, String? address) {
     final fromAt = RegExp(
       r'@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)',
@@ -147,17 +128,17 @@ class ProfileIdentityHeader extends StatelessWidget {
       child: Column(
         children: [
           // Theme toggle icon at top right
-          Align(
-            alignment: Alignment.topRight,
-            child: IconButton(
-              onPressed: onThemeToggle,
-              icon: Icon(
-                isDarkMode ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
-                size: 24.sp,
-                color: primaryColor,
-              ),
-            ),
-          ),
+          // Align(
+          //   alignment: Alignment.topRight,
+          //   child: IconButton(
+          //     onPressed: onThemeToggle,
+          //     icon: Icon(
+          //       isDarkMode ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
+          //       size: 24.sp,
+          //       color: primaryColor,
+          //     ),
+          //   ),
+          // ),
           // Profile avatar
           CircleAvatar(
             radius: 60.r,

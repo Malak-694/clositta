@@ -19,12 +19,17 @@ class ClosetCubit extends Cubit<ClosetState> {
   String selectedOccasion = 'All';
 
   ClosetCubit({required this.closetRepo}) : super(ClosetState.initial());
+
   Future<String?> _getToken() async {
     return await _prefs.getSecureData(SharedPrefKey.token);
   }
 
-  Future<void> viewClosetItems({String? category, String? season}) async {
-    emit(ClosetState.loading());
+  Future<void> viewClosetItems({
+    String? category,
+    String? season,
+    bool showLoading = true, // ✅ NEW: lets us refresh silently
+  }) async {
+    if (showLoading) emit(ClosetState.loading());
     try {
       final token = await _getToken();
       if (token == null || token.isEmpty) {
@@ -41,7 +46,7 @@ class ClosetCubit extends Cubit<ClosetState> {
         success: (List<ClosetItemResponseModel> data) {
           allItems = data;
           selectedCategory = category ?? 'All';
-          emit(ClosetState.success(data));
+          _applyFilters();
         },
         failure: (String error) {
           emit(ClosetState.fail("please try again later"));
@@ -74,7 +79,9 @@ class ClosetCubit extends Cubit<ClosetState> {
   }
 
   void _applyFilters() {
-    List<ClosetItemResponseModel> filtered = allItems;
+    // ✅ CHANGED: always build a brand-new list, never reuse `allItems` reference directly
+    List<ClosetItemResponseModel> filtered = List<ClosetItemResponseModel>.from(allItems);
+
     if (selectedCategory != 'All') {
       filtered = filtered
           .where((item) => item.category == selectedCategory.toLowerCase())
@@ -125,7 +132,6 @@ class ClosetCubit extends Cubit<ClosetState> {
 
       response.when(
         success: (MessageModel data) {
-          // Refresh the closet after adding
           viewClosetItems();
         },
         failure: (String error) {
@@ -157,10 +163,8 @@ class ClosetCubit extends Cubit<ClosetState> {
       );
       response.when(
         success: (MessageModel data) {
-          // Remove the item from the list and emit the updated list
-          allItems.removeWhere((item) => item.id == itemId);
-          // Also refresh the filtered view
-          _applyFilters();
+          // ✅ CHANGED: refetch from server instead of mutating allItems locally
+          viewClosetItems(showLoading: false); // silent refresh, no spinner flash
         },
         failure: (String error) {
           emit(ClosetState.fail("Failed to delete item. Please try again."));
@@ -204,7 +208,7 @@ class ClosetCubit extends Cubit<ClosetState> {
       );
 
       response.when(
-        success: (_) => emit(ClosetState.success(response)), // ✅
+        success: (_) => viewClosetItems(),
         failure: (error) => emit(ClosetState.fail(error)),
       );
     } catch (e) {

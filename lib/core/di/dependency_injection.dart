@@ -41,6 +41,7 @@ import '../../features/customer/ai/complete_recommend/logic/complete_outfit_cubi
 import '../../features/customer/ai/complete_recommend/logic/cubit/outfit_recommendation_cubit.dart';
 import '../../features/customer/biding/data/repo/bid_repo.dart';
 import '../../features/customer/biding/data/repo/portfolio_repo.dart';
+import '../../features/customer/biding/logic/cubit/customer_offer_cubit/customer_offers_cubit.dart';
 import '../../features/customer/biding/logic/cubit/portfolio_cubit/portfolio_cubit.dart';
 import '../../features/profile/data/repo/profile_repo.dart';
 import '../../features/profile/logic/cubit/profile_cubit.dart';
@@ -75,6 +76,9 @@ Future<void> setupGetIt() async {
   );
   getIt.registerFactory<CustomerBiddingCubit>(
     () => CustomerBiddingCubit(getIt()),
+  );
+  getIt.registerFactory<CustomerOffersCubit>(
+        () => CustomerOffersCubit(getIt()),
   );
   //SellerProduct
   getIt.registerLazySingleton<SellerProductRepo>(

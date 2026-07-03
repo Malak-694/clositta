@@ -7,11 +7,9 @@ import 'package:chicora/core/widgets/custom_app_bar.dart';
 import 'package:chicora/core/widgets/custom_nav_bar.dart';
 import 'package:chicora/features/chat/logic/conversations_cubit/conversations_cubit.dart';
 import 'package:chicora/features/notifications/logic/cubit/notification_cubit.dart';
-import 'package:chicora/features/notifications/data/models/unread_count_response.dart';
 import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
 import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_total_quantity.dart';
 import 'package:chicora/features/ecommerce_multi/ui/screens/buyer_product_screen_body.dart';
-import 'package:chicora/features/notifications/logic/cubit/notification_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -28,8 +26,11 @@ class _CustomerProductsScreenState extends State<CustomerProductsScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<ConversationsCubit>().loadUnreadCount();
+    });
     _loadUserId();
-    context.read<ConversationsCubit>().loadUnreadCount();
   }
 
   Future<void> _loadUserId() async {

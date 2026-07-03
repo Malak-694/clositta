@@ -7,11 +7,14 @@ import 'package:chicora/features/customer/biding/data/models/offer_model.dart';
 import 'package:chicora/features/customer/biding/logic/cubit/custom_bidding_cubit/customer_bidding_cubit.dart';
 import 'package:chicora/features/customer/biding/logic/cubit/custom_bidding_cubit/customer_bidding_state.dart';
 import 'package:chicora/features/customer/biding/ui/widgets/bid_item.dart';
+import 'package:chicora/features/tailor/bidding_tailor/data/models/accepted_offer_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/widgets/custom_category_selector.dart';
+import '../../logic/cubit/customer_offer_cubit/customer_offers_cubit.dart';
+import '../../logic/cubit/customer_offer_cubit/customer_offers_state.dart';
 
 class DetailesScreen extends StatefulWidget {
   final String bidId;
@@ -42,17 +45,21 @@ class _DetailesScreenState extends State<DetailesScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<CustomerOffersCubit>().getBestOffers(widget.bidId);
+    });
     isBidOpen = widget.bidStatus == "open" || widget.bidStatus == "updated";
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CustomerBiddingCubit>().getBestOffers(widget.bidId);
-    });
+    }
+    );
   }
 
   void _onFilterChanged(String filter) {
     if (filter == _filterType) return;
     setState(() => _filterType = filter);
 
-    final cubit = context.read<CustomerBiddingCubit>();
+    final cubit = context.read<CustomerOffersCubit>();
     if (filter == 'Best 3') {
       cubit.refreshBestOffers(widget.bidId);
     } else {
@@ -92,7 +99,7 @@ class _DetailesScreenState extends State<DetailesScreen> {
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
-              context.read<CustomerBiddingCubit>().acceptOffer(
+              context.read<CustomerOffersCubit>().acceptOffer(
                 offerId,
                 widget.bidId,
               );
@@ -122,7 +129,6 @@ class _DetailesScreenState extends State<DetailesScreen> {
             Text("Tailor bids", style: AppStyle.boldSecondary),
             SizedBox(height: 5.h),
 
-            // ── Bid Image ──────────────────────────────────────
             Container(
               decoration: BoxDecoration(
                 color: Colors.grey.shade100,
@@ -160,8 +166,6 @@ class _DetailesScreenState extends State<DetailesScreen> {
 
             Text(widget.description, style: AppStyle.medLight),
             SizedBox(height: 10.h),
-
-            // ── Filter & Sort Row ──────────────────────────────
             if (isBidOpen)
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -195,7 +199,7 @@ class _DetailesScreenState extends State<DetailesScreen> {
 
             // ── Offers List ────────────────────────────────────
             Expanded(
-              child: BlocConsumer<CustomerBiddingCubit, CustomerBiddingState>(
+              child: BlocConsumer<CustomerOffersCubit, AcceptedOffersState>(
                 listener: (context, state) {
                   state.when(
                     initial: () {},
@@ -217,7 +221,7 @@ class _DetailesScreenState extends State<DetailesScreen> {
                           ),
                         );
                         setState(() => isBidOpen = false);
-                        context.read<CustomerBiddingCubit>().refreshBestOffers(
+                        context.read<CustomerOffersCubit>().refreshBestOffers(
                           widget.bidId,
                         );
                       }
@@ -232,25 +236,25 @@ class _DetailesScreenState extends State<DetailesScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text('Failed to retrieve the bids'),
+                          Text('Failed to retrieve the bids: $msg'),
                           const SizedBox(height: 8),
                           CustomElevatedButton(
                             onPressed: () => context
-                                .read<CustomerBiddingCubit>()
+                                .read<CustomerOffersCubit>()
                                 .getBestOffers(widget.bidId),
                             value: 'Retry',
                           ),
                         ],
                       ),
                     ),
-                    success: (offers) {
-                      if (offers is! List<OfferResponse>) {
-                        return const Center(child: Text('Unexpected data'));
+                    success: (data) {
+                      if (data is! List<OfferResponse>) {
+                        return const Center(child: Text('Unexpected data format'));
                       }
 
                       final displayedOffers = isBidOpen
-                          ? _applySort(offers)
-                          : offers
+                          ? _applySort(data)
+                          : data
                           .where((o) => o.status == "accepted")
                           .toList();
 
@@ -272,7 +276,7 @@ class _DetailesScreenState extends State<DetailesScreen> {
                             padding: const EdgeInsets.only(bottom: 10.0),
                             child: BidItem(
                               offerId: offer.id ?? '',
-                              tailor: offer.tailor?.name ?? '',
+                              tailor: offer.tailor?.name ?? 'Unknown Tailor',
                               tailorId: offer.tailor?.id ?? '',
                               duration: offer.timeInDays ?? 0,
                               email: offer.tailor?.email ?? '',

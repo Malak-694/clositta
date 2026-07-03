@@ -29,9 +29,13 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<ConversationsCubit>().loadUnreadCount();
+    });
     _loadUserId();
-    context.read<ConversationsCubit>().loadUnreadCount();
   }
+
 
   Future<void> _loadUserId() async {
     final prefs = getIt<SharedPrefHelper>();
@@ -70,92 +74,92 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
           ),
         ),
         body:
-            BlocBuilder<
-              ConversationsCubit,
-              ConversationsState<List<ConversationModel>>
-            >(
-              builder: (context, state) {
-                return state.when(
-                  initial: () => const SizedBox(),
+        BlocBuilder<
+            ConversationsCubit,
+            ConversationsState<List<ConversationModel>>
+        >(
+          builder: (context, state) {
+            return state.when(
+              initial: () => const SizedBox(),
 
-                  loading: () => const Center(
-                    child: CircularProgressIndicator(color: AppColors.primery),
-                  ),
+              loading: () => const Center(
+                child: CircularProgressIndicator(color: AppColors.primery),
+              ),
 
-                  fail: (msg) => Center(
+              fail: (msg) => Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      size: 48,
+                      color: AppColors.light,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      msg,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: AppColors.light),
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primery,
+                        foregroundColor: Colors.white,
+                      ),
+                      onPressed: () => context
+                          .read<ConversationsCubit>()
+                          .loadConversations(),
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              ),
+
+              success: (conversations) {
+                if (conversations.isEmpty) {
+                  return Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
-                          Icons.error_outline,
-                          size: 48,
-                          color: AppColors.light,
+                        Icon(
+                          Icons.chat_bubble_outline,
+                          size: 64,
+                          color: Colors.grey.shade300,
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          msg,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(color: AppColors.light),
-                        ),
-                        const SizedBox(height: 12),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primery,
-                            foregroundColor: Colors.white,
-                          ),
-                          onPressed: () => context
-                              .read<ConversationsCubit>()
-                              .loadConversations(),
-                          child: const Text('Retry'),
+                          'No conversations yet',
+                          style: TextStyle(color: Colors.grey.shade400),
                         ),
                       ],
                     ),
-                  ),
+                  );
+                }
 
-                  success: (conversations) {
-                    if (conversations.isEmpty) {
-                      return Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.chat_bubble_outline,
-                              size: 64,
-                              color: Colors.grey.shade300,
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              'No conversations yet',
-                              style: TextStyle(color: Colors.grey.shade400),
-                            ),
-                          ],
-                        ),
+                return RefreshIndicator(
+                  color: AppColors.primery,
+                  onRefresh: () => context
+                      .read<ConversationsCubit>()
+                      .loadConversations(),
+                  child: ListView.separated(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    itemCount: conversations.length,
+                    separatorBuilder: (_, _) =>
+                    const Divider(height: 1, indent: 72),
+                    itemBuilder: (context, index) {
+                      final conv = conversations[index];
+                      return ConversationTile(
+                        conversation: conv,
+                        currentUserId: widget.currentUserId,
                       );
-                    }
-
-                    return RefreshIndicator(
-                      color: AppColors.primery,
-                      onRefresh: () => context
-                          .read<ConversationsCubit>()
-                          .loadConversations(),
-                      child: ListView.separated(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        itemCount: conversations.length,
-                        separatorBuilder: (_, _) =>
-                            const Divider(height: 1, indent: 72),
-                        itemBuilder: (context, index) {
-                          final conv = conversations[index];
-                          return ConversationTile(
-                            conversation: conv,
-                            currentUserId: widget.currentUserId,
-                          );
-                        },
-                      ),
-                    );
-                  },
+                    },
+                  ),
                 );
               },
-            ),
+            );
+          },
+        ),
         bottomNavigationBar: FloatingNavBar(
           userRole: 'customer',
           selectedIndex: 0,

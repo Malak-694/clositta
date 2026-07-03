@@ -42,11 +42,13 @@ class _ClosetItemsScreenBodyState extends State<ClosetItemsScreenBody> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<ClosetCubit>().viewClosetItems(category: null);
+    });
     _selectedCategory = 'All';
     _selectedSeason = null;
     _selectedOccasion = null;
-    // Load closet items on init
-    context.read<ClosetCubit>().viewClosetItems(category: null);
   }
 
   @override
@@ -107,20 +109,16 @@ class _ClosetItemsScreenBodyState extends State<ClosetItemsScreenBody> {
                   ),
                 ),
               ),
-
               SizedBox(width: 10.w),
               CustomElevatedButton(
                 value: 'Add',
-                onPressed: () {
-                  Navigator.pushNamed(context, "upload_closet_item");
-                },
+                onPressed: _openAddItem, // ✅ CHANGED: extracted to its own method, see below
                 height: 35,
                 width: 80,
                 style: AppStyle.medBackground.copyWith(fontSize: 15.sp),
               ),
             ],
           ),
-
           SizedBox(height: 20.h),
           Expanded(
             child: BlocBuilder<ClosetCubit, ClosetState>(
@@ -134,7 +132,7 @@ class _ClosetItemsScreenBodyState extends State<ClosetItemsScreenBody> {
                     ),
                   ),
                   loading: () =>
-                      const Center(child: CircularProgressIndicator()),
+                  const Center(child: CircularProgressIndicator()),
                   success: (data) {
                     if (data is List<ClosetItemResponseModel>) {
                       if (data.isEmpty) {
@@ -157,17 +155,9 @@ class _ClosetItemsScreenBodyState extends State<ClosetItemsScreenBody> {
                           showPrice: false,
                           showEdit: true,
                           showDelete: true,
-                          onEdit: () {
-                            Navigator.pushNamed(
-                              context,
-                              RouteNames.update_closet_item,
-                              arguments: item,
-                            ).then((_) {
-                              context.read<ClosetCubit>().viewClosetItems();
-                            });
-                          },
+                          onEdit: () => _openEditItem(item), // ✅ CHANGED: extracted, see below
                           onDelete: () =>
-                              _showDeleteConfirmation(context, item), // ✅ new
+                              _showDeleteConfirmation(context, item),
                           onTap: () {},
                         ),
                       );
@@ -196,10 +186,30 @@ class _ClosetItemsScreenBodyState extends State<ClosetItemsScreenBody> {
     );
   }
 
+  Future<void> _openAddItem() async {
+    final result = await Navigator.pushNamed(context, "upload_closet_item");
+    if (!mounted) return;
+    if (result == true) {
+      context.read<ClosetCubit>().viewClosetItems(showLoading: false);
+    }
+  }
+
+  Future<void> _openEditItem(ClosetItemResponseModel item) async {
+    final result = await Navigator.pushNamed(
+      context,
+      RouteNames.update_closet_item,
+      arguments: item,
+    );
+    if (!mounted) return;
+    if (result == true) {
+      context.read<ClosetCubit>().viewClosetItems(showLoading: false);
+    }
+  }
+
   void _showDeleteConfirmation(
-    BuildContext context,
-    ClosetItemResponseModel item,
-  ) {
+      BuildContext context,
+      ClosetItemResponseModel item,
+      ) {
     showDialog(
       context: context,
       builder: (contextDialog) => AlertDialog(

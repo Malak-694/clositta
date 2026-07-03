@@ -19,7 +19,7 @@ class ImageUploadWidget extends StatelessWidget {
     super.key,
     required this.imagePath,
     required this.onTap,
-    this.imageUrl,           // ✅ optional
+    this.imageUrl,
     this.onRemove,
     this.enabled = true,
     this.height,

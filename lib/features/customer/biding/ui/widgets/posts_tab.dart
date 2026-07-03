@@ -14,7 +14,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/router/route_names.dart';
 
 class PostsTab extends StatefulWidget {
-  // ✅ FIX: Removed onBidsLoaded callback — no longer needed
   const PostsTab({super.key});
 
   @override
@@ -24,22 +23,17 @@ class PostsTab extends StatefulWidget {
 class _PostsTabState extends State<PostsTab> {
   CustomerBiddingCubit? _cubit;
 
-  final List<String> _categories = ["All", "Open", "Updated"];
   final String _selectedCategory = "All";
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // ✅ FIX: getMyBids() is already called from PostScreen.initState,
-    // so this is a no-op if data is already loaded (_loadedBids guard in cubit).
     _cubit ??= context.read<CustomerBiddingCubit>();
   }
 
   String _formatDate(dynamic dateValue) {
     try {
-      final dateTime = dateValue is DateTime
-          ? dateValue
-          : DateTime.parse(dateValue as String);
+      final dateTime = dateValue is DateTime ? dateValue : DateTime.parse(dateValue as String);
       return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}';
     } catch (_) {
       return 'N/A';
@@ -53,10 +47,7 @@ class _PostsTabState extends State<PostsTab> {
         title: const Text('Delete Post'),
         content: const Text('Are you sure you want to delete this post?'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cancel'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(dialogContext), child: const Text('Cancel')),
           TextButton(
             onPressed: () {
               Navigator.pop(dialogContext);
@@ -72,9 +63,34 @@ class _PostsTabState extends State<PostsTab> {
 
   List<BidResponse> _filterBids(List<BidResponse> bids) {
     if (_selectedCategory == "All") return bids;
-    return bids
-        .where((b) => b.status.toLowerCase() == _selectedCategory.toLowerCase())
-        .toList();
+    return bids.where((b) => b.status.toLowerCase() == _selectedCategory.toLowerCase()).toList();
+  }
+
+
+  Future<void> _openAddPost(BuildContext context) async {
+    final result = await Navigator.pushNamed(context, RouteNames.upload_post);
+    if (!mounted) return;
+    if (result == true) {
+      context.read<CustomerBiddingCubit>().refreshMyBids();
+    }
+  }
+
+
+  Future<void> _openEditPost(BuildContext context, BidResponse post) async {
+    final result = await Navigator.pushNamed(
+      context,
+      RouteNames.upload_post,
+      arguments: {
+        'bidId': post.id,
+        'initialDescription': post.requestDescription,
+        'initialImageUrl': post.imageUrl,
+        'initialPrice': post.price,
+      },
+    );
+    if (!mounted) return;
+    if (result == true) {
+      context.read<CustomerBiddingCubit>().refreshMyBids();
+    }
   }
 
   @override
@@ -84,27 +100,19 @@ class _PostsTabState extends State<PostsTab> {
       child: Column(
         children: [
           Expanded(
-            child: BlocConsumer<CustomerBiddingCubit, CustomerBiddingState>(
+            child: BlocConsumer<CustomerBiddingCubit, CustomerBiddingState<dynamic>>(
               listener: (context, state) {
                 state.whenOrNull(
                   success: (data) {
-                    if (data is String && data == "Bid deleted successfully") {
+                    if (data is String) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Post deleted successfully'),
-                          backgroundColor: Colors.green,
-                        ),
+                        SnackBar(content: Text(data), backgroundColor: Colors.green),
                       );
-                      _cubit?.clearState();
-                      _cubit?.getMyBids();
                     }
                   },
                   fail: (msg) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(msg),
-                        backgroundColor: Colors.red,
-                      ),
+                      SnackBar(content: Text(msg), backgroundColor: Colors.red),
                     );
                   },
                 );
@@ -120,9 +128,7 @@ class _PostsTabState extends State<PostsTab> {
                         const Text('Failed to retrieve the posts'),
                         const SizedBox(height: 8),
                         CustomElevatedButton(
-                          onPressed: () => context
-                              .read<CustomerBiddingCubit>()
-                              .getMyBids(),
+                          onPressed: () => context.read<CustomerBiddingCubit>().refreshMyBids(),
                           value: 'Retry',
                         ),
                       ],
@@ -130,18 +136,13 @@ class _PostsTabState extends State<PostsTab> {
                   ),
                   success: (data) {
                     if (data is List<BidResponse>) {
-                      final nonClosedBids = data
-                          .where((b) => b.status.toLowerCase() != 'closed')
-                          .toList();
-
+                      final nonClosedBids = data.where((b) => b.status.toLowerCase() != 'closed').toList();
                       final filteredBids = _filterBids(nonClosedBids);
 
                       if (filteredBids.isEmpty) {
                         return Center(
                           child: Text(
-                            _selectedCategory == "All"
-                                ? 'No posts available'
-                                : 'No $_selectedCategory requests',
+                            _selectedCategory == "All" ? 'No posts available' : 'No $_selectedCategory requests',
                             style: AppStyle.medLight,
                           ),
                         );
@@ -176,20 +177,12 @@ class _PostsTabState extends State<PostsTab> {
                           showDelete: true,
                           onDelete: () => _confirmDelete(context, post.id),
                           showEdit: true,
-                          onEdit: () => Navigator.pushNamed(
-                            context,
-                            RouteNames.upload_post,
-                            arguments: {
-                              'bidId': post.id,
-                              'initialDescription': post.requestDescription,
-                              'initialImageUrl': post.imageUrl,
-                              'initialPrice': post.price,
-                            },
-                          ),
+                          onEdit: () => _openEditPost(context, post),
                         ),
                       );
                     }
-                    return const Center(child: Text('Unexpected data'));
+
+                    return Center(child: circleIndicator());
                   },
                 );
               },
@@ -200,8 +193,7 @@ class _PostsTabState extends State<PostsTab> {
             style: AppStyle.medBackground,
             height: 50.h,
             width: 370.w,
-            onPressed: () =>
-                Navigator.pushNamed(context, RouteNames.upload_post),
+            onPressed: () => _openAddPost(context),
           ),
           SizedBox(height: 15.h),
         ],

@@ -37,9 +37,12 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
   @override
   void initState() {
     super.initState();
-    // Load portfolio items on init
-    context.read<PortfolioTailorCubit>().viewPortfolioTailor(null);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<PortfolioTailorCubit>().viewPortfolioTailor(null);
+    });
   }
+
 
   @override
   void dispose() {
@@ -96,7 +99,7 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
                 return state.when(
                   initial: () => _centeredMessage('No items'),
                   loading: () =>
-                      const Center(child: CircularProgressIndicator()),
+                  const Center(child: CircularProgressIndicator()),
                   success: (data) {
                     if (data is! List<PortfolioTailorResponseModel>) {
                       return _centeredMessage('No portfolio items found');
@@ -122,7 +125,7 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
                               showDelete: true,
                               onEdit: () {
                                 final cubit =
-                                    context.read<PortfolioTailorCubit>();
+                                context.read<PortfolioTailorCubit>();
                                 Navigator.pushNamed(
                                   context,
                                   RouteNames.update_work_screen,
@@ -169,9 +172,9 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
   }
 
   void _showDeleteConfirmation(
-    BuildContext context,
-    PortfolioTailorResponseModel item,
-  ) {
+      BuildContext context,
+      PortfolioTailorResponseModel item,
+      ) {
     showDialog(
       context: context,
       builder: (contextDialog) => AlertDialog(

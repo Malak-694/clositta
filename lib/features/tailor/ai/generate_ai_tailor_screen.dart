@@ -59,9 +59,13 @@ class _AiCustomerScreenState extends State<GenerateImageScreenTailor> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<ConversationsCubit>().loadUnreadCount();
+    });
     _loadUserId();
-    context.read<ConversationsCubit>().loadUnreadCount();
   }
+
 
   Future<void> _loadUserId() async {
     final prefs = getIt<SharedPrefHelper>();
@@ -127,7 +131,7 @@ class _AiCustomerScreenState extends State<GenerateImageScreenTailor> {
                         setState(() {
                           _useMyMeasurements = value;
                           _others =
-                              null; // reset when switching back to "my measurements"
+                          null; // reset when switching back to "my measurements"
                         });
                       }
                     },

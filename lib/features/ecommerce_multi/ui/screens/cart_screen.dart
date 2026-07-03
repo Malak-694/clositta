@@ -32,16 +32,18 @@ class _CartScreenBodyState extends State<CartScreenBody> {
   @override
   void initState() {
     super.initState();
-    context.read<CartCubit>().getCart();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<CartCubit>().getCart();
+    });
   }
+
 
   double _calculateSubtotal(List<Item>? items) {
     if (items == null) return 0;
     return items.fold(
-      0,
-      (sum, item) =>
-          sum +
-          (item.subtotal ?? (item.priceAtAddTime ?? 0) * (item.quantity ?? 1)),
+      0, (sum, item) =>
+      sum + (item.subtotal ?? (item.priceAtAddTime ?? 0) * (item.quantity ?? 1)),
     );
   }
 
@@ -96,12 +98,12 @@ class _CartScreenBodyState extends State<CartScreenBody> {
       builder: (context, state) {
         final bool isMainLoading =
             state is Loading &&
-            _cachedCartItems.isEmpty &&
-            _cachedSubOrders.isEmpty;
+                _cachedCartItems.isEmpty &&
+                _cachedSubOrders.isEmpty;
         final List<Item> displayItems = _cachedSubOrders.isNotEmpty
             ? _cachedSubOrders
-                  .expand((subOrder) => subOrder.items ?? const <Item>[])
-                  .toList()
+            .expand((subOrder) => subOrder.items ?? const <Item>[])
+            .toList()
             : _cachedCartItems;
         final double subtotal = _calculateSubtotal(displayItems);
 
@@ -110,194 +112,194 @@ class _CartScreenBodyState extends State<CartScreenBody> {
           child: isMainLoading
               ? Center(child: CircularProgressIndicator(color: AppColors.primery))
               : Column(
-                  children: [
-                    Expanded(
-                      child: displayItems.isEmpty
-                          ? Center(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'Your cart is empty',
-                                    style: AppStyle.medBlack.copyWith(
-                                      fontSize: 16.sp,
-                                    ),
-                                  ),
-                                  SizedBox(height: 12.h),
-                                  CustomElevatedButton(
-                                    value: 'View my orders',
-                                    height: 46.h,
-                                    width: 190.w,
-                                    background: AppColors.primery,
-                                    style: AppStyle.smallBackground.copyWith(
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                    onPressed: () {
-                                      Navigator.pushNamed(
-                                        context,
-                                        RouteNames.order_view_screen,
-                                        arguments: {'fromCart': true},
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                            )
-                          : ListView(
-                              padding: const EdgeInsets.only(
-                                top: 8,
-                                bottom: 16,
-                              ),
-                              children: [
-                                ..._groupItemsBySeller(displayItems).map((
-                                  sellerGroup,
-                                ) {
-                                  final sellerId = sellerGroup.key;
-                                  final sellerItems = sellerGroup.value;
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                          left: 4.w,
-                                          right: 4.w,
-                                          top: 8.h,
-                                          bottom: 6.h,
-                                        ),
-                                        child: Text(
-                                          sellerId == 'unknown_seller'
-                                              ? 'Seller'
-                                              : 'Seller: $sellerId',
-                                          style: AppStyle.medBlack.copyWith(
-                                            fontSize: 14.sp,
-                                          ),
-                                        ),
-                                      ),
-                                      ...sellerItems.map((item) {
-                                        return ProductCartCard(
-                                          item: item,
-                                          isUpdating: _updatingItems.contains(
-                                            item.product?.pId,
-                                          ),
-                                          onIncrement: () {
-                                            final pId = item.product?.pId;
-                                            if (pId != null) {
-                                              context
-                                                  .read<CartCubit>()
-                                                  .updateCart(
-                                                    pId,
-                                                    (item.quantity ?? 1) + 1,
-                                                  );
-                                            }
-                                          },
-                                          onDecrement: () {
-                                            final pId = item.product?.pId;
-                                            if (pId != null &&
-                                                (item.quantity ?? 1) > 1) {
-                                              context
-                                                  .read<CartCubit>()
-                                                  .updateCart(
-                                                    pId,
-                                                    (item.quantity ?? 1) - 1,
-                                                  );
-                                            }
-                                          },
-                                          onRemove: () {
-                                            final pId = item.product?.pId;
-                                            if (pId != null) {
-                                              context
-                                                  .read<CartCubit>()
-                                                  .removeFromCart(pId);
-                                            }
-                                          },
-                                        );
-                                      }),
-                                      SizedBox(height: 4.h),
-                                    ],
-                                  );
-                                }),
-                                OrderSummary(
-                                  subtotal: subtotal,
-                                  shippingValueText: 'Calculated at checkout',
-                                  backgroundColor: AppColors.primery.withOpacity(
-                                    0.12,
-                                  ),
-                                  accentColor: AppColors.darkprimery,
-                                ),
-                              ],
-                            ),
-                    ),
-                    SizedBox(height: 10.h),
-                    if (displayItems.isNotEmpty) ...[
+            children: [
+              Expanded(
+                child: displayItems.isEmpty
+                    ? Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Your cart is empty',
+                        style: AppStyle.medBlack.copyWith(
+                          fontSize: 16.sp,
+                        ),
+                      ),
+                      SizedBox(height: 12.h),
                       CustomElevatedButton(
-                        value: 'Proceed to Checkout',
-                        height: 50.h,
-                        style: AppStyle.medBackground.copyWith(fontSize: 18.sp),
+                        value: 'View my orders',
+                        height: 46.h,
+                        width: 190.w,
                         background: AppColors.primery,
+                        style: AppStyle.smallBackground.copyWith(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w700,
+                        ),
                         onPressed: () {
-                          Navigator.push(
+                          Navigator.pushNamed(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => MultiBlocProvider(
-                                providers: [
-                                  BlocProvider.value(
-                                    value: context.read<CartCubit>(),
-                                  ),
-                                  BlocProvider(
-                                    create: (_) => getIt<OrderCubit>(),
-                                  ),
-                                ],
-                                child: const CheckoutScreen(),
-                              ),
-                            ),
+                            RouteNames.order_view_screen,
+                            arguments: {'fromCart': true},
                           );
                         },
                       ),
-                      SizedBox(height: 16.h),
-
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CustomElevatedButton(
-                              value: 'View my orders',
-                              height: 46.h,
-                              width: 150.w,
-                              style: AppStyle.smallBackground.copyWith(
-                                fontSize: 13.sp,
-                                fontWeight: FontWeight.w900,
-                              ),
-                              background: AppColors.primery,
-                              onPressed: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  RouteNames.order_view_screen,
-                                  arguments: {'fromCart': true},
-                                );
-                              },
-                            ),
-                            SizedBox(width: 10.w),
-                            CustomElevatedButton(
-                              value: 'Remove cart',
-                              height: 46.h,
-                              width: 130.w,
-                              style: AppStyle.boldBackground.copyWith(
-                                fontSize: 13.sp,
-                              ),
-                              onPressed: () =>
-                                  context.read<CartCubit>().removeAllCart(),
-                              background: AppColors.ternary,
-                            ),
-                          ],
-                        ),
-                      ),
                     ],
-                    SizedBox(height: 30.h),
+                  ),
+                )
+                    : ListView(
+                  padding: const EdgeInsets.only(
+                    top: 8,
+                    bottom: 16,
+                  ),
+                  children: [
+                    ..._groupItemsBySeller(displayItems).map((
+                        sellerGroup,
+                        ) {
+                      final sellerId = sellerGroup.key;
+                      final sellerItems = sellerGroup.value;
+                      return Column(
+                        crossAxisAlignment:
+                        CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(
+                              left: 4.w,
+                              right: 4.w,
+                              top: 8.h,
+                              bottom: 6.h,
+                            ),
+                            child: Text(
+                              sellerId == 'unknown_seller'
+                                  ? 'Seller'
+                                  : 'Seller: $sellerId',
+                              style: AppStyle.medBlack.copyWith(
+                                fontSize: 14.sp,
+                              ),
+                            ),
+                          ),
+                          ...sellerItems.map((item) {
+                            return ProductCartCard(
+                              item: item,
+                              isUpdating: _updatingItems.contains(
+                                item.product?.pId,
+                              ),
+                              onIncrement: () {
+                                final pId = item.product?.pId;
+                                if (pId != null) {
+                                  context
+                                      .read<CartCubit>()
+                                      .updateCart(
+                                    pId,
+                                    (item.quantity ?? 1) + 1,
+                                  );
+                                }
+                              },
+                              onDecrement: () {
+                                final pId = item.product?.pId;
+                                if (pId != null &&
+                                    (item.quantity ?? 1) > 1) {
+                                  context
+                                      .read<CartCubit>()
+                                      .updateCart(
+                                    pId,
+                                    (item.quantity ?? 1) - 1,
+                                  );
+                                }
+                              },
+                              onRemove: () {
+                                final pId = item.product?.pId;
+                                if (pId != null) {
+                                  context
+                                      .read<CartCubit>()
+                                      .removeFromCart(pId);
+                                }
+                              },
+                            );
+                          }),
+                          SizedBox(height: 4.h),
+                        ],
+                      );
+                    }),
+                    OrderSummary(
+                      subtotal: subtotal,
+                      shippingValueText: 'Calculated at checkout',
+                      backgroundColor: AppColors.primery.withOpacity(
+                        0.12,
+                      ),
+                      accentColor: AppColors.darkprimery,
+                    ),
                   ],
                 ),
+              ),
+              SizedBox(height: 10.h),
+              if (displayItems.isNotEmpty) ...[
+                CustomElevatedButton(
+                  value: 'Proceed to Checkout',
+                  height: 50.h,
+                  style: AppStyle.medBackground.copyWith(fontSize: 18.sp),
+                  background: AppColors.primery,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => MultiBlocProvider(
+                          providers: [
+                            BlocProvider.value(
+                              value: context.read<CartCubit>(),
+                            ),
+                            BlocProvider(
+                              create: (_) => getIt<OrderCubit>(),
+                            ),
+                          ],
+                          child: const CheckoutScreen(),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                SizedBox(height: 16.h),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CustomElevatedButton(
+                        value: 'View my orders',
+                        height: 46.h,
+                        width: 150.w,
+                        style: AppStyle.smallBackground.copyWith(
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w900,
+                        ),
+                        background: AppColors.primery,
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            RouteNames.order_view_screen,
+                            arguments: {'fromCart': true},
+                          );
+                        },
+                      ),
+                      SizedBox(width: 10.w),
+                      CustomElevatedButton(
+                        value: 'Remove cart',
+                        height: 46.h,
+                        width: 130.w,
+                        style: AppStyle.boldBackground.copyWith(
+                          fontSize: 13.sp,
+                        ),
+                        onPressed: () =>
+                            context.read<CartCubit>().removeAllCart(),
+                        background: AppColors.ternary,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+              SizedBox(height: 30.h),
+            ],
+          ),
         );
       },
     );

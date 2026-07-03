@@ -12,15 +12,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/helper/shared_key.dart';
 import '../../../../../core/router/route_names.dart';
 import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
-import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_state.dart';
 import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_total_quantity.dart';
 
 import '../../../../../core/widgets/custom_app_bar.dart';
-import '../../../../chat/data/models/conversation_model.dart';
 import '../../../../chat/logic/conversations_cubit/conversations_cubit.dart';
-import '../../../../chat/logic/conversations_cubit/conversations_state.dart';
 import '../../../../notifications/data/models/unread_count_response.dart';
 import '../../../../notifications/logic/cubit/notification_cubit.dart';
+import '../../logic/cubit/customer_offer_cubit/customer_offers_cubit.dart';
 import '../widgets/active_orders_tab.dart';
 import '../widgets/posts_tab.dart';
 
@@ -31,8 +29,7 @@ class PostScreen extends StatefulWidget {
   State<PostScreen> createState() => _PostScreenState();
 }
 
-class _PostScreenState extends State<PostScreen>
-    with SingleTickerProviderStateMixin {
+class _PostScreenState extends State<PostScreen> with SingleTickerProviderStateMixin {
   final prefs = getIt<SharedPrefHelper>();
   String? _currentUserId;
   late TabController _tabController;
@@ -42,17 +39,8 @@ class _PostScreenState extends State<PostScreen>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _loadUserId();
-
-    _tabController.addListener(() {
-      if (_tabController.index == 1) {
-        context.read<CustomerBiddingCubit>().loadAcceptedOffers();
-      }
-    });
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CustomerBiddingCubit>().getMyBids();
-    });
   }
+
   @override
   void dispose() {
     _tabController.dispose();
@@ -67,14 +55,12 @@ class _PostScreenState extends State<PostScreen>
 
   @override
   Widget build(BuildContext context) {
-
-    final cartCount   = cartTotalItemQuantity(context.watch<CartCubit>().state);
-    final chatCount   = context.watch<ConversationsCubit>().unreadCount;
-    final notifCount  = context.watch<NotificationCubit>().state.maybeWhen(
+    final cartCount = cartTotalItemQuantity(context.watch<CartCubit>().state);
+    final chatCount = context.watch<ConversationsCubit>().unreadCount;
+    final notifCount = context.watch<NotificationCubit>().state.maybeWhen(
       success: (data) => data is UnreadCountResponse ? data.unreadCount : 0,
       orElse: () => 0,
     );
-
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -99,20 +85,14 @@ class _PostScreenState extends State<PostScreen>
           children: [
             Container(
               height: 45.h,
-              decoration: BoxDecoration(
-                color: AppColors.lightprimery.withOpacity(0.3),
-              ),
+              decoration: BoxDecoration(color: AppColors.lightprimery.withOpacity(0.3)),
               child: TabBar(
                 controller: _tabController,
-                indicator: BoxDecoration(
-                  color: AppColors.primery,
-                ),
+                indicator: BoxDecoration(color: AppColors.primery),
                 indicatorSize: TabBarIndicatorSize.tab,
                 dividerColor: Colors.transparent,
-                labelStyle:
-                AppStyle.boldBackground.copyWith(fontSize: 14.sp),
-                unselectedLabelStyle:
-                AppStyle.boldPrimery.copyWith(fontSize: 14.sp),
+                labelStyle: AppStyle.boldBackground.copyWith(fontSize: 14.sp),
+                unselectedLabelStyle: AppStyle.boldPrimery.copyWith(fontSize: 14.sp),
                 tabs: const [
                   Tab(text: 'My Posts'),
                   Tab(text: 'Active Orders'),
@@ -123,9 +103,9 @@ class _PostScreenState extends State<PostScreen>
             Expanded(
               child: TabBarView(
                 controller: _tabController,
-                children: [
-                  const PostsTab(),
-                  const ActiveOrdersTab(),
+                children: const [
+                  PostsTab(),
+                  ActiveOrdersTab(),
                 ],
               ),
             ),

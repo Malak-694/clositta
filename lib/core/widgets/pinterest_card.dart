@@ -42,17 +42,17 @@ Widget _buildPostCard(
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             child: config.imageUrl != null
-                ? Image.network(
-              config.imageUrl!,
+                ? FadeInImage.assetNetwork(
               fit: BoxFit.cover,
               width: double.infinity,
-              errorBuilder: (_, _, _) => Container(
-                height: 120,
-                color: Colors.grey.shade100,
-                child: const Center(
-                  child: Icon(Icons.image_not_supported, color: Colors.grey),
-                ),
-              ),
+              // errorBuilder: (_, _, _) => Container(
+              //   height: 120,
+              //   color: Colors.grey.shade100,
+              //   child: const Center(
+              //     child: Icon(Icons.image_not_supported, color: Colors.grey),
+              //   ),
+              // ),
+              placeholder: 'assets/images/loading.gif', image: config.imageUrl!,
             )
                 : Container(
               height: 120,
@@ -169,17 +169,17 @@ Widget _buildProductCard(
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             child: config.imageUrl != null
-                ? Image.network(
-              config.imageUrl!,
+                ? FadeInImage.assetNetwork(
               fit: BoxFit.cover,
               width: double.infinity,
-              errorBuilder: (_, _, _) => Container(
-                height: 120,
-                color: Colors.grey.shade100,
-                child: const Center(
-                  child: Icon(Icons.image_not_supported, color: Colors.grey),
-                ),
-              ),
+              // errorBuilder: (_, _, _) => Container(
+              //   height: 120,
+              //   color: Colors.grey.shade100,
+              //   child: const Center(
+              //     child: Icon(Icons.image_not_supported, color: Colors.grey),
+              //   ),
+              // ),
+              placeholder: 'assets/images/loading.gif', image: config.imageUrl!,
             )
                 : Container(
               height: 120,

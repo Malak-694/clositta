@@ -41,6 +41,7 @@ import '../../features/chat/ui/screens/conversations_screen.dart';
 import '../../features/customer/ai/complete_recommend/data/models/daily_outfit_response_model.dart';
 import '../../features/customer/ai/complete_recommend/ui/screens/complete_outfit_screen.dart';
 import '../../features/customer/ai/complete_recommend/ui/screens/outfit_recomendation_screen.dart';
+import '../../features/customer/biding/logic/cubit/customer_offer_cubit/customer_offers_cubit.dart';
 import '../../features/customer/biding/ui/Screens/tailor_info_screen.dart';
 import '../../features/customer/closet/data/models/closet_item_response_model.dart';
 import '../../features/customer/closet/data/repo/closet_repo.dart';
@@ -149,8 +150,17 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => MultiBlocProvider(
             providers: [
-              BlocProvider(create: (_) => getIt<CustomerBiddingCubit>()),
-              BlocProvider(create: (_) => getIt<ViewProductsCubit>()),
+              BlocProvider(
+                create: (_) => getIt<CustomerBiddingCubit>()
+                  ..getMyBids(),
+              ),
+              BlocProvider(
+                create: (_) => getIt<ViewProductsCubit>(),
+              ),
+              BlocProvider(
+                create: (_) => getIt<CustomerOffersCubit>()
+                  ..loadAcceptedOffers(),
+              ),
             ],
             child: const PostScreen(),
           ),
@@ -216,15 +226,22 @@ class AppRouter {
         final status = args["status"] as String? ?? '';
 
         return MaterialPageRoute(
-          builder: (_) => BlocProvider<CustomerBiddingCubit>(
+          builder: (_) => MultiBlocProvider(
+  providers: [
+    BlocProvider<CustomerBiddingCubit>(
             create: (context) => getIt<CustomerBiddingCubit>(),
-            child: DetailesScreen(
+),
+    BlocProvider(
+      create: (context) => getIt<CustomerOffersCubit>(),
+    ),
+  ],
+  child: DetailesScreen(
               bidId: bidId,
               urlImage: urlImage,
               description: description,
               bidStatus: status,
             ),
-          ),
+),
         );
       case RouteNames.view_offers_tailor:
         final args = settings.arguments as Map<String, dynamic>? ?? {};

@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:chicora/features/notifications/data/models/notification_model.dart';
 
 part 'notification_state.freezed.dart';
 

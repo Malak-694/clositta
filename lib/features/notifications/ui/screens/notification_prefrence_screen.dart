@@ -36,9 +36,9 @@ class _PreferencesBody extends StatefulWidget {
 
 class _PreferencesBodyState extends State<_PreferencesBody> {
   Map<PrefKey, bool> _prefs = {
-    PrefKey.orderUpdates:   true,
-    PrefKey.bidUpdates:     true,
-    PrefKey.offerUpdates:   true,
+    PrefKey.orderUpdates: true,
+    PrefKey.bidUpdates: true,
+    PrefKey.offerUpdates: true,
     PrefKey.lowStockAlerts: true,
   };
   bool _initialised = false;
@@ -51,7 +51,9 @@ class _PreferencesBodyState extends State<_PreferencesBody> {
   }
 
   Future<void> _loadRole() async {
-    final role = await getIt<SharedPrefHelper>().getSecureData(SharedPrefKey.role);
+    final role = await getIt<SharedPrefHelper>().getSecureData(
+      SharedPrefKey.role,
+    );
     if (!mounted) return;
     setState(() => _role = role);
   }
@@ -59,22 +61,21 @@ class _PreferencesBodyState extends State<_PreferencesBody> {
   void _initFromPrefs(NotificationPreferences prefs) {
     if (_initialised) return;
     _prefs = {
-      PrefKey.orderUpdates:   prefs.orderUpdates,
-      PrefKey.bidUpdates:     prefs.bidUpdates,
-      PrefKey.offerUpdates:   prefs.offerUpdates,
+      PrefKey.orderUpdates: prefs.orderUpdates,
+      PrefKey.bidUpdates: prefs.bidUpdates,
+      PrefKey.offerUpdates: prefs.offerUpdates,
       PrefKey.lowStockAlerts: prefs.lowStockAlerts,
     };
     _initialised = true;
   }
 
-  void _toggle(PrefKey key, bool value) =>
-      setState(() => _prefs[key] = value);
+  void _toggle(PrefKey key, bool value) => setState(() => _prefs[key] = value);
 
   void _save() {
     context.read<NotificationCubit>().updateNotificationPreferences(
-      orderUpdates:   _prefs[PrefKey.orderUpdates]!,
-      bidUpdates:     _prefs[PrefKey.bidUpdates]!,
-      offerUpdates:   _prefs[PrefKey.offerUpdates]!,
+      orderUpdates: _prefs[PrefKey.orderUpdates]!,
+      bidUpdates: _prefs[PrefKey.bidUpdates]!,
+      offerUpdates: _prefs[PrefKey.offerUpdates]!,
       lowStockAlerts: _prefs[PrefKey.lowStockAlerts]!,
     );
   }
@@ -96,13 +97,16 @@ class _PreferencesBodyState extends State<_PreferencesBody> {
           state.whenOrNull(
             success: (data) {
               if (data is UpdatePreferencesResponse) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: const Text('Preferences saved'),
-                  backgroundColor: AppColors.primery,
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.r)),
-                ));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('Preferences saved'),
+                    backgroundColor: AppColors.primery,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                  ),
+                );
               }
               if (data is NotificationPreferencesResponse) {
                 setState(() => _initFromPrefs(data.notificationPreferences));
@@ -114,8 +118,10 @@ class _PreferencesBodyState extends State<_PreferencesBody> {
           );
         },
         builder: (context, state) {
-          final isLoading =
-          state.maybeWhen(loading: () => true, orElse: () => false);
+          final isLoading = state.maybeWhen(
+            loading: () => true,
+            orElse: () => false,
+          );
 
           return Stack(
             children: [
@@ -144,7 +150,7 @@ class _PreferencesBodyState extends State<_PreferencesBody> {
                     child: Column(
                       children: List.generate(keys.length, (i) {
                         final key = keys[i];
-                        final m   = prefMeta[key]!;
+                        final m = prefMeta[key]!;
                         return Column(
                           children: [
                             PreferenceTile(
@@ -175,8 +181,8 @@ class _PreferencesBodyState extends State<_PreferencesBody> {
 
                   CustomElevatedButton(
                     height: 53,
-                    value: "Save Preferences",
-                    onPressed: () => isLoading ? null : _save,
+                    value: isLoading ? '....' : "Save Preferences",
+                    onPressed: () => isLoading ? null : _save(),
                   ),
                 ],
               ),
@@ -185,7 +191,8 @@ class _PreferencesBodyState extends State<_PreferencesBody> {
                 const ColoredBox(
                   color: Colors.white54,
                   child: Center(
-                      child: CircularProgressIndicator(color: AppColors.primery)),
+                    child: CircularProgressIndicator(color: AppColors.primery),
+                  ),
                 ),
             ],
           );

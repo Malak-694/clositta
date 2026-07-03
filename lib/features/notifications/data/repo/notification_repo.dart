@@ -1,6 +1,5 @@
 import 'package:chicora/core/models/message_model.dart';
 import 'package:chicora/core/networking/api_service.dart';
-import 'package:chicora/features/notifications/data/models/notification_model.dart';
 
 import '../models/mark_all_read_response.dart';
 import '../models/notification_preferences.dart';

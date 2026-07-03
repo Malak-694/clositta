@@ -1,4 +1,6 @@
 import 'package:chicora/core/constants/style.dart';
+import 'package:chicora/core/widgets/custom_dropdown_list.dart';
+import 'package:chicora/core/widgets/labeled_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:chicora/core/constants/colors.dart';
@@ -66,15 +68,11 @@ class _AddToClosetFormState extends State<_AddToClosetForm> {
               ),
             ),
             SizedBox(height: 16.h),
-            DropdownButtonFormField<String>(
+            CustomDropdownList(
+              label: 'Category',
+              hintText: 'Category',
               value: selectedCategory,
-              decoration: InputDecoration(
-                labelText: 'Category',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-              ),
-              items: [
+              items: const [
                 "top",
                 "bottom",
                 "jacket",
@@ -82,60 +80,45 @@ class _AddToClosetFormState extends State<_AddToClosetForm> {
                 "dress",
                 "shoes",
                 "accessories",
-              ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+              ],
               onChanged: (val) {
                 setState(() => selectedCategory = val ?? 'accessories');
               },
             ),
             SizedBox(height: 12.h),
-            DropdownButtonFormField<String>(
+
+            CustomDropdownList(
+              label: 'Season',
+              hintText: 'Season',
               value: selectedSeason,
-              decoration: InputDecoration(
-                labelText: 'Season',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-              ),
-              items: [
-                "summer",
-                "winter",
-                "spring",
-                "fall",
-                "all",
-              ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+              items: const ["summer", "winter", "spring", "fall", "all"],
               onChanged: (val) {
                 setState(() => selectedSeason = val ?? 'all');
               },
             ),
             SizedBox(height: 12.h),
-            DropdownButtonFormField<String>(
+
+            CustomDropdownList(
+              label: 'Occasion',
+              hintText: 'Occasion',
               value: selectedOccasion,
-              decoration: InputDecoration(
-                labelText: 'Occasion',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-              ),
-              items: [
+              items: const [
                 "casual",
                 "formal",
                 "semi-formal",
                 "party",
                 "sporty",
-              ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+              ],
               onChanged: (val) {
                 setState(() => selectedOccasion = val ?? 'casual');
               },
             ),
             SizedBox(height: 12.h),
-            TextField(
+            SizedBox(height: 12.h),
+            LabeledTextField(
               controller: colorController,
-              decoration: InputDecoration(
-                labelText: 'Color',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-              ),
+              hintText: 'Enter color',
+              label: 'Color',
             ),
             SizedBox(height: 20.h),
             Row(

@@ -35,12 +35,15 @@ class _ActiveOrdersTabState extends State<ActiveOrdersTab> {
 
   String _formatDate(dynamic dateValue) {
     try {
-      final dateTime = dateValue is DateTime ? dateValue : DateTime.parse(dateValue as String);
+      final dateTime = dateValue is DateTime
+          ? dateValue
+          : DateTime.parse(dateValue as String);
       return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}';
     } catch (_) {
       return 'N/A';
     }
   }
+
   Color _statusColor(String? status) {
     switch (status?.toLowerCase()) {
       case 'in_progress':
@@ -88,7 +91,9 @@ class _ActiveOrdersTabState extends State<ActiveOrdersTab> {
                   const Text('Failed to retrieve active orders'),
                   const SizedBox(height: 8),
                   CustomElevatedButton(
-                    onPressed: () => context.read<CustomerOffersCubit>().refreshAcceptedOffers(),
+                    onPressed: () => context
+                        .read<CustomerOffersCubit>()
+                        .refreshAcceptedOffers(),
                     value: 'Retry',
                   ),
                 ],
@@ -111,17 +116,24 @@ class _ActiveOrdersTabState extends State<ActiveOrdersTab> {
                   final tailorName = offer.tailor?.name ?? 'Unknown Tailor';
                   final workStatus = offer.workStatus ?? 'accepted';
                   final receiverId = offer.tailor?.id;
-                  final canOpenChat = receiverId != null && receiverId.isNotEmpty;
+                  final canOpenChat =
+                      receiverId != null && receiverId.isNotEmpty;
                   final isCompleted = workStatus.toLowerCase() == 'completed';
 
                   final description = offer.bid?.requestDescription ?? '';
 
                   return Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 14.h,
+                    ),
                     decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(16.r),
-                      border: Border.all(color: AppColors.lightprimery, width: 1.5),
+                      border: Border.all(
+                        color: AppColors.lightprimery,
+                        width: 1.5,
+                      ),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.04),
@@ -146,7 +158,9 @@ class _ActiveOrdersTabState extends State<ActiveOrdersTab> {
                             SizedBox(width: 12.w),
                             Container(
                               padding: EdgeInsets.symmetric(
-                                  horizontal: 14.w, vertical: 6.h),
+                                horizontal: 14.w,
+                                vertical: 6.h,
+                              ),
                               decoration: BoxDecoration(
                                 color: _statusColor(workStatus),
                                 borderRadius: BorderRadius.circular(20.r),
@@ -193,16 +207,24 @@ class _ActiveOrdersTabState extends State<ActiveOrdersTab> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(tailorName, style: AppStyle.smallPrimery),
+                                    Text(
+                                      tailorName,
+                                      style: AppStyle.smallPrimery,
+                                    ),
                                     Text(
                                       'Tap to view profile',
-                                      style: AppStyle.body5.copyWith(fontSize: 12.sp),
+                                      style: AppStyle.body5.copyWith(
+                                        fontSize: 12.sp,
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
-                              Icon(Icons.arrow_forward_ios_rounded,
-                                  size: 12.sp, color: AppColors.primery),
+                              Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                size: 12.sp,
+                                color: AppColors.primery,
+                              ),
                             ],
                           ),
                         ),
@@ -232,32 +254,45 @@ class _ActiveOrdersTabState extends State<ActiveOrdersTab> {
                         if (offer.deadline != null) ...[
                           Row(
                             children: [
-                              Icon(Icons.calendar_today_outlined,
-                                  size: 13.sp, color: AppColors.light),
+                              Icon(
+                                Icons.calendar_today_outlined,
+                                size: 13.sp,
+                                color: AppColors.light,
+                              ),
                               SizedBox(width: 5.w),
-                              Text('Deadline',
-                                  style: AppStyle.body5.copyWith(fontSize: 14.sp)),
+                              Text(
+                                'Deadline',
+                                style: AppStyle.body5.copyWith(fontSize: 14.sp),
+                              ),
                             ],
                           ),
                           SizedBox(height: 4.h),
                           Row(
                             children: [
-                              Text(_formatDate(offer.deadline!),
-                                  style: AppStyle.smallPrimery),
+                              Text(
+                                _formatDate(offer.deadline!),
+                                style: AppStyle.smallPrimery,
+                              ),
                               const Spacer(),
                               DeadlineBadge(deadline: offer.deadline!),
                             ],
                           ),
                           SizedBox(height: 10.h),
                         ],
-                        if (offer.message != null && offer.message!.isNotEmpty) ...[
+                        if (offer.message != null &&
+                            offer.message!.isNotEmpty) ...[
                           Row(
                             children: [
-                              Icon(Icons.chat_bubble_outline,
-                                  size: 13.sp, color: AppColors.light),
+                              Icon(
+                                Icons.chat_bubble_outline,
+                                size: 13.sp,
+                                color: AppColors.light,
+                              ),
                               SizedBox(width: 5.w),
-                              Text("Tailor's note",
-                                  style: AppStyle.body5.copyWith(fontSize: 14.sp)),
+                              Text(
+                                "Tailor's note",
+                                style: AppStyle.body5.copyWith(fontSize: 14.sp),
+                              ),
                             ],
                           ),
                           SizedBox(height: 6.h),
@@ -268,7 +303,10 @@ class _ActiveOrdersTabState extends State<ActiveOrdersTab> {
                               color: AppColors.lightprimery.withOpacity(0.4),
                               borderRadius: BorderRadius.circular(10.r),
                             ),
-                            child: Text(offer.message!, style: AppStyle.smallPrimery),
+                            child: Text(
+                              offer.message!,
+                              style: AppStyle.smallPrimery,
+                            ),
                           ),
                           SizedBox(height: 14.h),
                         ],
@@ -284,13 +322,14 @@ class _ActiveOrdersTabState extends State<ActiveOrdersTab> {
                                 height: 40,
                                 onPressed: canOpenChat
                                     ? () => Navigator.pushNamed(
-                                  context,
-                                  RouteNames.chat_screen,
-                                  arguments: {
-                                    'receiverId': receiverId,
-                                    'receiverName': offer.tailor?.name ?? '',
-                                  },
-                                )
+                                        context,
+                                        RouteNames.chat_screen,
+                                        arguments: {
+                                          'receiverId': receiverId,
+                                          'receiverName':
+                                              offer.tailor?.name ?? '',
+                                        },
+                                      )
                                     : null,
                               ),
                             ),
@@ -307,32 +346,42 @@ class _ActiveOrdersTabState extends State<ActiveOrdersTab> {
                                   onPressed: offer.id == null
                                       ? null
                                       : () async {
-                                    final rated = await showRateTailorSheet(
-                                      context: context,
-                                      offerId: offer.id!,
-                                      tailorName: tailorName,
-                                      onSubmit: (rating, comment) async =>
-                                          cubit?.rateOffer(
-                                            offerId: offer.id!,
-                                            rating: rating,
-                                            comment: comment,
-                                          ),
-                                    );
-                                    if (rated == true && context.mounted) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: const Text(
-                                              'Rating submitted successfully!'),
-                                          backgroundColor: Colors.green.shade400,
-                                          behavior: SnackBarBehavior.floating,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(10.r),
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  },
+                                          final rated =
+                                              await showRateTailorSheet(
+                                                context: context,
+                                                offerId: offer.id!,
+                                                tailorName: tailorName,
+                                                onSubmit:
+                                                    (rating, comment) async =>
+                                                        cubit?.rateOffer(
+                                                          offerId: offer.id!,
+                                                          rating: rating,
+                                                          comment: comment,
+                                                        ),
+                                              );
+                                          if (rated == true &&
+                                              context.mounted) {
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: const Text(
+                                                  'Rating submitted successfully!',
+                                                ),
+                                                backgroundColor:
+                                                    Colors.green.shade400,
+                                                behavior:
+                                                    SnackBarBehavior.floating,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        10.r,
+                                                      ),
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
                                 ),
                               ),
                             ],

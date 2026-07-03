@@ -24,7 +24,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:vision_gallery_saver/vision_gallery_saver.dart';
-import 'package:vision_gallery_saver/vision_gallery_saver_method_channel.dart';
 
 class AiGenerateMessage {
   final String text;

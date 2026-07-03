@@ -18,7 +18,7 @@ class MockSharedPrefHelper extends Mock implements SharedPrefHelper {}
 final fakeItem = ClosetItemResponseModel(
   id: 'item-1',
   name: 'White T-Shirt',
-  category: 'Tops',
+  category: 'top',
   season: 'Summer',
   color: 'White',
   imageUrl: 'https://via.placeholder.com/100',
@@ -27,8 +27,8 @@ final fakeItem = ClosetItemResponseModel(
 final fakeItem2 = ClosetItemResponseModel(
   id: 'item-2',
   name: 'Blue Jeans',
-  category: 'Bottoms',
-  season: 'All Season',
+  category: 'bottom',
+  season: 'Winter',
   color: 'Blue',
   imageUrl: 'https://via.placeholder.com/100',
 );
@@ -143,7 +143,7 @@ void main() {
             () {
           cubit.allItems = [fakeItem, fakeItem2];
 
-          cubit.filterByCategory('Tops');
+          cubit.filterByCategory('top');
 
           expect(
             cubit.state.maybeWhen(

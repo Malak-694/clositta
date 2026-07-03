@@ -31,13 +31,7 @@ class _AddedItemScreenState extends State<AddedItemScreen> {
   final _descriptionController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
 
-  final List<String> categories = [
-    'Tops',
-    'Bottoms',
-    'Shoes',
-    'Accessories',
-    'Formal',
-  ];
+  final List<String> categories = ['Tops', 'Bottoms', 'Suits'];
 
   String? _selectedCategory;
   String? _selectedImagePath; // new image picked by user
@@ -97,8 +91,8 @@ class _AddedItemScreenState extends State<AddedItemScreen> {
                     ImageUploadWidget(
                       imagePath: _selectedImagePath, // new picked image
                       imageUrl:
-                      _selectedImagePath ==
-                          null // show existing only if no new image
+                          _selectedImagePath ==
+                              null // show existing only if no new image
                           ? _existingImageUrl
                           : null,
                       onTap: _pickImage,

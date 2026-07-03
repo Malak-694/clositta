@@ -24,8 +24,7 @@ class OutfitRecomendationScreen extends StatefulWidget {
       _OutfitRecomendationScreenState();
 }
 
-class _OutfitRecomendationScreenState
-    extends State<OutfitRecomendationScreen> {
+class _OutfitRecomendationScreenState extends State<OutfitRecomendationScreen> {
   final List<String> occasion = [
     'Casual',
     'Formal',
@@ -67,129 +66,131 @@ class _OutfitRecomendationScreenState
     return BlocProvider(
       create: (_) => getIt<OutfitRecommendationCubit>(),
       child:
-      BlocConsumer
-      <OutfitRecommendationCubit,
-          OutfitRecommendationState<DailyOutfitRecommendationResponse>
-      >(
-        listener: (context, state) {
-          state.whenOrNull(
-            fail: (message) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(message)),
+          BlocConsumer<
+            OutfitRecommendationCubit,
+            OutfitRecommendationState<DailyOutfitRecommendationResponse>
+          >(
+            listener: (context, state) {
+              state.whenOrNull(
+                fail: (message) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(message)));
+                },
               );
             },
-          );
-        },
-        builder: (context, state) {
-          final isLoading = state.maybeWhen(
-            loading: () => true,
-            orElse: () => false,
-          );
+            builder: (context, state) {
+              final isLoading = state.maybeWhen(
+                loading: () => true,
+                orElse: () => false,
+              );
 
-          final outfits = state.maybeWhen(
-            success: (data) => data.results.buildOutfits(),
-            orElse: () => <Map<String, OutfitItemModel>>[],
-          );
+              final outfits = state.maybeWhen(
+                success: (data) => data.results.buildOutfits(),
+                orElse: () => <Map<String, OutfitItemModel>>[],
+              );
 
-          return Scaffold(
-            appBar: CustomAppBar(
-              title: "Closet Outfit Recommendation",
-              showCartIcon: false,
-              onCartTap: () {},
-              leading: true,
-            ),
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            body: ListView(
-              padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 20.h),
-              children: [
-                // ── Form card ──
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppColors.light, width: 0.7),
-                  ),
-                  padding: EdgeInsets.all(15.w),
-                  child: Column(
-                    children: [
-                      CustomDropdownList(
-                        height: 49.h,
-                        value: selectedOccasion,
-                        items: occasion,
-                        hintText: 'ex,Casual',
-                        onChanged: (val) => setState(
-                              () => selectedOccasion = val ?? selectedOccasion,
-                        ),
-                        label: 'Occasion',
-                      ),
-                      SizedBox(height: 15.h),
-                      CustomDropdownList(
-                        height: 49.h,
-                        value: selectedSeason,
-                        items: season,
-                        hintText: 'ex,Summer',
-                        onChanged: (val) => setState(
-                              () => selectedSeason = val ?? selectedSeason,
-                        ),
-                        label: 'Season',
-                      ),
-                      SizedBox(height: 20.h),
-                      CustomElevatedButton(
-                        value: isLoading ? '...' : 'Get Recommendations',
-                        onPressed: isLoading
-                            ? () {}
-                            : () {
-                          context
-                              .read<OutfitRecommendationCubit>()
-                              .getRecommendation(
-                            occasion: selectedOccasion,
-                            season: selectedSeason,
-                          );
-                        },
-                        height: 50.h,
-                        style: AppStyle.button.copyWith(fontSize: 17),
-                      ),
-                    ],
-                  ),
+              return Scaffold(
+                appBar: CustomAppBar(
+                  title: "Closet Outfit Recommendation",
+                  showCartIcon: false,
+                  onCartTap: () {},
+                  leading: true,
                 ),
-
-                SizedBox(height: 25.h),
-
-                // ── Results section ──
-                if (isLoading)
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 40.h),
-                    child: const Center(child: CircularProgressIndicator()),
-                  )
-                else if (outfits.isNotEmpty) ...[
-                  Text(
-                    'Recommendations',
-                    style: TextStyle(
-                      fontSize: 17.sp,
-                      fontWeight: FontWeight.bold,
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                body: ListView(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 15.w,
+                    vertical: 20.h,
+                  ),
+                  children: [
+                    // ── Form card ──
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: AppColors.light, width: 0.7),
+                      ),
+                      padding: EdgeInsets.all(15.w),
+                      child: Column(
+                        children: [
+                          CustomDropdownList(
+                            height: 49.h,
+                            value: selectedOccasion,
+                            items: occasion,
+                            hintText: 'ex,Casual',
+                            onChanged: (val) => setState(
+                              () => selectedOccasion = val ?? selectedOccasion,
+                            ),
+                            label: 'Occasion',
+                          ),
+                          SizedBox(height: 15.h),
+                          CustomDropdownList(
+                            height: 49.h,
+                            value: selectedSeason,
+                            items: season,
+                            hintText: 'ex,Summer',
+                            onChanged: (val) => setState(
+                              () => selectedSeason = val ?? selectedSeason,
+                            ),
+                            label: 'Season',
+                          ),
+                          SizedBox(height: 20.h),
+                          CustomElevatedButton(
+                            value: isLoading ? '...' : 'Get Recommendations',
+                            onPressed: isLoading
+                                ? () {}
+                                : () {
+                                    context
+                                        .read<OutfitRecommendationCubit>()
+                                        .getRecommendation(
+                                          occasion: selectedOccasion,
+                                          season: selectedSeason,
+                                        );
+                                  },
+                            height: 50.h,
+                            style: AppStyle.button.copyWith(fontSize: 17),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 10.h),
-                  ...List.generate(
-                    outfits.length,
-                        (index) {
-                      final outfitMap = outfits[index]; // Map<String, OutfitItemModel>
-                      return OutfitCard(
-                        title: 'Outfit ${index + 1}',
-                        categories: outfitMap.keys.toList(),
-                        items: outfitMap.values.toList(),
-                        onItemTap: (item, category) {
-                          if (item.product == null) return; // closet-only item, nothing to open
-                          _openProductDetails(context, item);
-                        },
-                      );
-                    },
-                  ),
-                ],
-              ],
-            ),
-          );
-        },
-      ),
+
+                    SizedBox(height: 25.h),
+
+                    // ── Results section ──
+                    if (isLoading)
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 40.h),
+                        child: const Center(child: CircularProgressIndicator()),
+                      )
+                    else if (outfits.isNotEmpty) ...[
+                      Text(
+                        'Recommendations',
+                        style: TextStyle(
+                          fontSize: 17.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 10.h),
+                      ...List.generate(outfits.length, (index) {
+                        final outfitMap =
+                            outfits[index]; // Map<String, OutfitItemModel>
+                        return OutfitCard(
+                          title: 'Outfit ',
+                          categories: outfitMap.keys.toList(),
+                          items: outfitMap.values.toList(),
+                          onItemTap: (item, category) {
+                            if (item.product == null)
+                              return; // closet-only item, nothing to open
+                            _openProductDetails(context, item);
+                          },
+                        );
+                      }),
+                    ],
+                  ],
+                ),
+              );
+            },
+          ),
     );
   }
 }

@@ -1272,6 +1272,7 @@ class _ApiService implements ApiService {
     String category,
     String season,
     String color,
+    String occassion,
     MultipartFile image,
   ) async {
     final _extra = <String, dynamic>{};
@@ -1283,6 +1284,7 @@ class _ApiService implements ApiService {
     _data.fields.add(MapEntry('category', category));
     _data.fields.add(MapEntry('season', season));
     _data.fields.add(MapEntry('color', color));
+    _data.fields.add(MapEntry('occasion', occassion));
     _data.files.add(MapEntry('image', image));
     final _options = _setStreamType<MessageModel>(
       Options(
@@ -1318,6 +1320,7 @@ class _ApiService implements ApiService {
     String category,
     String season,
     String color,
+    String occassion,
     MultipartFile? image,
   ) async {
     final _extra = <String, dynamic>{};
@@ -1330,6 +1333,7 @@ class _ApiService implements ApiService {
     _data.fields.add(MapEntry('category', category));
     _data.fields.add(MapEntry('season', season));
     _data.fields.add(MapEntry('color', color));
+    _data.fields.add(MapEntry('occasion', occassion));
     if (image != null) {
       _data.files.add(MapEntry('image', image));
     }

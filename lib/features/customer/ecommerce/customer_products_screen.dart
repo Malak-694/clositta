@@ -43,8 +43,8 @@ class _CustomerProductsScreenState extends State<CustomerProductsScreen> {
   @override
   Widget build(BuildContext context) {
     // ── Read all counts here once, no nesting ──────────────
-    final cartCount   = cartTotalItemQuantity(context.watch<CartCubit>().state);
-    final chatCount   = context.watch<ConversationsCubit>().unreadCount;
+    final cartCount = cartTotalItemQuantity(context.watch<CartCubit>().state);
+    final chatCount = context.watch<ConversationsCubit>().unreadCount;
     final notifCount = context.read<NotificationCubit>().unreadCount;
 
     return Scaffold(
@@ -53,10 +53,12 @@ class _CustomerProductsScreenState extends State<CustomerProductsScreen> {
         title: 'Welcome to Clositta',
         showCartIcon: true,
         cartItemCount: cartCount,
-        onCartTap: () => Navigator.pushNamed(context, RouteNames.customer_cart_screen),
+        onCartTap: () =>
+            Navigator.pushNamed(context, RouteNames.customer_cart_screen),
         showNotificationIcon: true,
         unreadNotificationCount: notifCount,
-        onNotificationTap: () => Navigator.pushNamed(context, RouteNames.notification_screen),
+        onNotificationTap: () =>
+            Navigator.pushNamed(context, RouteNames.notification_screen),
         showChatIcon: true,
         unreadChatCount: chatCount,
         onChatTap: () => Navigator.pushNamed(
@@ -66,7 +68,10 @@ class _CustomerProductsScreenState extends State<CustomerProductsScreen> {
         ),
       ),
       body: const BuyerProductScreenBody(),
-      bottomNavigationBar: FloatingNavBar(userRole: 'customer', selectedIndex: 0),
+      bottomNavigationBar: FloatingNavBar(
+        userRole: 'customer',
+        selectedIndex: 0,
+      ),
     );
   }
 }

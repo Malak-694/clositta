@@ -27,12 +27,12 @@ class CommentCard extends StatelessWidget {
       } else if (dateValue is String) {
         dateTime = DateTime.parse(dateValue);
       } else {
-        return 'N/A';
+        return '  ';
       }
       // Return formatted date: 2026-02-17
       return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}';
     } catch (e) {
-      return 'N/A';
+      return ' ';
     }
   }
 
@@ -51,9 +51,7 @@ class CommentCard extends StatelessWidget {
       padding: EdgeInsets.all(14.w),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        border: Border.all(
-          color: accent.withValues(alpha: 0.12),
-        ),
+        border: Border.all(color: accent.withValues(alpha: 0.12)),
         borderRadius: BorderRadius.circular(14.r),
         boxShadow: [
           BoxShadow(
@@ -107,7 +105,7 @@ class CommentCard extends StatelessWidget {
               Row(
                 children: List.generate(
                   5,
-                      (index) => Icon(
+                  (index) => Icon(
                     Icons.star_rounded,
                     size: 16.sp,
                     color: index < comment.rating

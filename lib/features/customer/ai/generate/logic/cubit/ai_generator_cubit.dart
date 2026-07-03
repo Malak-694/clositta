@@ -107,6 +107,7 @@ class AiGeneratorCubit extends Cubit<AiGeneratorState> {
     required String category,
     required String season,
     required String color,
+    required String occassion,
     required String imagePath,
   }) async {
     try {
@@ -127,6 +128,7 @@ class AiGeneratorCubit extends Cubit<AiGeneratorState> {
         category: category,
         season: season,
         color: color,
+        occassion: occassion,
         imagePath: imagePath,
       );
 

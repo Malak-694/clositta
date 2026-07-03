@@ -53,6 +53,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/home.svg
   String get home => 'assets/images/home.svg';
 
+  /// File path: assets/images/loading.gif
+  AssetGenImage get loading => const AssetGenImage('assets/images/loading.gif');
+
   /// File path: assets/images/lock.png
   AssetGenImage get lock => const AssetGenImage('assets/images/lock.png');
 
@@ -88,6 +91,7 @@ class $AssetsImagesGen {
     email,
     guide,
     home,
+    loading,
     lock,
     login,
     logoRemovebg,

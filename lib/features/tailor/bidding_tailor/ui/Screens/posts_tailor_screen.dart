@@ -1,4 +1,3 @@
-import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/constants.dart';
 import 'package:chicora/core/di/dependency_injection.dart';
 import 'package:chicora/core/helper/shared_pref_helper.dart';
@@ -17,12 +16,8 @@ import '../../../../../assets.dart';
 import '../../../../../core/router/route_names.dart';
 import '../../../../../core/widgets/circle_indicator.dart';
 import '../../../../../core/widgets/custom_app_bar.dart';
-import '../../../../chat/data/models/conversation_model.dart';
 import '../../../../chat/logic/conversations_cubit/conversations_cubit.dart';
-import '../../../../chat/logic/conversations_cubit/conversations_state.dart';
-import '../../../../chat/ui/screens/conversations_screen.dart';
 import '../../../../ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
-import '../../../../ecommerce_multi/logic/cart_cubit/cart_state.dart';
 import '../../../../ecommerce_multi/logic/cart_cubit/cart_total_quantity.dart';
 import '../../../../notifications/data/models/unread_count_response.dart';
 import '../../../../notifications/logic/cubit/notification_cubit.dart';
@@ -33,34 +28,34 @@ class PostScreenTailor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    final cartCount   = cartTotalItemQuantity(context.watch<CartCubit>().state);
-    final chatCount   = context.watch<ConversationsCubit>().unreadCount;
-    final notifCount  = context.watch<NotificationCubit>().state.maybeWhen(
+    final cartCount = cartTotalItemQuantity(context.watch<CartCubit>().state);
+    final chatCount = context.watch<ConversationsCubit>().unreadCount;
+    final notifCount = context.watch<NotificationCubit>().state.maybeWhen(
       success: (data) => data is UnreadCountResponse ? data.unreadCount : 0,
       orElse: () => 0,
     );
 
-
     return Scaffold(
       appBar: CustomAppBar(
-          title: 'My Post',
-          showCartIcon: true,
-          cartItemCount: cartCount,
-          onCartTap: () => Navigator.pushNamed(context, RouteNames.customer_cart_screen),
-          showNotificationIcon: true,
-          unreadNotificationCount: notifCount,
-          onNotificationTap: () => Navigator.pushNamed(context, RouteNames.notification_screen),
-          showChatIcon: true,
-          unreadChatCount: chatCount,
-          onChatTap: () async {
-            final userId = await prefs.getSecureData('id') ?? '';
-            Navigator.pushNamed(
-              context,
-              RouteNames.conversations_screen,
-              arguments: {'currentUserId': userId ?? ''},
-            );
-          }
+        title: 'My Post',
+        showCartIcon: true,
+        cartItemCount: cartCount,
+        onCartTap: () =>
+            Navigator.pushNamed(context, RouteNames.customer_cart_screen),
+        showNotificationIcon: true,
+        unreadNotificationCount: notifCount,
+        onNotificationTap: () =>
+            Navigator.pushNamed(context, RouteNames.notification_screen),
+        showChatIcon: true,
+        unreadChatCount: chatCount,
+        onChatTap: () async {
+          final userId = await prefs.getSecureData('id') ?? '';
+          Navigator.pushNamed(
+            context,
+            RouteNames.conversations_screen,
+            arguments: {'currentUserId': userId ?? ''},
+          );
+        },
       ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
@@ -74,7 +69,6 @@ class PostScreenTailor extends StatelessWidget {
               Expanded(
                 child: Builder(
                   builder: (context) {
-
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       context.read<BiddingTailorCubit>().getBiddingTailors();
                     });
@@ -118,32 +112,32 @@ class PostScreenTailor extends StatelessWidget {
                                   return GestureDetector(
                                     onTap: () => post.status != "closed"
                                         ? Navigator.pushNamed(
-                                      context,
-                                      RouteNames.view_offers_tailor,
-                                      arguments: {
-                                        'urlImage':
-                                        post.imageUrl ??
-                                            Assets.clothes1,
+                                            context,
+                                            RouteNames.view_offers_tailor,
+                                            arguments: {
+                                              'urlImage':
+                                                  post.imageUrl ??
+                                                  Assets.clothes1,
 
-                                        'description':
-                                        post.requestDescription ?? '',
-                                        'price': post.price.toString(),
-                                        'period': post.time ?? '',
-                                        'postId': post.id ?? '',
-                                      },
-                                    )
+                                              'description':
+                                                  post.requestDescription ?? '',
+                                              'price': post.price.toString(),
+                                              'period': post.time ?? '',
+                                              'postId': post.id ?? '',
+                                            },
+                                          )
                                         : null,
                                     child: Center(
                                       child: PostItemTailor(
                                         title: post.requestDescription ?? '',
-                                        bidCount: 0 ,
+                                        bidCount: 0,
                                         date: post.createdAt ?? '',
                                         price: post.price != null
                                             ? '\$${post.price}'
                                             : '',
                                         period: post.time ?? 'Flexible',
                                         Image_url:
-                                        post.imageUrl ?? Assets.clothes1,
+                                            post.imageUrl ?? Assets.clothes1,
                                         status: post.status ?? 'selected',
                                         id: post.id ?? '',
                                       ),
@@ -165,10 +159,7 @@ class PostScreenTailor extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: FloatingNavBar(
-        userRole: 'tailor',
-        selectedIndex: 0,
-      ),
+      bottomNavigationBar: FloatingNavBar(userRole: 'tailor', selectedIndex: 0),
     );
   }
 }

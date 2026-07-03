@@ -1,8 +1,9 @@
+import 'package:chicora/core/widgets/custom_dropdown_list.dart';
 import 'package:chicora/core/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../core/constants/colors.dart';
-import '../../../../core/constants/style.dart';
+import '../constants/colors.dart';
+import '../constants/style.dart';
 
 enum PriceSortOrder {
   none('Any'),
@@ -144,12 +145,13 @@ class _FilterSidebarState extends State<_FilterSidebar> {
                   ),
                   SizedBox(height: 24.h),
                   if (widget.usePrice) ...[
-                    Text('Sort By Price', style: AppStyle.body5),
-                    SizedBox(height: 8.h),
-                    _buildDropdown(
-                      hint: 'Price Sort',
+                    CustomDropdownList(
+                      label: 'Sort By Price',
+                      hintText: 'Price Sort',
                       value: _priceSort.label,
                       items: PriceSortOrder.values.map((e) => e.label).toList(),
+                      showAllOption:
+                          false, // matches old `hint != 'Price Sort'` exclusion
                       onChanged: (val) {
                         if (val == null) return;
                         setState(() {
@@ -163,42 +165,42 @@ class _FilterSidebarState extends State<_FilterSidebar> {
                   ],
 
                   if (widget.useGender) ...[
-                    Text('Gender', style: AppStyle.body5),
-                    SizedBox(height: 8.h),
-                    _buildDropdown(
-                      hint: 'Gender',
+                    CustomDropdownList(
+                      label: 'Gender',
+                      hintText: 'Gender',
                       value: _gender,
                       items: const ['Male', 'Female', 'Kids', 'Unisex'],
+                      showAllOption: true,
                       onChanged: (val) => setState(() => _gender = val),
                     ),
                     SizedBox(height: 20.h),
                   ],
 
                   if (widget.useType) ...[
-                    Text('Type', style: AppStyle.body5),
-                    SizedBox(height: 8.h),
-                    _buildDropdown(
-                      hint: 'Type',
+                    CustomDropdownList(
+                      label: 'Type',
+                      hintText: 'Type',
                       value: _type,
                       items: const ['Clothes', 'Material'],
+                      showAllOption: true,
                       onChanged: (val) => setState(() => _type = val),
                     ),
                     SizedBox(height: 20.h),
                   ],
 
-                  Text('Season', style: AppStyle.body5),
-                  SizedBox(height: 8.h),
-                  _buildDropdown(
-                    hint: 'Season',
+                  CustomDropdownList(
+                    label: 'Season',
+                    hintText: 'Season',
                     value: _season,
                     items: const ['Winter', 'Summer', 'Spring', 'Autumn'],
+                    showAllOption: true,
                     onChanged: (val) => setState(() => _season = val),
                   ),
                   SizedBox(height: 20.h),
-                  Text('Occasion', style: AppStyle.body5),
-                  SizedBox(height: 8.h),
-                  _buildDropdown(
-                    hint: 'Occasion',
+
+                  CustomDropdownList(
+                    label: 'Occasion',
+                    hintText: 'Occasion',
                     value: _occasion,
                     items: const [
                       'Casual',
@@ -209,6 +211,7 @@ class _FilterSidebarState extends State<_FilterSidebar> {
                       'Party',
                       'Other',
                     ],
+                    showAllOption: true,
                     onChanged: (val) => setState(() => _occasion = val),
                   ),
                   const Spacer(),
@@ -216,74 +219,30 @@ class _FilterSidebarState extends State<_FilterSidebar> {
                     width: double.infinity,
                     child: OutlinedButton(
                       onPressed: _pop,
-                      child:  Text('Apply' , style: AppStyle.medPrimery,),
+                      child: Text('Apply', style: AppStyle.medPrimery),
                     ),
                   ),
                   SizedBox(height: 8.h),
 
                   CustomElevatedButton(
                     height: 47.h,
-                      value: 'Clear Filters',
-                      onPressed: () {
-                        setState(() {
-                          if (widget.usePrice) _priceSort = PriceSortOrder.none;
-                          if (widget.useGender) _gender = null;
-                          if (widget.useType) _type = null;
-                          _season = null;
-                          _occasion = null;
-                        });
-                      }),
+                    value: 'Clear Filters',
+                    onPressed: () {
+                      setState(() {
+                        if (widget.usePrice) _priceSort = PriceSortOrder.none;
+                        if (widget.useGender) _gender = null;
+                        if (widget.useType) _type = null;
+                        _season = null;
+                        _occasion = null;
+                      });
+                    },
+                  ),
                   SizedBox(height: 8.h),
                 ],
               ),
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildDropdown({
-    required String hint,
-    required String? value,
-    required List<String> items,
-    required ValueChanged<String?> onChanged,
-  }) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
-      decoration: BoxDecoration(
-        border: Border.all(color: AppColors.primery.withValues(alpha: 0.3)),
-        borderRadius: BorderRadius.circular(20.r),
-        color: value != null ? AppColors.primery.withValues(alpha: 0.1) : null,
-      ),
-      child: DropdownButton<String>(
-        value: value,
-        isExpanded: true,
-        hint: Text(
-          hint,
-          style: AppStyle.smallBlack.copyWith(color: AppColors.light),
-        ),
-        underline: const SizedBox.shrink(),
-        icon: Icon(
-          Icons.keyboard_arrow_down,
-          color: AppColors.primery,
-          size: 20.sp,
-        ),
-        isDense: true,
-        items: [
-          if (hint != 'Price Sort')
-            DropdownMenuItem<String>(
-              value: null,
-              child: Text('All', style: AppStyle.smallBlack.copyWith(fontSize: 16)),
-            ),
-          ...items.map(
-            (item) => DropdownMenuItem<String>(
-              value: item,
-              child: Text(item, style: AppStyle.smallBlack),
-            ),
-          ),
-        ],
-        onChanged: onChanged,
       ),
     );
   }

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/constants/colors.dart';
-
 
 import '../../../../../core/di/dependency_injection.dart';
 
@@ -114,7 +112,7 @@ class TailorInfoScreen extends StatelessWidget {
                         initial: () => const SizedBox(),
 
                         loading: () =>
-                        const Center(child: CircularProgressIndicator()),
+                            const Center(child: CircularProgressIndicator()),
 
                         fail: (msg) => Center(
                           child: Column(
@@ -188,8 +186,8 @@ class TailorInfoScreen extends StatelessWidget {
                                     productComments: ratings,
                                     userRating: null,
                                     currentUserId: null,
-                                    accent: AppColors.lightsecondary,
-                                    accentDark: AppColors.darksecondary,
+                                    accent: AppColors.darkPrimaryLight,
+                                    accentDark: AppColors.darkprimery,
                                     onDelete: null,
                                   ),
 

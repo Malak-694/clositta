@@ -33,7 +33,7 @@ class ClosetRepo {
   }) async {
     try {
       final response = await apiService.deleteClosetItem(
-       "Bearer $token",
+        "Bearer $token",
         itemId,
       );
       return ApiResult.success(response);
@@ -47,9 +47,9 @@ class ClosetRepo {
     required String name,
     required String category,
     required String season,
-    required String color ,
+    required String color,
     required String imagePath,
-
+    required String occassion,
   }) async {
     try {
       final file = File(imagePath);
@@ -69,13 +69,16 @@ class ClosetRepo {
         category,
         season,
         color,
+        occassion,
         multipartFile,
       );
 
       return ApiResult.success(response);
     } on DioException catch (e) {
       if (e.response != null) {
-        return ApiResult.failure("Server error: ${e.response?.statusCode} - ${e.response?.data}");
+        return ApiResult.failure(
+          "Server error: ${e.response?.statusCode} - ${e.response?.data}",
+        );
       }
       return ApiResult.failure("Network error: ${e.message}");
     } catch (e) {
@@ -90,6 +93,7 @@ class ClosetRepo {
     required String category,
     required String season,
     required String color,
+    required String occassion,
     String? imagePath,
   }) async {
     try {
@@ -111,6 +115,7 @@ class ClosetRepo {
         category,
         season,
         color,
+        occassion,
         multipartFile,
       );
 
@@ -118,12 +123,12 @@ class ClosetRepo {
     } on DioException catch (e) {
       if (e.response != null) {
         return ApiResult.failure(
-            "Server error: ${e.response?.statusCode} - ${e.response?.data}");
+          "Server error: ${e.response?.statusCode} - ${e.response?.data}",
+        );
       }
       return ApiResult.failure("Network error: ${e.message}");
     } catch (e) {
       return ApiResult.failure(mapErrorToUserMessage(e));
     }
   }
-
 }

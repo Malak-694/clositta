@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/constants/constants.dart';
 import '../../../../../core/constants/style.dart';
+import '../../../../../core/widgets/custom_category_selector.dart';
 import '../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../core/widgets/custom_search_bar.dart';
 import 'product_list_widget.dart';
@@ -25,6 +26,14 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
   List<ProductModel> _filteredProducts = [];
   final TextEditingController searchController = TextEditingController();
 
+  String _selectedStockLevel = 'All';
+  final List<String> _stockLevels = [
+    'All',
+    'Active',
+    'Low Stock',
+    'Out of Stock',
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -39,28 +48,28 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
 
   String _getStatus(int stock) {
     if (stock == 0) return 'Out of Stock';
-    if (stock < 300) return 'Low Stock';
+    if (stock < 200) return 'Low Stock';
     return 'Active';
   }
 
   void _performSearch() {
     final query = searchController.text.toLowerCase();
 
-    if (query.isEmpty) {
-      setState(() {
-        _filteredProducts = List.from(_allProducts);
-      });
-    } else {
-      setState(() {
-        _filteredProducts = _allProducts.where((product) {
+    setState(() {
+      _filteredProducts = _allProducts.where((product) {
+        final stockStatus = _getStatus(product.stock);
+        final stockMatch =
+            _selectedStockLevel == 'All' || stockStatus == _selectedStockLevel;
+
+        if (query.isEmpty) {
+          return stockMatch;
+        } else {
           final nameMatch = product.name.toLowerCase().contains(query);
-          final statusMatch = _getStatus(
-            product.stock,
-          ).toLowerCase().contains(query);
-          return nameMatch || statusMatch;
-        }).toList();
-      });
-    }
+          final statusMatch = stockStatus.toLowerCase().contains(query);
+          return stockMatch && (nameMatch || statusMatch);
+        }
+      }).toList();
+    });
   }
 
   @override
@@ -71,8 +80,8 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
           success: (data) {
             setState(() {
               _allProducts = data as List<ProductModel>;
-              _filteredProducts = List.from(_allProducts);
             });
+            _performSearch();
           },
         );
       },
@@ -103,7 +112,8 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
                     },
                     height: 40.h,
                     width: 190.w,
-                    background: AppColors.ternary,
+                    background: AppColors.lightsecondary,
+                    style: AppStyle.medPrimery,
                   ),
                 ],
               ),
@@ -114,6 +124,27 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
                   _performSearch();
                 },
               ),
+              SizedBox(height: 12.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  CustomCategorySelector(
+                    categories: _stockLevels,
+                    selectedCategory: _selectedStockLevel,
+                    onCategorySelected: (category) {
+                      setState(() {
+                        _selectedStockLevel = category;
+                      });
+                      _performSearch();
+                    },
+                    selectedColor: AppColors.ternary,
+                    unselectedColor: AppColors.lightsecondary,
+                    selectedTextColor: AppColors.background,
+                    unselectedTextColor: AppColors.darkPrimary,
+                  ),
+                ],
+              ),
+              SizedBox(height: 12.h),
               state.maybeWhen(
                 loading: () => const Expanded(
                   child: Center(child: CircularProgressIndicator()),
@@ -128,7 +159,7 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
                         child: Center(child: CircularProgressIndicator()),
                       ),
               ),
-              SizedBox(height: 24.w),
+              SizedBox(height: 10.w),
             ],
           ),
         );

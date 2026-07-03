@@ -2,11 +2,11 @@ import 'package:chicora/core/constants/style.dart';
 import 'package:chicora/core/helper/notification_helper.dart';
 import 'package:chicora/core/router/route_names.dart';
 import 'package:chicora/core/utils/validator.dart';
+import 'package:chicora/core/widgets/labeled_text_field.dart';
 import 'package:chicora/features/auth/data/model/google_auth_model.dart';
 import 'package:chicora/features/auth/logic/cubit/authentication_cubit.dart';
 import 'package:chicora/features/auth/logic/cubit/authentication_state.dart';
 import 'package:chicora/features/auth/ui/widgets/custom_medium_button.dart';
-import 'package:chicora/features/auth/ui/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -113,35 +113,43 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     Form(
                       key: _formKey,
-                      child: Column(
-                        children: [
-                          SizedBox(height: 25.h),
-                          CustomTextFormField(
-                            text: "Email",
-                            controller: _email,
-                            validator: Validators.validateEmail,
-                          ),
-                          SizedBox(height: 10.h),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            SizedBox(height: 25.h),
+                            LabeledTextField(
+                              label: "Email",
+                              hintText: "Enter your email",
+                              controller: _email,
+                              validator: Validators.validateEmail,
+                              textInputAction: TextInputAction.next,
+                            ),
+                            SizedBox(height: 10.h),
 
-                          CustomTextFormField(
-                            text: "Password",
-                            controller: _password,
-                            isPassword: true,
-                            validator: Validators.validatePassword,
-                          ),
-                          SizedBox(height: 30.h),
-                          CustomMediumButton(
-                            value: "LogIn",
-                            isLoading: state is Loading,
-                            onPressed: state is Loading ? () {} : _handleLogin,
-                            color: AppColors.primery,
-                            width: MediaQuery.of(context).size.width - 60.w,
-                          ),
-                        ],
+                            LabeledTextField(
+                              label: "Password",
+                              hintText: "Enter your password",
+                              controller: _password,
+                              obscureText: true,
+                              validator: Validators.validatePassword,
+                              textInputAction: TextInputAction.done,
+                            ),
+                            SizedBox(height: 30.h),
+                            CustomMediumButton(
+                              value: "LogIn",
+                              isLoading: state is Loading,
+                              onPressed: state is Loading
+                                  ? () {}
+                                  : _handleLogin,
+                              color: AppColors.primery,
+                              width: MediaQuery.of(context).size.width - 60.w,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
 
-                    SizedBox(height: 20.h),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -173,17 +181,16 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                       child: Text(
                         "- Sign in with google -",
-                        style: AppStyle.smallBlack,
+                        style: AppStyle.smallBlack.copyWith(fontSize: 15.sp),
                       ),
                     ),
-                    SizedBox(height: 16.h),
                     TextButton(
                       onPressed: () {
                         Navigator.pushNamed(context, RouteNames.sign_up);
                       },
                       child: Text(
                         "First time to see us?",
-                        style: AppStyle.smallBlack,
+                        style: AppStyle.smallBlack.copyWith(fontSize: 15.sp),
                       ),
                     ),
                   ],

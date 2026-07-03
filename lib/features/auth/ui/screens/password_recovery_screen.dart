@@ -1,14 +1,12 @@
-import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
 import 'package:chicora/core/router/route_names.dart';
 import 'package:chicora/core/widgets/custom_elevated_button.dart';
-import 'package:chicora/features/auth/ui/widgets/custom_text_form_field.dart';
+import 'package:chicora/core/widgets/labeled_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../logic/cubit/authentication_cubit.dart';
 import '../../logic/cubit/authentication_state.dart';
-
 
 class PasswordRecoveryScreen extends StatelessWidget {
   final TextEditingController _email = TextEditingController();
@@ -24,8 +22,9 @@ class PasswordRecoveryScreen extends StatelessWidget {
             RouteNames.recovery_code,
             arguments: _email.text.trim(),
           ),
-          fail: (error) => ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(error))),
+          fail: (error) => ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(error))),
         );
       },
       builder: (context, state) {
@@ -58,8 +57,15 @@ class PasswordRecoveryScreen extends StatelessWidget {
                     style: AppStyle.medBlack,
                   ),
                   SizedBox(height: 25.h),
-                  CustomTextFormField(text: "Email", controller: _email),
-                  SizedBox(height: 90.h),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: LabeledTextField(
+                      label: "Email",
+                      hintText: "eg, xxxx@gmail.com",
+                      controller: _email,
+                    ),
+                  ),
+                  SizedBox(height: 70.h),
                   CustomElevatedButton(
                     value: isLoading ? "Sending..." : "Next",
                     onPressed: () {
@@ -72,9 +78,9 @@ class PasswordRecoveryScreen extends StatelessWidget {
                         );
                         return;
                       }
-                      context
-                          .read<AuthCubit>()
-                          .forgotPassword(_email.text.trim());
+                      context.read<AuthCubit>().forgotPassword(
+                        _email.text.trim(),
+                      );
                     },
                   ),
                   SizedBox(height: 16.h),

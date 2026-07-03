@@ -365,6 +365,7 @@ class _AiCustomerScreenState extends State<GenerateImageScreen> {
                             category: result['category'] ?? 'All',
                             season: result['season'] ?? 'All',
                             color: result['color'] ?? '',
+                            occassion: result['occasion'] ?? 'All',
                             imagePath: filePath,
                           );
                         }

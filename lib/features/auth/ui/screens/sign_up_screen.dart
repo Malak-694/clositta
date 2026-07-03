@@ -2,10 +2,10 @@ import 'package:chicora/core/constants/style.dart';
 import 'package:chicora/core/helper/notification_helper.dart';
 import 'package:chicora/core/router/route_names.dart';
 import 'package:chicora/core/utils/validator.dart';
+import 'package:chicora/core/widgets/custom_dropdown_list.dart';
+import 'package:chicora/core/widgets/labeled_text_field.dart';
 import 'package:chicora/features/auth/logic/cubit/authentication_cubit.dart';
 import 'package:chicora/features/auth/logic/cubit/authentication_state.dart';
-import 'package:chicora/features/auth/ui/widgets/custom_text_form_field.dart';
-import 'package:chicora/features/auth/ui/widgets/drop_down_type.dart';
 import 'package:chicora/features/auth/ui/widgets/sign_up_tailor_extra_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,13 +38,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _mapsLink = TextEditingController();
 
   String? _selectedType;
-  final List<String> _types = [
-    'Customer',
-    'Tailor',
-    'Admin',
-    'Clothes Seller',
-    'Material Seller',
-  ]; // example types
+  final List<String> _types = ['Customer', 'Tailor', 'Seller']; // example types
   void _handleSignUp() {
     final String name = _name.text.trim();
     final String email = _email.text.trim();
@@ -60,8 +54,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         confirmPassword,
         phone,
         role,
-        workshopLocation:
-            _selectedType == 'Tailor' ? _workshopLocation.text : null,
+        workshopLocation: _selectedType == 'Tailor'
+            ? _workshopLocation.text
+            : null,
         workshopMapsUrl: _selectedType == 'Tailor' ? _mapsLink.text : null,
       );
     }
@@ -79,9 +74,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
             Navigator.pushNamed(context, RouteNames.login);
           },
           fail: (error) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(AppStyle.userMessage(error))));
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(AppStyle.userMessage(error))),
+            );
           },
         );
       },
@@ -102,102 +97,120 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
                 child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(height: 130.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Create\nAccount", style: AppStyle.boldBlack),
-                      SizedBox(width: 150.w),
-                    ],
-                  ),
-
-                  SizedBox(height: 25.h),
-                  Form(
-                    key: _formKey,
-                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 130.h),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        CustomTextFormField(text: "Name", controller: _name),
-
-                        SizedBox(height: 10.h),
-                        CustomTextFormField(
-                          text: "Email",
-                          controller: _email,
-                          validator: Validators.validateEmail,
-                        ),
-                        SizedBox(height: 10.h),
-
-                        CustomTextFormField(
-                          text: "Phone",
-                          controller: _phone,
-                          validator: Validators.validateOptionalPhone,
-                        ),
-                        SizedBox(height: 10.h),
-
-                        CustomTextFormField(
-                          text: "Password",
-                          controller: _password,
-                          isPassword: true,
-                          validator: Validators.validatePassword,
-                        ),
-                        SizedBox(height: 10.h),
-                        CustomTextFormField(
-                          text: "Confirm Password",
-                          controller: _confirm_password,
-                          isPassword: true,
-                          validator: (value) =>
-                              Validators.validateConfirmPassword(
-                                value,
-                                _password.text,
-                              ),
-                        ),
-
-                        SizedBox(height: 10.h),
-
-                        CustomDropdown(
-                          items: _types,
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedType = value;
-                            });
-                          },
-                        ),
-
-                        SignUpTailorExtraFields(
-                          visible: _selectedType == 'Tailor',
-                          workshopLocation: _workshopLocation,
-                          mapsLink: _mapsLink,
-                        ),
-
-                        SizedBox(height: 30.h),
-                        CustomMediumButton(
-                          value: "Sign Up",
-                          isLoading: state is Loading,
-                          onPressed: state is Loading ? () {} : _handleSignUp,
-                          color: AppColors.primery,
-                          width: MediaQuery.of(context).size.width - 60.w,
-                        ),
+                        Text("Create\nAccount", style: AppStyle.boldBlack),
+                        SizedBox(width: 150.w),
                       ],
                     ),
-                  ),
 
-                  SizedBox(height: 16.h),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, RouteNames.login);
-                    },
-                    child: Text(
-                      "Already Our Friend ?",
-                      style: AppStyle.medBlack,
+                    SizedBox(height: 25.h),
+                    Form(
+                      key: _formKey,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            LabeledTextField(
+                              label: "Email",
+                              hintText: "Enter your Email",
+                              controller: _email,
+                              validator: Validators.validateEmail,
+                              textInputAction: TextInputAction.next,
+                            ),
+                            SizedBox(height: 10.h),
+                            LabeledTextField(
+                              label: "Name",
+                              hintText: "Enter your Name",
+                              controller: _name,
+                              textInputAction: TextInputAction.next,
+                            ),
+
+                            SizedBox(height: 10.h),
+
+                            LabeledTextField(
+                              label: "Phone",
+                              controller: _phone,
+                              hintText: "Enter your Phone",
+                              validator: Validators.validateOptionalPhone,
+                              textInputAction: TextInputAction.next,
+                            ),
+                            SizedBox(height: 10.h),
+                            LabeledTextField(
+                              label: "Password",
+                              hintText: "Enter your password",
+                              controller: _password,
+                              obscureText: true,
+                              validator: Validators.validatePassword,
+                              textInputAction: TextInputAction.next,
+                            ),
+                            SizedBox(height: 10.h),
+                            LabeledTextField(
+                              label: "Confirm Password",
+                              hintText: "Confirm your Password",
+                              controller: _confirm_password,
+                              obscureText: true,
+                              validator: (value) =>
+                                  Validators.validateConfirmPassword(
+                                    value,
+                                    _password.text,
+                                  ),
+                              textInputAction: TextInputAction.done,
+                            ),
+
+                            SizedBox(height: 10.h),
+
+                            CustomDropdownList(
+                              value: "Customer",
+                              hintText: "you role",
+                              items: _types,
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedType = value;
+                                });
+                              },
+                            ),
+
+                            SignUpTailorExtraFields(
+                              visible: _selectedType == 'Tailor',
+                              workshopLocation: _workshopLocation,
+                              mapsLink: _mapsLink,
+                            ),
+
+                            SizedBox(height: 30.h),
+                            CustomMediumButton(
+                              value: "Sign Up",
+                              isLoading: state is Loading,
+                              onPressed: state is Loading
+                                  ? () {}
+                                  : _handleSignUp,
+                              color: AppColors.primery,
+                              width: MediaQuery.of(context).size.width - 60.w,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, RouteNames.login);
+                      },
+                      child: Text(
+                        "Already Our Friend ?",
+                        style: AppStyle.smallBlack.copyWith(fontSize: 15.sp),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
         );
       },
     );

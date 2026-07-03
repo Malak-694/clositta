@@ -124,18 +124,18 @@ class _AddedClosetItemScreenState extends State<AddedClosetItemScreen> {
                   controller: _nameController,
                   hintText: "e.g., Wedding Dress",
                   label: "Name",
-                  labelStyle: AppStyle.body6,
                   fillColor: AppColors.lightprimery,
                   filled: true,
+                  textInputAction: TextInputAction.next,
                 ),
                 SizedBox(height: 15.h),
                 LabeledTextField(
                   controller: _colorController,
                   hintText: "e.g., white",
                   label: "Color",
-                  labelStyle: AppStyle.body6,
                   fillColor: AppColors.lightprimery,
                   filled: true,
+                  textInputAction: TextInputAction.done,
                 ),
                 SizedBox(height: 15.h),
                 Row(
@@ -148,6 +148,7 @@ class _AddedClosetItemScreenState extends State<AddedClosetItemScreen> {
                         hintText: "Top",
                         onChanged: (value) =>
                             setState(() => _selectedCategory = value),
+                        height: 48.h,
                       ),
                     ),
                     SizedBox(width: 10.w),
@@ -157,6 +158,7 @@ class _AddedClosetItemScreenState extends State<AddedClosetItemScreen> {
                         value: _selectedSeason,
                         items: seasons,
                         hintText: "Summer",
+                        height: 48.h,
                         onChanged: (value) =>
                             setState(() => _selectedSeason = value),
                       ),
@@ -168,6 +170,7 @@ class _AddedClosetItemScreenState extends State<AddedClosetItemScreen> {
                         value: _selectedOccasion,
                         items: occasions,
                         hintText: "casual",
+                        height: 48.h,
                         onChanged: (value) =>
                             setState(() => _selectedOccasion = value),
                       ),
@@ -243,7 +246,8 @@ class _AddedClosetItemScreenState extends State<AddedClosetItemScreen> {
         category: _selectedCategory ?? categories.first,
         season: _selectedSeason ?? seasons.first,
         color: _colorController.text.trim(),
-        imagePath: _selectedImagePath,
+        occassion : _selectedOccasion ?? occasions.first,
+        imagePath: _selectedImagePath!,
       );
     } else {
       context.read<ClosetCubit>().addClosetItem(
@@ -251,6 +255,7 @@ class _AddedClosetItemScreenState extends State<AddedClosetItemScreen> {
         category: _selectedCategory ?? categories.first,
         season: _selectedSeason ?? seasons.first,
         color: _colorController.text.trim(),
+        occassion : _selectedOccasion ?? occasions.first,
         imagePath: _selectedImagePath!,
       );
     }

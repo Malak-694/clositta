@@ -10,7 +10,7 @@ import '../../../../../core/constants/style.dart';
 import '../../../../../core/router/route_names.dart';
 import '../../../../../core/widgets/pinterest_grid_config.dart';
 import '../../../../../core/widgets/custom_category_selector.dart';
-import '../../../../ecommerce_multi/ui/widgets/filter_side_bar_widget.dart';
+import '../../../../../core/widgets/filter_side_bar_widget.dart';
 import '../../data/models/closet_item_response_model.dart';
 import '../../logic/cubit/closet_cubit.dart';
 import '../../logic/cubit/closet_state.dart';

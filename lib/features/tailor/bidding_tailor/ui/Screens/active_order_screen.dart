@@ -1,3 +1,4 @@
+import 'package:chicora/core/widgets/custom_dropdown_list.dart';
 import 'package:chicora/features/notifications/logic/cubit/notification_state.dart';
 import 'package:chicora/features/tailor/bidding_tailor/logic/cubit/bidding_tailor_cubit.dart';
 import 'package:chicora/features/tailor/bidding_tailor/logic/cubit/bidding_tailor_state.dart';
@@ -11,13 +12,10 @@ import '../../../../../core/di/dependency_injection.dart';
 import '../../../../../core/helper/shared_pref_helper.dart';
 import '../../../../../core/router/route_names.dart';
 import '../../../../../core/widgets/custom_app_bar.dart';
-import '../../../../../core/widgets/custom_dropdown_list.dart';
+import '../../../../../core/widgets/custom_category_selector.dart';
 import '../../../../../core/widgets/custom_nav_bar.dart';
-import '../../../../chat/data/models/conversation_model.dart';
 import '../../../../chat/logic/conversations_cubit/conversations_cubit.dart';
-import '../../../../chat/logic/conversations_cubit/conversations_state.dart';
 import '../../../../ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
-import '../../../../ecommerce_multi/logic/cart_cubit/cart_state.dart';
 import '../../../../ecommerce_multi/logic/cart_cubit/cart_total_quantity.dart';
 import '../../../../notifications/data/models/unread_count_response.dart';
 import '../../../../notifications/logic/cubit/notification_cubit.dart';
@@ -48,6 +46,13 @@ class _ActiveOrderViewState extends State<_ActiveOrderView> {
   String _selectedFilter = 'all';
   List<String> states = ['all', 'accepted', 'in_progress', 'completed'];
   final prefs = getIt<SharedPrefHelper>();
+  final Map<String, String> _filterLabels = {
+    'all': 'All',
+    'accepted': 'Accepted',
+    'in_progress': 'In Progress',
+    'completed': 'Completed',
+  };
+
   String _statusLabel(String? s) {
     switch (s) {
       case 'in_progress':
@@ -164,205 +169,187 @@ class _ActiveOrderViewState extends State<_ActiveOrderView> {
             Padding(
               padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 10.w),
               child: Align(
-                alignment: Alignment.centerRight,
-                child: DropdownButton<String>(
-                  isDense: true,
-                  value: _selectedFilter,
-                  underline: const SizedBox.shrink(),
-                  icon: Icon(Icons.sort, color: AppColors.primery, size: 22.sp),
-                  style: AppStyle.medBlack.copyWith(fontSize: 14.sp),
-                  items: states
-                      .map(
-                        (f) => DropdownMenuItem(
-                      value: f,
-                      child: Text(
-                        _statusLabel(f == 'all' ? null : f),
-                        style: AppStyle.smallBlack,
-                      ),
-                    ),
-                  )
-                      .toList(),
-                  selectedItemBuilder: (context) {
-                    return states.map((f) {
-                      if (f == 'all') return const SizedBox.shrink();
-                      return Row(
-                        children: [
-                          Text(_statusLabel(f), style: AppStyle.smallBlack),
-                          SizedBox(width: 4.w),
-                        ],
-                      );
-                    }).toList();
+                alignment: Alignment.centerLeft,
+                child: CustomCategorySelector(
+                  categories: _filterLabels.values.toList(),
+                  selectedCategory: _filterLabels[_selectedFilter] ?? 'All',
+                  onCategorySelected: (label) {
+                    final key = _filterLabels.entries
+                        .firstWhere((e) => e.value == label)
+                        .key;
+                    setState(() => _selectedFilter = key);
                   },
-                  onChanged: (val) {
-                    if (val != null) setState(() => _selectedFilter = val);
-                  },
+                  selectedColor: AppColors.secondary,
+                  unselectedColor: AppColors.lightsecondary,
+                  selectedTextColor: AppColors.background,
+                  unselectedTextColor: AppColors.darkPrimary,
                 ),
               ),
             ),
             SizedBox(height: 8.h),
-
             Expanded(
               child: _orders.isEmpty
                   ? const Center(child: Text("No active orders"))
                   : _filteredOrders.isEmpty
                   ? Center(
-                child: Text(
-                  'No orders with status "${_statusLabel(_selectedFilter)}"',
-                  style: AppStyle.medLight,
-                ),
-              )
+                      child: Text(
+                        'No orders with status "${_statusLabel(_selectedFilter)}"',
+                        style: AppStyle.medLight,
+                      ),
+                    )
                   : ListView.builder(
-                padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
-                itemCount: _filteredOrders.length,
-                itemBuilder: (context, index) {
-                  final order = _filteredOrders[index];
-                  final dropdownItems = [
-                    'accepted',
-                    'in_progress',
-                    'completed',
-                  ];
+                      padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
+                      itemCount: _filteredOrders.length,
+                      itemBuilder: (context, index) {
+                        final order = _filteredOrders[index];
+                        final dropdownItems = [
+                          'accepted',
+                          'in_progress',
+                          'completed',
+                        ];
 
-                  return Card(
-                    color: Theme.of(context).cardColor,
-                    margin: EdgeInsets.only(bottom: 12.h),
-                    child: Padding(
-                      padding: EdgeInsets.all(12.w),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                order.bid.requestDescription,
-                                style: AppStyle.medBlack,
-                              ),
-                              const Spacer(),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 10.w,
-                                  vertical: 4.h,
+                        return Card(
+                          color: Theme.of(context).cardColor,
+                          margin: EdgeInsets.only(bottom: 12.h),
+                          child: Padding(
+                            padding: EdgeInsets.all(12.w),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      order.bid.requestDescription,
+                                      style: AppStyle.medBlack,
+                                    ),
+                                    const Spacer(),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 10.w,
+                                        vertical: 4.h,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(25),
+                                        color: AppColors.primery,
+                                      ),
+                                      child: Text(
+                                        _statusLabel(order.workStatus),
+                                        style: AppStyle.smallBackground,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(25),
-                                  color: AppColors.primery,
+                                SizedBox(height: 4.h),
+                                Text(
+                                  'for ${order.bid.customer.name}',
+                                  style: AppStyle.medPrimery.copyWith(
+                                    fontSize: 17.sp,
+                                  ),
                                 ),
-                                child: Text(
-                                  _statusLabel(order.workStatus),
-                                  style: AppStyle.smallBackground,
+                                SizedBox(height: 8.h),
+                                Row(
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Deadline',
+                                          style: AppStyle.medPrimery.copyWith(
+                                            fontSize: 17.sp,
+                                          ),
+                                        ),
+                                        Text(
+                                          order.isOverdue == true
+                                              ? 'Overdue!'
+                                              : '${order.daysRemaining ?? order.timeInDays} days',
+                                          style: AppStyle.body5,
+                                        ),
+                                      ],
+                                    ),
+                                    const Spacer(),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          'Payment',
+                                          style: AppStyle.medPrimery.copyWith(
+                                            fontSize: 17.sp,
+                                          ),
+                                        ),
+                                        Text(
+                                          '\$${order.price}',
+                                          style: AppStyle.body5,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 4.h),
-                          Text(
-                            'for ${order.bid.customer.name}',
-                            style: AppStyle.medPrimery.copyWith(
-                              fontSize: 17.sp,
+                                SizedBox(height: 10.h),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Expanded(
+                                      child: CustomDropdownList(
+                                        label: "Status",
+                                        value: order.workStatus ?? 'accepted',
+                                        items: dropdownItems,
+                                        hintText: "",
+                                        onChanged: (newStatus) {
+                                          context
+                                              .read<BiddingTailorCubit>()
+                                              .updateWorkStatus(
+                                                order.id,
+                                                newStatus!,
+                                              );
+                                        },
+                                       
+                                      ),
+                                    ),
+                                    SizedBox(width: 8.w),
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                          context,
+                                          RouteNames.chat_screen,
+                                          arguments: {
+                                            'receiverId': order.bid.customer.id,
+                                            'receiverName':
+                                                order.bid.customer.name,
+                                          },
+                                        );
+                                      },
+                                      borderRadius: BorderRadius.circular(12.r),
+                                      child: Container(
+                                        padding: EdgeInsets.all(13.w),
+                                        width: 70.w,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.primery,
+                                          borderRadius: BorderRadius.circular(
+                                            12.r,
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.chat_bubble_outline_rounded,
+                                          color: Theme.of(context).cardColor,
+                                          size: 22.sp,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
-                          SizedBox(height: 8.h),
-                          Row(
-                            children: [
-                              Column(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Deadline',
-                                    style: AppStyle.medPrimery.copyWith(
-                                      fontSize: 17.sp,
-                                    ),
-                                  ),
-                                  Text(
-                                    order.isOverdue == true
-                                        ? 'Overdue!'
-                                        : '${order.daysRemaining ?? order.timeInDays} days',
-                                    style: AppStyle.body5,
-                                  ),
-                                ],
-                              ),
-                              const Spacer(),
-                              Column(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    'Payment',
-                                    style: AppStyle.medPrimery.copyWith(
-                                      fontSize: 17.sp,
-                                    ),
-                                  ),
-                                  Text(
-                                    '\$${order.price}',
-                                    style: AppStyle.body5,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 10.h),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Expanded(
-                                child: CustomDropdownList(
-                                  label: "Status",
-                                  value: order.workStatus ?? 'accepted',
-                                  items: dropdownItems,
-                                  hintText: "",
-                                  onChanged: (newStatus) {
-                                    context
-                                        .read<BiddingTailorCubit>()
-                                        .updateWorkStatus(
-                                      order.id,
-                                      newStatus!,
-                                    );
-                                  },
-                                ),
-                              ),
-                              SizedBox(width: 8.w),
-                              InkWell(
-                                onTap: () {
-                                  Navigator.pushNamed(
-                                    context,
-                                    RouteNames.chat_screen,
-                                    arguments: {
-                                      'receiverId': order.bid.customer.id,
-                                      'receiverName':
-                                      order.bid.customer.name,
-                                    },
-                                  );
-                                },
-                                borderRadius: BorderRadius.circular(12.r),
-                                child: Container(
-                                  padding: EdgeInsets.all(13.w),
-                                  width: 70.w,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primery,
-                                    borderRadius: BorderRadius.circular(
-                                      12.r,
-                                    ),
-                                  ),
-                                  child: Icon(
-                                    Icons.chat_bubble_outline_rounded,
-                                    color: Theme.of(context).cardColor,
-                                    size: 22.sp,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
           ],
         ),
       ),
-      bottomNavigationBar: FloatingNavBar(userRole: 'tailor', selectedIndex: 1),
+      bottomNavigationBar: FloatingNavBar(userRole: 'tailor', selectedIndex: 2),
     );
   }
 }

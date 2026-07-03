@@ -312,6 +312,7 @@ abstract class ApiService {
       @Part(name: "category") String category,
       @Part(name: "season") String season,
       @Part(name: "color") String color,
+      @Part(name: "occasion") String occassion,
       @Part(name: "image") MultipartFile image,
       );
 
@@ -324,6 +325,7 @@ abstract class ApiService {
       @Part(name: "category") String category,
       @Part(name: "season") String season,
       @Part(name: "color") String color,
+      @Part(name: "occasion") String occassion,
       @Part(name: "image") MultipartFile? image,
       );
 

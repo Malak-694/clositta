@@ -1,8 +1,9 @@
+import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class LabeledTextField extends StatelessWidget {
+class LabeledTextField extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
   final bool enabled;
@@ -35,6 +36,7 @@ class LabeledTextField extends StatelessWidget {
   final BoxConstraints? constraints;
   final TextStyle? textStyle;
   final TextStyle? hintStyle;
+  final bool obscureText;
 
   const LabeledTextField({
     super.key,
@@ -57,87 +59,115 @@ class LabeledTextField extends StatelessWidget {
     this.borderColor,
     this.focusedBorderColor,
     this.fillColor,
-    this.filled = false,
+    this.filled = true, // match CheckoutTextField: filled by default
     this.borderRadius,
     this.height,
     this.width,
     this.constraints,
     this.textStyle,
     this.hintStyle,
+    this.obscureText = false,
   });
 
   @override
-  Widget build(BuildContext context) {
-    // If label is provided, wrap the text field with label
-    if (label != null) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildLabel(),
-          SizedBox(height: 8.h),
-          _buildTextField(context),
-        ],
-      );
-    }
+  State<LabeledTextField> createState() => _LabeledTextFieldState();
+}
 
-    // Otherwise, return just the text field
+class _LabeledTextFieldState extends State<LabeledTextField> {
+  late bool _obscureText;
+
+  @override
+  void initState() {
+    super.initState();
+    _obscureText = widget.obscureText;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Label now lives inside the field (floating label), so just return the field
     return _buildTextField(context);
   }
 
-  Widget _buildLabel() {
-    return Row(
-      children: [
-        Text(label!, style: labelStyle ?? AppStyle.body6),
-        if (required) ...[
-          SizedBox(width: 4.w),
-          Text(
-            '*',
-            style: TextStyle(
-              color: Colors.red,
-              fontSize: (labelStyle ?? AppStyle.body6).fontSize,
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-
   Widget _buildTextField(BuildContext context) {
-    final effectiveBorderRadius = borderRadius ?? 12.r;
-    final effectiveBorderColor = borderColor ?? Colors.grey[300]!;
+    final effectiveBorderRadius = widget.borderRadius ?? 12.r;
+    final effectiveBorderColor = widget.borderColor ?? AppColors.lightprimery;
     final effectiveFocusedBorderColor =
-        focusedBorderColor ?? Theme.of(context).primaryColor;
+        widget.focusedBorderColor ?? AppColors.primery;
+    final effectiveFillColor =
+        widget.fillColor ?? const Color.fromARGB(255, 41, 16, 200);
+
+    // Build the floating label text, appending '*' when required
+    final effectiveLabelText = widget.label == null
+        ? null
+        : (widget.required ? '${widget.label!} *' : widget.label!);
 
     final textField = TextFormField(
-      controller: controller,
-      focusNode: focusNode,
-      enabled: enabled,
-      maxLines: maxLines,
-      keyboardType: keyboardType,
-      textInputAction: textInputAction,
-      validator: validator ?? (required ? _defaultValidator : null),
-      onChanged: onChanged,
-      onFieldSubmitted: onFieldSubmitted,
-      style: textStyle ?? AppStyle.body6,
+      controller: widget.controller,
+      focusNode: widget.focusNode,
+      enabled: widget.enabled,
+      maxLines: widget.obscureText
+          ? 1
+          : widget.maxLines, // obscured fields shouldn't be multiline
+      keyboardType: widget.keyboardType,
+      textInputAction: widget.textInputAction,
+      obscureText: widget.obscureText ? _obscureText : false,
+      validator:
+          widget.validator ?? (widget.required ? _defaultValidator : null),
+      onChanged: widget.onChanged,
+      onFieldSubmitted: widget.onFieldSubmitted,
+      style: widget.textStyle ?? AppStyle.body3,
       decoration: InputDecoration(
-        hintText: hintText,
-        hintStyle: hintStyle ?? AppStyle.smallBlack.copyWith(fontSize: 14.sp),
-        prefixIcon: prefixIcon,
-        suffixIcon: suffixIcon,
+        labelText: effectiveLabelText,
+        labelStyle:
+            widget.labelStyle ??
+            AppStyle.smallPrimery.copyWith(
+              fontSize: 13.sp,
+              color: AppColors.primery,
+            ),
+        hintText: widget.hintText,
+        hintStyle:
+            widget.hintStyle ??
+            AppStyle.smallBlack.copyWith(
+              fontSize: 14.sp,
+              color: AppColors.light,
+            ),
+        prefixIcon: widget.prefixIcon,
+        suffixIcon: widget.obscureText
+            ? IconButton(
+                icon: Icon(
+                  _obscureText ? Icons.visibility_off : Icons.visibility,
+                  color: AppColors.primery,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _obscureText = !_obscureText;
+                  });
+                },
+              )
+            : widget.suffixIcon,
         contentPadding:
-            contentPadding ??
+            widget.contentPadding ??
             EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
-        filled: filled,
-        fillColor: fillColor,
+        filled: widget.filled,
+        fillColor: widget.controller.text.isNotEmpty
+            ? AppColors.primery.withValues(alpha: 0.1)
+            : effectiveFillColor,
 
         // Border styling
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(effectiveBorderRadius),
+          borderSide: BorderSide.none,
+        ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(effectiveBorderRadius),
           borderSide: BorderSide(color: effectiveBorderColor, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(effectiveBorderRadius),
-          borderSide: BorderSide(color: effectiveFocusedBorderColor, width: 2),
+          borderSide: BorderSide(
+            color: effectiveFocusedBorderColor,
+            width: 1.2,
+          ),
         ),
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(effectiveBorderRadius),
@@ -158,8 +188,12 @@ class LabeledTextField extends StatelessWidget {
     );
 
     // If size constraints are provided, wrap the text field
-    if (height != null || width != null) {
-      return SizedBox(height: height, width: width, child: textField);
+    if (widget.height != null || widget.width != null) {
+      return SizedBox(
+        height: widget.height,
+        width: widget.width,
+        child: textField,
+      );
     }
 
     return textField;

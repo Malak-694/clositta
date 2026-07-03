@@ -25,8 +25,6 @@ class AiCustomerScreen extends StatefulWidget {
 
 class _AiCustomerScreenState extends State<AiCustomerScreen> {
   String? _currentUserId;
-  String? _currentUserName;
-
 
   @override
   void initState() {
@@ -41,14 +39,11 @@ class _AiCustomerScreenState extends State<AiCustomerScreen> {
   Future<void> _loadUserId() async {
     final prefs = getIt<SharedPrefHelper>();
     final id = await prefs.getSecureData(SharedPrefKey.id);
-    final user_name = await prefs.getSecureData(SharedPrefKey.username);
 
     if (!mounted) return;
     setState(() {
-      _currentUserId = id ;
-      _currentUserName = user_name;
+      _currentUserId = id;
     });
-
   }
 
   @override
@@ -85,7 +80,6 @@ class _AiCustomerScreenState extends State<AiCustomerScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // const SizedBox(height: 10),
-
               Row(
                 children: [
                   Container(
@@ -120,7 +114,7 @@ class _AiCustomerScreenState extends State<AiCustomerScreen> {
                   ),
                   SizedBox(width: 15.w),
                   Text(
-                    "Hello, ${_currentUserName}\nHow can I help you today?",
+                    "Hello, \nHow can I help you today?",
                     style: AppStyle.medBlack,
                   ),
                 ],

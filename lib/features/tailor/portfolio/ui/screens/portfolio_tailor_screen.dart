@@ -9,11 +9,8 @@ import '../../../../../core/helper/shared_pref_helper.dart';
 import '../../../../../core/router/route_names.dart';
 import '../../../../../core/widgets/custom_app_bar.dart';
 import '../../../../../core/widgets/custom_nav_bar.dart';
-import '../../../../chat/data/models/conversation_model.dart';
 import '../../../../chat/logic/conversations_cubit/conversations_cubit.dart';
-import '../../../../chat/logic/conversations_cubit/conversations_state.dart';
 import '../../../../ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
-import '../../../../ecommerce_multi/logic/cart_cubit/cart_state.dart';
 import '../../../../ecommerce_multi/logic/cart_cubit/cart_total_quantity.dart';
 import '../../../../notifications/data/models/unread_count_response.dart';
 import '../../../../notifications/logic/cubit/notification_cubit.dart';
@@ -59,7 +56,7 @@ class PortfolioTailorScreen extends StatelessWidget {
             Navigator.pushNamed(
               context,
               RouteNames.conversations_screen,
-              arguments: {'currentUserId': userId ?? ''},
+              arguments: {'currentUserId': userId},
             );
           },
         ),
@@ -77,13 +74,13 @@ class PortfolioTailorScreen extends StatelessWidget {
                     reviewsSection: ratings == null
                         ? null
                         : CommentSection(
-                      productComments: ratings,
-                      userRating: null,
-                      currentUserId: null,
-                      accent: AppColors.lightsecondary,
-                      accentDark: AppColors.darksecondary,
-                      onDelete: null,
-                    ),
+                            productComments: ratings,
+                            userRating: null,
+                            currentUserId: null,
+                            accent: AppColors.darkPrimaryLight,
+                            accentDark: AppColors.darkprimery,
+                            onDelete: null,
+                          ),
                   ),
                 ),
               ],
@@ -92,7 +89,7 @@ class PortfolioTailorScreen extends StatelessWidget {
         ),
         bottomNavigationBar: FloatingNavBar(
           userRole: 'tailor',
-          selectedIndex: 2,
+          selectedIndex: 3,
         ),
       ),
     );

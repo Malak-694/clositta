@@ -106,6 +106,7 @@ class ClosetCubit extends Cubit<ClosetState> {
     required String category,
     required String season,
     required String color,
+    required String occassion,
     required String imagePath,
   }) async {
     emit(ClosetState.loading());
@@ -127,6 +128,7 @@ class ClosetCubit extends Cubit<ClosetState> {
         category: category,
         season: season,
         color: color,
+        occassion: occassion,
         imagePath: imagePath,
       );
 
@@ -187,6 +189,7 @@ class ClosetCubit extends Cubit<ClosetState> {
     required String category,
     required String season,
     required String color,
+    required String occassion,
     String? imagePath,
   }) async {
     emit(ClosetState.loading());
@@ -201,10 +204,11 @@ class ClosetCubit extends Cubit<ClosetState> {
         token: token,
         itemId: itemId,
         name: name,
-        category: category,
-        season: season,
+        category: category.toLowerCase(),
+        season: season.toLowerCase(),
         color: color,
         imagePath: imagePath,
+        occassion: occassion.toLowerCase(),
       );
 
       response.when(

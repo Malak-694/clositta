@@ -61,7 +61,7 @@ class TailorProductsScreen extends StatelessWidget {
       ),
       bottomNavigationBar: FloatingNavBar(
         userRole: 'tailor',
-        selectedIndex: 3,
+        selectedIndex: 4,
 
       ),
     );

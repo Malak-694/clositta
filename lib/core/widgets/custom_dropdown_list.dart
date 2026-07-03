@@ -1,6 +1,3 @@
-
-
-
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +17,7 @@ class CustomDropdownList extends StatelessWidget {
   final bool isExpanded;
   final double? width;
   final double? height;
+  final bool showAllOption; // adds a null "All" item, like Price Sort dropdown
 
   const CustomDropdownList({
     super.key,
@@ -34,8 +32,9 @@ class CustomDropdownList extends StatelessWidget {
     this.style,
     this.vPadding,
     this.isExpanded = true,
-    this.width ,
-    this.height ,
+    this.width,
+    this.height,
+    this.showAllOption = false,
   });
 
   @override
@@ -45,27 +44,35 @@ class CustomDropdownList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Label
-
-        if(label != null) ...[Row(
-          children: [
-            Text(label!, style: AppStyle.body3),
-            if (required) ...[
-              SizedBox(width: 4.w),
-              Text('*', style: TextStyle(color: Colors.red, fontSize: 14.sp)),
+        if (label != null) ...[
+          Row(
+            children: [
+              Text(label!, style: AppStyle.body3),
+              if (required) ...[
+                SizedBox(width: 4.w),
+                Text(
+                  '*',
+                  style: TextStyle(color: Colors.red, fontSize: 14.sp),
+                ),
+              ],
             ],
-          ],
-        ),
-        SizedBox(height: 8.h),
-  ],
+          ),
+          SizedBox(height: 8.h),
+        ],
 
         // Dropdown
         SizedBox(
           width: width?.w ?? double.infinity,
           height: height?.h,
           child: DropdownButtonFormField<String>(
+            initialValue: value,
             isExpanded: isExpanded,
-            initialValue: value??items.first,
+            isDense: true,
+            icon: Icon(
+              Icons.keyboard_arrow_down,
+              color: AppColors.primery,
+              size: 20.sp,
+            ),
             hint: Text(
               hintText,
               style: textStyle,
@@ -73,7 +80,8 @@ class CustomDropdownList extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
             selectedItemBuilder: (context) {
-              return items.map((item) {
+              final allItems = [if (showAllOption) 'All', ...items];
+              return allItems.map((item) {
                 return Align(
                   alignment: AlignmentDirectional.centerStart,
                   child: Text(
@@ -85,45 +93,68 @@ class CustomDropdownList extends StatelessWidget {
                 );
               }).toList();
             },
-            items: items.map((item) {
-              return DropdownMenuItem(
-                value: item,
-                child: Text(
-                  item,
-                  style: textStyle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+            items: [
+              if (showAllOption)
+                DropdownMenuItem<String>(
+                  value: null,
+                  child: Text('All', style: textStyle),
                 ),
-              );
-            }).toList(),
+              ...items.map(
+                (item) => DropdownMenuItem<String>(
+                  value: item,
+                  child: Text(
+                    item,
+                    style: textStyle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+            ],
             onChanged: enabled ? onChanged : null,
             dropdownColor: fillColor,
             decoration: InputDecoration(
-              hintText: hintText,
-              fillColor: fillColor,
               filled: true,
+              fillColor: value != null
+                  ? AppColors.primery.withValues(alpha: 0.1)
+                  : fillColor,
               contentPadding: EdgeInsets.symmetric(
-                horizontal: 12.w,
+                horizontal: 14.w,
                 vertical: vPadding ?? 12.h,
               ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.r),
-                borderSide: BorderSide(color: AppColors.light),
-              ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.r),
-                borderSide: BorderSide(color: AppColors.light),
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide(color: Colors.grey[300]!, width: 1),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.r),
-                borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide(
+                  color: Theme.of(context).primaryColor,
+                  width: 2,
+                ),
               ),
+              disabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide(
+                  color: Colors.grey[300]!.withOpacity(0.5),
+                  width: 1,
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide(color: Colors.red[400]!, width: 1),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide(color: Colors.red[600]!, width: 2),
+              ),
+              isDense: true,
             ),
             validator: required
                 ? (value) {
-              if (value == null) return 'This field is required';
-              return null;
-            }
+                    if (value == null) return 'This field is required';
+                    return null;
+                  }
                 : null,
           ),
         ),

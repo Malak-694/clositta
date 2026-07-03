@@ -1,5 +1,5 @@
 import 'package:chicora/core/utils/validator.dart';
-import 'package:chicora/features/auth/ui/widgets/custom_text_form_field.dart';
+import 'package:chicora/core/widgets/labeled_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -23,14 +23,15 @@ class SignUpTailorExtraFields extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         SizedBox(height: 12.h),
-        CustomTextFormField(
-          text: "Workshop address (optional)",
+        LabeledTextField(
+          label: "Workshop address (optional)",
+          hintText: "",
           controller: workshopLocation,
-          validator: (_) => null,
         ),
         SizedBox(height: 10.h),
-        CustomTextFormField(
-          text: "Google Maps URL (optional)",
+        LabeledTextField(
+          label: "Google Maps URL (optional)",
+          hintText: "",
           controller: mapsLink,
           validator: Validators.validateOptionalHttpUrl,
         ),

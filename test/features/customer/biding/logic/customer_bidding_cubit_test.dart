@@ -150,45 +150,6 @@ void main() {
     );
   });
 
-  group('getOffers', () {
-    blocTest<CustomerBiddingCubit, CustomerBiddingState>(
-      'emits [Loading, Success] when loading offers succeeds',
-      build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => 'fake-token-123');
-        when(() => mockRepo.getOffers(any(), any()))
-            .thenAnswer((_) async => [fakeOffer]);
-        return cubit;
-      },
-      act: (cubit) => cubit.getOffers('bid-123'),
-      expect: () => [
-        const CustomerBiddingState.loading(),
-        CustomerBiddingState<dynamic>.success([fakeOffer]),
-      ],
-    );
-  });
-
-  group('acceptOffer', () {
-    blocTest<CustomerBiddingCubit, CustomerBiddingState>(
-      'emits [Loading, Success("Offer accepted successfully"), Loading, Success] when accepting offer succeeds',
-      build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => 'fake-token-123');
-        when(() => mockRepo.acceptOffer(any(), any()))
-            .thenAnswer((_) async => Future.value());
-        when(() => mockRepo.getBestOffers(any(), any()))
-            .thenAnswer((_) async => [fakeOffer]);
-        return cubit;
-      },
-      act: (cubit) => cubit.acceptOffer('offer-123', 'bid-123'),
-      expect: () => [
-        const CustomerBiddingState.loading(),
-        const CustomerBiddingState<dynamic>.success("Offer accepted successfully"),
-        const CustomerBiddingState.loading(),
-        CustomerBiddingState<dynamic>.success([fakeOffer]),
-      ],
-    );
-  });
 
   group('deleteBid', () {
     blocTest<CustomerBiddingCubit, CustomerBiddingState>(

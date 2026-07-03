@@ -8,7 +8,7 @@ import 'package:chicora/features/notifications/logic/cubit/notification_state.da
 import 'package:chicora/features/seller/orders/data/models/order_seller_response_model.dart';
 import 'package:chicora/features/seller/orders/logic/cubit/order_mangement_cubit.dart';
 import 'package:chicora/features/seller/orders/logic/cubit/order_mangement_state.dart';
-import 'package:chicora/features/seller/orders/ui/widgets/seller_order_status_filter_bar.dart';
+import 'package:chicora/core/widgets/custom_category_selector.dart';
 import 'package:chicora/features/seller/orders/ui/widgets/seller_orders_list_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,8 +23,7 @@ class OrderMangementScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    final notifCount  = context.watch<NotificationCubit>().state.maybeWhen(
+    final notifCount = context.watch<NotificationCubit>().state.maybeWhen(
       success: (data) => data is UnreadCountResponse ? data.unreadCount : 0,
       orElse: () => 0,
     );
@@ -35,20 +34,18 @@ class OrderMangementScreen extends StatelessWidget {
       appBar: CustomAppBar(
         title: 'Orders',
         showCartIcon: false,
-        onCartTap: () => Navigator.pushNamed(context, RouteNames.customer_cart_screen),
+        onCartTap: () =>
+            Navigator.pushNamed(context, RouteNames.customer_cart_screen),
         showNotificationIcon: true,
         unreadNotificationCount: notifCount,
-        onNotificationTap: () => Navigator.pushNamed(context, RouteNames.notification_screen),
-
+        onNotificationTap: () =>
+            Navigator.pushNamed(context, RouteNames.notification_screen),
       ),
       body: BlocProvider(
         create: (_) => getIt<OrderMangementCubit>()..getAllOrdersSeller(),
         child: const _OrderMangementBody(),
       ),
-      bottomNavigationBar: FloatingNavBar(
-        userRole: 'seller',
-        selectedIndex: 1,
-      ),
+      bottomNavigationBar: FloatingNavBar(userRole: 'seller', selectedIndex: 1),
     );
   }
 }
@@ -62,7 +59,16 @@ class _OrderMangementBody extends StatefulWidget {
 
 class _OrderMangementBodyState extends State<_OrderMangementBody> {
   List<OrderSellerResponseModel> _orders = [];
-  String? _statusFilter;
+  String _statusFilter = 'All';
+  final List<String> _categories = [
+    'All',
+    'Placed',
+    'Confirmed',
+    'Shipped',
+    'Delivered',
+    'Cancelled',
+  ];
+
   /// After the first successful fetch, filter/refresh loads use inline progress only.
   bool _hasCompletedFirstLoad = false;
 
@@ -91,10 +97,7 @@ class _OrderMangementBodyState extends State<_OrderMangementBody> {
           loading: () => true,
           orElse: () => false,
         );
-        final failMessage = state.maybeWhen(
-          fail: (m) => m,
-          orElse: () => null,
-        );
+        final String? failMessage = state.maybeWhen(fail: (m) => m, orElse: () => null);
 
         if (loading && !_hasCompletedFirstLoad) {
           return const Center(child: CircularProgressIndicator());
@@ -107,15 +110,15 @@ class _OrderMangementBodyState extends State<_OrderMangementBody> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    failMessage,
-                    textAlign: TextAlign.center,
-                  ),
+                  Text(failMessage, textAlign: TextAlign.center),
                   SizedBox(height: 16.h),
                   FilledButton(
-                    onPressed: () => context.read<OrderMangementCubit>().getAllOrdersSeller(
-                      status: _statusFilter,
-                    ),
+                    onPressed: () =>
+                        context.read<OrderMangementCubit>().getAllOrdersSeller(
+                          status: _statusFilter == 'All'
+                              ? null
+                              : _statusFilter.toLowerCase(),
+                        ),
                     child: const Text('Retry'),
                   ),
                 ],
@@ -135,14 +138,19 @@ class _OrderMangementBodyState extends State<_OrderMangementBody> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 20),
-              SellerOrderStatusFilterBar(
-                selectedStatus: _statusFilter,
-                onStatusSelected: (value) {
+              CustomCategorySelector(
+                categories: _categories,
+                selectedCategory: _statusFilter,
+                onCategorySelected: (value) {
                   setState(() => _statusFilter = value);
                   context.read<OrderMangementCubit>().getAllOrdersSeller(
-                    status: value,
+                    status: value == 'All' ? null : value.toLowerCase(),
                   );
                 },
+                selectedColor: AppColors.ternary,
+                unselectedColor: AppColors.lightsecondary,
+                selectedTextColor: AppColors.background,
+                unselectedTextColor: AppColors.darkPrimary,
               ),
               SizedBox(height: 12.h),
               if (loading) const LinearProgressIndicator(minHeight: 2),
@@ -151,20 +159,26 @@ class _OrderMangementBodyState extends State<_OrderMangementBody> {
                 child: SellerOrdersListWidget(
                   orders: _orders,
                   onRefresh: () async {
-                    await context.read<OrderMangementCubit>().getAllOrdersSeller(
-                      status: _statusFilter,
-                      forceRefresh: true,
-                    );
+                    await context
+                        .read<OrderMangementCubit>()
+                        .getAllOrdersSeller(
+                          status: _statusFilter == 'All'
+                              ? null
+                              : _statusFilter.toLowerCase(),
+                          forceRefresh: true,
+                        );
                   },
                   onUpdateStatus: (order, {orderStatus}) async {
                     final id = order.resolvedOrderId;
                     final subOrderId = order.resolvedSubOrderId;
                     if (id == null || subOrderId == null) return;
-                    await context.read<OrderMangementCubit>().updateOrderStatusSeller(
-                      orderId: id,
-                      suborderId: subOrderId,
-                      orderStatus: orderStatus,
-                    );
+                    await context
+                        .read<OrderMangementCubit>()
+                        .updateOrderStatusSeller(
+                          orderId: id,
+                          suborderId: subOrderId,
+                          orderStatus: orderStatus,
+                        );
                   },
                 ),
               ),

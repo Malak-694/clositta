@@ -1,3 +1,4 @@
+import 'package:chicora/core/widgets/custom_dropdown_list.dart';
 import 'package:chicora/features/customer/measurements/data/model/measurements_request_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -69,16 +70,12 @@ Future<MeasurementsModel?> showOtherMeasuresBottomSheet(BuildContext context) {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    DropdownButtonFormField<String>(
+
+                    CustomDropdownList(
+                      label: 'Unit',
+                      hintText: 'Unit',
                       value: unit,
-                      decoration: const InputDecoration(
-                        labelText: 'Unit',
-                        border: OutlineInputBorder(),
-                      ),
-                      items: const [
-                        DropdownMenuItem(value: 'cm', child: Text('cm')),
-                        DropdownMenuItem(value: 'in', child: Text('in')),
-                      ],
+                      items: const ["cm", "in"],
                       onChanged: (val) {
                         setStateSheet(() => unit = val);
                       },

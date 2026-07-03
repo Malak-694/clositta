@@ -1,6 +1,6 @@
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/constants.dart';
-import 'package:chicora/core/widgets/custom_dropdown_list.dart';
+import 'package:chicora/core/widgets/custom_category_selector.dart';
 import 'package:chicora/core/widgets/custom_elevated_button.dart';
 import 'package:chicora/core/widgets/pinterest_grid.dart';
 import 'package:chicora/features/tailor/portfolio/logic/cubit/portfolio_tailor_cubit.dart';
@@ -26,13 +26,9 @@ class PortfolioTailorBody extends StatefulWidget {
 class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
   final TextEditingController searchController = TextEditingController();
 
-  final List<String> _categories = [
-    'All',
-    'Tops',
-    'Bottoms',
-    'Shoes',
-    'Accessories',
-  ];
+  String _selectedCategory = 'All';
+
+  final List<String> _categories = ['All', 'Tops', 'Bottoms', 'Suits'];
 
   @override
   void initState() {
@@ -42,7 +38,6 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
       context.read<PortfolioTailorCubit>().viewPortfolioTailor(null);
     });
   }
-
 
   @override
   void dispose() {
@@ -60,25 +55,23 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
           Row(
             children: [
               Expanded(
-                child: CustomDropdownList(
-                  fillColor: AppColors.lightsecondary,
-                  width: 90.w,
-                  height: 37.h,
-                  vPadding: 3.h,
-                  style: AppStyle.medSecondary.copyWith(
-                    color: AppColors.darksecondary,
-                  ),
-                  items: _categories,
-                  value: 'All',
-                  hintText: 'Category',
-                  onChanged: (category) {
+                child: CustomCategorySelector(
+                  categories: _categories,
+                  selectedCategory: _selectedCategory,
+                  onCategorySelected: (category) {
+                    setState(() {
+                      _selectedCategory = category;
+                    });
                     context.read<PortfolioTailorCubit>().filterByCategory(
-                      category ?? 'All',
+                      category,
                     );
                   },
+                  selectedColor: AppColors.secondary,
+                  unselectedColor: AppColors.lightsecondary,
+                  selectedTextColor: AppColors.background,
+                  unselectedTextColor: AppColors.darkPrimary,
                 ),
               ),
-              const Spacer(),
               SizedBox(width: 10.w),
               CustomElevatedButton(
                 background: AppColors.secondary,
@@ -99,7 +92,7 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
                 return state.when(
                   initial: () => _centeredMessage('No items'),
                   loading: () =>
-                  const Center(child: CircularProgressIndicator()),
+                      const Center(child: CircularProgressIndicator()),
                   success: (data) {
                     if (data is! List<PortfolioTailorResponseModel>) {
                       return _centeredMessage('No portfolio items found');
@@ -124,8 +117,8 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
                               showEdit: true,
                               showDelete: true,
                               onEdit: () {
-                                final cubit =
-                                context.read<PortfolioTailorCubit>();
+                                final cubit = context
+                                    .read<PortfolioTailorCubit>();
                                 Navigator.pushNamed(
                                   context,
                                   RouteNames.update_work_screen,
@@ -172,9 +165,9 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
   }
 
   void _showDeleteConfirmation(
-      BuildContext context,
-      PortfolioTailorResponseModel item,
-      ) {
+    BuildContext context,
+    PortfolioTailorResponseModel item,
+  ) {
     showDialog(
       context: context,
       builder: (contextDialog) => AlertDialog(

@@ -1,6 +1,6 @@
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/widgets/custom_category_selector.dart';
-import 'package:chicora/features/ecommerce_multi/ui/widgets/filter_side_bar_widget.dart';
+import 'package:chicora/core/widgets/filter_side_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

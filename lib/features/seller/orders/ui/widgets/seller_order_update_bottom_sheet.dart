@@ -1,5 +1,6 @@
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/style.dart';
+import 'package:chicora/core/widgets/custom_dropdown_list.dart';
 import 'package:chicora/features/seller/orders/data/models/order_seller_response_model.dart';
 import 'package:chicora/features/seller/orders/ui/widgets/seller_order_ui_constants.dart';
 import 'package:flutter/material.dart';
@@ -90,33 +91,15 @@ class _SellerOrderUpdateSheetState extends State<_SellerOrderUpdateSheet> {
             style: AppStyle.medPrimery.copyWith(fontSize: 14.sp),
           ),
           SizedBox(height: 8.h),
-          DropdownButtonFormField<String>(
-            initialValue: _orderStatus,
-            hint: Text(
-              'No change',
-              style: AppStyle.smallBlack.copyWith(fontSize: 14.sp),
-            ),
-            items: kSellerOrderStatusValues
-                .map(
-                  (v) => DropdownMenuItem(
-                value: v,
-                child: Text(sellerOrderStatusLabel(v)),
-              ),
-            )
-                .toList(),
-            onChanged: (v) => setState(() => _orderStatus = v),
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
-                borderSide: BorderSide(color: Colors.grey.shade300),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
-                borderSide: BorderSide(color: Colors.grey.shade300),
-              ),
-            ),
+
+          CustomDropdownList(
+            hintText: 'No change',
+            value: _orderStatus,
+            items: kSellerOrderStatusValues,
+            onChanged: (val) {
+              setState(() => _orderStatus = val);
+            },
+            fillColor: AppColors.background,
           ),
           SizedBox(height: 16.h),
           Text(

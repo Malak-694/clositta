@@ -50,13 +50,8 @@ class AuthCubit extends Cubit<AuthState> {
       case 'Tailor':
         rolefinal = 'tailor';
         break;
-      case 'Admin':
-        rolefinal = 'admin';
-        break;
-      case 'Clothes Seller':
-        rolefinal = 'clothes_seller';
-        break;
-      case 'Material Seller':
+
+      case 'Seller':
         rolefinal = 'material_seller';
         break;
       default:

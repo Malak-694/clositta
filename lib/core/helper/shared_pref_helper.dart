@@ -1,13 +1,19 @@
+import 'package:chicora/core/di/dependency_injection.dart';
+import 'package:chicora/core/networking/api_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPrefHelper {
   static SharedPreferences? _prefs;
   static const FlutterSecureStorage _secureStorage = FlutterSecureStorage();
+  final ApiService apiService ;
+
+  SharedPrefHelper({required this.apiService});
 
   /// Call this once in setupGetIt()
   static Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
+    
   }
 
   /// --------------------
@@ -67,6 +73,9 @@ class SharedPrefHelper {
   }
 
   Future<void> clearAllSecure() async {
+    final String? userToken = await getSecureData('token');
+    await apiService.updateFcmToken("Bearer $userToken", {"fcmToken": "null"});
+
     await _secureStorage.deleteAll();
   }
 }

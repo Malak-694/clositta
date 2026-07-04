@@ -311,12 +311,14 @@ class _AddedProductFormState extends State<AddedProductForm> {
                       );
                     }
 
-                    return CustomElevatedButton(
-                      value: _isUpdate ? "Update Product" : "Add Product",
-                      onPressed: _submitPost,
-                      height: 48,
-                      width: 380,
-                      background: AppColors.primery,
+                    return SafeArea(
+                      child: CustomElevatedButton(
+                        value: _isUpdate ? "Update Product" : "Add Product",
+                        onPressed: _submitPost,
+                        height: 48,
+                        width: 380,
+                        background: AppColors.primery,
+                      ),
                     );
                   },
                 ),

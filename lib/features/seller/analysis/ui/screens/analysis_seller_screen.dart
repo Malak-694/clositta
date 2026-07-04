@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'package:chicora/core/constants/colors.dart';
 import 'package:chicora/core/constants/constants.dart';
 import 'package:chicora/core/widgets/custom_app_bar.dart';
@@ -28,8 +30,7 @@ class AnalysisSellerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    final notifCount  = context.watch<NotificationCubit>().state.maybeWhen(
+    final notifCount = context.watch<NotificationCubit>().state.maybeWhen(
       success: (data) => data is UnreadCountResponse ? data.unreadCount : 0,
       orElse: () => 0,
     );
@@ -39,11 +40,12 @@ class AnalysisSellerScreen extends StatelessWidget {
       appBar: CustomAppBar(
         title: 'Analytics',
         showCartIcon: false,
-        onCartTap: () => Navigator.pushNamed(context, RouteNames.customer_cart_screen),
+        onCartTap: () =>
+            Navigator.pushNamed(context, RouteNames.customer_cart_screen),
         showNotificationIcon: true,
         unreadNotificationCount: notifCount,
-        onNotificationTap: () => Navigator.pushNamed(context, RouteNames.notification_screen),
-
+        onNotificationTap: () =>
+            Navigator.pushNamed(context, RouteNames.notification_screen),
       ),
       body: BlocBuilder<AnalysisSellerCubit, AnalysisSellerState>(
         builder: (context, state) {
@@ -62,10 +64,7 @@ class AnalysisSellerScreen extends StatelessWidget {
           );
         },
       ),
-      bottomNavigationBar: FloatingNavBar(
-        userRole: 'seller',
-        selectedIndex: 2 ,
-      ),
+      bottomNavigationBar: FloatingNavBar(userRole: 'seller', selectedIndex: 2),
     );
   }
 }
@@ -80,7 +79,25 @@ class _AnalysisContent extends StatelessWidget {
     final overview = analysis.overview;
     final monthlyRevenue = analysis.revenuePerMonth;
     final weeklyRevenue = analysis.revenuePerWeek;
+    // Remove duplicates by product id
+    final uniqueProducts = {
+      for (final product in analysis.topProducts) product.productId: product,
+    }.values.toList();
 
+    // Merge any products that exist only in bottomProducts
+    for (final product in analysis.bottomProducts) {
+      if (!uniqueProducts.any((p) => p.productId == product.productId)) {
+        uniqueProducts.add(product);
+      }
+    }
+
+    // Sort from highest sales to lowest
+    uniqueProducts.sort((a, b) => b.totalRevenue.compareTo(a.totalRevenue));
+
+    // Split into top and bottom halves
+    final half = (uniqueProducts.length / 2).ceil();
+    final topProducts = uniqueProducts.take(half).toList();
+    final bottomProducts = uniqueProducts.skip(half).toList();
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: kHorizontalPadding),
       child: Column(
@@ -93,14 +110,15 @@ class _AnalysisContent extends StatelessWidget {
           ),
           AnalysisSectionCard(
             title: 'Average Order Value',
-            child: AnalysisAverageOrderRow(avgOrderValue: analysis.avgOrderValue),
+            child: AnalysisAverageOrderRow(
+              avgOrderValue: analysis.avgOrderValue,
+            ),
           ),
           AnalysisSectionCard(
             title: 'Revenue Per Month',
             child: AnalysisRevenueList(
               items: monthlyRevenue,
-              getLabel: (item) =>
-              item.monthName ?? 'M${item.month ?? '-'}',
+              getLabel: (item) => item.monthName ?? 'M${item.month ?? '-'}',
               getSubLabel: (item) => 'Year ${item.year}',
             ),
           ),
@@ -115,9 +133,9 @@ class _AnalysisContent extends StatelessWidget {
           AnalysisSectionCard(
             title: 'Top Products',
             child: AnalysisEmptyState(
-              isEmpty: analysis.topProducts.isEmpty,
+              isEmpty: topProducts.isEmpty,
               child: Column(
-                children: analysis.topProducts
+                children: topProducts
                     .map((item) => AnalysisProductItem(product: item))
                     .toList(),
               ),
@@ -126,9 +144,9 @@ class _AnalysisContent extends StatelessWidget {
           AnalysisSectionCard(
             title: 'Bottom Products',
             child: AnalysisEmptyState(
-              isEmpty: analysis.bottomProducts.isEmpty,
+              isEmpty: bottomProducts.isEmpty,
               child: Column(
-                children: analysis.bottomProducts
+                children: bottomProducts
                     .map((item) => AnalysisProductItem(product: item))
                     .toList(),
               ),
@@ -170,7 +188,6 @@ class _AnalysisContent extends StatelessWidget {
           const SizedBox(height: 20),
         ],
       ),
-
     );
   }
 }

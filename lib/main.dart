@@ -7,6 +7,7 @@ import 'package:chicora/core/helper/shared_key.dart';
 import 'package:chicora/core/helper/shared_pref_helper.dart';
 import 'package:chicora/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'core/router/app_router.dart';
@@ -40,12 +41,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setupGetIt();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   await NotificationHelper.initialize();
   final prefs = getIt<SharedPrefHelper>();
-  final token      = await prefs.getSecureData(SharedPrefKey.token);
-  final role       = await prefs.getSecureData(SharedPrefKey.role);
-  final savedDark  = prefs.getData(SharedPrefKey.isDarkMode) as bool? ?? false;
+  final token = await prefs.getSecureData(SharedPrefKey.token);
+  final role = await prefs.getSecureData(SharedPrefKey.role);
+  final savedDark = prefs.getData(SharedPrefKey.isDarkMode) as bool? ?? false;
 
   if (token != null && token.isNotEmpty) {
     NotificationHelper.sendTokenToBackend();
@@ -66,9 +67,7 @@ void main() async {
   } else {
     appProviders = MultiBlocProvider(
       providers: [
-        BlocProvider<CartCubit>(
-          create: (_) => getIt<CartCubit>()..getCart(),
-        ),
+        BlocProvider<CartCubit>(create: (_) => getIt<CartCubit>()..getCart()),
         BlocProvider<ConversationsCubit>(
           create: (_) => getIt<ConversationsCubit>()..loadUnreadCount(),
         ),
@@ -92,7 +91,11 @@ bool _isOrdersReturnDeepLink(Uri uri) {
 class ChicoraApp extends StatefulWidget {
   final String initialRoute;
   final bool savedDark;
-  const ChicoraApp({super.key, required this.initialRoute, this.savedDark = false});
+  const ChicoraApp({
+    super.key,
+    required this.initialRoute,
+    this.savedDark = false,
+  });
 
   static _ChicoraAppState of(BuildContext context) =>
       context.findAncestorStateOfType<_ChicoraAppState>()!;
@@ -115,7 +118,9 @@ class _ChicoraAppState extends State<ChicoraApp> {
   }
 
   Future<void> toggleTheme() async {
-    final newMode = _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    final newMode = _themeMode == ThemeMode.light
+        ? ThemeMode.dark
+        : ThemeMode.light;
     setState(() => _themeMode = newMode);
     // Persist so the choice survives app restarts
     await getIt<SharedPrefHelper>().setData(

@@ -17,8 +17,7 @@ class SellerProductsScreen extends StatelessWidget {
   SellerProductsScreen({super.key});
   @override
   Widget build(BuildContext context) {
-
-    final notifCount  = context.watch<NotificationCubit>().state.maybeWhen(
+    final notifCount = context.watch<NotificationCubit>().state.maybeWhen(
       success: (data) => data is UnreadCountResponse ? data.unreadCount : 0,
       orElse: () => 0,
     );
@@ -29,16 +28,16 @@ class SellerProductsScreen extends StatelessWidget {
       appBar: CustomAppBar(
         title: 'My Products',
         showCartIcon: false,
-        onCartTap: () => Navigator.pushNamed(context, RouteNames.customer_cart_screen),
+        onCartTap: () =>
+            Navigator.pushNamed(context, RouteNames.customer_cart_screen),
         showNotificationIcon: true,
         unreadNotificationCount: notifCount,
-        onNotificationTap: () => Navigator.pushNamed(context, RouteNames.notification_screen),
-
+        onNotificationTap: () =>
+            Navigator.pushNamed(context, RouteNames.notification_screen),
       ),
       body: SellerProductScreenBody(),
-      bottomNavigationBar: FloatingNavBar(
-        userRole: 'seller',
-        selectedIndex: 0,
+      bottomNavigationBar: SafeArea(
+        child: FloatingNavBar(userRole: 'seller', selectedIndex: 0),
       ),
     );
   }

@@ -53,10 +53,10 @@ import '../networking/socket_service.dart';
 final GetIt getIt = GetIt.instance;
 Future<void> setupGetIt() async {
   Dio dio = DioFactory.getDio();
+  getIt.registerLazySingleton<ApiService>(() => ApiService(dio));
 
   await SharedPrefHelper.init();
-  getIt.registerSingleton<SharedPrefHelper>(SharedPrefHelper());
-  getIt.registerLazySingleton<ApiService>(() => ApiService(dio));
+  getIt.registerLazySingleton<SharedPrefHelper>(() => SharedPrefHelper(apiService: getIt()));
   //Authentication
   getIt.registerLazySingleton<AuthRepo>(() => AuthRepo(apiService: getIt()));
   getIt.registerFactory<AuthCubit>(() => AuthCubit(getIt()));

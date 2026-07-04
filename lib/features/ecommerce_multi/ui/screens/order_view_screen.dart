@@ -34,6 +34,7 @@ Future<void> leaveOrdersScreen(
     SharedPrefKey.role,
   );
   if (!context.mounted) return;
+  // ignore: unused_local_variable
   final cartRoute = role == 'tailor'
       ? RouteNames.tailor_cart_screen
       : RouteNames.customer_cart_screen;

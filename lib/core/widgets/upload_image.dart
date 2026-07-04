@@ -36,16 +36,13 @@ class ImageUploadWidget extends StatelessWidget {
         height: height ?? 200.h,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(
-            color: Colors.grey[300]!,
-            width: 2,
-          ),
+          border: Border.all(color: Colors.grey[300]!, width: 2),
         ),
         child: imagePath != null
-            ? _buildFileImagePreview()   //local image takes priority
+            ? _buildFileImagePreview() //local image takes priority
             : imageUrl != null
             ? _buildNetworkImagePreview() // existing url if no new image
-            : _buildPlaceholder(),        // no image at all
+            : _buildPlaceholder(), // no image at all
       ),
     );
   }
@@ -54,11 +51,7 @@ class ImageUploadWidget extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(
-          LucideIcons.upload,
-          size: 50.sp,
-          color: AppColors.light,
-        ),
+        Icon(LucideIcons.upload, size: 50.sp, color: AppColors.light),
         SizedBox(height: 10.h),
         Text(placeholderText, style: AppStyle.body5),
       ],
@@ -71,10 +64,7 @@ class ImageUploadWidget extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(12.r),
-          child: Image.file(
-            File(imagePath!),
-            fit: BoxFit.cover,
-          ),
+          child: Image.file(File(imagePath!), fit: BoxFit.contain),
         ),
         if (enabled && onRemove != null) _buildRemoveButton(),
       ],
@@ -115,11 +105,7 @@ class ImageUploadWidget extends StatelessWidget {
             color: Colors.black54,
             shape: BoxShape.circle,
           ),
-          child: Icon(
-            Icons.close,
-            color: Colors.white,
-            size: 20.sp,
-          ),
+          child: Icon(Icons.close, color: Colors.white, size: 20.sp),
         ),
       ),
     );

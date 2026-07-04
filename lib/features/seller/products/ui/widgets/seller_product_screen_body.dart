@@ -104,10 +104,10 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
             0,
           ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 8.h),
+              SizedBox(height: 10.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -117,13 +117,15 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
                   ),
                 ],
               ),
+              SizedBox(height: 10.h),
+
               CustomSearchBar(
                 searchController: searchController,
                 onSearch: (value) {
                   _performSearch();
                 },
               ),
-              SizedBox(height: 12.h),
+              SizedBox(height: 10.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -164,22 +166,23 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
                   ),
                 ],
               ),
-              SizedBox(height: 12.h),
+              SizedBox(height: 10.h),
               state.maybeWhen(
-                loading: () => const Expanded(
-                  child: Center(child: CircularProgressIndicator()),
-                ),
+                loading: () =>
+                    Expanded(child: Center(child: CircularProgressIndicator())),
                 fail: (error) =>
                     Expanded(child: Center(child: Text('Error: $error'))),
-                success: (data) =>
-                    ProductList(filteredProducts: _filteredProducts),
-                orElse: () => _filteredProducts.isNotEmpty
-                    ? ProductList(filteredProducts: _filteredProducts)
-                    : const Expanded(
-                  child: Center(child: CircularProgressIndicator()),
+                success: (data) => Expanded(
+                  child: ProductList(filteredProducts: _filteredProducts),
                 ),
+                orElse: () => _filteredProducts.isNotEmpty
+                    ? Expanded(
+                        child: ProductList(filteredProducts: _filteredProducts),
+                      )
+                    : Expanded(
+                        child: Center(child: CircularProgressIndicator()),
+                      ),
               ),
-              SizedBox(height: 10.w),
             ],
           ),
         );

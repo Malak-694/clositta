@@ -16,7 +16,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddedProductForm extends StatefulWidget {
-  final ProductModel? product; // null = add, not null = update
+  final ProductModel? product;
 
   const AddedProductForm({super.key, this.product});
 
@@ -75,7 +75,6 @@ class _AddedProductFormState extends State<AddedProductForm> {
   void initState() {
     super.initState();
     if (_isUpdate) {
-      // ✅ pre-fill for update
       _productNameController.text = widget.product!.name;
       _descriptionController.text = widget.product!.description;
       _priceController.text = widget.product!.price.toString();
@@ -337,7 +336,6 @@ class _AddedProductFormState extends State<AddedProductForm> {
       _showSnackBar('Please enter all fields');
       return;
     }
-    // ✅ image required only for add
     if (!_isUpdate && _selectedImagePath == null) {
       _showSnackBar('Please select an image');
       return;
@@ -358,7 +356,7 @@ class _AddedProductFormState extends State<AddedProductForm> {
         color: _colorController.text.trim().isEmpty
             ? null
             : _colorController.text.trim(),
-        imagePath: _selectedImagePath, // ✅ null if not changed
+        imagePath: _selectedImagePath,
       );
     } else {
       context.read<SellerProductsCubit>().addProduct(

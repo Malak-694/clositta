@@ -17,7 +17,7 @@ class TailorProfileScreen extends StatelessWidget {
         body: const ProfileScreen(),
         bottomNavigationBar: FloatingNavBar(
           userRole: 'tailor',
-          selectedIndex: 5,
+          selectedIndex: 4,
         ),
       ),
     );

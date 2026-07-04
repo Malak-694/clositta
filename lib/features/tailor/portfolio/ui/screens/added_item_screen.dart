@@ -15,7 +15,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 
+// ✅ Added these imports
+import '../../../../../core/di/dependency_injection.dart';
 import '../../../../../core/router/route_names.dart';
+import '../../data/repo/portfolio_tailor_repo.dart';
 
 class AddedItemScreen extends StatefulWidget {
   final PortfolioTailorResponseModel? item;
@@ -61,111 +64,116 @@ class _AddedItemScreenState extends State<AddedItemScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<PortfolioTailorCubit, PortfolioTailorState>(
-      listener: (context, state) {
-        state.whenOrNull(
-          success: (_) => Navigator.pop(context),
-          fail: (error) => _showSnackBar(error),
-        );
-      },
-      child: Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        appBar: CustomAppBar(
-          title: _isUpdate ? "Update Item" : "Add New Item",
-          leading: true,
-          showCartIcon: true,
-          onCartTap: () =>
-              Navigator.pushNamed(context, RouteNames.tailor_cart_screen),
-        ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(15, 30, 15, 10),
-          child: Form(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Upload Image", style: AppStyle.body6),
-                    SizedBox(height: 10.h),
-                    ImageUploadWidget(
-                      imagePath: _selectedImagePath, // new picked image
-                      imageUrl:
-                          _selectedImagePath ==
-                              null // show existing only if no new image
-                          ? _existingImageUrl
-                          : null,
-                      onTap: _pickImage,
-                    ),
-                  ],
-                ),
-                SizedBox(height: 15.h),
-                LabeledTextField(
-                  controller: _titleController,
-                  hintText: "e.g., Navy Blazer",
-                  label: "Title",
-                  labelStyle: AppStyle.body3,
-                  textInputAction: TextInputAction.next,
-                ),
-                SizedBox(height: 15.h),
-                LabeledTextField(
-                  controller: _descriptionController,
-                  hintText: "e.g., Custom Navy Blazer",
-                  label: "Description",
-                  maxLines: 3,
-                  labelStyle: AppStyle.body3,
-                  textInputAction: TextInputAction.newline,
-                ),
-                SizedBox(height: 15.h),
-                CustomDropdownList(
-                  label: "Category",
-                  value: _selectedCategory,
-                  items: categories,
-                  hintText: "Select category",
-                  onChanged: (value) =>
-                      setState(() => _selectedCategory = value),
-                ),
-                SizedBox(height: 30.h),
-                BlocBuilder<PortfolioTailorCubit, PortfolioTailorState>(
-                  builder: (context, state) {
-                    final isLoading = state.maybeWhen(
-                      loading: () => true,
-                      orElse: () => false,
-                    );
-
-                    if (isLoading) {
-                      return SizedBox(
-                        height: 48.h,
-                        width: 380.w,
-                        child: ElevatedButton(
-                          onPressed: null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primery.withOpacity(0.6),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.r),
-                            ),
-                          ),
-                          child: SizedBox(
-                            height: 24.h,
-                            width: 24.w,
-                            child: const CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          ),
-                        ),
+    return BlocProvider(
+      create: (context) => PortfolioTailorCubit(
+        portfolioTailorRepo: getIt<PortfolioTailorRepo>(),
+      ),
+      child: BlocListener<PortfolioTailorCubit, PortfolioTailorState>(
+        listener: (context, state) {
+          state.whenOrNull(
+            success: (_) => Navigator.pop(context, true),
+            fail: (error) => _showSnackBar(error),
+          );
+        },
+        child: Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          appBar: CustomAppBar(
+            title: _isUpdate ? "Update Item" : "Add New Item",
+            leading: true,
+            showCartIcon: true,
+            onCartTap: () =>
+                Navigator.pushNamed(context, RouteNames.tailor_cart_screen),
+          ),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(15, 30, 15, 10),
+            child: Form(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Upload Image", style: AppStyle.body6),
+                      SizedBox(height: 10.h),
+                      ImageUploadWidget(
+                        imagePath: _selectedImagePath, // new picked image
+                        imageUrl:
+                        _selectedImagePath ==
+                            null // show existing only if no new image
+                            ? _existingImageUrl
+                            : null,
+                        onTap: _pickImage,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 15.h),
+                  LabeledTextField(
+                    controller: _titleController,
+                    hintText: "e.g., Navy Blazer",
+                    label: "Title",
+                    labelStyle: AppStyle.body3,
+                    textInputAction: TextInputAction.next,
+                  ),
+                  SizedBox(height: 15.h),
+                  LabeledTextField(
+                    controller: _descriptionController,
+                    hintText: "e.g., Custom Navy Blazer",
+                    label: "Description",
+                    maxLines: 3,
+                    labelStyle: AppStyle.body3,
+                    textInputAction: TextInputAction.newline,
+                  ),
+                  SizedBox(height: 15.h),
+                  CustomDropdownList(
+                    label: "Category",
+                    value: _selectedCategory,
+                    items: categories,
+                    hintText: "Select category",
+                    onChanged: (value) =>
+                        setState(() => _selectedCategory = value),
+                  ),
+                  SizedBox(height: 30.h),
+                  BlocBuilder<PortfolioTailorCubit, PortfolioTailorState>(
+                    builder: (context, state) {
+                      final isLoading = state.maybeWhen(
+                        loading: () => true,
+                        orElse: () => false,
                       );
-                    }
 
-                    return CustomElevatedButton(
-                      value: _isUpdate ? "Update Item" : "Add Item",
-                      onPressed: _submitPost,
-                      height: 48,
-                      width: 380,
-                    );
-                  },
-                ),
-              ],
+                      if (isLoading) {
+                        return SizedBox(
+                          height: 48.h,
+                          width: 380.w,
+                          child: ElevatedButton(
+                            onPressed: null,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primery.withOpacity(0.6),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                            ),
+                            child: SizedBox(
+                              height: 24.h,
+                              width: 24.w,
+                              child: const CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+
+                      return CustomElevatedButton(
+                        value: _isUpdate ? "Update Item" : "Add Item",
+                        onPressed: _submitPost,
+                        height: 48,
+                        width: 380,
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -182,7 +190,6 @@ class _AddedItemScreenState extends State<AddedItemScreen> {
       _showSnackBar('Please enter a description');
       return;
     }
-    // ✅ image required only for add, optional for update
     if (!_isUpdate && _selectedImagePath == null) {
       _showSnackBar('Please select an image');
       return;
@@ -204,6 +211,7 @@ class _AddedItemScreenState extends State<AddedItemScreen> {
         imagePath: _selectedImagePath!,
       );
     }
+     Navigator.pop(context);
   }
 
   void _showSnackBar(String message) {

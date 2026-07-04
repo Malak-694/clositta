@@ -17,7 +17,7 @@ class TailorCheckoutScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(
-        title: "Welcome to Clositta",
+        title: "Cart",
         showCartIcon: true,
         onCartTap: () =>
             Navigator.pushNamed(context, RouteNames.tailor_cart_screen),

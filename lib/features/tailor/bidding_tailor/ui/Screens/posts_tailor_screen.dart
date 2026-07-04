@@ -37,7 +37,7 @@ class PostScreenTailor extends StatelessWidget {
 
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'My Post',
+        title: 'Posts',
         showCartIcon: true,
         cartItemCount: cartCount,
         onCartTap: () =>
@@ -161,6 +161,10 @@ class PostScreenTailor extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: FloatingNavBar(userRole: 'tailor', selectedIndex: 0),
+      floatingActionButton: FloatingActionButton(
+          onPressed: ()=> Navigator.pushNamed(context, RouteNames.generate_image_tailor_screen) ,
+           child: Icon(Icons.auto_awesome),
+      ),
     );
   }
 }

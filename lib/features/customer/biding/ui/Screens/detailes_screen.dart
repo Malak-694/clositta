@@ -4,6 +4,7 @@ import 'package:chicora/core/widgets/circle_indicator.dart';
 import 'package:chicora/core/widgets/custom_app_bar.dart';
 import 'package:chicora/core/widgets/custom_elevated_button.dart';
 import 'package:chicora/features/customer/biding/data/models/offer_model.dart';
+import 'package:chicora/features/customer/biding/logic/cubit/custom_bidding_cubit/customer_bidding_cubit.dart';
 import 'package:chicora/features/customer/biding/ui/widgets/bid_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -42,14 +43,11 @@ class _DetailesScreenState extends State<DetailesScreen> {
   @override
   void initState() {
     super.initState();
+    isBidOpen = widget.bidStatus == "open" || widget.bidStatus == "updated";
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       context.read<CustomerOffersCubit>().getBestOffers(widget.bidId);
     });
-    isBidOpen = widget.bidStatus == "open" || widget.bidStatus == "updated";
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-    }
-    );
   }
 
   void _onFilterChanged(String filter) {
@@ -211,16 +209,13 @@ class _DetailesScreenState extends State<DetailesScreen> {
                     },
                     success: (data) {
                       if (data is String) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(data),
-                            backgroundColor: Colors.green,
-                          ),
-                        );
                         setState(() => isBidOpen = false);
+
                         context.read<CustomerOffersCubit>().refreshBestOffers(
                           widget.bidId,
                         );
+                        context.read<CustomerBiddingCubit>().refreshMyBids();
+                        Navigator.pop(context);
                       }
                     },
                   );

@@ -85,15 +85,19 @@ class SellerProductsCubit extends Cubit<SellerProductsState> {
       );
 
       response.when(
-        success: (_) => emit(SellerProductsState.success(response)),
+        success: (_) async {
+          await getProducts();
+        },
         failure: (error) => emit(SellerProductsState.fail(error)),
       );
     } catch (e) {
-      emit(SellerProductsState.fail(
-        e.toString().contains("Exception:")
-            ? e.toString().split("Exception: ")[1]
-            : "Failed to add product. Please try again.",
-      ));
+      emit(
+        SellerProductsState.fail(
+          e.toString().contains("Exception:")
+              ? e.toString().split("Exception: ")[1]
+              : "Failed to add product. Please try again.",
+        ),
+      );
     }
   }
 
@@ -135,15 +139,19 @@ class SellerProductsCubit extends Cubit<SellerProductsState> {
       );
 
       response.when(
-        success: (_) => emit(SellerProductsState.success(response)),
+        success: (_) async {
+          await getProducts();
+        },
         failure: (error) => emit(SellerProductsState.fail(error)),
       );
     } catch (e) {
-      emit(SellerProductsState.fail(
-        e.toString().contains("Exception:")
-            ? e.toString().split("Exception: ")[1]
-            : "Failed to update product. Please try again.",
-      ));
+      emit(
+        SellerProductsState.fail(
+          e.toString().contains("Exception:")
+              ? e.toString().split("Exception: ")[1]
+              : "Failed to update product. Please try again.",
+        ),
+      );
     }
   }
 }

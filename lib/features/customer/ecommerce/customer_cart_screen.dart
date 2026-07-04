@@ -29,6 +29,7 @@ class CustomerCartScreen extends StatelessWidget {
             builder: (context, state) {
               return CustomAppBar(
                 title: "Welcome to Clositta",
+                leading: true,
                 showCartIcon: true,
                 cartItemCount: cartTotalItemQuantity(state),
                 onCartTap: () => Navigator.pushNamed(

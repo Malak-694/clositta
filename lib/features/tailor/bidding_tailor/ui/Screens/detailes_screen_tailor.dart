@@ -45,6 +45,17 @@ class _DetailesScreenTailorState extends State<DetailesScreenTailor> {
   void initState() {
     super.initState();
     _loadMyId();
+
+    // ✅ Load offers exactly once when the screen is created,
+    // instead of inside build() via Builder + addPostFrameCallback.
+    if (widget.postId.isNotEmpty) {
+      // Scheduled after first frame so context.read works safely.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          context.read<BiddingTailorCubit>().getOffers(widget.postId);
+        }
+      });
+    }
   }
 
   Future<void> _loadMyId() async {
@@ -66,13 +77,7 @@ class _DetailesScreenTailorState extends State<DetailesScreenTailor> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Row(
-          children: [
-            const Icon(Icons.warning_amber_rounded, color: Colors.red),
-            const SizedBox(width: 8),
-            Text('Delete Offer', style: AppStyle.body6),
-          ],
-        ),
+        title: Text('Delete Offer', style: AppStyle.body6),
         content: Text(
           'Are you sure you want to delete this offer? This action cannot be undone.',
           style: AppStyle.body6.copyWith(fontWeight: FontWeight.normal),
@@ -134,93 +139,93 @@ class _DetailesScreenTailorState extends State<DetailesScreenTailor> {
 
             // ── Offers list ──────────────────────────────────
             Expanded(
-              child: Builder(
-                builder: (context) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    if (widget.postId.isNotEmpty) {
-                      context.read<BiddingTailorCubit>().getOffers(
-                        widget.postId,
-                      );
-                    }
-                  });
-
-                  return BlocBuilder<BiddingTailorCubit, BiddingTailorState>(
-                    builder: (context, state) {
-                      return state.when(
-                        initial: () => const CircularProgressIndicator(
+              child: RefreshIndicator(
+                onRefresh: () => context
+                    .read<BiddingTailorCubit>()
+                    .refreshOffers(widget.postId),
+                child: BlocBuilder<BiddingTailorCubit, BiddingTailorState>(
+                  builder: (context, state) {
+                    return state.when(
+                      initial: () => const Center(
+                        child: CircularProgressIndicator(
                           color: AppColors.secondary,
                           strokeWidth: 5.0,
                         ),
-                        loading: () => const Center(
-                          child: CircularProgressIndicator(
-                            color: AppColors.secondary,
-                            strokeWidth: 5.0,
-                          ),
+                      ),
+                      loading: () => const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.secondary,
+                          strokeWidth: 5.0,
                         ),
-                        fail: (msg) =>
-                            Center(child: Text(AppStyle.userMessage(msg))),
-                        success: (data) {
-                          if (data is List<BidModelReponse>) {
-                            // ✅ update my offer reference
-                            _updateMyOffer(data);
+                      ),
+                      fail: (msg) =>
+                          Center(child: Text(AppStyle.userMessage(msg))),
+                      success: (data) {
+                        if (data is List<BidModelReponse>) {
+                          _updateMyOffer(data);
 
-                            if (data.isEmpty) {
-                              return const Center(child: Text('No offers yet'));
-                            }
-
-                            return ListView.separated(
-                              itemCount: data.length,
-                              separatorBuilder: (_, _) =>
-                                  SizedBox(height: 10.h),
-                              itemBuilder: (context, index) {
-                                final offer = data[index];
-                                final isMyOffer =
-                                    offer.tailor.id == _myTailorId;
-
-                                return BidItemTailor(
-                                  tailorName: offer.tailor.name,
-                                  duration: offer.timeInDays,
-                                  price: offer.price,
-                                  comment: offer.message,
-                                  isMyOffer: isMyOffer,
-                                  onEdit: () =>
-                                      Navigator.pushNamed(
-                                        context,
-                                        RouteNames.join_bidding,
-                                        arguments: {
-                                          'urlImage': widget.urlImage,
-                                          'price': widget.price,
-                                          'period': widget.period,
-                                          'title': widget.describtion,
-                                          'postId': widget.postId,
-                                          'offerId': offer.id,
-                                          'initialPrice': offer.price
-                                              .toString(),
-                                          'initialDays': offer.timeInDays
-                                              .toString(),
-                                          // ignore: dead_code, dead_null_aware_expression
-                                          'initialMessage': offer.message ?? '',
-                                        },
-                                      ).then((_) {
-                                        // ✅ refreshOffers resets flag then reloads fresh data
-                                        if (context.mounted) {
-                                          context
-                                              .read<BiddingTailorCubit>()
-                                              .refreshOffers(widget.postId);
-                                        }
-                                      }),
-                                  onDelete: () =>
-                                      _confirmDeleteOffer(context, offer.id),
-                                );
-                              },
+                          if (data.isEmpty) {
+                            return ListView(
+                              // Wrapped in ListView so pull-to-refresh
+                              // still works on an empty list.
+                              children: const [
+                                SizedBox(height: 100),
+                                Center(child: Text('No offers yet')),
+                              ],
                             );
                           }
-                          return const Center(child: Text('Unexpected data'));
-                        },
-                      );
-                    },
-                  );
-                },
+
+                          return ListView.separated(
+                            itemCount: data.length,
+                            separatorBuilder: (_, __) => SizedBox(height: 10.h),
+                            itemBuilder: (context, index) {
+                              final offer = data[index];
+                              final isMyOffer = offer.tailor.id == _myTailorId;
+
+                              return BidItemTailor(
+                                tailorName: offer.tailor.name,
+                                duration: offer.timeInDays,
+                                price: offer.price,
+                                comment: offer.message,
+                                isMyOffer: isMyOffer,
+                                onEdit: () async {
+                                  final result = await Navigator.pushNamed(
+                                    context,
+                                    RouteNames.join_bidding,
+                                    arguments: {
+                                      'urlImage': widget.urlImage,
+                                      'price': widget.price,
+                                      'period': widget.period,
+                                      'title': widget.describtion,
+                                      'postId': widget.postId,
+                                      'offerId': offer.id,
+                                      'initialPrice': offer.price.toString(),
+                                      'initialDays':
+                                      offer.timeInDays.toString(),
+                                      'initialMessage': offer.message ?? '',
+                                    },
+                                  );
+
+                                  if (!context.mounted) return;
+                                  // ✅ Only refresh if the join/edit screen
+                                  // actually signaled success.
+                                  if (result == true) {
+                                    context
+                                        .read<BiddingTailorCubit>()
+                                        .refreshOffers(widget.postId);
+                                  }
+                                },
+                                onDelete: () =>
+                                    _confirmDeleteOffer(context, offer.id),
+                              );
+                            },
+                          );
+                        }
+                        return const Center(child: Text('Unexpected data'));
+                      },
+                    );
+                  },
+                ),
               ),
             ),
 
@@ -232,7 +237,7 @@ class _DetailesScreenTailorState extends State<DetailesScreenTailor> {
                   height: 50.h,
                   width: 350.w,
                   onPressed: () async {
-                    await Navigator.pushNamed(
+                    final result = await Navigator.pushNamed(
                       context,
                       RouteNames.join_bidding,
                       arguments: {
@@ -246,9 +251,12 @@ class _DetailesScreenTailorState extends State<DetailesScreenTailor> {
 
                     if (!mounted) return;
 
-                    context.read<BiddingTailorCubit>().refreshOffers(
-                      widget.postId,
-                    );
+                    // ✅ Only refresh if the bidding was actually submitted.
+                    if (result == true) {
+                      context.read<BiddingTailorCubit>().refreshOffers(
+                        widget.postId,
+                      );
+                    }
                   },
                 ),
               ),

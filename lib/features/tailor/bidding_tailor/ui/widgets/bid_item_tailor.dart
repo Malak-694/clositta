@@ -30,7 +30,7 @@ class BidItemTailor extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
       decoration: ShapeDecoration(
-        color: Theme.of(context).cardColor,
+        color: Theme.of(context).scaffoldBackgroundColor,
         shape: RoundedRectangleBorder(
           side: const BorderSide(color: Colors.black26),
           borderRadius: BorderRadius.circular(15.sp),
@@ -38,7 +38,7 @@ class BidItemTailor extends StatelessWidget {
         shadows: [
           BoxShadow(
             color: AppColors.light,
-            blurRadius: 5,
+            blurRadius: 4,
             offset: const Offset(0, .5),
           ),
         ],
@@ -53,7 +53,7 @@ class BidItemTailor extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(tailorName, style: AppStyle.boldSecondary),
+                Text(tailorName, style: AppStyle.medPrimery),
                 Text('\$${price ?? '-'}', style: AppStyle.medBlack),
               ],
             ),

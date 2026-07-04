@@ -87,7 +87,8 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
               behavior: SnackBarBehavior.floating,
             ),
           );
-          Navigator.pop(context);
+          // ✅ Signal success back to the caller so it knows to refresh.
+          Navigator.pop(context, true);
         } else if (state is Fail) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -118,22 +119,22 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
             onCartTap: () {},
             extraActions: widget.isEditMode
                 ? [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 12, 0),
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.delete_outline,
-                          color: AppColors.ternary,
-                          size: 30,
-                        ),
-                        onPressed: isLoading
-                            ? null
-                            : () =>
-                                  _confirmDeleteOffer(context, widget.offerId!),
-                        tooltip: 'Delete Post',
-                      ),
-                    ),
-                  ]
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 12, 0),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.delete_outline,
+                    color: AppColors.ternary,
+                    size: 30,
+                  ),
+                  onPressed: isLoading
+                      ? null
+                      : () =>
+                      _confirmDeleteOffer(context, widget.offerId!),
+                  tooltip: 'Delete Post',
+                ),
+              ),
+            ]
                 : [],
           ),
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,

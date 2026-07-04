@@ -63,11 +63,6 @@ class FloatingNavBar extends StatelessWidget {
         "route": RouteNames.view_bidding_tailor,
       },
       {
-        "icon": Icons.auto_awesome,
-        "name": "AI",
-        "route": RouteNames.generate_image_tailor_screen,
-      },
-      {
         "icon": Icons.assignment_outlined,
         "name": "orders",
         "route": RouteNames.active_order,

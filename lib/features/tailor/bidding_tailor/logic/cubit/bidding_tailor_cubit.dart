@@ -14,9 +14,15 @@ class BiddingTailorCubit extends Cubit<BiddingTailorState> {
   final BiddingTailorRepo _repository;
   final SharedPrefHelper _prefs = getIt<SharedPrefHelper>();
   BiddingTailorCubit(this._repository) : super(BiddingTailorState.initial());
+
   bool _loadedPosts = false;
-  bool _loadedoOffers = false;
   bool _loadedAcceptedOffers = false;
+
+  // ✅ Keyed by postId instead of a single shared bool.
+  // This fixes two bugs:
+  //  1) Offers from post A no longer "stick" when you open post B.
+  //  2) refreshOffers() now reliably forces a re-fetch for that specific post.
+  String? _loadedOffersForPostId;
 
   Future<String?> _getToken() async {
     return await _prefs.getSecureData(SharedPrefKey.token);
@@ -47,7 +53,9 @@ class BiddingTailorCubit extends Cubit<BiddingTailorState> {
   }
 
   Future<void> getOffers(String postId) async {
-    if (_loadedoOffers) return;
+    // Already loaded for this exact post — skip.
+    if (_loadedOffersForPostId == postId) return;
+
     emit(const BiddingTailorState.loading());
     try {
       final token = await _getToken();
@@ -55,13 +63,12 @@ class BiddingTailorCubit extends Cubit<BiddingTailorState> {
         emit(const BiddingTailorState.fail("Authentication token not found"));
         return;
       }
-      print(token);
       final List<BidModelReponse> response = await _repository.getOffers(
         token,
         postId,
       );
       emit(BiddingTailorState.success(response));
-      _loadedoOffers = true;
+      _loadedOffersForPostId = postId;
     } catch (e) {
       emit(
         BiddingTailorState.fail(
@@ -74,7 +81,8 @@ class BiddingTailorCubit extends Cubit<BiddingTailorState> {
   }
 
   Future<void> refreshOffers(String postId) async {
-    _loadedoOffers = false;
+    // Force getOffers() to actually hit the network again.
+    _loadedOffersForPostId = null;
     await getOffers(postId);
   }
 
@@ -95,6 +103,12 @@ class BiddingTailorCubit extends Cubit<BiddingTailorState> {
         request,
       );
       emit(BiddingTailorState.success(response));
+
+      // ✅ Invalidate the offers cache for this post so the details screen
+      // picks up the new offer as soon as it calls refreshOffers/getOffers.
+      if (_loadedOffersForPostId == postId) {
+        _loadedOffersForPostId = null;
+      }
     } catch (e) {
       emit(
         BiddingTailorState.fail(
@@ -137,7 +151,9 @@ class BiddingTailorCubit extends Cubit<BiddingTailorState> {
         message: message,
       );
 
-      _loadedoOffers = false;
+      if (_loadedOffersForPostId == postId) {
+        _loadedOffersForPostId = null;
+      }
       if (!isClosed) {
         emit(const BiddingTailorState.success("Offer updated successfully"));
       }
@@ -168,7 +184,7 @@ class BiddingTailorCubit extends Cubit<BiddingTailorState> {
 
       await _repository.deleteOffer(token: token, offerId: offerId);
 
-      _loadedoOffers = false;
+      _loadedOffersForPostId = null;
       if (!isClosed) {
         emit(const BiddingTailorState.success("Offer deleted successfully"));
       }

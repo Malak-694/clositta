@@ -77,7 +77,11 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
                 background: AppColors.secondary,
                 value: 'Add',
                 onPressed: () {
-                  Navigator.pushNamed(context, "added_work_screen");
+                  Navigator.pushNamed(context, RouteNames.added_work_screen).then((result) {
+                    if (result == true) {
+                      context.read<PortfolioTailorCubit>().viewPortfolioTailor(null);
+                    }
+                  });
                 },
                 height: 35,
                 width: 80,
@@ -92,7 +96,7 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
                 return state.when(
                   initial: () => _centeredMessage('No items'),
                   loading: () =>
-                      const Center(child: CircularProgressIndicator()),
+                  const Center(child: CircularProgressIndicator()),
                   success: (data) {
                     if (data is! List<PortfolioTailorResponseModel>) {
                       return _centeredMessage('No portfolio items found');
@@ -117,14 +121,14 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
                               showEdit: true,
                               showDelete: true,
                               onEdit: () {
-                                final cubit = context
-                                    .read<PortfolioTailorCubit>();
                                 Navigator.pushNamed(
                                   context,
                                   RouteNames.update_work_screen,
                                   arguments: item,
-                                ).then((_) {
-                                  cubit.viewPortfolioTailor(null);
+                                ).then((result) {
+                                  if (result == true) {
+                                    context.read<PortfolioTailorCubit>().viewPortfolioTailor(null);
+                                  }
                                 });
                               },
                               onDelete: () =>
@@ -165,9 +169,9 @@ class _PortfolioTailorBodyState extends State<PortfolioTailorBody> {
   }
 
   void _showDeleteConfirmation(
-    BuildContext context,
-    PortfolioTailorResponseModel item,
-  ) {
+      BuildContext context,
+      PortfolioTailorResponseModel item,
+      ) {
     showDialog(
       context: context,
       builder: (contextDialog) => AlertDialog(

@@ -38,13 +38,13 @@ class ProfileMenuList extends StatelessWidget {
           //   'route': null,
           //   'arguments': null,
           // },
-          {
-            'icon': Icons.history_outlined,
-            'title': 'Order History',
-            'subtitle': 'Completed tailoring jobs',
-            'route': null,
-            'arguments': null,
-          },
+          // {
+          //   'icon': Icons.history_outlined,
+          //   'title': 'Order History',
+          //   'subtitle': 'Completed tailoring jobs',
+          //   'route': null,
+          //   'arguments': null,
+          // },
           {
             'icon': Icons.notifications_outlined,
             'title': 'Notification Preferences',

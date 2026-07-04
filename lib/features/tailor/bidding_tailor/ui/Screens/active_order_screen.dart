@@ -221,7 +221,7 @@ class _ActiveOrderViewState extends State<_ActiveOrderView> {
                         final order = _filteredOrders[index];
                         final dropdownItems = getNextStatuses(order.workStatus);
                         return Card(
-                          color: Theme.of(context).cardColor,
+                          color: Theme.of(context).scaffoldBackgroundColor,
                           margin: EdgeInsets.only(bottom: 12.h),
                           child: Padding(
                             padding: EdgeInsets.all(12.w),
@@ -304,6 +304,7 @@ class _ActiveOrderViewState extends State<_ActiveOrderView> {
                                   children: [
                                     Expanded(
                                       child: CustomDropdownList(
+                                        fillColor: AppColors.background,
                                         label: "Status",
                                         value: order.workStatus ?? 'accepted',
                                         items: dropdownItems,
@@ -313,7 +314,6 @@ class _ActiveOrderViewState extends State<_ActiveOrderView> {
                                               newStatus == order.workStatus) {
                                             return;
                                           }
-
                                           context
                                               .read<BiddingTailorCubit>()
                                               .updateWorkStatus(
@@ -365,7 +365,11 @@ class _ActiveOrderViewState extends State<_ActiveOrderView> {
           ],
         ),
       ),
-      bottomNavigationBar: FloatingNavBar(userRole: 'tailor', selectedIndex: 2),
+      bottomNavigationBar: FloatingNavBar(userRole: 'tailor', selectedIndex: 1),
+      floatingActionButton: FloatingActionButton(
+        onPressed: ()=> Navigator.pushNamed(context, RouteNames.generate_image_tailor_screen) ,
+        child: Icon(Icons.auto_awesome,),
+      ),
     );
   }
 }

@@ -178,6 +178,7 @@ void main() {
         season: any(named: 'season'),
         color: any(named: 'color'),
         imagePath: any(named: 'imagePath'),
+        occassion:'formal'
       ));
     });
   });
@@ -215,6 +216,7 @@ void main() {
             season: any(named: 'season'),
             color: any(named: 'color'),
             imagePath: any(named: 'imagePath'),
+            occassion: 'formal'
           )).thenAnswer((_) async {});
 
           await tester.pumpWidget(buildScreen(cubit: mockCubit, item: fakeItem));
@@ -227,6 +229,7 @@ void main() {
             season: 'Summer',
             color: 'White',
             imagePath: null,
+            occassion: 'formal'
           )).called(1);
         });
 

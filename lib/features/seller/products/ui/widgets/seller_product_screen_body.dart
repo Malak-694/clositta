@@ -38,6 +38,13 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
   void initState() {
     super.initState();
     searchController.addListener(_performSearch);
+
+    // ✅ Load products as soon as this screen is built.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<SellerProductsCubit>().getProducts();
+      }
+    });
   }
 
   @override
@@ -78,10 +85,13 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
       listener: (context, state) {
         state.whenOrNull(
           success: (data) {
-            setState(() {
-              _allProducts = data as List<ProductModel>;
-            });
-            _performSearch();
+            // ✅ Guard the cast instead of assuming it's always correct.
+            if (data is List<ProductModel>) {
+              setState(() {
+                _allProducts = data;
+              });
+              _performSearch();
+            }
           },
         );
       },
@@ -110,7 +120,6 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
               CustomSearchBar(
                 searchController: searchController,
                 onSearch: (value) {
-                  // run local filtering on press
                   _performSearch();
                 },
               ),
@@ -137,14 +146,19 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
                   SizedBox(width: 7.h),
                   CustomElevatedButton(
                     value: "Add",
-                    onPressed: () {
-                      Navigator.pushNamed(context, "added_product_item");
+                    onPressed: () async {
+                      // ✅ await + explicit refresh as a safety net,
+                      // in case the cubit isn't shared across routes.
+                      await Navigator.pushNamed(context, "added_product_item");
+                      if (context.mounted) {
+                        context.read<SellerProductsCubit>().getProducts();
+                      }
                     },
                     height: 35.h,
                     width: 75.w,
-                    background: AppColors.darkPrimaryLight,
+                    background: AppColors.primery,
                     style: AppStyle.medSecondary.copyWith(
-                      color: AppColors.lightsecondary,
+                      color: AppColors.background,
                       fontSize: 13.sp,
                     ),
                   ),
@@ -162,8 +176,8 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
                 orElse: () => _filteredProducts.isNotEmpty
                     ? ProductList(filteredProducts: _filteredProducts)
                     : const Expanded(
-                        child: Center(child: CircularProgressIndicator()),
-                      ),
+                  child: Center(child: CircularProgressIndicator()),
+                ),
               ),
               SizedBox(height: 10.w),
             ],

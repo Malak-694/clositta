@@ -193,7 +193,7 @@ void main() {
       category: 'Tops',
       season: 'Summer',
       color: 'White',
-      imagePath: '/fake/image.jpg',
+      imagePath: '/fake/image.jpg', occassion: 'formal',
     );
 
     blocTest<ClosetCubit, ClosetState>(
@@ -208,7 +208,7 @@ void main() {
           category: any(named: 'category'),
           season: any(named: 'season'),
           color: any(named: 'color'),
-          imagePath: any(named: 'imagePath'),
+          imagePath: any(named: 'imagePath'), occassion: 'formal',
         )).thenAnswer(
                 (_) async => ApiResult.success(MessageModel(message: 'added')));
 
@@ -238,6 +238,7 @@ void main() {
           season: 'Summer',
           color: 'White',
           imagePath: '/fake/image.jpg',
+          occassion: 'formal'
         )).called(1);
       },
     );
@@ -268,6 +269,7 @@ void main() {
           season: any(named: 'season'),
           color: any(named: 'color'),
           imagePath: any(named: 'imagePath'),
+          occassion: 'formal'
         )).thenAnswer(
                 (_) async => const ApiResult.failure('Upload failed'));
         return cubit;
@@ -345,6 +347,7 @@ void main() {
       season: 'Winter',
       color: 'Red',
       imagePath: null,
+      occassion: 'formal'
     );
 
     blocTest<ClosetCubit, ClosetState>(
@@ -360,6 +363,7 @@ void main() {
           season: any(named: 'season'),
           color: any(named: 'color'),
           imagePath: any(named: 'imagePath'),
+          occassion: 'foraml'
         )).thenAnswer(
                 (_) async => ApiResult.success(MessageModel(message: 'ok')));
         return cubit;
@@ -382,6 +386,7 @@ void main() {
           season: 'Winter',
           color: 'Red',
           imagePath: null,
+          occassion: 'formal'
         )).called(1);
       },
     );
@@ -413,6 +418,7 @@ void main() {
           season: any(named: 'season'),
           color: any(named: 'color'),
           imagePath: any(named: 'imagePath'),
+          occassion: 'formal'
         )).thenAnswer(
                 (_) async => const ApiResult.failure('Update failed'));
         return cubit;

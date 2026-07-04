@@ -89,7 +89,11 @@ class PortfolioTailorScreen extends StatelessWidget {
         ),
         bottomNavigationBar: FloatingNavBar(
           userRole: 'tailor',
-          selectedIndex: 3,
+          selectedIndex: 2,
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: ()=> Navigator.pushNamed(context, RouteNames.generate_image_tailor_screen) ,
+          child: Icon(Icons.auto_awesome),
         ),
       ),
     );

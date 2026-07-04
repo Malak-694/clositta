@@ -17,7 +17,7 @@ class AppColors {
   static const darkternary    = Color(0xFFDD2C00);
   static const lightternary   = Color(0xFFF18C88);
 
-  static const darkScaffold   = Color(0xFF12111F); // page / deepest
+  static const darkScaffold   = Color(0xFF12111F);
   static const darkSurface    = Color(0xFF1C1B2E); // cards
   static const darkElevated   = Color(0xFF242339); // dialogs and sheets
 

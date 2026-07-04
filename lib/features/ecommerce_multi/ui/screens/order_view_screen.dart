@@ -37,7 +37,7 @@ Future<void> leaveOrdersScreen(
   final cartRoute = role == 'tailor'
       ? RouteNames.tailor_cart_screen
       : RouteNames.customer_cart_screen;
-  Navigator.of(context).pushReplacementNamed(cartRoute);
+  Navigator.of(context).pop();
 }
 
 class OrderViewScreen extends StatelessWidget {

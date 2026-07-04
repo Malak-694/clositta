@@ -26,16 +26,16 @@ class ConversationsScreen extends StatefulWidget {
 
 class _ConversationsScreenState extends State<ConversationsScreen> {
   String? _currentUserId;
+  late final ConversationsCubit _cubit;
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      context.read<ConversationsCubit>().loadUnreadCount();
-    });
+    _cubit = getIt<ConversationsCubit>();
+    _cubit.loadConversations();
+    _cubit.loadUnreadCount();
     _loadUserId();
   }
-
 
   Future<void> _loadUserId() async {
     final prefs = getIt<SharedPrefHelper>();
@@ -45,13 +45,20 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
   }
 
   @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final cartCount = cartTotalItemQuantity(context.watch<CartCubit>().state);
-    final chatCount = context.watch<ConversationsCubit>().unreadCount;
+    // Use the local cubit directly — no context.watch needed for unread count.
+    final chatCount = _cubit.unreadCount;
     final notifCount = context.read<NotificationCubit>().unreadCount;
 
-    return BlocProvider(
-      create: (_) => getIt<ConversationsCubit>()..loadConversations(),
+    return BlocProvider.value(
+      value: _cubit,
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: CustomAppBar(
@@ -73,11 +80,8 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
             arguments: {'currentUserId': _currentUserId ?? ''},
           ),
         ),
-        body:
-        BlocBuilder<
-            ConversationsCubit,
-            ConversationsState<List<ConversationModel>>
-        >(
+        body: BlocBuilder<ConversationsCubit,
+            ConversationsState<List<ConversationModel>>>(
           builder: (context, state) {
             return state.when(
               initial: () => const SizedBox(),
@@ -107,9 +111,8 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                         backgroundColor: AppColors.primery,
                         foregroundColor: Colors.white,
                       ),
-                      onPressed: () => context
-                          .read<ConversationsCubit>()
-                          .loadConversations(),
+                      onPressed: () =>
+                          context.read<ConversationsCubit>().loadConversations(),
                       child: const Text('Retry'),
                     ),
                   ],
@@ -139,14 +142,13 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
 
                 return RefreshIndicator(
                   color: AppColors.primery,
-                  onRefresh: () => context
-                      .read<ConversationsCubit>()
-                      .loadConversations(),
+                  onRefresh: () =>
+                      context.read<ConversationsCubit>().loadConversations(),
                   child: ListView.separated(
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     itemCount: conversations.length,
-                    separatorBuilder: (_, _) =>
-                    const Divider(height: 1, indent: 72),
+                    separatorBuilder: (_, __) =>
+                        const Divider(height: 1, indent: 72),
                     itemBuilder: (context, index) {
                       final conv = conversations[index];
                       return ConversationTile(

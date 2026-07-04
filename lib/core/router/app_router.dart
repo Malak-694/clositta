@@ -453,18 +453,12 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => PortfolioTailorScreen());
       case RouteNames.added_work_screen:
         return MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (_) => getIt<PortfolioTailorCubit>(),
-            child: AddedItemScreen(),
-          ),
+          builder: (_) => AddedItemScreen(),
         );
       case RouteNames.update_work_screen:
         final item = settings.arguments as PortfolioTailorResponseModel;
         return MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (_) => getIt<PortfolioTailorCubit>(),
-            child: AddedItemScreen(item: item),
-          ),
+          builder: (_) => AddedItemScreen(item: item),
         );
       case RouteNames.customer_cart_screen:
         return MaterialPageRoute(builder: (_) => CustomerCartScreen());

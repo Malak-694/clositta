@@ -52,6 +52,11 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
   String? _selectedOccasion;
   String? _selectedType;
 
+  // True when results come from a text or image search.
+  // Local type/gender/season/occasion filters are skipped for search results
+  // because the backend already returns the most relevant matches.
+  bool _isSearchActive = false;
+
   final TextEditingController searchController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
   String? _searchImagePath;
@@ -90,7 +95,10 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
   }
 
   void _clearSearchImage() {
-    setState(() => _searchImagePath = null);
+    setState(() {
+      _searchImagePath = null;
+      _isSearchActive = false;
+    });
     if (_token == null) return;
     context.read<ViewProductsCubit>().getProductsBuyer(
       token: _token!,
@@ -103,10 +111,13 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
     if (_token == null) return;
 
     if (_searchImagePath != null) {
-      setState(() => _searchImagePath = null);
+      setState(() {
+        _searchImagePath = null;
+      });
     }
 
     if (q.isEmpty) {
+      setState(() => _isSearchActive = false);
       context.read<ViewProductsCubit>().getProductsBuyer(
         token: _token!,
         category: _selectedCategory == 'All' ? null : _selectedCategory,
@@ -114,12 +125,18 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
       return;
     }
 
+    setState(() => _isSearchActive = true);
     context.read<ViewProductsCubit>().searchByText(query: q);
   }
 
   List<ProductModelBuyer> _filterAndSortProducts(
     List<ProductModelBuyer> products,
   ) {
+    // Skip local filters for search results — the backend already returns
+    // the most relevant matches, and applying the default type filter
+    // (e.g. "Material" for tailors) would wipe out all search results.
+    if (_isSearchActive) return products;
+
     var filtered = products.where((p) {
       if (_selectedGender != null && _selectedGender!.toLowerCase() != 'all') {
         if (p.gender == null ||
@@ -173,7 +190,10 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
       if (picked == null || !mounted) return;
 
       searchController.clear();
-      setState(() => _searchImagePath = picked.path);
+      setState(() {
+        _searchImagePath = picked.path;
+        _isSearchActive = true;
+      });
       context.read<ViewProductsCubit>().searchByImage(imagePath: picked.path);
     } catch (e) {
       if (!mounted) return;
@@ -214,6 +234,7 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
                 _selectedCategory = category;
                 searchController.clear();
                 _searchImagePath = null;
+                _isSearchActive = false;
               });
 
               if (_token != null) {

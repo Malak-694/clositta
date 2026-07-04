@@ -184,7 +184,6 @@ class _ChatScreenState extends State<ChatScreen> {
                 state.when(
                   initial: () {},
                   loading: () {},
-                  // ✅ No scroll needed — reverse: true handles it
                   success: (_) {},
                   fail: (msg) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -239,7 +238,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             Text(
                               'No messages yet\nSay hello! ',
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: AppColors.darksecondary),
+                              style: TextStyle(color: AppColors.primery),
                             ),
                           ],
                         ),

@@ -42,16 +42,17 @@ class _ActiveOrderView extends StatefulWidget {
 
 class _ActiveOrderViewState extends State<_ActiveOrderView> {
   List<AcceptedOfferResponse> _orders = [];
-  bool _isLoadingDialogOpen = false;
+  bool _isLoading = false;
   String _selectedFilter = 'all';
-  List<String> states = ['all', 'accepted', 'in_progress', 'completed'];
-  final prefs = getIt<SharedPrefHelper>();
+
   final Map<String, String> _filterLabels = {
     'all': 'All',
     'accepted': 'Accepted',
     'in_progress': 'In Progress',
     'completed': 'Completed',
   };
+
+  final prefs = getIt<SharedPrefHelper>();
 
   String _statusLabel(String? s) {
     switch (s) {
@@ -68,13 +69,10 @@ class _ActiveOrderViewState extends State<_ActiveOrderView> {
     switch (status) {
       case 'accepted':
         return ['accepted', 'in_progress'];
-
       case 'in_progress':
         return ['in_progress', 'completed'];
-
       case 'completed':
         return ['completed'];
-
       default:
         return ['accepted', 'in_progress', 'completed'];
     }
@@ -88,37 +86,26 @@ class _ActiveOrderViewState extends State<_ActiveOrderView> {
     }).toList();
   }
 
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.r),
-        ),
-        title: Row(
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
           children: [
-            Icon(Icons.error_outline, color: Colors.red, size: 24.sp),
-            SizedBox(width: 8.w),
-            Text('Error', style: AppStyle.medBlack),
+            const Icon(Icons.error_outline, color: Colors.white, size: 20),
+            const SizedBox(width: 8),
+            Expanded(child: Text(message)),
           ],
         ),
-        content: Text(message, style: AppStyle.medLight),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('OK', style: AppStyle.boldPrimery),
-          ),
-        ],
+        backgroundColor: Colors.red.shade700,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        duration: const Duration(seconds: 4),
       ),
     );
   }
 
-  void _showLoadingDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const Center(child: CircularProgressIndicator()),
-    );
+  Future<void> _refresh() async {
+    context.read<BiddingTailorCubit>().refreshAcceptedOffers();
   }
 
   @override
@@ -148,7 +135,6 @@ class _ActiveOrderViewState extends State<_ActiveOrderView> {
           Navigator.pushNamed(
             context,
             RouteNames.conversations_screen,
-            // ignore: dead_null_aware_expression, dead_code
             arguments: {'currentUserId': userId ?? ''},
           );
         },
@@ -157,27 +143,28 @@ class _ActiveOrderViewState extends State<_ActiveOrderView> {
       body: BlocListener<BiddingTailorCubit, BiddingTailorState>(
         listener: (context, state) {
           state.when(
-            initial: () {},
+            initial: () {
+              setState(() => _isLoading = true);
+            },
             loading: () {
-              if (!_isLoadingDialogOpen) {
-                _isLoadingDialogOpen = true;
-                _showLoadingDialog();
-              }
+              setState(() => _isLoading = true);
             },
             fail: (err) {
-              if (_isLoadingDialogOpen) {
-                _isLoadingDialogOpen = false;
-                Navigator.pop(context);
-              }
-              _showErrorDialog(err);
+              setState(() => _isLoading = false);
+              _showErrorSnackBar(err);
             },
             success: (data) {
-              if (_isLoadingDialogOpen) {
-                _isLoadingDialogOpen = false;
-                Navigator.pop(context);
+              if (data is List<AcceptedOfferResponse>) {
+                setState(() {
+                  _orders = data;
+                  _isLoading = false;
+                });
+              } else {
+                // For non-list success responses (e.g. after updateWorkStatus
+                // confirmation), just clear loading — the cubit will follow
+                // up with a refresh that emits a new List<AcceptedOfferResponse>.
+                setState(() => _isLoading = false);
               }
-              final orders = data as List<AcceptedOfferResponse>;
-              setState(() => _orders = orders);
             },
           );
         },
@@ -205,171 +192,231 @@ class _ActiveOrderViewState extends State<_ActiveOrderView> {
             ),
             SizedBox(height: 8.h),
             Expanded(
-              child: _orders.isEmpty
-                  ? const Center(child: Text(" active orders "))
-                  : _filteredOrders.isEmpty
-                  ? Center(
-                      child: Text(
-                        'No orders with status "${_statusLabel(_selectedFilter)}"',
-                        style: AppStyle.medLight,
-                      ),
-                    )
-                  : ListView.builder(
-                      padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
-                      itemCount: _filteredOrders.length,
-                      itemBuilder: (context, index) {
-                        final order = _filteredOrders[index];
-                        final dropdownItems = getNextStatuses(order.workStatus);
-                        return Card(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          margin: EdgeInsets.only(bottom: 12.h),
-                          child: Padding(
-                            padding: EdgeInsets.all(12.w),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      order.bid.requestDescription,
-                                      style: AppStyle.medBlack,
-                                    ),
-                                    const Spacer(),
-                                    Container(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 10.w,
-                                        vertical: 4.h,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(25),
-                                        color: AppColors.primery,
-                                      ),
-                                      child: Text(
-                                        _statusLabel(order.workStatus),
-                                        style: AppStyle.smallBackground,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 4.h),
-                                Text(
-                                  'for ${order.bid.customer.name}',
-                                  style: AppStyle.medPrimery.copyWith(
-                                    fontSize: 17.sp,
-                                  ),
-                                ),
-                                SizedBox(height: 8.h),
-                                Row(
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Deadline',
-                                          style: AppStyle.medPrimery.copyWith(
-                                            fontSize: 17.sp,
-                                          ),
-                                        ),
-                                        Text(
-                                          order.isOverdue == true
-                                              ? 'Overdue!'
-                                              : '${order.daysRemaining ?? order.timeInDays} days',
-                                          style: AppStyle.body5,
-                                        ),
-                                      ],
-                                    ),
-                                    const Spacer(),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        Text(
-                                          'Payment',
-                                          style: AppStyle.medPrimery.copyWith(
-                                            fontSize: 17.sp,
-                                          ),
-                                        ),
-                                        Text(
-                                          '\$${order.price}',
-                                          style: AppStyle.body5,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 10.h),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Expanded(
-                                      child: CustomDropdownList(
-                                        fillColor: AppColors.background,
-                                        label: "Status",
-                                        value: order.workStatus ?? 'accepted',
-                                        items: dropdownItems,
-                                        hintText: "",
-                                        onChanged: (newStatus) {
-                                          if (newStatus == null ||
-                                              newStatus == order.workStatus) {
-                                            return;
-                                          }
-                                          context
-                                              .read<BiddingTailorCubit>()
-                                              .updateWorkStatus(
-                                                order.id,
-                                                newStatus,
-                                              );
-                                        },
-                                      ),
-                                    ),
-                                    SizedBox(width: 8.w),
-                                    InkWell(
-                                      onTap: () {
-                                        Navigator.pushNamed(
-                                          context,
-                                          RouteNames.chat_screen,
-                                          arguments: {
-                                            'receiverId': order.bid.customer.id,
-                                            'receiverName':
-                                                order.bid.customer.name,
-                                          },
-                                        );
-                                      },
-                                      borderRadius: BorderRadius.circular(12.r),
-                                      child: Container(
-                                        padding: EdgeInsets.all(13.w),
-                                        width: 70.w,
-                                        decoration: BoxDecoration(
-                                          color: AppColors.primery,
-                                          borderRadius: BorderRadius.circular(
-                                            12.r,
-                                          ),
-                                        ),
-                                        child: Icon(
-                                          Icons.chat_bubble_outline_rounded,
-                                          color: Theme.of(context).cardColor,
-                                          size: 22.sp,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+              child: _buildBody(),
             ),
           ],
         ),
       ),
       bottomNavigationBar: FloatingNavBar(userRole: 'tailor', selectedIndex: 1),
       floatingActionButton: FloatingActionButton(
-        onPressed: ()=> Navigator.pushNamed(context, RouteNames.generate_image_tailor_screen) ,
-        child: Icon(Icons.auto_awesome,),
+        onPressed: () => Navigator.pushNamed(
+            context, RouteNames.generate_image_tailor_screen),
+        child: const Icon(Icons.auto_awesome),
       ),
     );
+  }
+
+  Widget _buildBody() {
+    // Show a full-screen spinner on first load (list is still empty).
+    if (_isLoading && _orders.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return RefreshIndicator(
+      onRefresh: _refresh,
+      color: AppColors.primery,
+      child: _buildList(),
+    );
+  }
+
+  Widget _buildList() {
+    if (_orders.isEmpty) {
+      // Not loading and truly no orders — show empty state.
+      return ListView(
+        // Wrap in ListView so RefreshIndicator still works on an empty screen.
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: [
+          SizedBox(height: 120.h),
+          Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.inbox_outlined,
+                    size: 64.sp, color: AppColors.lightsecondary),
+                SizedBox(height: 12.h),
+                Text('No active orders yet', style: AppStyle.medLight),
+              ],
+            ),
+          ),
+        ],
+      );
+    }
+
+    if (_filteredOrders.isEmpty) {
+      return ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: [
+          SizedBox(height: 120.h),
+          Center(
+            child: Text(
+              'No orders with status "${_statusLabel(_selectedFilter)}"',
+              style: AppStyle.medLight,
+            ),
+          ),
+        ],
+      );
+    }
+
+    return Stack(
+      children: [
+        ListView.builder(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
+          itemCount: _filteredOrders.length,
+          itemBuilder: (context, index) {
+            final order = _filteredOrders[index];
+            final dropdownItems = getNextStatuses(order.workStatus);
+            return Card(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              margin: EdgeInsets.only(bottom: 12.h),
+              child: Padding(
+                padding: EdgeInsets.all(12.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            order.bid.requestDescription,
+                            style: AppStyle.medBlack,
+                          ),
+                        ),
+                        SizedBox(width: 8.w),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10.w,
+                            vertical: 4.h,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(25),
+                            color: _statusColor(order.workStatus),
+                          ),
+                          child: Text(
+                            _statusLabel(order.workStatus),
+                            style: AppStyle.smallBackground,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 4.h),
+                    Text(
+                      'for ${order.bid.customer.name}',
+                      style: AppStyle.medPrimery.copyWith(fontSize: 17.sp),
+                    ),
+                    SizedBox(height: 8.h),
+                    Row(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Deadline',
+                              style:
+                                  AppStyle.medPrimery.copyWith(fontSize: 17.sp),
+                            ),
+                            Text(
+                              order.isOverdue == true
+                                  ? 'Overdue!'
+                                  : '${order.daysRemaining ?? order.timeInDays} days',
+                              style: order.isOverdue == true
+                                  ? AppStyle.body5
+                                      .copyWith(color: Colors.red)
+                                  : AppStyle.body5,
+                            ),
+                          ],
+                        ),
+                        const Spacer(),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              'Payment',
+                              style:
+                                  AppStyle.medPrimery.copyWith(fontSize: 17.sp),
+                            ),
+                            Text('\$${order.price}', style: AppStyle.body5),
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10.h),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: CustomDropdownList(
+                            fillColor: AppColors.background,
+                            label: "Status",
+                            value: order.workStatus ?? 'accepted',
+                            items: dropdownItems,
+                            hintText: "",
+                            onChanged: (newStatus) {
+                              if (newStatus == null ||
+                                  newStatus == order.workStatus) {
+                                return;
+                              }
+                              context
+                                  .read<BiddingTailorCubit>()
+                                  .updateWorkStatus(order.id, newStatus);
+                            },
+                          ),
+                        ),
+                        SizedBox(width: 8.w),
+                        InkWell(
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              RouteNames.chat_screen,
+                              arguments: {
+                                'receiverId': order.bid.customer.id,
+                                'receiverName': order.bid.customer.name,
+                              },
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(12.r),
+                          child: Container(
+                            padding: EdgeInsets.all(13.w),
+                            width: 70.w,
+                            decoration: BoxDecoration(
+                              color: AppColors.primery,
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                            child: Icon(
+                              Icons.chat_bubble_outline_rounded,
+                              color: Theme.of(context).cardColor,
+                              size: 22.sp,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+        // Subtle top-of-list loading bar when refreshing existing data.
+        if (_isLoading)
+          const Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: LinearProgressIndicator(),
+          ),
+      ],
+    );
+  }
+
+  Color _statusColor(String? status) {
+    switch (status) {
+      case 'in_progress':
+        return Colors.orange;
+      case 'completed':
+        return Colors.green;
+      default:
+        return AppColors.primery;
+    }
   }
 }

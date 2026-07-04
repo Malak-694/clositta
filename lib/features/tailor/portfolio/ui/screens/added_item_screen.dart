@@ -15,7 +15,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 
-// ✅ Added these imports
 import '../../../../../core/di/dependency_injection.dart';
 import '../../../../../core/router/route_names.dart';
 import '../../data/repo/portfolio_tailor_repo.dart';
@@ -34,17 +33,24 @@ class _AddedItemScreenState extends State<AddedItemScreen> {
   final _descriptionController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
 
+  // Own the cubit directly so _submitPost can always reach it,
+  // regardless of which BuildContext is in scope.
+  late final PortfolioTailorCubit _cubit;
+
   final List<String> categories = ['Tops', 'Bottoms', 'Suits'];
 
   String? _selectedCategory;
-  String? _selectedImagePath; // new image picked by user
-  String? _existingImageUrl; // existing image from API
+  String? _selectedImagePath;  // newly picked image path
+  String? _existingImageUrl;   // image already on server (update mode)
 
   bool get _isUpdate => widget.item != null;
 
   @override
   void initState() {
     super.initState();
+    _cubit = PortfolioTailorCubit(
+      portfolioTailorRepo: getIt<PortfolioTailorRepo>(),
+    );
     if (_isUpdate) {
       _titleController.text = widget.item!.title ?? '';
       _descriptionController.text = widget.item!.description ?? '';
@@ -59,20 +65,25 @@ class _AddedItemScreenState extends State<AddedItemScreen> {
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
+    _cubit.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => PortfolioTailorCubit(
-        portfolioTailorRepo: getIt<PortfolioTailorRepo>(),
-      ),
+    return BlocProvider.value(
+      value: _cubit,
       child: BlocListener<PortfolioTailorCubit, PortfolioTailorState>(
-        listener: (context, state) {
+        listener: (ctx, state) {
           state.whenOrNull(
-            success: (_) => Navigator.pop(context, true),
-            fail: (error) => _showSnackBar(error),
+            // Success → pop back to portfolio screen with result=true
+            // so the .then() callback there triggers a refresh.
+            success: (_) {
+              if (mounted) Navigator.pop(context, true);
+            },
+            fail: (error) {
+              if (mounted) _showSnackBar(error);
+            },
           );
         },
         child: Scaffold(
@@ -96,10 +107,9 @@ class _AddedItemScreenState extends State<AddedItemScreen> {
                       Text("Upload Image", style: AppStyle.body6),
                       SizedBox(height: 10.h),
                       ImageUploadWidget(
-                        imagePath: _selectedImagePath, // new picked image
-                        imageUrl:
-                        _selectedImagePath ==
-                            null // show existing only if no new image
+                        imagePath: _selectedImagePath,
+                        // Show the existing URL only when no new image is picked
+                        imageUrl: _selectedImagePath == null
                             ? _existingImageUrl
                             : null,
                         onTap: _pickImage,
@@ -134,7 +144,7 @@ class _AddedItemScreenState extends State<AddedItemScreen> {
                   ),
                   SizedBox(height: 30.h),
                   BlocBuilder<PortfolioTailorCubit, PortfolioTailorState>(
-                    builder: (context, state) {
+                    builder: (ctx, state) {
                       final isLoading = state.maybeWhen(
                         loading: () => true,
                         orElse: () => false,
@@ -147,7 +157,8 @@ class _AddedItemScreenState extends State<AddedItemScreen> {
                           child: ElevatedButton(
                             onPressed: null,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primery.withOpacity(0.6),
+                              backgroundColor:
+                                  AppColors.primery.withOpacity(0.6),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12.r),
                               ),
@@ -196,7 +207,7 @@ class _AddedItemScreenState extends State<AddedItemScreen> {
     }
 
     if (_isUpdate) {
-      context.read<PortfolioTailorCubit>().updatePortfolioItem(
+      _cubit.updatePortfolioItem(
         itemId: widget.item!.id!,
         title: _titleController.text.trim(),
         category: _selectedCategory ?? categories.first,
@@ -204,14 +215,16 @@ class _AddedItemScreenState extends State<AddedItemScreen> {
         imagePath: _selectedImagePath,
       );
     } else {
-      context.read<PortfolioTailorCubit>().addPortfolioItem(
+      _cubit.addPortfolioItem(
         title: _titleController.text.trim(),
         category: _selectedCategory ?? categories.first,
         description: _descriptionController.text.trim(),
         imagePath: _selectedImagePath!,
       );
     }
-     Navigator.pop(context);
+    // Pop is intentionally NOT called here.
+    // BlocListener fires Navigator.pop(context, true) on success,
+    // which returns the result to portfolio_tailor_body.dart's .then() callback.
   }
 
   void _showSnackBar(String message) {

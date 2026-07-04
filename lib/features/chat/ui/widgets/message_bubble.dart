@@ -23,7 +23,7 @@ class MessageBubble extends StatelessWidget {
     final isEdited  = message.isEdited  ?? false;
 
     return Align(
-      alignment: isMine ? Alignment.centerLeft : Alignment.centerRight,
+      alignment: isMine ? Alignment.centerRight : Alignment.centerLeft,
       child: GestureDetector(
         onLongPress: (!isMine || isDeleted) ? null : () => _showOptions(context),
         child: Container(
@@ -35,8 +35,8 @@ class MessageBubble extends StatelessWidget {
             borderRadius: BorderRadius.only(
               topLeft:     Radius.circular(16.r),
               topRight:    Radius.circular(16.r),
-              bottomLeft:  isMine ? Radius.zero : Radius.circular(16.r),
-              bottomRight: isMine ? Radius.circular(16.r) : Radius.zero,
+              bottomLeft:  isMine ? Radius.circular(16.r) : Radius.zero,
+              bottomRight: isMine ? Radius.zero : Radius.circular(16.r),
             ),
           ),
           child: Column(

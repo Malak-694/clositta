@@ -11,8 +11,7 @@ class ConversationsRepo {
   }
 
   Future<int> getUnreadCount(String token) async {
-    final int response =
-    await _apiService.getUnreadCount('Bearer $token');
-    return response ?? 0;
+    final int response = await _apiService.getUnreadCount('Bearer $token');
+    return response;
   }
 }

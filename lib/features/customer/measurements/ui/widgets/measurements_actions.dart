@@ -27,21 +27,25 @@ class MeasurementsActions extends StatelessWidget {
             padding: EdgeInsets.only(bottom: 16.h),
             child: CircularProgressIndicator(color: AppColors.primery),
           ),
-        CustomElevatedButton(
-          value: hasExistingMeasurements
-              ? 'Update Measurements'
-              : 'Save Measurements',
-          style: AppStyle.medBackground.copyWith(fontSize: 16.sp),
-          onPressed: isLoading ? () {} : onSave,
-          background: AppColors.primery,
+        SafeArea(
+          child: CustomElevatedButton(
+            value: hasExistingMeasurements
+                ? 'Update Measurements'
+                : 'Save Measurements',
+            style: AppStyle.medBackground.copyWith(fontSize: 16.sp),
+            onPressed: isLoading ? () {} : onSave,
+            background: AppColors.primery,
+          ),
         ),
         if (hasExistingMeasurements) ...[
           SizedBox(height: 12.h),
-          CustomElevatedButton(
-            value: 'Delete Measurements',
-            style: AppStyle.medBackground.copyWith(fontSize: 16.sp),
-            onPressed: isLoading ? () {} : onDelete,
-            background: AppColors.ternary,
+          SafeArea(
+            child: CustomElevatedButton(
+              value: 'Delete Measurements',
+              style: AppStyle.medBackground.copyWith(fontSize: 16.sp),
+              onPressed: isLoading ? () {} : onDelete,
+              background: AppColors.ternary,
+            ),
           ),
         ],
       ],

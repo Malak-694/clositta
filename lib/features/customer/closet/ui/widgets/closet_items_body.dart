@@ -115,7 +115,7 @@ class _ClosetItemsScreenBodyState extends State<ClosetItemsScreenBody> {
                 onPressed: _openAddItem, // ✅ CHANGED: extracted to its own method, see below
                 height: 35,
                 width: 80,
-                style: AppStyle.medBackground.copyWith(fontSize: 15.sp),
+                style: AppStyle.medBackground.copyWith(fontSize: 14.sp),
               ),
             ],
           ),

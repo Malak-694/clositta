@@ -153,7 +153,7 @@ class _JoinBiddingScreenState extends State<JoinBiddingScreen> {
                     borderRadius: BorderRadius.circular(15),
                     image: DecorationImage(
                       image: NetworkImage(widget.imageUrl),
-                      fit: BoxFit.fill,
+                      fit: BoxFit.contain,
                     ),
                   ),
                 ),

@@ -129,7 +129,7 @@ class _DetailesScreenTailorState extends State<DetailesScreenTailor> {
                 borderRadius: BorderRadius.circular(20.sp),
                 image: DecorationImage(
                   image: NetworkImage(widget.urlImage),
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                 ),
               ),
             ),

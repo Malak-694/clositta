@@ -80,7 +80,7 @@ class ImageUploadWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           child: Image.network(
             imageUrl!,
-            fit: BoxFit.cover,
+            fit: BoxFit.contain,
             loadingBuilder: (context, child, loadingProgress) {
               if (loadingProgress == null) return child;
               return const Center(child: CircularProgressIndicator());

@@ -51,149 +51,164 @@ Widget buildProductCard(BuildContext context, ProductModel product) {
   final imageUrl = product.imageUrl;
 
   return Container(
-    height: 135.h,
+    width: double.infinity,
+    constraints: BoxConstraints(minHeight: 130.h),
     decoration: BoxDecoration(
       color: Colors.white,
       border: Border.all(color: Colors.grey[300]!),
       borderRadius: BorderRadius.circular(20),
     ),
     padding: EdgeInsets.all(16.h),
-    child: Row(
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(12.r),
-          child: Image.network(
-            imageUrl,
-            width: 100.w,
-            height: 100.h,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
-                width: 100.w,
-                height: 100.h,
-                color: Colors.grey[200],
-                child: Icon(Icons.error, color: Colors.grey),
-              );
-            },
+    // IntrinsicHeight forces the Row (and its children) to resolve to a
+    // finite, shared height instead of an unbounded one. This is what
+    // lets Expanded inside the right-hand Column actually fill space.
+    child: IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12.r),
+            child: Image.network(
+              imageUrl,
+              width: 100.w,
+              height: 100.h,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  width: 100.w,
+                  height: 100.h,
+                  color: Colors.grey[200],
+                  child: Icon(Icons.error, color: Colors.grey),
+                );
+              },
+            ),
           ),
-        ),
-        SizedBox(width: 16.w),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: 120.w,
-              child: Text(
-                name,
-                style: AppStyle.medBlack.copyWith(fontSize: 14.sp),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            SizedBox(height: 6.h),
-            Row(
-              children: [
-                _buildStarRating(rating),
-                SizedBox(width: 8.w),
-              ],
-            ),
-            SizedBox(height: 6.h),
-            Text(
-              '£$pricePerYard/Item',
-              style: AppStyle.medGray.copyWith(fontSize: 16.sp),
-            ),
-            Text('Stock: $stock', style: AppStyle.smallPrimery),
-          ],
-        ),
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.end,
+          SizedBox(width: 16.w),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: _getStatusColor(status).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: _getStatusColor(status), width: 1),
-                ),
+              SizedBox(
+                width: 120.w,
                 child: Text(
-                  status,
-                  style: TextStyle(
-                    color: _getStatusColor(status),
-                    fontWeight: FontWeight.w500,
-                    fontSize:
-                        12, // Adjusted font size as it seemed hardcoded in original
-                  ),
+                  name,
+                  style: AppStyle.medBlack.copyWith(fontSize: 14.sp),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              Spacer(),
+              SizedBox(height: 6.h),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  IconButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (dialogContext) {
-                          return AlertDialog(
-                            content: Text(
-                              'Are you sure you want to Delete this product?',
-                              style: AppStyle.medBlack.copyWith(
-                                fontSize: 16.sp,
-                              ),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(dialogContext);
-                                },
-                                child: Text('Cancel', style: AppStyle.medBlack),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  context
-                                      .read<SellerProductsCubit>()
-                                      .deleteProduct(product.id);
-                                  Navigator.pop(dialogContext);
-                                },
-                                child: Text(
-                                  'Delete',
-                                  style: AppStyle.medTernary,
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ); // keep existing delete dialog
-                    },
-                    icon: Icon(Icons.delete, color: AppColors.primery),
-                    padding: EdgeInsets.zero,
-                    iconSize: 22,
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      Navigator.pushNamed(
-                        context,
-                        RouteNames.update_product_screen,
-                        arguments: product,
-                      ).then((_) {
-                        context.read<SellerProductsCubit>().getProducts();
-                      });
-                    },
-                    icon: Icon(Icons.edit, color: AppColors.primery),
-                    padding: EdgeInsets.zero,
-                    iconSize: 22,
-                  ),
+                  _buildStarRating(rating),
+                  SizedBox(width: 8.w),
                 ],
               ),
+              SizedBox(height: 6.h),
+              Text(
+                '£$pricePerYard/Item',
+                style: AppStyle.medGray.copyWith(fontSize: 16.sp),
+              ),
+              Text('Stock: $stock', style: AppStyle.smallPrimery),
             ],
           ),
-        ),
-      ],
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: _getStatusColor(status).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: _getStatusColor(status),
+                      width: 1,
+                    ),
+                  ),
+                  child: Text(
+                    status,
+                    style: TextStyle(
+                      color: _getStatusColor(status),
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (dialogContext) {
+                            return AlertDialog(
+                              content: Text(
+                                'Are you sure you want to Delete this product?',
+                                style: AppStyle.medBlack.copyWith(
+                                  fontSize: 16.sp,
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(dialogContext);
+                                  },
+                                  child: Text(
+                                    'Cancel',
+                                    style: AppStyle.medBlack,
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    context
+                                        .read<SellerProductsCubit>()
+                                        .deleteProduct(product.id);
+                                    Navigator.pop(dialogContext);
+                                  },
+                                  child: Text(
+                                    'Delete',
+                                    style: AppStyle.medTernary,
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ); // keep existing delete dialog
+                      },
+                      icon: Icon(Icons.delete, color: AppColors.primery),
+                      padding: EdgeInsets.zero,
+                      iconSize: 22,
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.pushNamed(
+                          context,
+                          RouteNames.update_product_screen,
+                          arguments: product,
+                        ).then((_) {
+                          context.read<SellerProductsCubit>().getProducts();
+                        });
+                      },
+                      icon: Icon(Icons.edit, color: AppColors.primery),
+                      padding: EdgeInsets.zero,
+                      iconSize: 22,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     ),
   );
 }

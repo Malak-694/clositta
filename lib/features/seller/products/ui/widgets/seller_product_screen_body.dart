@@ -161,7 +161,7 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
                     background: AppColors.primery,
                     style: AppStyle.medSecondary.copyWith(
                       color: AppColors.background,
-                      fontSize: 13.sp,
+                      fontSize: 20.sp,
                     ),
                   ),
                 ],

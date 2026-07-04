@@ -1,12 +1,12 @@
 import 'package:chicora/core/networking/api_result.dart';
 import 'package:chicora/core/networking/api_service.dart';
-import 'package:chicora/features/ecommerce_multi/data/models/product_models/product_response_model.dart';
+import 'package:chicora/features/ecommerce_multi/data/models/product_models/products_list_response_model.dart';
 
 class ViewProductsRepo {
   final ApiService apiService;
   ViewProductsRepo({required this.apiService});
 
-  Future<ApiResult<List<ProductModelBuyer>>> getProductsBuyer({
+  Future<ApiResult<ProductListResponseModel>> getProductsBuyer({
     required String token,
     String? category,
     double? minPrice,
@@ -15,6 +15,11 @@ class ViewProductsRepo {
     String? sellerId,
     String? search,
     String? type,
+    String? season,
+    String? occasion,
+    String? gender,
+    int page = 1,
+    int limit = 20,
   }) async {
     try {
       final response = await apiService.getProductsBuyer(
@@ -25,14 +30,16 @@ class ViewProductsRepo {
         inStock: inStock,
         sellerId: sellerId,
         search: search,
-type  : type
-        );
-
+        type: type,
+        season: season,
+        occasion: occasion,
+        gender: gender,
+        page: page,
+        limit: limit,
+      );
       return ApiResult.success(response);
     } catch (e) {
       return ApiResult.failure(mapErrorToUserMessage(e));
     }
   }
-
-
 }

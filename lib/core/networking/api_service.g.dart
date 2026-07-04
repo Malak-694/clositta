@@ -870,7 +870,7 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<List<ProductModelBuyer>> getProductsBuyer({
+  Future<ProductListResponseModel> getProductsBuyer({
     required String token,
     String? category,
     double? minPrice,
@@ -879,6 +879,11 @@ class _ApiService implements ApiService {
     String? sellerId,
     String? search,
     String? type,
+    String? season,
+    String? occasion,
+    String? gender,
+    int page = 1,
+    int limit = 20,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
@@ -889,12 +894,17 @@ class _ApiService implements ApiService {
       r'sellerId': sellerId,
       r'search': search,
       r'type': type,
+      r'season': season,
+      r'occasion': occasion,
+      r'gender': gender,
+      r'page': page,
+      r'limit': limit,
     };
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<List<ProductModelBuyer>>(
+    final _options = _setStreamType<ProductListResponseModel>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -904,15 +914,10 @@ class _ApiService implements ApiService {
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
-    final _result = await _dio.fetch<List<dynamic>>(_options);
-    late List<ProductModelBuyer> _value;
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late ProductListResponseModel _value;
     try {
-      _value = _result.data!
-          .map(
-            (dynamic i) =>
-                ProductModelBuyer.fromJson(i as Map<String, dynamic>),
-          )
-          .toList();
+      _value = ProductListResponseModel.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, response: _result);
       rethrow;

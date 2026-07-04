@@ -1,3 +1,4 @@
+import 'package:chicora/features/ecommerce_multi/data/models/product_models/products_list_response_model.dart';
 import 'package:chicora/features/notifications/data/models/notification_model.dart';
 import 'package:chicora/core/models/message_model.dart';
 import 'package:chicora/core/networking/api_endpoints.dart';
@@ -228,17 +229,22 @@ abstract class ApiService {
       @Part(name: "image") MultipartFile image,
       );
   //ecommerce -buyer
-  @GET(ApiEndpoints.products)
-  Future<List<ProductModelBuyer>> getProductsBuyer({
-    @Header("Authorization") required String token,
-    @Query("category") String? category,
-    @Query("minPrice") double? minPrice,
-    @Query("maxPrice") double? maxPrice,
-    @Query("inStock") bool? inStock,
-    @Query("sellerId") String? sellerId,
-    @Query("search") String? search,
-    @Query("type") String? type,
-  });
+@GET(ApiEndpoints.products)
+Future<ProductListResponseModel> getProductsBuyer({
+  @Header("Authorization") required String token,
+  @Query("category") String? category,
+  @Query("minPrice") double? minPrice,
+  @Query("maxPrice") double? maxPrice,
+  @Query("inStock") bool? inStock,
+  @Query("sellerId") String? sellerId,
+  @Query("search") String? search,
+  @Query("type") String? type,
+  @Query("season") String? season,
+  @Query("occasion") String? occasion,
+  @Query("gender") String? gender,
+  @Query("page") int page = 1,
+  @Query("limit") int limit = 20,
+});
   //ecommerce -buyer -rate
   @POST(ApiEndpoints.ratePoduct)
   Future<RatingResponseModel> rateProduct(

@@ -184,13 +184,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: AppStyle.smallBlack.copyWith(fontSize: 15.sp),
                       ),
                     ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, RouteNames.sign_up);
-                      },
-                      child: Text(
-                        "First time to see us?",
-                        style: AppStyle.smallBlack.copyWith(fontSize: 15.sp),
+                    SafeArea(
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, RouteNames.sign_up);
+                        },
+                        child: Text(
+                          "First time to see us?",
+                          style: AppStyle.smallBlack.copyWith(fontSize: 15.sp),
+                        ),
                       ),
                     ),
                   ],

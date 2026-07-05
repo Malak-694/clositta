@@ -60,104 +60,106 @@ class _ChatInputFieldState extends State<ChatInputField> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        if (_selectedImage != null)
-          Container(
-            padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
-            color: AppColors.lightprimery,
-            child: Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10.r),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.6,
-                    height: 220.h,
-                    child: Image.file(_selectedImage!, fit: BoxFit.cover),
+    return SafeArea(
+      child: Column(
+        children: [
+          if (_selectedImage != null)
+            Container(
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+              color: AppColors.lightprimery,
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10.r),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      height: 220.h,
+                      child: Image.file(_selectedImage!, fit: BoxFit.cover),
+                    ),
                   ),
-                ),
-                Positioned(
-                  top: 4,
-                  right: 4,
-                  child: GestureDetector(
-                    onTap: _removeImage,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: AppColors.light,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.close,
-                        color: Theme.of(context).cardColor,
-                        size: 18,
+                  Positioned(
+                    top: 4,
+                    right: 4,
+                    child: GestureDetector(
+                      onTap: _removeImage,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          color: AppColors.light,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.close,
+                          color: Theme.of(context).cardColor,
+                          size: 18,
+                        ),
                       ),
                     ),
+                  ),
+                ],
+              ),
+            ),
+      
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(color: AppColors.light.withOpacity(0.7), blurRadius: 4),
+              ],
+            ),
+            child: Row(
+              children: [
+                // Image picker button
+                IconButton(
+                  icon: Icon(
+                    Icons.image_outlined,
+                    color: _selectedImage != null
+                        ? AppColors.primery
+                        : AppColors.light,
+                  ),
+                  onPressed: _pickImage,
+                ),
+      
+                // Text field
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    textInputAction: TextInputAction.send,
+                    onSubmitted: (_) => _handleSend(),
+                    decoration: InputDecoration(
+                      hintText: _selectedImage != null
+                          ? 'Add a caption... (optional)'
+                          : 'Type a message...',
+                      filled: true,
+                      fillColor: AppColors.lightprimery,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(24.r),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                    ),
+                  ),
+                ),
+      
+                const SizedBox(width: 8),
+      
+                // Send button
+                CircleAvatar(
+                  backgroundColor: AppColors.primery,
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.send,
+                      color: Theme.of(context).cardColor,
+                      size: 18,
+                    ),
+                    onPressed: _handleSend,
                   ),
                 ),
               ],
             ),
           ),
-
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(color: AppColors.light.withOpacity(0.7), blurRadius: 4),
-            ],
-          ),
-          child: Row(
-            children: [
-              // Image picker button
-              IconButton(
-                icon: Icon(
-                  Icons.image_outlined,
-                  color: _selectedImage != null
-                      ? AppColors.primery
-                      : AppColors.light,
-                ),
-                onPressed: _pickImage,
-              ),
-
-              // Text field
-              Expanded(
-                child: TextField(
-                  controller: _controller,
-                  textInputAction: TextInputAction.send,
-                  onSubmitted: (_) => _handleSend(),
-                  decoration: InputDecoration(
-                    hintText: _selectedImage != null
-                        ? 'Add a caption... (optional)'
-                        : 'Type a message...',
-                    filled: true,
-                    fillColor: AppColors.lightprimery,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(24.r),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                  ),
-                ),
-              ),
-
-              const SizedBox(width: 8),
-
-              // Send button
-              CircleAvatar(
-                backgroundColor: AppColors.primery,
-                child: IconButton(
-                  icon: Icon(
-                    Icons.send,
-                    color: Theme.of(context).cardColor,
-                    size: 18,
-                  ),
-                  onPressed: _handleSend,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

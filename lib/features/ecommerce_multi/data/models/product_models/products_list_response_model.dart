@@ -5,12 +5,14 @@ class ProductListResponseModel {
   final List<ProductModelBuyer> products;
   final int total;
   final int page;
+  final int limit;
   final int totalPages;
 
   ProductListResponseModel({
     required this.products,
     required this.total,
     required this.page,
+    required this.limit,
     required this.totalPages,
   });
 
@@ -21,6 +23,7 @@ class ProductListResponseModel {
           .toList(),
       total: json['pagination']['total'] as int,
       page: json['pagination']['page'] as int,
+      limit: json['pagination']['limit'] as int,
       totalPages: json['pagination']['totalPages'] as int,
     );
   }

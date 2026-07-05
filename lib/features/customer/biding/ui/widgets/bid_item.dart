@@ -108,7 +108,6 @@ class BidItem extends StatelessWidget {
             children: [
               Icon(LucideIcons.smile, size: 20, color: AppColors.light),
               const SizedBox(width: 2),
-              Text(' $num_work Tailoring', style: AppStyle.body5),
               const Spacer(),
               Icon(LucideIcons.clock, size: 18, color: AppColors.light),
               const SizedBox(width: 1),

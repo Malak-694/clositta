@@ -55,8 +55,10 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
   @override
   void initState() {
     super.initState();
-    _initAndLoad();
     _scrollController.addListener(_onScroll);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _initAndLoad();
+    });
   }
 
   void _onScroll() {

@@ -10,6 +10,7 @@ import '../../../../core/helper/shared_pref_helper.dart';
 import '../../../../core/widgets/info_card.dart';
 import '../../../../core/widgets/pinterest_grid.dart';
 import '../../../../core/widgets/pinterest_grid_config.dart';
+import '../../data/models/product_models/product_page_ui_model.dart';
 import '../../data/models/product_models/product_response_model.dart';
 import '../../logic/view_product_logic/view_products_cubit.dart';
 import '../../logic/view_product_logic/view_products_state.dart';
@@ -45,14 +46,30 @@ class _SellerInfoScreenState extends State<SellerInfoScreen> {
   void initState() {
     super.initState();
     _cubit = getIt<ViewProductsCubit>();
-    _loadProducts();
+    // addPostFrameCallback avoids the async initState double-trigger issue
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _loadProducts();
+    });
+  }
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
   }
 
   Future<void> _loadProducts() async {
     final token =
         await getIt<SharedPrefHelper>().getSecureData(SharedPrefKey.token) ??
             '';
-    _cubit.getProductsBuyer(token: token, sellerId: widget.sellerId);
+    if (!mounted) return;
+    // Pass type: null so ALL product types for this seller are shown,
+    // regardless of the user's default type filter (Clothes / Material).
+    _cubit.getProductsBuyer(
+      token: token,
+      sellerId: widget.sellerId,
+      type: null,
+    );
   }
 
   @override
@@ -76,7 +93,6 @@ class _SellerInfoScreenState extends State<SellerInfoScreen> {
                   email: widget.email,
                 ),
                 SizedBox(height: 30.h),
-
                 Row(
                   children: [
                     Icon(
@@ -89,37 +105,34 @@ class _SellerInfoScreenState extends State<SellerInfoScreen> {
                   ],
                 ),
                 SizedBox(height: 12.h),
-
                 Expanded(
-                  child: BlocBuilder<ViewProductsCubit, ViewProductsState>(
+                  child: BlocBuilder<ViewProductsCubit,
+                      ViewProductsState<ProductPageData>>(
                     builder: (context, state) {
-                      if (state is Loading) {
-                        return const Center(
+                      return state.when(
+                        initial: () => const SizedBox(),
+                        loading: () => const Center(
                           child: CircularProgressIndicator(),
-                        );
-                      } else if (state is Success) {
-                        final products =
-                        (state).data as List<ProductModelBuyer>;
-                        return _buildGrid(products);
-                      } else if (state is Fail) {
-                        final message = (state).message;
-                        return Center(
+                        ),
+                        success: (data) => _buildGrid(data.products),
+                        fail: (message) => Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
                                 message,
                                 style: TextStyle(color: AppColors.light),
+                                textAlign: TextAlign.center,
                               ),
+                              const SizedBox(height: 8),
                               TextButton(
                                 onPressed: _loadProducts,
                                 child: const Text("Retry"),
                               ),
                             ],
                           ),
-                        );
-                      }
-                      return const SizedBox(); // initial
+                        ),
+                      );
                     },
                   ),
                 ),

@@ -13,6 +13,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockCartRepo extends Mock implements CartRepo {}
+
 class MockSharedPrefHelper extends Mock implements SharedPrefHelper {}
 
 void main() {
@@ -35,10 +36,10 @@ void main() {
   setUp(() {
     mockCartRepo = MockCartRepo();
     mockPrefs = MockSharedPrefHelper();
-    
+
     // Register mock dependencies
     getIt.registerSingleton<SharedPrefHelper>(mockPrefs);
-    
+
     cartCubit = CartCubit(cartRepo: mockCartRepo);
   });
 
@@ -51,10 +52,12 @@ void main() {
     blocTest<CartCubit, CartState>(
       'emits [Loading, Success] when token is found and API succeeds',
       build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => 'fake-token-123');
-        when(() => mockCartRepo.getCart(any()))
-            .thenAnswer((_) async => ApiResult.success(fakeCartResponse));
+        when(
+          () => mockPrefs.getSecureData(any()),
+        ).thenAnswer((_) async => 'fake-token-123');
+        when(
+          () => mockCartRepo.getCart(any()),
+        ).thenAnswer((_) async => ApiResult.success(fakeCartResponse));
         return cartCubit;
       },
       act: (cubit) => cubit.getCart(),
@@ -67,8 +70,9 @@ void main() {
     blocTest<CartCubit, CartState>(
       'emits [Loading, Fail] when token is null',
       build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockPrefs.getSecureData(any()),
+        ).thenAnswer((_) async => null);
         return cartCubit;
       },
       act: (cubit) => cubit.getCart(),
@@ -81,10 +85,12 @@ void main() {
     blocTest<CartCubit, CartState>(
       'emits [Loading, Fail] when API fails',
       build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => 'fake-token-123');
-        when(() => mockCartRepo.getCart(any()))
-            .thenAnswer((_) async => const ApiResult.failure('Failed to fetch cart'));
+        when(
+          () => mockPrefs.getSecureData(any()),
+        ).thenAnswer((_) async => 'fake-token-123');
+        when(() => mockCartRepo.getCart(any())).thenAnswer(
+          (_) async => const ApiResult.failure('Failed to fetch cart'),
+        );
         return cartCubit;
       },
       act: (cubit) => cubit.getCart(),
@@ -99,10 +105,12 @@ void main() {
     blocTest<CartCubit, CartState>(
       'emits [Loading, Success] when item is added successfully',
       build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => 'fake-token-123');
-        when(() => mockCartRepo.addToCart(any(), any()))
-            .thenAnswer((_) async => ApiResult.success(fakeCartResponse));
+        when(
+          () => mockPrefs.getSecureData(any()),
+        ).thenAnswer((_) async => 'fake-token-123');
+        when(
+          () => mockCartRepo.addToCart(any(), any()),
+        ).thenAnswer((_) async => ApiResult.success(fakeCartResponse));
         return cartCubit;
       },
       act: (cubit) => cubit.addToCart('product-1', 2),
@@ -117,15 +125,17 @@ void main() {
     blocTest<CartCubit, CartState>(
       'emits [Loading, Success] when item quantity is updated successfully',
       build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => 'fake-token-123');
-        when(() => mockCartRepo.updateCart(any(), any(), any()))
-            .thenAnswer((_) async => ApiResult.success(fakeCartResponse));
+        when(
+          () => mockPrefs.getSecureData(any()),
+        ).thenAnswer((_) async => 'fake-token-123');
+        when(
+          () => mockCartRepo.updateCart(any(), any(), any()),
+        ).thenAnswer((_) async => ApiResult.success(fakeCartResponse));
         return cartCubit;
       },
       act: (cubit) => cubit.updateCart('product-1', 3),
       expect: () => [
-        const CartState.loading(),
+        const CartState.updateQuantityLoading('product-1'),
         CartState<dynamic>.success(fakeCartResponse),
       ],
     );
@@ -140,15 +150,17 @@ void main() {
     blocTest<CartCubit, CartState>(
       'emits [Loading, Success] when item is removed from cart',
       build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => 'fake-token-123');
-        when(() => mockCartRepo.removeFromCart(any(), any()))
-            .thenAnswer((_) async => ApiResult.success(fakeDeleteResponse));
+        when(
+          () => mockPrefs.getSecureData(any()),
+        ).thenAnswer((_) async => 'fake-token-123');
+        when(
+          () => mockCartRepo.removeFromCart(any(), any()),
+        ).thenAnswer((_) async => ApiResult.success(fakeDeleteResponse));
         return cartCubit;
       },
       act: (cubit) => cubit.removeFromCart('product-1'),
       expect: () => [
-        const CartState.loading(),
+        const CartState.updateQuantityLoading('product-1'),
         CartState<dynamic>.success(fakeDeleteResponse),
       ],
     );
@@ -160,10 +172,12 @@ void main() {
     blocTest<CartCubit, CartState>(
       'emits [Loading, Success] when cart is cleared',
       build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => 'fake-token-123');
-        when(() => mockCartRepo.removeAllCart(any()))
-            .thenAnswer((_) async => ApiResult.success(fakeMessageResponse));
+        when(
+          () => mockPrefs.getSecureData(any()),
+        ).thenAnswer((_) async => 'fake-token-123');
+        when(
+          () => mockCartRepo.removeAllCart(any()),
+        ).thenAnswer((_) async => ApiResult.success(fakeMessageResponse));
         return cartCubit;
       },
       act: (cubit) => cubit.removeAllCart(),

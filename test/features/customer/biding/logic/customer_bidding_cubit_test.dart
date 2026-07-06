@@ -11,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockBiddingCustomerRepo extends Mock implements BiddingCustomerRepo {}
+
 class MockSharedPrefHelper extends Mock implements SharedPrefHelper {}
 
 void main() {
@@ -19,21 +20,23 @@ void main() {
   late CustomerBiddingCubit cubit;
 
   setUpAll(() {
-    registerFallbackValue(SendBiddingModel(
-      description: 'Test description',
-      imageUrl: 'test.jpg',
-      price: 100,
-      time: '3 days',
-    ));
+    registerFallbackValue(
+      SendBiddingModel(
+        description: 'Test description',
+        imageUrl: 'test.jpg',
+        price: 100,
+        time: '3 days',
+      ),
+    );
   });
 
   setUp(() {
     mockRepo = MockBiddingCustomerRepo();
     mockPrefs = MockSharedPrefHelper();
-    
+
     // Register mock dependencies
     getIt.registerSingleton<SharedPrefHelper>(mockPrefs);
-    
+
     cubit = CustomerBiddingCubit(mockRepo);
   });
 
@@ -71,10 +74,12 @@ void main() {
     blocTest<CustomerBiddingCubit, CustomerBiddingState>(
       'emits [Loading, Success] when token is found and API succeeds',
       build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => 'fake-token-123');
-        when(() => mockRepo.getMyBids(any()))
-            .thenAnswer((_) async => [fakeBid]);
+        when(
+          () => mockPrefs.getSecureData(any()),
+        ).thenAnswer((_) async => 'fake-token-123');
+        when(
+          () => mockRepo.getMyBids(any()),
+        ).thenAnswer((_) async => [fakeBid]);
         return cubit;
       },
       act: (cubit) => cubit.getMyBids(),
@@ -87,8 +92,9 @@ void main() {
     blocTest<CustomerBiddingCubit, CustomerBiddingState>(
       'emits [Loading, Fail] when token is null',
       build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockPrefs.getSecureData(any()),
+        ).thenAnswer((_) async => null);
         return cubit;
       },
       act: (cubit) => cubit.getMyBids(),
@@ -103,15 +109,21 @@ void main() {
     blocTest<CustomerBiddingCubit, CustomerBiddingState>(
       'emits [Loading, Success] when bid is created successfully',
       build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => 'fake-token-123');
-        when(() => mockRepo.createBidWithFile(
-              token: any(named: 'token'),
-              description: any(named: 'description'),
-              imagePath: any(named: 'imagePath'),
-              price: any(named: 'price'),
-              time: any(named: 'time'),
-            )).thenAnswer((_) async => fakeBid);
+        when(
+          () => mockPrefs.getSecureData(any()),
+        ).thenAnswer((_) async => 'fake-token-123');
+        when(
+          () => mockRepo.createBidWithFile(
+            token: any(named: 'token'),
+            description: any(named: 'description'),
+            imagePath: any(named: 'imagePath'),
+            price: any(named: 'price'),
+            time: any(named: 'time'),
+          ),
+        ).thenAnswer((_) async => fakeBid);
+        when(
+          () => mockRepo.getMyBids(any()),
+        ).thenAnswer((_) async => [fakeBid]);
         return cubit;
       },
       act: (cubit) => cubit.createBid(
@@ -124,15 +136,20 @@ void main() {
       ),
       expect: () => [
         const CustomerBiddingState.loading(),
-        CustomerBiddingState<dynamic>.success(fakeBid),
+        const CustomerBiddingState<dynamic>.success(
+          'Bid created successfully!',
+        ),
+        const CustomerBiddingState.loading(),
+        CustomerBiddingState<dynamic>.success([fakeBid]),
       ],
     );
 
     blocTest<CustomerBiddingCubit, CustomerBiddingState>(
       'emits [Loading, Fail] when request image is empty',
       build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => 'fake-token-123');
+        when(
+          () => mockPrefs.getSecureData(any()),
+        ).thenAnswer((_) async => 'fake-token-123');
         return cubit;
       },
       act: (cubit) => cubit.createBid(
@@ -150,23 +167,30 @@ void main() {
     );
   });
 
-
   group('deleteBid', () {
     blocTest<CustomerBiddingCubit, CustomerBiddingState>(
       'emits [Loading, Success] when bid is deleted successfully',
       build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => 'fake-token-123');
-        when(() => mockRepo.deleteBid(
-              token: any(named: 'token'),
-              bidId: any(named: 'bidId'),
-            )).thenAnswer((_) async => Future.value());
+        when(
+          () => mockPrefs.getSecureData(any()),
+        ).thenAnswer((_) async => 'fake-token-123');
+        when(
+          () => mockRepo.deleteBid(
+            token: any(named: 'token'),
+            bidId: any(named: 'bidId'),
+          ),
+        ).thenAnswer((_) async => Future.value());
+        when(
+          () => mockRepo.getMyBids(any()),
+        ).thenAnswer((_) async => [fakeBid]);
         return cubit;
       },
       act: (cubit) => cubit.deleteBid(bidId: 'bid-123'),
       expect: () => [
         const CustomerBiddingState.loading(),
-        const CustomerBiddingState<dynamic>.success("Bid deleted successfully"),
+        const CustomerBiddingState<dynamic>.success('Bid deleted successfully'),
+        const CustomerBiddingState.loading(),
+        CustomerBiddingState<dynamic>.success([fakeBid]),
       ],
     );
   });

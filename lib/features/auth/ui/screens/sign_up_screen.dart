@@ -197,17 +197,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
 
-                    SafeArea(
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, RouteNames.login);
-                        },
-                        child: Text(
-                          "Already Our Friend ?",
-                          style: AppStyle.smallBlack.copyWith(fontSize: 15.sp),
-                        ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, RouteNames.login);
+                      },
+                      child: Text(
+                        "Already Our Friend ?",
+                        style: AppStyle.smallBlack.copyWith(fontSize: 15.sp),
                       ),
                     ),
+
+                    SizedBox(height: 40.h),
                   ],
                 ),
               ),

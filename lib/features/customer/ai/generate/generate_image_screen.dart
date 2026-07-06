@@ -344,13 +344,14 @@ class _AiCustomerScreenState extends State<GenerateImageScreen> {
                           );
                         }
                       },
-                      child: const Text('Download'),
+                      child: Icon(Icons.download),
                     ),
                   ),
 
                   Padding(
                     padding: EdgeInsets.only(top: 8.h),
                     child: ElevatedButton(
+
                       onPressed: () async {
                         final result = await showAddToClosetSheet(context);
 

@@ -57,8 +57,8 @@ class CustomSearchBar extends StatelessWidget {
                       borderRadius: BorderRadius.circular(3.r),
                       child: Image.file(
                         File(searchImagePath!),
-                        width: 23.w,
-                        height: 23.w,
+                        width: 20.w,
+                        height: 20.w,
                         fit: BoxFit.cover,
                       ),
                     ),

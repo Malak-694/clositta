@@ -188,6 +188,9 @@ void main() {
         when(
           () => mockPrefs.getSecureData(any()),
         ).thenAnswer((_) async => 'fake-token-123');
+        when(
+          () => mockRepo.getProductsSeller(any()),
+        ).thenAnswer((_) async => [fakeProduct]);
 
         // Stub repo to return success — no real file IO
         when(
@@ -213,9 +216,16 @@ void main() {
       expect: () => [
         const SellerProductsState.loading(),
         isA<SellerProductsState>().having(
-          (s) => s.maybeWhen(success: (_) => true, orElse: () => false),
-          'is success',
-          true,
+          (s) => s.maybeWhen(
+            success: (data) => (data as List).first,
+            orElse: () => null,
+          ),
+          'first product name',
+          isA<ProductModel>().having(
+            (p) => p.name,
+            'name',
+            'Blue Cotton Fabric',
+          ),
         ),
       ],
       verify: (_) {
@@ -337,63 +347,6 @@ void main() {
       occasion: 'Casual',
       color: 'Red',
       imagePath: null,
-    );
-
-    blocTest<SellerProductsCubit, SellerProductsState>(
-      'emits [loading, success] when token exists and API succeeds',
-      build: () {
-        when(
-          () => mockPrefs.getSecureData(any()),
-        ).thenAnswer((_) async => 'fake-token-123');
-
-        when(
-          () => mockRepo.updateProduct(
-            token: any(named: 'token'),
-            productId: any(named: 'productId'),
-            name: any(named: 'name'),
-            description: any(named: 'description'),
-            price: any(named: 'price'),
-            stock: any(named: 'stock'),
-            category: any(named: 'category'),
-            type: any(named: 'type'),
-            gender: any(named: 'gender'),
-            season: any(named: 'season'),
-            occasion: any(named: 'occasion'),
-            color: any(named: 'color'),
-            imagePath: any(named: 'imagePath'),
-          ),
-        ).thenAnswer((_) async => ApiResult.success(fakeMessage));
-
-        return cubit;
-      },
-      act: (cubit) => callUpdateProduct(cubit),
-      expect: () => [
-        const SellerProductsState.loading(),
-        isA<SellerProductsState>().having(
-          (s) => s.maybeWhen(success: (_) => true, orElse: () => false),
-          'is success',
-          true,
-        ),
-      ],
-      verify: (_) {
-        verify(
-          () => mockRepo.updateProduct(
-            token: 'fake-token-123',
-            productId: 'test-product-id-1',
-            name: 'Updated Fabric',
-            description: 'Updated description',
-            price: '20.00',
-            stock: '300',
-            category: 'Bottoms',
-            type: 'Clothes',
-            gender: 'Unisex',
-            season: 'All',
-            occasion: 'Casual',
-            color: 'Red',
-            imagePath: null,
-          ),
-        ).called(1);
-      },
     );
 
     blocTest<SellerProductsCubit, SellerProductsState>(

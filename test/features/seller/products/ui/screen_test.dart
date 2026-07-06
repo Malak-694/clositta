@@ -304,6 +304,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:chicora/core/di/dependency_injection.dart';
 import 'package:chicora/core/helper/shared_pref_helper.dart';
+import 'package:chicora/features/ecommerce_multi/data/repo/product_search_repo.dart';
 import 'package:chicora/features/seller/products/data/models/product_model_response.dart';
 import 'package:chicora/features/seller/products/logic/cubit/seller_products_cubit.dart';
 import 'package:chicora/features/seller/products/logic/cubit/seller_products_state.dart';
@@ -320,6 +321,8 @@ class MockSellerProductsCubit extends MockCubit<SellerProductsState>
     implements SellerProductsCubit {}
 
 class MockSharedPrefHelper extends Mock implements SharedPrefHelper {}
+
+class MockProductSearchRepo extends Mock implements ProductSearchRepo {}
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 void setPhoneSize(WidgetTester tester) {
@@ -343,6 +346,7 @@ void ignoreOverflowErrors(WidgetTester tester) {
 void main() {
   late MockSellerProductsCubit cubit;
   late MockSharedPrefHelper mockPrefs;
+  late MockProductSearchRepo mockSearchRepo;
 
   final fakeProduct = ProductModel(
     ratingDistribution: {'1': 0, '2': 0, '3': 1, '4': 2, '5': 5},
@@ -366,8 +370,11 @@ void main() {
 
   setUp(() {
     mockPrefs = MockSharedPrefHelper();
+    mockSearchRepo = MockProductSearchRepo();
     getIt.registerSingleton<SharedPrefHelper>(mockPrefs);
+    getIt.registerSingleton<ProductSearchRepo>(mockSearchRepo);
     cubit = MockSellerProductsCubit();
+    when(() => cubit.getProducts()).thenAnswer((_) async {});
   });
 
   tearDown(() {
@@ -390,9 +397,9 @@ void main() {
         ),
         routes: {
           'added_product_item': (_) =>
-          const Scaffold(body: Text('Add Product Page')),
+              const Scaffold(body: Text('Add Product Page')),
           'update_product_screen': (_) =>
-          const Scaffold(body: Text('Update Product Page')),
+              const Scaffold(body: Text('Update Product Page')),
         },
       ),
     );
@@ -413,7 +420,7 @@ void main() {
       ),
       routes: {
         'update_product_screen': (_) =>
-        const Scaffold(body: Text('Update Product Page')),
+            const Scaffold(body: Text('Update Product Page')),
       },
     );
   }
@@ -425,8 +432,7 @@ void main() {
     setPhoneSize(tester);
     ignoreOverflowErrors(tester);
 
-    when(() => cubit.state)
-        .thenReturn(const SellerProductsState.loading());
+    when(() => cubit.state).thenReturn(const SellerProductsState.loading());
 
     await tester.pumpWidget(buildScreen());
     await tester.pump();
@@ -442,9 +448,9 @@ void main() {
     setPhoneSize(tester);
     ignoreOverflowErrors(tester);
 
-    when(() => cubit.state).thenReturn(
-      SellerProductsState.success([fakeProduct]),
-    );
+    when(
+      () => cubit.state,
+    ).thenReturn(SellerProductsState.success([fakeProduct]));
     whenListen(
       cubit,
       Stream.fromIterable([
@@ -470,9 +476,9 @@ void main() {
     setPhoneSize(tester);
     ignoreOverflowErrors(tester);
 
-    when(() => cubit.state).thenReturn(
-      const SellerProductsState.fail('Network error'),
-    );
+    when(
+      () => cubit.state,
+    ).thenReturn(const SellerProductsState.fail('Network error'));
 
     await tester.pumpWidget(buildScreen());
     await tester.pump();
@@ -481,15 +487,14 @@ void main() {
     expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 
-
   // ── 4a: dialog appears ───────────────────────────────────────────────
   testWidgets('tapping delete icon shows confirmation dialog', (tester) async {
     setPhoneSize(tester);
     ignoreOverflowErrors(tester);
 
-    when(() => cubit.state).thenReturn(
-      SellerProductsState.success([fakeProduct]),
-    );
+    when(
+      () => cubit.state,
+    ).thenReturn(SellerProductsState.success([fakeProduct]));
 
     await tester.pumpWidget(buildCardOnly(fakeProduct));
     await tester.pumpAndSettle();
@@ -516,9 +521,9 @@ void main() {
     setPhoneSize(tester);
     ignoreOverflowErrors(tester);
 
-    when(() => cubit.state).thenReturn(
-      SellerProductsState.success([fakeProduct]),
-    );
+    when(
+      () => cubit.state,
+    ).thenReturn(SellerProductsState.success([fakeProduct]));
 
     await tester.pumpWidget(buildCardOnly(fakeProduct));
     await tester.pumpAndSettle();
@@ -544,9 +549,9 @@ void main() {
     setPhoneSize(tester);
     ignoreOverflowErrors(tester);
 
-    when(() => cubit.state).thenReturn(
-      SellerProductsState.success([fakeProduct]),
-    );
+    when(
+      () => cubit.state,
+    ).thenReturn(SellerProductsState.success([fakeProduct]));
     when(() => cubit.deleteProduct(any())).thenAnswer((_) async {});
 
     await tester.pumpWidget(buildCardOnly(fakeProduct));
@@ -596,9 +601,9 @@ void main() {
       v: 0,
     );
 
-    when(() => cubit.state).thenReturn(
-      SellerProductsState.success([fakeProduct, secondProduct]),
-    );
+    when(
+      () => cubit.state,
+    ).thenReturn(SellerProductsState.success([fakeProduct, secondProduct]));
     whenListen(
       cubit,
       Stream.fromIterable([

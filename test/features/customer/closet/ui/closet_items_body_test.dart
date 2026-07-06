@@ -13,8 +13,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockClosetCubit extends MockCubit<ClosetState>
-    implements ClosetCubit {}
+class MockClosetCubit extends MockCubit<ClosetState> implements ClosetCubit {}
 
 class MockSharedPrefHelper extends Mock implements SharedPrefHelper {}
 
@@ -24,7 +23,7 @@ final fakeItem = ClosetItemResponseModel(
   category: 'Tops',
   season: 'Summer',
   color: 'White',
-  imageUrl: 'https://via.placeholder.com/100',
+  imageUrl: null,
 );
 
 final fakeItem2 = ClosetItemResponseModel(
@@ -33,7 +32,7 @@ final fakeItem2 = ClosetItemResponseModel(
   category: 'Bottoms',
   season: 'All Season',
   color: 'Blue',
-  imageUrl: 'https://via.placeholder.com/100',
+  imageUrl: null,
 );
 
 void setPhoneSize(WidgetTester tester) {
@@ -48,7 +47,14 @@ void setPhoneSize(WidgetTester tester) {
 void ignoreOverflowErrors(WidgetTester tester) {
   final original = FlutterError.onError;
   FlutterError.onError = (details) {
-    if (details.exceptionAsString().contains('overflowed')) return;
+    final message = details.exceptionAsString();
+    if (message.contains('overflowed') ||
+        message.contains('NetworkImageLoadException') ||
+        message.contains('ImageCodecException') ||
+        message.contains('image codec') ||
+        message.contains('Image provider')) {
+      return;
+    }
     original?.call(details);
   };
   addTearDown(() => FlutterError.onError = original);
@@ -66,9 +72,9 @@ Widget buildBody(MockClosetCubit cubit) {
       ),
       routes: {
         'upload_closet_item': (_) =>
-        const Scaffold(body: Text('Add Item Page')),
+            const Scaffold(body: Text('Add Item Page')),
         'update_closet_item': (_) =>
-        const Scaffold(body: Text('Update Item Page')),
+            const Scaffold(body: Text('Update Item Page')),
       },
     ),
   );
@@ -81,13 +87,13 @@ void main() {
   setUp(() {
     mockPrefs = MockSharedPrefHelper();
     getIt.registerSingleton<SharedPrefHelper>(mockPrefs);
-    when(() => mockPrefs.getSecureData(any()))
-        .thenAnswer((_) async => null);
+    when(() => mockPrefs.getSecureData(any())).thenAnswer((_) async => null);
 
     mockCubit = MockClosetCubit();
     // viewClosetItems is called in initState — stub it to do nothing
-    when(() => mockCubit.viewClosetItems(category: any(named: 'category')))
-        .thenAnswer((_) async {});
+    when(
+      () => mockCubit.viewClosetItems(category: any(named: 'category')),
+    ).thenAnswer((_) async {});
     when(() => mockCubit.state).thenReturn(ClosetState.initial());
   });
 
@@ -108,26 +114,27 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('shows "No closet items found" when success with empty list',
-            (tester) async {
-          setPhoneSize(tester);
-          ignoreOverflowErrors(tester);
+    testWidgets('shows "No closet items found" when success with empty list', (
+      tester,
+    ) async {
+      setPhoneSize(tester);
+      ignoreOverflowErrors(tester);
 
-          when(() => mockCubit.state)
-              .thenReturn(ClosetState.success([]));
+      when(() => mockCubit.state).thenReturn(ClosetState.success([]));
 
-          await tester.pumpWidget(buildBody(mockCubit));
-          await tester.pump();
+      await tester.pumpWidget(buildBody(mockCubit));
+      await tester.pump();
 
-          expect(find.text('No closet items found'), findsOneWidget);
-        });
+      expect(find.text('No closet items found'), findsOneWidget);
+    });
 
     testWidgets('shows item names when success with items', (tester) async {
       setPhoneSize(tester);
       ignoreOverflowErrors(tester);
 
-      when(() => mockCubit.state)
-          .thenReturn(ClosetState.success([fakeItem, fakeItem2]));
+      when(
+        () => mockCubit.state,
+      ).thenReturn(ClosetState.success([fakeItem, fakeItem2]));
 
       await tester.pumpWidget(buildBody(mockCubit));
       await tester.pumpAndSettle();
@@ -140,8 +147,9 @@ void main() {
       setPhoneSize(tester);
       ignoreOverflowErrors(tester);
 
-      when(() => mockCubit.state)
-          .thenReturn(const ClosetState.fail('Network error'));
+      when(
+        () => mockCubit.state,
+      ).thenReturn(const ClosetState.fail('Network error'));
 
       await tester.pumpWidget(buildBody(mockCubit));
       await tester.pump();
@@ -154,8 +162,7 @@ void main() {
 
   group('Delete confirmation dialog', () {
     Future<void> pumpWithItem(WidgetTester tester) async {
-      when(() => mockCubit.state)
-          .thenReturn(ClosetState.success([fakeItem]));
+      when(() => mockCubit.state).thenReturn(ClosetState.success([fakeItem]));
 
       await tester.pumpWidget(buildBody(mockCubit));
       await tester.pump();
@@ -180,7 +187,7 @@ void main() {
       debugDumpApp();
       throw TestFailure(
         'Could not find any delete trigger widget. '
-            'Check the debugDumpApp output above to see what is rendered.',
+        'Check the debugDumpApp output above to see what is rendered.',
       );
     }
 
@@ -202,34 +209,37 @@ void main() {
       expect(find.text('Cancel'), findsOneWidget);
     });
 
-    testWidgets('tapping Cancel closes dialog without calling cubit',
-            (tester) async {
-          setPhoneSize(tester);
-          ignoreOverflowErrors(tester);
+    testWidgets('tapping Cancel closes dialog without calling cubit', (
+      tester,
+    ) async {
+      setPhoneSize(tester);
+      ignoreOverflowErrors(tester);
 
-          await pumpWithItem(tester);
+      await pumpWithItem(tester);
 
-          final trigger = await findDeleteTrigger(tester);
-          await tester.tapAt(tester.getCenter(trigger));
-          await tester.pump();
+      final trigger = await findDeleteTrigger(tester);
+      await tester.tapAt(tester.getCenter(trigger));
+      await tester.pump();
 
-          await tester.tap(find.text('Cancel'));
-          await tester.pumpAndSettle();
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
 
-          expect(
-            find.text('Are you sure you want to delete White T-Shirt?'),
-            findsNothing,
-          );
-          verifyNever(
-                  () => mockCubit.deleteClosetItem(itemId: any(named: 'itemId')));
-        });
+      expect(
+        find.text('Are you sure you want to delete White T-Shirt?'),
+        findsNothing,
+      );
+      verifyNever(
+        () => mockCubit.deleteClosetItem(itemId: any(named: 'itemId')),
+      );
+    });
 
     testWidgets('tapping Delete calls cubit.deleteClosetItem', (tester) async {
       setPhoneSize(tester);
       ignoreOverflowErrors(tester);
 
-      when(() => mockCubit.deleteClosetItem(itemId: any(named: 'itemId')))
-          .thenAnswer((_) async {});
+      when(
+        () => mockCubit.deleteClosetItem(itemId: any(named: 'itemId')),
+      ).thenAnswer((_) async {});
 
       await pumpWithItem(tester);
 
@@ -252,45 +262,49 @@ void main() {
   // ── Filter dropdowns ─────────────────────────────────────────────────────
 
   group('Filter dropdowns', () {
-    testWidgets('tapping category dropdown calls filterByCategory',
-            (tester) async {
-          setPhoneSize(tester);
-          ignoreOverflowErrors(tester);
+    testWidgets('tapping category dropdown calls filterByCategory', (
+      tester,
+    ) async {
+      setPhoneSize(tester);
+      ignoreOverflowErrors(tester);
 
-          when(() => mockCubit.state)
-              .thenReturn(ClosetState.success([fakeItem, fakeItem2]));
-          when(() => mockCubit.filterByCategory(any()))
-              .thenAnswer((_) {});
+      when(
+        () => mockCubit.state,
+      ).thenReturn(ClosetState.success([fakeItem, fakeItem2]));
+      when(() => mockCubit.filterByCategory(any())).thenAnswer((_) {});
 
-          await tester.pumpWidget(buildBody(mockCubit));
-          await tester.pumpAndSettle();
+      await tester.pumpWidget(buildBody(mockCubit));
+      await tester.pumpAndSettle();
 
-          await tester.tap(find.text('All').first);
-          await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(ElevatedButton, 'top'));
+      await tester.pumpAndSettle();
 
-          await tester.tap(find.text('Tops').last);
-          await tester.pumpAndSettle();
-
-          verify(() => mockCubit.filterByCategory('Tops')).called(1);
-        });
+      verify(() => mockCubit.filterByCategory('top')).called(1);
+    });
 
     testWidgets('tapping season dropdown calls filterBySeason', (tester) async {
       setPhoneSize(tester);
       ignoreOverflowErrors(tester);
 
-      when(() => mockCubit.state)
-          .thenReturn(ClosetState.success([fakeItem, fakeItem2]));
-      when(() => mockCubit.filterBySeason(any()))
-          .thenAnswer((_) {});
+      when(
+        () => mockCubit.state,
+      ).thenReturn(ClosetState.success([fakeItem, fakeItem2]));
+      when(() => mockCubit.filterBySeason(any())).thenAnswer((_) {});
+      when(() => mockCubit.filterByOccasion(any())).thenAnswer((_) {});
 
       await tester.pumpWidget(buildBody(mockCubit));
       await tester.pumpAndSettle();
 
-      // Open the season dropdown (second 'All')
-      await tester.tap(find.text('All').last);
+      await tester.tap(find.byIcon(Icons.filter_list));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(DropdownButtonFormField<String>).first);
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Winter').last);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Apply'));
       await tester.pumpAndSettle();
 
       verify(() => mockCubit.filterBySeason('Winter')).called(1);

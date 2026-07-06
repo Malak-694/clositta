@@ -1,6 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:chicora/core/di/dependency_injection.dart';
 import 'package:chicora/core/helper/shared_pref_helper.dart';
+import 'package:chicora/features/ecommerce_multi/data/models/product_models/product_page_ui_model.dart';
 import 'package:chicora/features/ecommerce_multi/data/models/product_models/product_response_model.dart';
 import 'package:chicora/features/ecommerce_multi/logic/view_product_logic/view_products_cubit.dart';
 import 'package:chicora/features/ecommerce_multi/logic/view_product_logic/view_products_state.dart';
@@ -11,7 +12,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockViewProductsCubit extends MockCubit<ViewProductsState>
+class MockViewProductsCubit
+    extends MockCubit<ViewProductsState<ProductPageData>>
     implements ViewProductsCubit {}
 
 class MockSharedPrefHelper extends Mock implements SharedPrefHelper {}
@@ -28,7 +30,12 @@ void setPhoneSize(WidgetTester tester) {
 void ignoreOverflowErrors(WidgetTester tester) {
   final originalOnError = FlutterError.onError;
   FlutterError.onError = (details) {
-    if (details.exceptionAsString().contains('overflowed')) return;
+    final message = details.exceptionAsString();
+    if (message.contains('overflowed') ||
+        message.contains('NetworkImageLoadException') ||
+        message.contains('image codec')) {
+      return;
+    }
     originalOnError?.call(details);
   };
   addTearDown(() => FlutterError.onError = originalOnError);
@@ -37,7 +44,6 @@ void ignoreOverflowErrors(WidgetTester tester) {
 void main() {
   late MockViewProductsCubit cubit;
   late MockSharedPrefHelper mockPrefs;
-
   final fakeProduct = ProductModelBuyer(
     pId: 'product-1',
     name: 'Blue Cotton Dress',
@@ -46,7 +52,7 @@ void main() {
     stock: 15,
     category: 'Dress',
     type: 'Clothes',
-    imageUrl: 'https://via.placeholder.com/100',
+    imageUrl: null,
     imageFileId: 'file-1',
     averageRating: 4.5,
     totalRatings: 10,
@@ -54,6 +60,13 @@ void main() {
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-02T00:00:00Z',
     iV: 0,
+  );
+
+  // success() now wraps a ProductPageData, not a bare List<ProductModelBuyer>.
+  final fakePageData = ProductPageData(
+    products: [fakeProduct],
+    hasMore: false,
+    isLoadingMore: false,
   );
 
   setUp(() {
@@ -67,7 +80,10 @@ void main() {
       () => mockPrefs.getSecureData(any()),
     ).thenAnswer((_) async => 'token-123');
     when(
-      () => cubit.getProductsBuyer(token: any(named: 'token')),
+      () => cubit.getProductsBuyer(
+        token: any(named: 'token'),
+        type: any(named: 'type'),
+      ),
     ).thenAnswer((_) async {});
     when(
       () => cubit.searchByText(query: any(named: 'query')),
@@ -96,7 +112,9 @@ void main() {
     setPhoneSize(tester);
     ignoreOverflowErrors(tester);
 
-    when(() => cubit.state).thenReturn(const ViewProductsState.loading());
+    when(
+      () => cubit.state,
+    ).thenReturn(const ViewProductsState<ProductPageData>.loading());
 
     await tester.pumpWidget(buildScreen());
     await tester.pump();
@@ -110,13 +128,13 @@ void main() {
 
     when(
       () => cubit.state,
-    ).thenReturn(ViewProductsState.success([fakeProduct]));
+    ).thenReturn(ViewProductsState<ProductPageData>.success(fakePageData));
     whenListen(
       cubit,
       Stream.fromIterable([
-        ViewProductsState.success([fakeProduct]),
+        ViewProductsState<ProductPageData>.success(fakePageData),
       ]),
-      initialState: ViewProductsState.success([fakeProduct]),
+      initialState: ViewProductsState<ProductPageData>.success(fakePageData),
     );
 
     await tester.pumpWidget(buildScreen());
@@ -129,9 +147,9 @@ void main() {
     setPhoneSize(tester);
     ignoreOverflowErrors(tester);
 
-    when(
-      () => cubit.state,
-    ).thenReturn(const ViewProductsState.fail('Network error'));
+    when(() => cubit.state).thenReturn(
+      const ViewProductsState<ProductPageData>.fail('Network error'),
+    );
 
     await tester.pumpWidget(buildScreen());
     await tester.pump();
@@ -148,13 +166,13 @@ void main() {
 
     when(
       () => cubit.state,
-    ).thenReturn(ViewProductsState.success([fakeProduct]));
+    ).thenReturn(ViewProductsState<ProductPageData>.success(fakePageData));
     whenListen(
       cubit,
       Stream.fromIterable([
-        ViewProductsState.success([fakeProduct]),
+        ViewProductsState<ProductPageData>.success(fakePageData),
       ]),
-      initialState: ViewProductsState.success([fakeProduct]),
+      initialState: ViewProductsState<ProductPageData>.success(fakePageData),
     );
 
     await tester.pumpWidget(buildScreen());

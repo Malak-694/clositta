@@ -13,13 +13,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockClosetRepo extends Mock implements ClosetRepo {}
+
 class MockSharedPrefHelper extends Mock implements SharedPrefHelper {}
 
 final fakeItem = ClosetItemResponseModel(
   id: 'item-1',
   name: 'White T-Shirt',
   category: 'top',
-  season: 'Summer',
+  season: 'summer',
   color: 'White',
   imageUrl: 'https://via.placeholder.com/100',
 );
@@ -28,7 +29,7 @@ final fakeItem2 = ClosetItemResponseModel(
   id: 'item-2',
   name: 'Blue Jeans',
   category: 'bottom',
-  season: 'Winter',
+  season: 'winter',
   color: 'Blue',
   imageUrl: 'https://via.placeholder.com/100',
 );
@@ -50,26 +51,27 @@ void main() {
     getIt.reset();
   });
 
-
   group('viewClosetItems()', () {
     blocTest<ClosetCubit, ClosetState>(
       'emits [loading, success] when token exists and API returns items',
       build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => 'fake-token');
-        when(() => mockRepo.viewClosetItems(
-          token: any(named: 'token'),
-          category: any(named: 'category'),
-          season: any(named: 'season'),
-        )).thenAnswer(
-                (_) async => ApiResult.success([fakeItem, fakeItem2]));
+        when(
+          () => mockPrefs.getSecureData(any()),
+        ).thenAnswer((_) async => 'fake-token');
+        when(
+          () => mockRepo.viewClosetItems(
+            token: any(named: 'token'),
+            category: any(named: 'category'),
+            season: any(named: 'season'),
+          ),
+        ).thenAnswer((_) async => ApiResult.success([fakeItem, fakeItem2]));
         return cubit;
       },
       act: (c) => c.viewClosetItems(),
       expect: () => [
         ClosetState.loading(),
         isA<ClosetState>().having(
-              (s) => s.maybeWhen(
+          (s) => s.maybeWhen(
             success: (data) => (data as List).length,
             orElse: () => -1,
           ),
@@ -82,8 +84,9 @@ void main() {
     blocTest<ClosetCubit, ClosetState>(
       'emits [loading, fail] when token is null',
       build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockPrefs.getSecureData(any()),
+        ).thenAnswer((_) async => null);
         return cubit;
       },
       act: (c) => c.viewClosetItems(),
@@ -96,14 +99,16 @@ void main() {
     blocTest<ClosetCubit, ClosetState>(
       'emits [loading, fail] when API returns failure',
       build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => 'fake-token');
-        when(() => mockRepo.viewClosetItems(
-          token: any(named: 'token'),
-          category: any(named: 'category'),
-          season: any(named: 'season'),
-        )).thenAnswer(
-                (_) async => const ApiResult.failure('Server error'));
+        when(
+          () => mockPrefs.getSecureData(any()),
+        ).thenAnswer((_) async => 'fake-token');
+        when(
+          () => mockRepo.viewClosetItems(
+            token: any(named: 'token'),
+            category: any(named: 'category'),
+            season: any(named: 'season'),
+          ),
+        ).thenAnswer((_) async => const ApiResult.failure('Server error'));
         return cubit;
       },
       act: (c) => c.viewClosetItems(),
@@ -116,20 +121,23 @@ void main() {
     blocTest<ClosetCubit, ClosetState>(
       'emits [loading, fail] when repo throws exception',
       build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => 'fake-token');
-        when(() => mockRepo.viewClosetItems(
-          token: any(named: 'token'),
-          category: any(named: 'category'),
-          season: any(named: 'season'),
-        )).thenThrow(Exception('Network error'));
+        when(
+          () => mockPrefs.getSecureData(any()),
+        ).thenAnswer((_) async => 'fake-token');
+        when(
+          () => mockRepo.viewClosetItems(
+            token: any(named: 'token'),
+            category: any(named: 'category'),
+            season: any(named: 'season'),
+          ),
+        ).thenThrow(Exception('Network error'));
         return cubit;
       },
       act: (c) => c.viewClosetItems(),
       expect: () => [
         ClosetState.loading(),
         isA<ClosetState>().having(
-              (s) => s.maybeWhen(fail: (e) => e, orElse: () => null),
+          (s) => s.maybeWhen(fail: (e) => e, orElse: () => null),
           'error',
           isNotNull,
         ),
@@ -137,22 +145,23 @@ void main() {
     );
   });
 
-
   group('filterByCategory()', () {
-    test('filters allItems by category and emits success with filtered list',
-            () {
-          cubit.allItems = [fakeItem, fakeItem2];
+    test(
+      'filters allItems by category and emits success with filtered list',
+      () {
+        cubit.allItems = [fakeItem, fakeItem2];
 
-          cubit.filterByCategory('top');
+        cubit.filterByCategory('top');
 
-          expect(
-            cubit.state.maybeWhen(
-              success: (data) => (data as List).length,
-              orElse: () => -1,
-            ),
-            1,
-          );
-        });
+        expect(
+          cubit.state.maybeWhen(
+            success: (data) => (data as List).length,
+            orElse: () => -1,
+          ),
+          1,
+        );
+      },
+    );
 
     test('emits all items when category is All', () {
       cubit.allItems = [fakeItem, fakeItem2];
@@ -168,7 +177,6 @@ void main() {
       );
     });
   });
-
 
   group('filterBySeason()', () {
     test('filters allItems by season and emits success with filtered list', () {
@@ -186,37 +194,44 @@ void main() {
     });
   });
 
-
   group('addClosetItem()', () {
     void callAdd(ClosetCubit c) => c.addClosetItem(
       name: 'White T-Shirt',
       category: 'Tops',
       season: 'Summer',
       color: 'White',
-      imagePath: '/fake/image.jpg', occassion: 'formal',
+      imagePath: '/fake/image.jpg',
+      occassion: 'formal',
     );
 
     blocTest<ClosetCubit, ClosetState>(
       'emits [loading, success] when token exists and API succeeds',
       build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => 'fake-token');
+        when(
+          () => mockPrefs.getSecureData(any()),
+        ).thenAnswer((_) async => 'fake-token');
 
-        when(() => mockRepo.addClosetItem(
-          token: any(named: 'token'),
-          name: any(named: 'name'),
-          category: any(named: 'category'),
-          season: any(named: 'season'),
-          color: any(named: 'color'),
-          imagePath: any(named: 'imagePath'), occassion: 'formal',
-        )).thenAnswer(
-                (_) async => ApiResult.success(MessageModel(message: 'added')));
+        when(
+          () => mockRepo.addClosetItem(
+            token: any(named: 'token'),
+            name: any(named: 'name'),
+            category: any(named: 'category'),
+            season: any(named: 'season'),
+            color: any(named: 'color'),
+            imagePath: any(named: 'imagePath'),
+            occassion: 'formal',
+          ),
+        ).thenAnswer(
+          (_) async => ApiResult.success(MessageModel(message: 'added')),
+        );
 
-        when(() => mockRepo.viewClosetItems(
-          token: any(named: 'token'),
-          category: any(named: 'category'),
-          season: any(named: 'season'),
-        )).thenAnswer((_) async => ApiResult.success([fakeItem]));
+        when(
+          () => mockRepo.viewClosetItems(
+            token: any(named: 'token'),
+            category: any(named: 'category'),
+            season: any(named: 'season'),
+          ),
+        ).thenAnswer((_) async => ApiResult.success([fakeItem]));
         return cubit;
       },
 
@@ -225,29 +240,32 @@ void main() {
       expect: () => [
         ClosetState.loading(),
         isA<ClosetState>().having(
-              (s) => s.maybeWhen(success: (_) => true, orElse: () => false),
+          (s) => s.maybeWhen(success: (_) => true, orElse: () => false),
           'is success',
           true,
         ),
       ],
       verify: (_) {
-        verify(() => mockRepo.addClosetItem(
-          token: 'fake-token',
-          name: 'White T-Shirt',
-          category: 'Tops',
-          season: 'Summer',
-          color: 'White',
-          imagePath: '/fake/image.jpg',
-          occassion: 'formal'
-        )).called(1);
+        verify(
+          () => mockRepo.addClosetItem(
+            token: 'fake-token',
+            name: 'White T-Shirt',
+            category: 'Tops',
+            season: 'Summer',
+            color: 'White',
+            imagePath: '/fake/image.jpg',
+            occassion: 'formal',
+          ),
+        ).called(1);
       },
     );
 
     blocTest<ClosetCubit, ClosetState>(
       'emits [loading, fail] when token is null',
       build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockPrefs.getSecureData(any()),
+        ).thenAnswer((_) async => null);
         return cubit;
       },
       act: callAdd,
@@ -260,18 +278,20 @@ void main() {
     blocTest<ClosetCubit, ClosetState>(
       'emits [loading, fail] when API returns failure',
       build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => 'fake-token');
-        when(() => mockRepo.addClosetItem(
-          token: any(named: 'token'),
-          name: any(named: 'name'),
-          category: any(named: 'category'),
-          season: any(named: 'season'),
-          color: any(named: 'color'),
-          imagePath: any(named: 'imagePath'),
-          occassion: 'formal'
-        )).thenAnswer(
-                (_) async => const ApiResult.failure('Upload failed'));
+        when(
+          () => mockPrefs.getSecureData(any()),
+        ).thenAnswer((_) async => 'fake-token');
+        when(
+          () => mockRepo.addClosetItem(
+            token: any(named: 'token'),
+            name: any(named: 'name'),
+            category: any(named: 'category'),
+            season: any(named: 'season'),
+            color: any(named: 'color'),
+            imagePath: any(named: 'imagePath'),
+            occassion: 'formal',
+          ),
+        ).thenAnswer((_) async => const ApiResult.failure('Upload failed'));
         return cubit;
       },
       act: callAdd,
@@ -282,19 +302,29 @@ void main() {
     );
   });
 
-
   group('deleteClosetItem()', () {
     blocTest<ClosetCubit, ClosetState>(
       'removes item from allItems and emits updated success list',
       build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => 'fake-token');
+        when(
+          () => mockPrefs.getSecureData(any()),
+        ).thenAnswer((_) async => 'fake-token');
 
-        when(() => mockRepo.deleteClosetItem(
-          token: any(named: 'token'),
-          itemId: any(named: 'itemId'),
-        )).thenAnswer(
-                (_) async => ApiResult.success(MessageModel(message: 'ok')));
+        when(
+          () => mockRepo.deleteClosetItem(
+            token: any(named: 'token'),
+            itemId: any(named: 'itemId'),
+          ),
+        ).thenAnswer(
+          (_) async => ApiResult.success(MessageModel(message: 'ok')),
+        );
+        when(
+          () => mockRepo.viewClosetItems(
+            token: any(named: 'token'),
+            category: any(named: 'category'),
+            season: any(named: 'season'),
+          ),
+        ).thenAnswer((_) async => ApiResult.success([fakeItem2]));
         return cubit;
       },
 
@@ -307,7 +337,7 @@ void main() {
 
       expect: () => [
         isA<ClosetState>().having(
-              (s) => s.maybeWhen(
+          (s) => s.maybeWhen(
             success: (data) => (data as List).length,
             orElse: () => -1,
           ),
@@ -317,27 +347,25 @@ void main() {
       ],
 
       verify: (_) {
-        verify(() => mockRepo.deleteClosetItem(
-          token: 'fake-token',
-          itemId: 'item-1',
-        )).called(1);
+        verify(
+          () =>
+              mockRepo.deleteClosetItem(token: 'fake-token', itemId: 'item-1'),
+        ).called(1);
       },
     );
 
     blocTest<ClosetCubit, ClosetState>(
       'emits fail when token is null',
       build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockPrefs.getSecureData(any()),
+        ).thenAnswer((_) async => null);
         return cubit;
       },
       act: (c) => c.deleteClosetItem(itemId: 'item-1'),
-      expect: () => [
-        const ClosetState.fail('Authentication token not found'),
-      ],
+      expect: () => [const ClosetState.fail('Authentication token not found')],
     );
   });
-
 
   group('updateClosetItem()', () {
     void callUpdate(ClosetCubit c) => c.updateClosetItem(
@@ -347,55 +375,69 @@ void main() {
       season: 'Winter',
       color: 'Red',
       imagePath: null,
-      occassion: 'formal'
+      occassion: 'formal',
     );
 
     blocTest<ClosetCubit, ClosetState>(
       'emits [loading, success] when token exists and API succeeds',
       build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => 'fake-token');
-        when(() => mockRepo.updateClosetItem(
-          token: any(named: 'token'),
-          itemId: any(named: 'itemId'),
-          name: any(named: 'name'),
-          category: any(named: 'category'),
-          season: any(named: 'season'),
-          color: any(named: 'color'),
-          imagePath: any(named: 'imagePath'),
-          occassion: 'foraml'
-        )).thenAnswer(
-                (_) async => ApiResult.success(MessageModel(message: 'ok')));
+        when(
+          () => mockPrefs.getSecureData(any()),
+        ).thenAnswer((_) async => 'fake-token');
+        when(
+          () => mockRepo.updateClosetItem(
+            token: any(named: 'token'),
+            itemId: any(named: 'itemId'),
+            name: any(named: 'name'),
+            category: any(named: 'category'),
+            season: any(named: 'season'),
+            color: any(named: 'color'),
+            imagePath: any(named: 'imagePath'),
+            occassion: any(named: 'occassion'),
+          ),
+        ).thenAnswer(
+          (_) async => ApiResult.success(MessageModel(message: 'ok')),
+        );
+        when(
+          () => mockRepo.viewClosetItems(
+            token: any(named: 'token'),
+            category: any(named: 'category'),
+            season: any(named: 'season'),
+          ),
+        ).thenAnswer((_) async => ApiResult.success([fakeItem]));
         return cubit;
       },
       act: callUpdate,
       expect: () => [
         ClosetState.loading(),
         isA<ClosetState>().having(
-              (s) => s.maybeWhen(success: (_) => true, orElse: () => false),
+          (s) => s.maybeWhen(success: (_) => true, orElse: () => false),
           'is success',
           true,
         ),
       ],
       verify: (_) {
-        verify(() => mockRepo.updateClosetItem(
-          token: 'fake-token',
-          itemId: 'item-1',
-          name: 'Updated Shirt',
-          category: 'Tops',
-          season: 'Winter',
-          color: 'Red',
-          imagePath: null,
-          occassion: 'formal'
-        )).called(1);
+        verify(
+          () => mockRepo.updateClosetItem(
+            token: 'fake-token',
+            itemId: 'item-1',
+            name: 'Updated Shirt',
+            category: 'tops',
+            season: 'winter',
+            color: 'Red',
+            imagePath: null,
+            occassion: 'formal',
+          ),
+        ).called(1);
       },
     );
 
     blocTest<ClosetCubit, ClosetState>(
       'emits [loading, fail] when token is null',
       build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockPrefs.getSecureData(any()),
+        ).thenAnswer((_) async => null);
         return cubit;
       },
       act: callUpdate,
@@ -408,19 +450,21 @@ void main() {
     blocTest<ClosetCubit, ClosetState>(
       'emits [loading, fail] when API returns failure',
       build: () {
-        when(() => mockPrefs.getSecureData(any()))
-            .thenAnswer((_) async => 'fake-token');
-        when(() => mockRepo.updateClosetItem(
-          token: any(named: 'token'),
-          itemId: any(named: 'itemId'),
-          name: any(named: 'name'),
-          category: any(named: 'category'),
-          season: any(named: 'season'),
-          color: any(named: 'color'),
-          imagePath: any(named: 'imagePath'),
-          occassion: 'formal'
-        )).thenAnswer(
-                (_) async => const ApiResult.failure('Update failed'));
+        when(
+          () => mockPrefs.getSecureData(any()),
+        ).thenAnswer((_) async => 'fake-token');
+        when(
+          () => mockRepo.updateClosetItem(
+            token: any(named: 'token'),
+            itemId: any(named: 'itemId'),
+            name: any(named: 'name'),
+            category: any(named: 'category'),
+            season: any(named: 'season'),
+            color: any(named: 'color'),
+            imagePath: any(named: 'imagePath'),
+            occassion: 'formal',
+          ),
+        ).thenAnswer((_) async => const ApiResult.failure('Update failed'));
         return cubit;
       },
       act: callUpdate,

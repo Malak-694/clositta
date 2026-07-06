@@ -1,10 +1,17 @@
+import 'dart:io';
+
 import 'package:chicora/core/constants/colors.dart';
+import 'package:chicora/core/di/dependency_injection.dart';
+import 'package:chicora/core/networking/api_result.dart';
+import 'package:chicora/features/ecommerce_multi/data/repo/product_search_repo.dart';
+import 'package:chicora/features/ecommerce_multi/data/repo/view_products_repo.dart';
 import 'package:chicora/features/seller/products/data/models/product_model_response.dart';
 import 'package:chicora/features/seller/products/logic/cubit/seller_products_cubit.dart';
 import 'package:chicora/features/seller/products/logic/cubit/seller_products_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../../../core/constants/constants.dart';
 import '../../../../../core/constants/style.dart';
@@ -12,6 +19,7 @@ import '../../../../../core/widgets/custom_category_selector.dart';
 import '../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../core/widgets/custom_search_bar.dart';
 import 'product_list_widget.dart';
+
 
 class SellerProductScreenBody extends StatefulWidget {
   const SellerProductScreenBody({super.key});
@@ -34,12 +42,19 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
     'Out of Stock',
   ];
 
+  // ---- image search additions ----
+  final ImagePicker _picker = ImagePicker();
+  final ProductSearchRepo _searchRepo = getIt<ProductSearchRepo>(); // adjust to your DI
+  String? _searchImagePath;
+  List<ProductModel>? _imageSearchResults; // null => no active image search
+  bool _isSearchingByImage = false;
+  // ---------------------------------
+
   @override
   void initState() {
     super.initState();
     searchController.addListener(_performSearch);
 
-    // ✅ Load products as soon as this screen is built.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         context.read<SellerProductsCubit>().getProducts();
@@ -61,9 +76,12 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
 
   void _performSearch() {
     final query = searchController.text.toLowerCase();
+    // If there's an active image search, filter within its results;
+    // otherwise filter within all products.
+    final source = _imageSearchResults ?? _allProducts;
 
     setState(() {
-      _filteredProducts = _allProducts.where((product) {
+      _filteredProducts = source.where((product) {
         final stockStatus = _getStatus(product.stock);
         final stockMatch =
             _selectedStockLevel == 'All' || stockStatus == _selectedStockLevel;
@@ -79,13 +97,64 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
     });
   }
 
+  Future<void> _pickAndSearchByImage() async {
+    final XFile? picked = await _picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85,
+    );
+    if (picked == null) return;
+
+    setState(() {
+      _searchImagePath = picked.path;
+      _isSearchingByImage = true;
+    });
+
+    final result = await _searchRepo.searchByImage(imagePath: picked.path);
+
+    result.when(
+      success: (matches) {
+        // Preserve the relevance order returned by the search API,
+        // but only keep products that exist in this seller's own list.
+        final productsById = {for (final p in _allProducts) p.id: p};
+
+        final matched = matches
+            .map((m) => m.product?.pId)
+            .whereType<String>()
+            .map((id) => productsById[id])
+            .whereType<ProductModel>()
+            .toList();
+
+        setState(() {
+          _imageSearchResults = matched;
+          _isSearchingByImage = false;
+        });
+        _performSearch();
+      },
+      failure: (error) {
+        setState(() => _isSearchingByImage = false);
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Image search failed: $error')));
+        }
+      },
+    );
+  }
+
+  void _clearImageSearch() {
+    setState(() {
+      _searchImagePath = null;
+      _imageSearchResults = null;
+    });
+    _performSearch();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<SellerProductsCubit, SellerProductsState>(
       listener: (context, state) {
         state.whenOrNull(
           success: (data) {
-            // ✅ Guard the cast instead of assuming it's always correct.
             if (data is List<ProductModel>) {
               setState(() {
                 _allProducts = data;
@@ -124,7 +193,24 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
                 onSearch: (value) {
                   _performSearch();
                 },
+                onImageSearch: _pickAndSearchByImage,
+                searchImagePath: _searchImagePath,
+                onClearSearchImage: _clearImageSearch,
               ),
+              if (_isSearchingByImage) ...[
+                SizedBox(height: 6.h),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 14.w,
+                      height: 14.w,
+                      child: const CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                    SizedBox(width: 6.w),
+                    Text("Searching by image...", style: AppStyle.smallBlack),
+                  ],
+                ),
+              ],
               SizedBox(height: 10.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -149,8 +235,6 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
                   CustomElevatedButton(
                     value: "Add",
                     onPressed: () async {
-                      // ✅ await + explicit refresh as a safety net,
-                      // in case the cubit isn't shared across routes.
                       await Navigator.pushNamed(context, "added_product_item");
                       if (context.mounted) {
                         context.read<SellerProductsCubit>().getProducts();

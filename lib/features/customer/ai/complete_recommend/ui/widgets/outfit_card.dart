@@ -55,9 +55,9 @@ class OutfitCard extends StatelessWidget {
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.light, // shadow color
-                      spreadRadius: 2,                       // how much the shadow spreads
-                      blurRadius: 4,                         // how blurry the edges are
-                      offset: Offset(0, 4),                  // horizontal, vertical shift
+                      spreadRadius: 2,
+                      blurRadius: 4,
+                      offset: Offset(0, 4),
                     ),
                   ],
                 ),

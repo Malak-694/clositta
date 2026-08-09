@@ -4,7 +4,7 @@ part 'rating_model_response.g.dart';
 
 @JsonSerializable()
 class RatingModel {
-  @JsonKey(name: '_id') // ← Add this annotation
+  @JsonKey(name: '_id')
   final String id;
   final User user;
   final int rating;

@@ -6,8 +6,8 @@ part 'conversation_model.g.dart';
 @JsonSerializable()
 class ConversationModel {
   final LastMessageModel? lastMessage;
-  final int?              unreadCount;
-  final UserModel?        otherUser;
+  final int? unreadCount;
+  final UserModel? otherUser;
   final String? lastMessageType;
 
   ConversationModel({
@@ -17,8 +17,8 @@ class ConversationModel {
     this.lastMessageType,
   });
 
-  String?   get lastMessageContent => lastMessage?.content;
-  DateTime? get lastMessageAt      => lastMessage?.createdAt;
+  String? get lastMessageContent => lastMessage?.content;
+  DateTime? get lastMessageAt => lastMessage?.createdAt;
 
   factory ConversationModel.fromJson(Map<String, dynamic> json) =>
       _$ConversationModelFromJson(json);
@@ -28,10 +28,10 @@ class ConversationModel {
 
 @JsonSerializable()
 class LastMessageModel {
-  final String?   content;
-  final String?   sender;
-  final String?   receiver;
-  final bool?     isRead;
+  final String? content;
+  final String? sender;
+  final String? receiver;
+  final bool? isRead;
   @JsonKey(name: 'createdAt')
   final DateTime? createdAt;
 

@@ -33,15 +33,15 @@ class SocketService {
   void init() {
     _closeControllers();
     _onMessageReceived = StreamController.broadcast();
-    _onMessageSent     = StreamController.broadcast();
-    _onMessageEdited   = StreamController.broadcast();
-    _onMessageDeleted  = StreamController.broadcast();
-    _onTyping          = StreamController.broadcast();
-    _onStopTyping      = StreamController.broadcast();
-    _onError           = StreamController.broadcast();
-    _onUserOnline      = StreamController.broadcast();
-    _onUserOffline     = StreamController.broadcast();
-    _onConnected       = StreamController.broadcast();
+    _onMessageSent = StreamController.broadcast();
+    _onMessageEdited = StreamController.broadcast();
+    _onMessageDeleted = StreamController.broadcast();
+    _onTyping = StreamController.broadcast();
+    _onStopTyping = StreamController.broadcast();
+    _onError = StreamController.broadcast();
+    _onUserOnline = StreamController.broadcast();
+    _onUserOffline = StreamController.broadcast();
+    _onConnected = StreamController.broadcast();
   }
 
   void connect(String token, String receiverId) {
@@ -67,7 +67,6 @@ class SocketService {
     _socket!.connect();
 
     _socket!.onConnect((_) {
-      print('Socket connected: ${_socket?.id}');
       _socket!.emit('joinConversation', {'receiverId': receiverId});
       if (!_onConnected.isClosed) _onConnected.add(true);
     });
@@ -77,12 +76,10 @@ class SocketService {
     });
 
     _socket!.onConnectError((err) {
-      print('Connect error: $err');
       if (!_onError.isClosed) _onError.add(err.toString());
     });
 
     _socket!.on('connect_error', (data) {
-      print('Server rejected: $data');
       if (!_onError.isClosed) _onError.add(data.toString());
     });
 

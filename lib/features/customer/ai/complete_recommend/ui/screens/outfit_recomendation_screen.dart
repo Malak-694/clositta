@@ -12,8 +12,8 @@ import '../../../../../../core/router/route_names.dart';
 import '../../../../../ecommerce_multi/data/models/product_models/product_response_model.dart';
 import '../../../../../ecommerce_multi/logic/cart_cubit/cart_cubit.dart';
 import '../../data/models/daily_outfit_response_model.dart';
-import '../../logic/cubit/outfit_recommendation_cubit.dart';
-import '../../logic/cubit/outfit_recommendation_state.dart';
+import '../../logic/outfit_recommendation_cubit/outfit_recommendation_cubit.dart';
+import '../../logic/outfit_recommendation_cubit/outfit_recommendation_state.dart';
 import '../widgets/outfit_card.dart';
 
 class OutfitRecomendationScreen extends StatefulWidget {

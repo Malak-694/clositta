@@ -7,7 +7,5 @@ class PlaceOrderSuccess {
 
   final String? message;
   final String? orderId;
-
-  /// When non-null, open in browser / external WebView (Paymob iframe URL).
   final String? paymentIframeUrl;
 }

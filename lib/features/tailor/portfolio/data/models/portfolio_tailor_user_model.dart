@@ -3,7 +3,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'portfolio_tailor_user_model.g.dart';
 
-/// Populated tailor summary on portfolio payloads (browse, detail, login profile fields overlap).
 @JsonSerializable(explicitToJson: true)
 class PortfolioTailorUserModel {
   @JsonKey(name: '_id')

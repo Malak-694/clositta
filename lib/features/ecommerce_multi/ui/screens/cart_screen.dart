@@ -25,7 +25,6 @@ class CartScreenBody extends StatefulWidget {
 }
 
 class _CartScreenBodyState extends State<CartScreenBody> {
-  // Keeps track of item IDs that are currently updating quantity/removing
   final Set<String> _updatingItems = {};
   List<Item> _cachedCartItems = [];
   List<CartSubOrder> _cachedSubOrders = [];
@@ -65,7 +64,6 @@ class _CartScreenBodyState extends State<CartScreenBody> {
     return BlocConsumer<CartCubit, CartState>(
       listener: (context, state) {
         state.whenOrNull(
-          // Cache items on success so they survive Loading state
           success: (data) {
             if (data is CartResponseModel) {
               setState(() {
@@ -196,9 +194,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                                           onIncrement: () {
                                             final pId = item.product?.pId;
                                             if (pId != null) {
-                                              context
-                                                  .read<CartCubit>()
-                                                  .updateCart(
+                                              context.read<CartCubit>().updateCart(
                                                     pId,
                                                     (item.quantity ?? 1) + 1,
                                                   );
@@ -208,9 +204,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                                             final pId = item.product?.pId;
                                             if (pId != null &&
                                                 (item.quantity ?? 1) > 1) {
-                                              context
-                                                  .read<CartCubit>()
-                                                  .updateCart(
+                                              context.read<CartCubit>().updateCart(
                                                     pId,
                                                     (item.quantity ?? 1) - 1,
                                                   );

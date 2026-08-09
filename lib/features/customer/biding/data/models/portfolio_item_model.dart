@@ -46,7 +46,6 @@ class PortfolioItem {
     'category': category,
   };
 }
-//----maybe we need to remove
 @JsonSerializable()
 class TailorInfo {
   @JsonKey(name: '_id')

@@ -392,7 +392,7 @@ class AppRouter {
       case RouteNames.product_details_screen:
         final args = settings.arguments as Map<String, dynamic>? ?? {};
         final product = args['product'];
-        final cartCubit = args['cartCubit'] as CartCubit?; // ✅ extract it
+        final cartCubit = args['cartCubit'] as CartCubit?;
 
         if (product == null || cartCubit == null) {
           return MaterialPageRoute(

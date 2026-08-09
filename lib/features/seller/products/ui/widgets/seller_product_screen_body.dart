@@ -44,9 +44,9 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
 
   // ---- image search additions ----
   final ImagePicker _picker = ImagePicker();
-  final ProductSearchRepo _searchRepo = getIt<ProductSearchRepo>(); // adjust to your DI
+  final ProductSearchRepo _searchRepo = getIt<ProductSearchRepo>();
   String? _searchImagePath;
-  List<ProductModel>? _imageSearchResults; // null => no active image search
+  List<ProductModel>? _imageSearchResults;
   bool _isSearchingByImage = false;
   // ---------------------------------
 
@@ -76,8 +76,6 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
 
   void _performSearch() {
     final query = searchController.text.toLowerCase();
-    // If there's an active image search, filter within its results;
-    // otherwise filter within all products.
     final source = _imageSearchResults ?? _allProducts;
 
     setState(() {
@@ -113,8 +111,6 @@ class _SellerProductScreenBodyState extends State<SellerProductScreenBody> {
 
     result.when(
       success: (matches) {
-        // Preserve the relevance order returned by the search API,
-        // but only keep products that exist in this seller's own list.
         final productsById = {for (final p in _allProducts) p.id: p};
 
         final matched = matches

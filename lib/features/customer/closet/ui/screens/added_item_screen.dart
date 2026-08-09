@@ -243,7 +243,7 @@ class _AddedClosetItemScreenState extends State<AddedClosetItemScreen> {
         season: _selectedSeason ?? seasons.first,
         color: _colorController.text.trim(),
         occassion : _selectedOccasion ?? occasions.first,
-        imagePath: _selectedImagePath!,
+        imagePath: _selectedImagePath,
       );
     } else {
       context.read<ClosetCubit>().addClosetItem(

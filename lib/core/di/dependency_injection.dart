@@ -38,7 +38,7 @@ import '../../features/chat/logic/conversations_cubit/conversations_cubit.dart';
 import '../../features/customer/ai/complete_recommend/data/repo/complete_outfit_repo.dart';
 import '../../features/customer/ai/complete_recommend/data/repo/outfit_recommendation_repo.dart';
 import '../../features/customer/ai/complete_recommend/logic/complete_outfit_cubit/complete_outfit_cubit.dart';
-import '../../features/customer/ai/complete_recommend/logic/cubit/outfit_recommendation_cubit.dart';
+import '../../features/customer/ai/complete_recommend/logic/outfit_recommendation_cubit/outfit_recommendation_cubit.dart';
 import '../../features/customer/biding/data/repo/bid_repo.dart';
 import '../../features/customer/biding/data/repo/portfolio_repo.dart';
 import '../../features/customer/biding/logic/cubit/customer_offer_cubit/customer_offers_cubit.dart';

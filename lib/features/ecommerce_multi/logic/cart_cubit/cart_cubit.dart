@@ -14,8 +14,6 @@ import '../../data/repo/cart_repo.dart';
 class CartCubit extends Cubit<CartState> {
   final SharedPrefHelper _prefs = getIt<SharedPrefHelper>();
   final CartRepo cartRepo;
-
-  // Holds the last known good cart so we can do optimistic updates.
   CartResponseModel? _cachedCart;
 
   CartCubit({required this.cartRepo}) : super(CartState.initial());
@@ -71,7 +69,6 @@ class CartCubit extends Cubit<CartState> {
 
   Future<void> updateCart(String productId, int quantity) async {
     // 1. Emit updateQuantityLoading so only the tapped item shows a spinner —
-    //    the rest of the list stays fully interactive.
     emit(CartState.updateQuantityLoading(productId));
 
     // 2. Optimistically patch the cached cart so the counter updates instantly
@@ -102,7 +99,6 @@ class CartCubit extends Cubit<CartState> {
           emit(CartState.success(data));
         },
         failure: (error) {
-          // Roll back the optimistic update to the server's last known state.
           if (_cachedCart != null) emit(CartState.success(_cachedCart!));
           emit(CartState.fail(error));
         },
@@ -155,8 +151,6 @@ class CartCubit extends Cubit<CartState> {
     }
   }
 
-  // Builds a new CartResponseModel with the quantity for [productId] set to
-  // [newQuantity], recalculating subtotals inline.
   CartResponseModel _applyQuantityPatch(
     CartResponseModel cart,
     String productId,

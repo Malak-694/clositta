@@ -18,6 +18,7 @@
             <data android:scheme="geo" />
         </intent>
     </queries>
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="Clositta"
         android:name="${applicationName}"

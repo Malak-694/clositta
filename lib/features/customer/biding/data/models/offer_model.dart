@@ -16,7 +16,6 @@ class Tailor {
   Map<String, dynamic> toJson() => _$TailorToJson(this);
 }
 
-// ── BidNested (bid populated inside offer response) ──────
 @JsonSerializable()
 class BidNested {
   @JsonKey(name: '_id')
@@ -80,8 +79,6 @@ class OfferResponse {
   @JsonKey(name: '_id')
   final String? id;
 
-  // bid can be a String ID (tailor flow) or a full BidNested object (customer flow)
-  // We store the resolved ID separately for easy map keying
   @JsonKey(includeFromJson: false, includeToJson: false)
   final String? bidId;
 
@@ -120,13 +117,9 @@ class OfferResponse {
   });
 
   bool get isAccepted => status == "accepted";
-
-  /// Works whether bid is a plain String ID or a full nested object
   factory OfferResponse.fromJson(Map<String, dynamic> json) {
     final raw = json['bid'];
 
-    // If bid is a plain string ID (tailor endpoints return it this way),
-    // wrap it into a minimal map so BidNested.fromJson doesn't crash
     if (raw is String) {
       json = {...json, 'bid': <String, dynamic>{'_id': raw}};
     }

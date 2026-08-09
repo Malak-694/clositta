@@ -19,10 +19,10 @@ class ConversationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final other     = conversation.otherUser;
-    final name        = other?.name ?? 'Unknown';
-    final unread      = conversation.unreadCount ?? 0;
-    final time        = _formatTime(conversation.lastMessageAt);
+    final other = conversation.otherUser;
+    final name  = other?.name ?? 'Unknown';
+    final unread = conversation.unreadCount ?? 0;
+    final time  = _formatTime(conversation.lastMessageAt);
 
     String _formatLastMessage({String? content, String? messageType}) {
       switch (messageType) {

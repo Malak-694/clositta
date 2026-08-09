@@ -82,8 +82,7 @@ class RecoveryCodeScreen extends StatelessWidget {
                         ? null
                         : () {
                       if (code.length == 6) {
-                        context
-                            .read<AuthCubit>()
+                        context.read<AuthCubit>()
                             .verifyResetCode(email, code);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(

@@ -116,9 +116,7 @@ class BidItem extends StatelessWidget {
           ),
 
           const SizedBox(height: 10),
-
           if (comment != null) Text(comment!, style: AppStyle.body6),
-
           const SizedBox(height: 10),
 
           // ── Action Buttons ─────────────────────────────────

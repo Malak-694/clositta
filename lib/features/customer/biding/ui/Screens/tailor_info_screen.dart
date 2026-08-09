@@ -1,32 +1,19 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import '../../../../../core/constants/colors.dart';
-
 import '../../../../../core/di/dependency_injection.dart';
-
 import '../../../../../core/widgets/custom_app_bar.dart';
-
 import '../../../../../core/widgets/info_card.dart';
-
 import '../../../../../core/widgets/pinterest_grid.dart';
-
 import '../../../../../core/widgets/pinterest_grid_config.dart';
-
 import '../../../../ecommerce_multi/ui/widgets/comment_section_widget.dart';
-
 import '../../data/models/portfolio_item_model.dart';
-
 import '../../logic/cubit/portfolio_cubit/portfolio_cubit.dart';
-
 import '../../logic/cubit/portfolio_cubit/portfolio_state.dart';
 
 class TailorInfoScreen extends StatelessWidget {
   final String name;
-
   final String tailorId;
   final String? imageUrl;
   final String? location;

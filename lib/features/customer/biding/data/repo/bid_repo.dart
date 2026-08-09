@@ -11,7 +11,6 @@ class BiddingCustomerRepo {
 
   BiddingCustomerRepo({required this.apiService});
 
-  // ✅ GET /api/bids → getMyBids
   Future<List<BidResponse>> getMyBids(String token) async {
     try {
       final response = await apiService.getMyBids("Bearer $token");
@@ -21,7 +20,6 @@ class BiddingCustomerRepo {
     }
   }
 
-  // ✅ POST /api/bids → createBid (multipart)
   // Future<BidResponse> createBid({
   //   required String token,
   //   required String description,

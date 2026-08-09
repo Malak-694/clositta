@@ -27,7 +27,7 @@ class ClosetCubit extends Cubit<ClosetState> {
   Future<void> viewClosetItems({
     String? category,
     String? season,
-    bool showLoading = true, // ✅ NEW: lets us refresh silently
+    bool showLoading = true,
   }) async {
     if (showLoading) emit(ClosetState.loading());
     try {
@@ -79,7 +79,6 @@ class ClosetCubit extends Cubit<ClosetState> {
   }
 
   void _applyFilters() {
-    // ✅ CHANGED: always build a brand-new list, never reuse `allItems` reference directly
     List<ClosetItemResponseModel> filtered = List<ClosetItemResponseModel>.from(allItems);
 
     if (selectedCategory != 'All') {
@@ -165,8 +164,7 @@ class ClosetCubit extends Cubit<ClosetState> {
       );
       response.when(
         success: (MessageModel data) {
-          // ✅ CHANGED: refetch from server instead of mutating allItems locally
-          viewClosetItems(showLoading: false); // silent refresh, no spinner flash
+          viewClosetItems(showLoading: false);
         },
         failure: (String error) {
           emit(ClosetState.fail("Failed to delete item. Please try again."));

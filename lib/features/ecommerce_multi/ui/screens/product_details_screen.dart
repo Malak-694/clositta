@@ -50,11 +50,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   @override
   void initState() {
     super.initState();
-    // Use product image URL or default fallback
     productPhotos = widget.product.imageUrl != null
         ? [widget.product.imageUrl!]
         : ['https://via.placeholder.com/400x500?text=No+Image'];
-    // initialize ratings list and load current user info
     _ratings = List<RatingModel>.from(widget.product.ratings ?? []);
     if (_hasFullProductData) _loadUserInfo();
   }
@@ -126,16 +124,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         listener: (context, state) {
           state.whenOrNull(
             success: (data) {
-              // deletion returns a MessageModel
               if (data is MessageModel) {
-                // remove user's rating locally and show rate widget again
                 setState(() {
                   _ratings.removeWhere((r) => r.user.id == _userId);
                   _userHasRated = false;
                   _userRatingModel = null;
                 });
               }
-              // if success with rating response, nothing to do here (onRated handles UI)
             },
             fail: (message) {
               ScaffoldMessenger.of(context).showSnackBar(

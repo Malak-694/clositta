@@ -91,10 +91,8 @@ class _AnalysisContent extends StatelessWidget {
       }
     }
 
-    // Sort from highest sales to lowest
     uniqueProducts.sort((a, b) => b.totalRevenue.compareTo(a.totalRevenue));
 
-    // Split into top and bottom halves
     final half = (uniqueProducts.length / 2).ceil();
     final topProducts = uniqueProducts.take(half).toList();
     final bottomProducts = uniqueProducts.skip(half).toList();

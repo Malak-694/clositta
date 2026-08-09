@@ -112,7 +112,7 @@ class _ClosetItemsScreenBodyState extends State<ClosetItemsScreenBody> {
               SizedBox(width: 10.w),
               CustomElevatedButton(
                 value: 'Add',
-                onPressed: _openAddItem, // ✅ CHANGED: extracted to its own method, see below
+                onPressed: _openAddItem,
                 height: 35,
                 width: 80,
                 style: AppStyle.medBackground.copyWith(fontSize: 14.sp),
@@ -155,7 +155,7 @@ class _ClosetItemsScreenBodyState extends State<ClosetItemsScreenBody> {
                           showPrice: false,
                           showEdit: true,
                           showDelete: true,
-                          onEdit: () => _openEditItem(item), // ✅ CHANGED: extracted, see below
+                          onEdit: () => _openEditItem(item),
                           onDelete: () =>
                               _showDeleteConfirmation(context, item),
                           onTap: () {},

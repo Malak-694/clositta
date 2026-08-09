@@ -73,7 +73,6 @@ class ViewProductsCubit extends Cubit<ViewProductsState<ProductPageData>> {
   Future<void> loadMore() async {
     if (_isFetching || !_hasMore) return;
 
-    // keep showing current products, just flag isLoadingMore
     emit(ViewProductsState.success(
       ProductPageData(
         products: _products,

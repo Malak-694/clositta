@@ -13,7 +13,6 @@ class ProductSearchRepo {
 
   ProductSearchRepo({required this.apiService});
 
-  /// Simulates GET /api/products/search?query=
   Future<ApiResult<List<ProductSearchResponseModel>>> searchByText({
     required Map<String, dynamic> body,
   }) async {
@@ -25,7 +24,6 @@ class ProductSearchRepo {
     }
   }
 
-  /// Simulates POST /api/products/search/image (multipart)
   Future<ApiResult<List<ProductSearchResponseModel>>> searchByImage({
     required String imagePath,
   }) async {

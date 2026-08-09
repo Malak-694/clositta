@@ -11,7 +11,6 @@ class SellerOrderStatusFilterBar extends StatelessWidget {
     required this.onStatusSelected,
   });
 
-  /// `null` means “all orders”.
   final String? selectedStatus;
   final ValueChanged<String?> onStatusSelected;
 

@@ -27,7 +27,6 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // If we have an icon, use ElevatedButton.icon
     return SizedBox(
       width: width.w,
       height: height.h,

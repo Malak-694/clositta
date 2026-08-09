@@ -4,10 +4,7 @@ part 'order_request_model.g.dart';
 
 @JsonSerializable()
 class OrderRequestModel {
-  /// Sent as [paymentMethod] in the place-order API body.
   static const String paymentCredit = 'credit';
-
-  /// Cash on delivery — sent as [paymentMethod].
   static const String paymentCashOnDelivery = 'cash_on_delivery';
 
   String? fullName;

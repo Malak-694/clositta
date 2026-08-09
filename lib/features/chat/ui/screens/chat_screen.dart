@@ -248,11 +248,9 @@ class _ChatScreenState extends State<ChatScreen> {
                     return ListView.builder(
                       controller: _scrollController,
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      // ✅ Always starts at bottom, new messages appear at bottom
                       reverse: true,
                       itemCount: messages.length,
                       itemBuilder: (context, index) {
-                        // ✅ Reverse index so newest is at bottom
                         final reversedIndex = messages.length - 1 - index;
                         final msg = messages[reversedIndex];
                         final isMine = msg.sender?.id == _currentUserId;
@@ -261,7 +259,6 @@ class _ChatScreenState extends State<ChatScreen> {
                               messages[reversedIndex - 1].createdAt,
                               msg.createdAt,
                             );
-
                         return Column(
                           children: [
                             if (showDate) _buildDateSeparator(msg.createdAt),

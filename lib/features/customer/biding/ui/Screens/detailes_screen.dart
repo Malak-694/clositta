@@ -243,7 +243,6 @@ class _DetailesScreenState extends State<DetailesScreen> {
                       if (data is! List<OfferResponse>) {
                         return const Center(child: Text('Unexpected data format'));
                       }
-
                       final displayedOffers = isBidOpen
                           ? _applySort(data)
                           : data

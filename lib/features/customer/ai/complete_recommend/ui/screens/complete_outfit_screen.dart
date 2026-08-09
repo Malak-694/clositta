@@ -58,7 +58,7 @@ class _CompleteOutfitScreenState extends State<CompleteOutfitScreen> {
     'Winter',
     'Spring',
     'Fall',
-  ]; // 'all' is backend-only, intentionally excluded
+  ];
   final List<String> colorOptions = [
     'White',
     'Black',
@@ -88,8 +88,6 @@ class _CompleteOutfitScreenState extends State<CompleteOutfitScreen> {
   String _toBackendValue(String display) =>
       display.toLowerCase().replaceAll(' ', '-');
 
-  /// Capitalizes the first letter of a category key for display
-  /// (e.g. "top" -> "Top", "bottom" -> "Bottom").
   String _formatCategoryTitle(String category) {
     if (category.isEmpty) return category;
     return category[0].toUpperCase() + category.substring(1);
@@ -317,8 +315,6 @@ class _CompleteOutfitScreenState extends State<CompleteOutfitScreen> {
                 orElse: () => false,
               );
 
-              // Get category -> items map directly from the response
-              // instead of flattening into combined "outfits".
               final categoryResults = state.maybeWhen(
                 success: (data) => data.results,
                 orElse: () => <String, List<OutfitItemModel>>{},
@@ -407,8 +403,7 @@ class _CompleteOutfitScreenState extends State<CompleteOutfitScreen> {
                                   items: seasonOptions,
                                   hintText: 'ex,Summer',
                                   onChanged: (val) => setState(
-                                    () =>
-                                        selectedSeason = val ?? selectedSeason,
+                                    () => selectedSeason = val ?? selectedSeason,
                                   ),
                                   label: 'Season',
                                 ),
@@ -439,8 +434,7 @@ class _CompleteOutfitScreenState extends State<CompleteOutfitScreen> {
                                   items: genderOptions,
                                   hintText: 'ex,Female',
                                   onChanged: (val) => setState(
-                                    () =>
-                                        selectedGender = val ?? selectedGender,
+                                    () => selectedGender = val ?? selectedGender,
                                   ),
                                   label: 'Gender',
                                   required: true,
@@ -506,7 +500,7 @@ class _CompleteOutfitScreenState extends State<CompleteOutfitScreen> {
                       SizedBox(height: 10.h),
                       ...categoryResults.entries.map((entry) {
                         final category =
-                            entry.key; // e.g. "top", "bottom", "shoes"
+                            entry.key;
                         final items = entry.value.where((item) => 
                             item.product != null && 
                             item.product!.description != null && 
@@ -536,7 +530,6 @@ class _CompleteOutfitScreenState extends State<CompleteOutfitScreen> {
   }
 }
 
-/// Renders a field label with a red trailing asterisk to mark it as required.
 class _RequiredLabel extends StatelessWidget {
   final String text;
   const _RequiredLabel(this.text);

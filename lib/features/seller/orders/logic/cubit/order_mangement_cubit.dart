@@ -18,11 +18,6 @@ class OrderMangementCubit extends Cubit<OrderMangementState> {
 
   OrderMangementCubit({required this.repo}) : super(OrderMangementState.initial());
 
-  /// Loads every seller order from the API (no server-side status filter), caches
-  /// the full list, then emits [success] with orders matching [status].
-  ///
-  /// When [forceRefresh] is false and a cache exists (for example after changing
-  /// the filter chip), only local filtering runs—no network round trip.
   Future<void> getAllOrdersSeller({String? status, bool forceRefresh = false}) async {
     _lastStatusFilter = status;
     final cached = _cachedAllOrders;

@@ -10,11 +10,8 @@ class NotificationCubit extends Cubit<NotificationState> {
   final NotificationRepo _repo;
   final SharedPrefHelper _prefs = getIt<SharedPrefHelper>();
 
-  // Local list so we can update it without re-fetching
   List<NotificationModel> _notifications = [];
   List<NotificationModel> get notifications => _notifications;
-
-  // Plain int field — readable without watching state
   int unreadCount = 0;
 
   NotificationCubit(this._repo) : super(const NotificationState.initial());

@@ -14,7 +14,6 @@ import 'package:chicora/features/ecommerce_multi/data/models/cart_models/delete_
 import 'package:chicora/features/ecommerce_multi/data/models/order_models/order_request_model.dart';
 import 'package:chicora/features/ecommerce_multi/data/models/order_models/order_response_model.dart';
 import 'package:chicora/features/ecommerce_multi/data/models/order_models/pay_model.dart';
-import 'package:chicora/features/ecommerce_multi/data/models/product_models/product_response_model.dart';
 import 'package:chicora/features/ecommerce_multi/data/models/product_models/product_search_response_model.dart';
 import 'package:chicora/features/seller/orders/data/models/order_seller_response_model.dart';
 import 'package:chicora/features/seller/orders/data/models/order_update_seller_request_model.dart';

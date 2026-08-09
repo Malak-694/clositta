@@ -62,21 +62,21 @@ class ApiEndpoints {
 
   static const String socketUrl = baseUrl;
 
-  // ── Chat ──────────────────────────────────────────
+  //chat
   static const String conversations = '/api/chat/conversations';
   static const String chatHistory = '/api/chat/{userId}';
   static const String unreadCount = '/api/chat/unread';
   static const String uploadChatImage = '/api/chat/upload-image';
-  // ── Measurements ──────────────────────────────────────────
+  //measurements
   static const String measurements = '/api/auth/measurements';
 
-  // _____ai _____________________________
+  // AI
   static const String searchByImage = '/api/ai/search_by_image/image';
   static const String searchByText = '/api/ai/search_by_image/text';
   static const String generateImage = '/api/ai_generator/generate';
   static const String dailyOutfitRecommendation = '/api/ai/daily_outfit_recommendation/recommend';
   static const String completeOutfitRecommend = '/api/ai/complete_outfit/recommend';
-  //_____________ notifications __________________________
+  // Notifications
   static const String updateFcmToken = '/api/auth/fcm-token';
   static const String notificationPreferences =
       '/api/auth/notification-preferences';

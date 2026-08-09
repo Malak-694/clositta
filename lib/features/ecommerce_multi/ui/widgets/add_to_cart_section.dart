@@ -12,7 +12,6 @@ import '../../../../core/widgets/quantity_counter_widget.dart';
 
 class AddToCartSection extends StatefulWidget {
   final String productId;
-  /// Role-based primary accent (buttons, loading).
   final Color accent;
   final Color accentDark;
 

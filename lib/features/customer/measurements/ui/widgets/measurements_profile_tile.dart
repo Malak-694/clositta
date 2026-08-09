@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-/// Profile menu tile that opens the measurements screen for customers.
 class MeasurementsProfileTile extends StatelessWidget {
   final Color primaryColor;
   final Color lightColor;

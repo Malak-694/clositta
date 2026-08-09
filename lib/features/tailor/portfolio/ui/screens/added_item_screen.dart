@@ -40,8 +40,8 @@ class _AddedItemScreenState extends State<AddedItemScreen> {
   final List<String> categories = ['Tops', 'Bottoms', 'Suits'];
 
   String? _selectedCategory;
-  String? _selectedImagePath;  // newly picked image path
-  String? _existingImageUrl;   // image already on server (update mode)
+  String? _selectedImagePath;
+  String? _existingImageUrl;
 
   bool get _isUpdate => widget.item != null;
 
@@ -76,8 +76,6 @@ class _AddedItemScreenState extends State<AddedItemScreen> {
       child: BlocListener<PortfolioTailorCubit, PortfolioTailorState>(
         listener: (ctx, state) {
           state.whenOrNull(
-            // Success → pop back to portfolio screen with result=true
-            // so the .then() callback there triggers a refresh.
             success: (_) {
               if (mounted) Navigator.pop(context, true);
             },
@@ -222,9 +220,7 @@ class _AddedItemScreenState extends State<AddedItemScreen> {
         imagePath: _selectedImagePath!,
       );
     }
-    // Pop is intentionally NOT called here.
-    // BlocListener fires Navigator.pop(context, true) on success,
-    // which returns the result to portfolio_tailor_body.dart's .then() callback.
+
   }
 
   void _showSnackBar(String message) {

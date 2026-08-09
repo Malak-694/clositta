@@ -153,7 +153,7 @@ class _AddedProductFormState extends State<AddedProductForm> {
                       imagePath: _selectedImagePath,
                       imageUrl: _selectedImagePath == null
                           ? _existingImageUrl
-                          : null, // ✅
+                          : null,
                       onTap: _pickImage,
                     ),
                   ],

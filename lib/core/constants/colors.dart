@@ -18,23 +18,23 @@ class AppColors {
   static const lightternary   = Color(0xFFF18C88);
 
   static const darkScaffold   = Color(0xFF12111F);
-  static const darkSurface    = Color(0xFF1C1B2E); // cards
-  static const darkElevated   = Color(0xFF242339); // dialogs and sheets
+  static const darkSurface    = Color(0xFF1C1B2E);
+  static const darkElevated   = Color(0xFF242339);
 
   static const darkPrimary       = Color(0xFF7B6FCA);
-  static const darkPrimaryLight  = Color(0xFF9B91D9); // pressed / tint text
-  static const darkPrimaryTint   = Color(0xFF2A2750); // badge / chip bg
+  static const darkPrimaryLight  = Color(0xFF9B91D9);
+  static const darkPrimaryTint   = Color(0xFF2A2750);
 
   static const darkSecondaryMain = Color(0xFFFFC333);
-  static const darkSecondaryTint = Color(0xFF3A2F10); // badge bg
+  static const darkSecondaryTint = Color(0xFF3A2F10);
 
   static const darkTernary       = Color(0xFFFF7A7A);
-  static const darkTernaryLight  = Color(0xFFFF9A9A); // error text
-  static const darkTernaryTint   = Color(0xFF3D1414); // error chip bg
+  static const darkTernaryLight  = Color(0xFFFF9A9A);
+  static const darkTernaryTint   = Color(0xFF3D1414);
 
-  static const darkTextPrimary   = Color(0xFFF0EFFF); // warm white with purple tint
-  static const darkTextSecondary = Color(0xFF8E8BAA); // muted purple-gray
+  static const darkTextPrimary   = Color(0xFFF0EFFF);
+  static const darkTextSecondary = Color(0xFF8E8BAA);
 
-  static const darkDivider       = Color(0x1FFFFFFF); // white 12%
-  static const darkBorder        = Color(0xFF2E2C47); // subtle card border
+  static const darkDivider       = Color(0x1FFFFFFF);
+  static const darkBorder        = Color(0xFF2E2C47);
 }

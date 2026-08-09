@@ -49,7 +49,6 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
   final ImagePicker _picker = ImagePicker();
   String? _searchImagePath;
 
-  // NEW: scroll controller for infinite scroll
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -141,7 +140,6 @@ class _BuyerProductScreenBodyState extends State<BuyerProductScreenBody> {
     context.read<ViewProductsCubit>().searchByText(query: q);
   }
 
-  // Only client-side sort remains — filters are now server side.
   List<ProductModelBuyer> _sortProducts(List<ProductModelBuyer> products) {
     if (_priceSort == PriceSortOrder.none) return products;
     final sorted = [...products];

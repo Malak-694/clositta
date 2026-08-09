@@ -59,9 +59,6 @@ Widget buildProductCard(BuildContext context, ProductModel product) {
       borderRadius: BorderRadius.circular(20),
     ),
     padding: EdgeInsets.all(16.h),
-    // IntrinsicHeight forces the Row (and its children) to resolve to a
-    // finite, shared height instead of an unbounded one. This is what
-    // lets Expanded inside the right-hand Column actually fill space.
     child: IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,

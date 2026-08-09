@@ -3,7 +3,6 @@ import 'package:chicora/core/widgets/labeled_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-/// Optional workshop address and Google Maps link when registering as a tailor.
 class SignUpTailorExtraFields extends StatelessWidget {
   const SignUpTailorExtraFields({
     super.key,

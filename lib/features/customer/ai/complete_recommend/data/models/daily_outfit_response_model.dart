@@ -20,11 +20,7 @@ class DailyOutfitRecommendationResponse {
   Map<String, dynamic> toJson() => _$DailyOutfitRecommendationResponseToJson(this);
 }
 
-/// Shared helper for turning a `{category: [items]}` map (used by both the
-/// daily and complete outfit responses) into a list of complete outfits,
-/// each mapping category label -> item. Works with however many/whichever
-/// categories the backend actually returns (top, bottom, shoes, bag,
-/// jacket, accessories, etc.) instead of assuming a fixed set.
+
 extension OutfitResultsX on Map<String, List<OutfitItemModel>> {
   List<Map<String, OutfitItemModel>> buildOutfits() {
     final nonEmpty = Map<String, List<OutfitItemModel>>.fromEntries(
@@ -49,9 +45,6 @@ class OutfitItemModel {
   final double score;
   final ProductInfoModel? product;
 
-  /// Present in the API response but always null so far in samples seen.
-  /// Kept as raw JSON so parsing never breaks if the backend starts
-  /// populating it before we know its exact shape.
   final Map<String, dynamic>? closetItem;
 
   OutfitItemModel({

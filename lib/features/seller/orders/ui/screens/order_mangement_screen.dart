@@ -69,7 +69,6 @@ class _OrderMangementBodyState extends State<_OrderMangementBody> {
     'Cancelled',
   ];
 
-  /// After the first successful fetch, filter/refresh loads use inline progress only.
   bool _hasCompletedFirstLoad = false;
 
   @override

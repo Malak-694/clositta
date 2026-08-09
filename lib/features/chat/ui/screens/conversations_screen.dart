@@ -53,7 +53,6 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
   @override
   Widget build(BuildContext context) {
     final cartCount = cartTotalItemQuantity(context.watch<CartCubit>().state);
-    // Use the local cubit directly — no context.watch needed for unread count.
     final chatCount = _cubit.unreadCount;
     final notifCount = context.read<NotificationCubit>().unreadCount;
 

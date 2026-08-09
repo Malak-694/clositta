@@ -2,7 +2,6 @@ import 'package:chicora/features/ecommerce_multi/data/models/cart_models/cart_re
 import 'package:chicora/features/ecommerce_multi/data/models/cart_models/delete_cart_response_model.dart';
 import 'package:chicora/features/ecommerce_multi/logic/cart_cubit/cart_state.dart';
 
-/// Sum of line-item quantities in the cart for [state], for UI badges.
 int cartTotalItemQuantity(CartState<dynamic> state) {
   return state.maybeMap(
     success: (s) {

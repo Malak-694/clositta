@@ -8,9 +8,9 @@ import 'chat_state.dart';
 
 class ChatCubit extends Cubit<ChatState<List<ChatMessageModel>>> {
   final SocketService _socketService;
-  final ChatRepo      _chatRepo;
+  final ChatRepo _chatRepo;
 
-  final List<ChatMessageModel>   _messages      = [];
+  final List<ChatMessageModel>   _messages = [];
   final List<StreamSubscription> _subscriptions = [];
 
   ChatCubit(this._socketService, this._chatRepo)
@@ -31,13 +31,10 @@ class ChatCubit extends Cubit<ChatState<List<ChatMessageModel>>> {
       final history = await _chatRepo.getChatHistory(token, receiverId);
       _messages.addAll(history);
       emit(ChatState.success(List.from(_messages)));
-
-      // ✅ Fresh stream controllers AFTER disconnect
       _socketService.init();
 
       _subscriptions.add(
         _socketService.onConnected.listen((_) {
-          // socket is ready — nothing needed here
         }),
       );
 

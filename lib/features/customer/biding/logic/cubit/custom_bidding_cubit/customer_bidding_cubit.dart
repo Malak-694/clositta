@@ -46,7 +46,7 @@ class CustomerBiddingCubit extends Cubit<CustomerBiddingState> {
       }
       final response = await _repository.getMyBids(token);
       _loadedBids = true;
-      emit(CustomerBiddingState.success(response)); // ✅ T = List<BidResponse>
+      emit(CustomerBiddingState.success(response));
     } catch (e) {
       emit(CustomerBiddingState.fail(_parseError(e, "Failed to load my bids")));
     }
@@ -76,7 +76,7 @@ class CustomerBiddingCubit extends Cubit<CustomerBiddingState> {
         price: request.price,
         time: request.time,
       );
-      emit(const CustomerBiddingState.success("Bid created successfully!")); // ✅ T = String here
+      emit(const CustomerBiddingState.success("Bid created successfully!"));
       await refreshMyBids();
     } catch (e) {
       emit(CustomerBiddingState.fail(_parseError(e, "Failed to create bid")));

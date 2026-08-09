@@ -4,7 +4,6 @@ import 'package:chicora/features/tailor/portfolio/data/models/portfolio_tailor_u
 
 part 'tailor_portfolio_bundle_model.g.dart';
 
-/// GET /portfolio/my and GET /portfolio/tailor/:tailorId envelope.
 @JsonSerializable(explicitToJson: true)
 class TailorPortfolioBundleModel {
   final PortfolioTailorUserModel tailor;

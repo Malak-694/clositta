@@ -1,81 +1,226 @@
-# Clositta
+# Clositta (Chicora)
 
-An integrated platform combining Fast Fashion & Custom Tailoring
+> A smart fashion & tailoring marketplace built with Flutter — connecting customers, tailors, and clothing/material sellers in one unified platform.
 
-Clositta uniquely combines three core value propositions:
+---
 
-Fast Fashion Marketplace – Browse & purchase ready-made items
-Custom Tailoring Network – Connect with vetted tailors for bespoke clothing
-AI-powered Intelligence – Personalized design generation & outfit recommendation
+## 📱 Overview
 
-## Features
+**Clositta** is a multi-role Flutter mobile application that brings together three types of users under one roof:
 
+- **Customers** — manage their digital wardrobe (closet), discover outfits with AI assistance, browse products, and commission tailors via a bidding system.
+- **Tailors** — receive and respond to bidding requests, manage orders, showcase their portfolio, browse material products, and use AI to generate design images.
+- **Sellers** — list and manage clothing or fabric/material products, fulfill orders, and track sales analytics.
 
-<!-- TODO: Add the app's core, user-facing features here, e.g.:
-- Digital wardrobe / closet catalog
-- Outfit planning and recommendations
-- Browse or shop for clothing items
--->
-Customers features : 
-- Browse fast fashion and search by image
-- Get AI-generated outfits , daily recommendations from your digital closet and completing outfit 
-- upload post for tailoring
+---
 
-Tailor features :
-- browse requests
-- submit offers 
-- Chat with customers 
-- upload his works in portfolio
+## ✨ Features
 
-Seller features :
-- manage his products 
-- track orders 
-- show analysis 
-## Tech Stack
-
-| Category | Package(s) |
+### 👗 Customer
+| Feature | Description |
 |---|---|
-| Framework | Flutter (Dart SDK ^3.9.2) |
-| State management | `flutter_bloc`, `bloc` |
-| Networking | `dio`, `retrofit`, `pretty_dio_logger`, `socket_io_client` |
-| Auth & Backend | `firebase_core`, `firebase_messaging`, `google_sign_in` |
-| Storage | `shared_preferences`, `flutter_secure_storage` |
-| Maps & Location | `google_maps_flutter` |
-| Media | `image_picker`, `vision_gallery_saver`, `flutter_svg` |
-| Code generation | `build_runner`, `freezed`, `json_serializable`, `retrofit_generator` |
-| Dependency Injection | `get_it` |
-| Testing | `flutter_test`, `bloc_test`, `mocktail`, `network_image_mock` |
+| **Digital Closet** | Upload, organize, and manage wardrobe items |
+| **AI Outfit Recommendations** | Get personalized outfit suggestions powered by AI |
+| **AI Image Generation** | Generate clothing/outfit images from text prompts |
+| **Complete the Outfit** | AI-powered tool to suggest missing outfit pieces |
+| **Bidding System** | Post custom tailoring requests and receive bids from tailors |
+| **E-Commerce** | Browse and purchase clothing from sellers |
+| **Body Measurements** | Store and manage body measurements |
+| **Real-time Chat** | Chat directly with tailors or sellers |
+| **Notifications** | Real-time push notifications via Firebase |
+| **Cart & Orders** | Add to cart and track order status with deep-link support |
 
-## Project Structure
+### 🧵 Tailor
+| Feature | Description |
+|---|---|
+| **Bidding Board** | View and submit bids on customer tailoring requests |
+| **Active Orders** | Manage ongoing tailoring orders |
+| **Portfolio** | Showcase previous work with images |
+| **AI Image Generation** | Generate design inspiration images |
+| **E-Commerce** | Browse clothing and material products |
+| **Real-time Chat** | Communicate with customers |
+| **Notifications** | Stay updated on new bids and messages |
+
+### 🛍️ Seller
+| Feature | Description |
+|---|---|
+| **Product Management** | Add, update, and remove product listings |
+| **Orders Management** | View and manage incoming orders |
+| **Sales Analytics** | Visual dashboard for tracking sales performance |
+| **Profile** | Manage store profile |
+| **Notifications** | Get notified of new customer orders |
+
+### 🔐 Authentication
+- Email / Password login & signup
+- Google Sign-In
+- Password recovery via email code
+- Persistent login with secure token storage
+- Role-based routing on app launch
+
+---
+
+## 🏗️ Architecture
+
+The project follows a **Feature-First Clean Architecture** with BLoC for state management.
 
 ```
-clositta/
-├── android/        # Android platform code
-├── ios/            # iOS platform code
-├── linux/          # Linux platform code
-├── macos/          # macOS platform code
-├── windows/        # Windows platform code
-├── web/            # Web platform code
-├── lib/            # Main Dart/Flutter application source
-├── assets/         # Images, fonts, and other static assets
-├── test/           # Unit and widget tests
-├── notes/          # Project notes/docs
-├── pubspec.yaml    # Project metadata and dependencies
-└── firebase.json   # Firebase configuration
+lib/
+├── core/
+│   ├── constants/        # App-wide constants
+│   ├── di/               # Dependency injection (get_it)
+│   ├── helper/           # Shared preferences, notifications, etc.
+│   ├── models/           # Shared data models
+│   ├── networking/       # Dio HTTP client, interceptors, Retrofit APIs
+│   ├── router/           # Named route definitions & AppRouter
+│   ├── theme/            # Light & dark themes
+│   ├── tools/            # Utility functions
+│   ├── utils/            # Helpers (formatters, validators, etc.)
+│   └── widgets/          # Shared/reusable widgets
+│
+└── features/
+    ├── auth/             # Login, signup, password recovery
+    ├── chat/             # Real-time messaging (Socket.IO)
+    ├── customer/
+    │   ├── ai/           # AI outfit recommendations & image generation
+    │   ├── biding/       # Customer bidding posts
+    │   ├── closet/       # Digital wardrobe management
+    │   ├── ecommerce/    # Product browsing & cart
+    │   ├── measurements/ # Body measurements
+    │   └── profile/      # Customer profile
+    ├── ecommerce_multi/  # Shared cart & order logic
+    ├── notifications/    # Push notification management
+    ├── profile/          # Shared profile components
+    ├── seller/
+    │   ├── analysis/     # Sales analytics dashboard
+    │   ├── orders/       # Order management
+    │   ├── products/     # Product CRUD
+    │   └── profile/      # Seller profile
+    └── tailor/
+        ├── ai/           # Tailor AI image generation
+        ├── bidding_tailor/ # Tailor's bidding board
+        ├── ecommerce/    # Product browsing for tailors
+        ├── portfolio/    # Portfolio management
+        └── profile/      # Tailor profile
 ```
 
-## Getting Started
+---
+
+## 🛠️ Tech Stack
+
+| Category | Technology |
+|---|---|
+| **Framework** | Flutter (Dart) |
+| **State Management** | Flutter BLoC / Cubit |
+| **Dependency Injection** | get_it |
+| **HTTP Client** | Dio + Retrofit |
+| **Serialization** | json_serializable + freezed |
+| **Real-time** | Socket.IO (`socket_io_client`) |
+| **Push Notifications** | Firebase Cloud Messaging + `flutter_local_notifications` |
+| **Backend Services** | Firebase (Core, Messaging) |
+| **Authentication** | Google Sign-In, JWT (stored via `flutter_secure_storage`) |
+| **Maps** | Google Maps Flutter |
+| **Deep Links** | app_links |
+| **Image Handling** | image_picker, vision_gallery_saver |
+| **Navigation** | Named routes via AppRouter |
+| **Responsive UI** | flutter_screenutil (design size: 412×917) |
+| **Font** | Raleway (multiple weights) |
+| **Icons** | Lucide Icons Flutter |
+| **Logging** | logger, pretty_dio_logger |
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- [Flutter SDK](https://docs.flutter.dev/get-started/install) (Dart SDK `^3.9.2` or compatible)
-- Android Studio / Xcode (for mobile builds) or a configured platform toolchain
-- A Firebase project (for `firebase_core` / `firebase_messaging`) with `google-services.json` (Android) and `GoogleService-Info.plist` (iOS) added to the respective platform folders
-- A Google Maps API key configured for `google_maps_flutter`
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) `^3.x` (Dart SDK `^3.9.2`)
+- [Firebase project](https://console.firebase.google.com/) configured for Android and/or iOS
+- Google Maps API key (for maps features)
+- A running backend server
 
-## Testing
+### Setup
 
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd clositta
+   ```
+
+2. **Install dependencies**
+   ```bash
+   flutter pub get
+   ```
+
+3. **Configure Firebase**
+   - Place your `google-services.json` in `android/app/`
+   - Place your `GoogleService-Info.plist` in `ios/Runner/`
+   - Update `lib/firebase_options.dart` with your Firebase project details
+
+4. **Configure Google Maps** *(if applicable)*
+   - Add your API key to `android/app/src/main/AndroidManifest.xml`
+   - Add your API key to `ios/Runner/AppDelegate.swift`
+
+5. **Generate code** (for Retrofit, Freezed, JSON serialization, and assets)
+   ```bash
+   dart run build_runner build --delete-conflicting-outputs
+   ```
+
+6. **Run the app**
+   ```bash
+   flutter run
+   ```
+
+---
+
+## 🔧 Code Generation
+
+This project uses code generation for:
+- **Freezed** — immutable data classes & union types
+- **json_serializable** — JSON parsing
+- **Retrofit** — type-safe REST API clients
+- **flutter_gen** — type-safe asset references
+
+Regenerate when models or assets change:
 ```bash
-flutter test
+dart run build_runner build --delete-conflicting-outputs
 ```
 
+---
+
+## 🎨 Theming
+
+The app fully supports **Light and Dark modes**, toggled at runtime and persisted across sessions via `SharedPreferences`. Theme definitions live in `lib/core/theme/app_theme.dart`.
+
+---
+
+## 🔔 Notifications
+
+Push notifications are powered by **Firebase Cloud Messaging (FCM)**. The device token is automatically sent to the backend on login. Local notification display is handled by `flutter_local_notifications`.
+
+---
+
+## 🔗 Deep Links
+
+The app handles deep links with the scheme `app://clositta.com`. Currently, navigating to `/orders` via a deep link will redirect the user to the order view screen.
+
+---
+
+## 📁 Assets
+
+```
+assets/
+└── images/
+    ├── dress.png
+    ├── recovery.png
+    ├── password.png
+    ├── email.png
+    ├── lock.png
+    ├── loading.gif
+    └── logo-removebg.png   ← App launcher icon
+```
+
+---
+
+## 📄 License
+
+This project is private and not published to pub.dev.
